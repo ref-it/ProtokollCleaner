@@ -31,27 +31,27 @@ class Main
             {
                 continue;
             }
-            $Datum = $this->getDateFromFileName($datei);
-            if(intval($Datum->Year()) < $this->startYear)
+            $Date = $this->getDateFromFileName($datei);
+            if(intval($Date->Year()) < $this->startYear)
             {
                 continue;
             }
-            if((intval($Datum->Year()) === $this->startYear) and (intval($Datum->Month()) < $this->startMonth))
+            if((intval($Date->Year()) === $this->startYear) and (intval($Date->Month()) < $this->startMonth))
             {
                 continue;
             }
-            if((intval($Datum->Year()) === $this->startYear) and (intval($Datum->Month()) === $this->startMonth) and (intval($Datum->Day()) < $this->startday))
+            if((intval($Date->Year()) === $this->startYear) and (intval($Date->Month()) === $this->startMonth) and (intval($Date->Day()) < $this->startday))
             {
                 continue;
             }
-            $file = new File($Datum, $datei);
+            $file = new File($Date, $datei);
             $fn = Main::$outputpath . "/" . $file->getOutputFilename();
             $this->copy($file->getFilename(), $fn);
 
             $this->files[] = $file;
 
 
-            echo $Datum->GermanDate() . "<br />";
+            echo $Date->GermanDate() . "<br />";
         }
 
     }
