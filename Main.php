@@ -50,7 +50,7 @@ class Main
             }
             $file = new File($Date, $datei);
             $fn = Main::$outputpath . "/" . $file->getOutputFilename();
-            $this->copy($file->getFilename(), $fn);
+            $this->copy($file->getFilename(), $fn, $this->checkApproved($file->getgermanDate()));
 
             $this->files[] = $file;
 
@@ -59,7 +59,7 @@ class Main
         }
 
     }
-    function copy($fileName, $fn)
+    function copy($fileName, $fn, $check)
     {
         $OffRec=false;
         $lines = array();
@@ -73,7 +73,15 @@ class Main
                 }
                 if(!$OffRec)
                 {
-                    $lines[] = $line;
+                    if(strpos($line, "======") !== false and $check)
+                    {
+                        $firstpart = substr($line, strpos($line, "======"), 6 );
+                        $secondpart = substr($line, strpos($line, "======") + 6, strlen($line) -1 );
+                        $lines[] = $firstpart . " Entwurf:" . $secondpart;
+                    }
+                    else {
+                        $lines[] = $line;
+                    }
                     continue;
                 }
                 if($OffRec and strpos($line, "tag>" . Main::$endtag) !== false) {
@@ -101,6 +109,28 @@ class Main
         $y = substr($Name, 0, 4);
         $Date = new Date($y,$m,$d);
         return $Date;
+    }
+
+    function checkApproved($germanDate)
+    {
+        $this->files = array();
+        $alledateien = scandir(Main::$inputpath); //Ordner "files" auslesen
+        foreach ($alledateien as $datei) { // Ausgabeschleife
+            if ($fl = fopen(Main::$inputpath . "/" . $datei, "r")) {
+                while(!feof($fl)) {
+                    $line = fgets($fl);
+                    # do same stuff with the $line
+                    if (strpos($line, "template>:vorlagen:stimmen|Titel=Der StuRa beschließt das Protokoll der Sitzung vom " . $germanDate . " in der im Wiki vorliegenden Fassung.") !== false)
+                    {
+                        if (strpos($line, "S=angenommen") !== false) {
+                            return true;
+                        }
+                    }
+                }
+                fclose($fl);
+            }
+        }
+        return false;
     }
 }
 
@@ -161,6 +191,10 @@ class File
     function getOutputFilename()
     {
         return $this->datum->Filname();
+    }
+    function getgermanDate()
+    {
+        return $this->datum->GermanDate();
     }
 }
 $haupt = new Main();
