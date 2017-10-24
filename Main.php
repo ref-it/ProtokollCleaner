@@ -14,11 +14,15 @@
 
 class Main
 {
-    public static $inputpath = "/home/martin/test/intern/";
+    public static $inputpath  = "/home/martin/test/intern/";
     public static $outputpath = "/home/martin/test/public/";
+    public static $starttag   = "intern";
+    public static $endtag     = "nointern";
     private $startMonth = 01;
     private $startYear  = 2016;
     private $startday   = 01;
+
+
     private $files;
 
     function getAllFiles()
@@ -63,7 +67,7 @@ class Main
             while(!feof($fl)) {
                 $line = fgets($fl);
                 # do same stuff with the $line
-                if(strpos($line, 'tag>intern') !== false) {
+                if(!$OffRec and strpos($line, "tag>" . Main::$starttag) !== false) {
                     $OffRec=true;
                     continue;
                 }
@@ -72,7 +76,7 @@ class Main
                     $lines[] = $line;
                     continue;
                 }
-                if($OffRec and strpos($line, 'tag>nointern') !== false) {
+                if($OffRec and strpos($line, "tag>" . Main::$endtag) !== false) {
                     $OffRec=false;
                 }
 
