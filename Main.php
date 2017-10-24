@@ -14,13 +14,13 @@
 
 class Main
 {
-    public static $inputpath  = "/home/martin/test/intern/";
-    public static $outputpath = "/home/martin/test/public/";
-    public static $starttag   = "intern";
-    public static $endtag     = "nointern";
-    private $startMonth = 01;
-    private $startYear  = 2016;
-    private $startday   = 01;
+    public static $inputpath  = "/home/martin/test/intern/"; //intern part of the Wiki, where the files which will be cleaned are
+    public static $outputpath = "/home/martin/test/public/"; //public part of the Wiki, where the cleaned files will be saved
+    public static $starttag   = "intern"; //start tag of cleaning area
+    public static $endtag     = "nointern"; //end tag of cleaning area
+    private $startMonth = 01;    //Day,
+    private $startYear  = 2016;  //Month and
+    private $startday   = 01;    //Year of First protokoll which will be cleaned
 
 
     private $files;
