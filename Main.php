@@ -51,11 +51,7 @@ class Main
             $file = new File($Date, $datei);
             $fn = Main::$outputpath . "/" . $file->getOutputFilename();
             $this->copy($file->getFilename(), $fn, $this->checkApproved($file->getgermanDate()));
-
             $this->files[] = $file;
-
-
-            echo $Date->GermanDate() . "<br />";
         }
 
     }
@@ -78,6 +74,7 @@ class Main
                         $firstpart = substr($line, strpos($line, "======"), 6 );
                         $secondpart = substr($line, strpos($line, "======") + 6, strlen($line) -1 );
                         $lines[] = $firstpart . " Entwurf:" . $secondpart;
+                        echo "Published as Draft: ";
                     }
                     else {
                         $lines[] = $line;
@@ -94,10 +91,10 @@ class Main
         if($fl = fopen($fn, "w+")) {
             foreach ($lines as $line) {
                 fwrite($fl, $line);
-                echo $line . "<br />";
             }
         }
         fclose($fl);
+        echo substr($fileName, strlen($fileName)-14, strlen($fileName) -1) . "<br />";
     }
 
     function getDateFromFileName($Filename)
