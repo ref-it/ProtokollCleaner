@@ -54,7 +54,7 @@ class Main
             $this->copy($file->getFilename(), $fn, $this->checkApproved($file->getgermanDate()));
             $this->files[] = $file;
         }
-
+        $this->exportFinancial();
     }
     function copy($fileName, $fn, $check)
     {
@@ -123,6 +123,41 @@ class Main
         }
         fclose($fl);
         return false;
+    }
+
+    function exportFinancial()
+    {
+        if($fl = fopen(Main::$decissionList, "r"))
+        {
+            while (!feof($fl)) {
+                $line = fgets($fl);
+                if ((strpos($line, "Budget") !== false)) {
+                    if (strpos($line, "https://helfer.stura.tu-ilmenau.de/FinanzAntragUI/") !== false) {
+                        if (strpos($line, "<del>") !== false)
+                        {
+                            echo substr($line, 2, 8) . " - " . substr($line, strpos($line, "FinanzAntragUI/") + 15, 17) . "</del><br />" . PHP_EOL;
+                        }
+                        else
+                        {
+                            echo substr($line, 2, 8) . " - " . substr($line, strpos($line, "FinanzAntragUI/") + 15, 17) . "<br />" . PHP_EOL;
+                        }
+
+                    }
+                    else
+                    {
+                        if (strpos($line, "<del>") !== false)
+                        {
+                            echo substr($line, 2, 8) . " - " . "not found </del><br />" . PHP_EOL;
+                        }
+                        else
+                        {
+                            echo substr($line, 2, 8) . " - " . "not found <br />" . PHP_EOL;
+                        }
+
+                    }
+                }
+            }
+        }
     }
 }
 
