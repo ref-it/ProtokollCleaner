@@ -16,6 +16,7 @@ class Main
 {
     public static $inputpath  = "/home/martin/test/intern/"; //intern part of the Wiki, where the files which will be cleaned are
     public static $outputpath = "/home/martin/test/public/"; //public part of the Wiki, where the cleaned files will be saved
+    public static $decissionList = "/home/martin/test/beschluesse.txt"; //Liste der Beschlüsse
     public static $starttag   = "intern"; //start tag of cleaning area
     public static $endtag     = "nointern"; //end tag of cleaning area
     private $startMonth = 01;    //Day,
@@ -69,7 +70,7 @@ class Main
                 }
                 if(!$OffRec)
                 {
-                    if(strpos($line, "======") !== false and $check)
+                    if(strpos($line, "======") !== false and !$check)
                     {
                         $firstpart = substr($line, strpos($line, "======"), 6 );
                         $secondpart = substr($line, strpos($line, "======") + 6, strlen($line) -1 );
@@ -110,23 +111,17 @@ class Main
 
     function checkApproved($germanDate)
     {
-        $this->files = array();
-        $alledateien = scandir(Main::$inputpath); //Ordner "files" auslesen
-        foreach ($alledateien as $datei) { // Ausgabeschleife
-            if ($fl = fopen(Main::$inputpath . "/" . $datei, "r")) {
-                while(!feof($fl)) {
-                    $line = fgets($fl);
-                    # do same stuff with the $line
-                    if (strpos($line, "template>:vorlagen:stimmen|Titel=Der StuRa beschließt das Protokoll der Sitzung vom " . $germanDate . " in der im Wiki vorliegenden Fassung.") !== false)
-                    {
-                        if (strpos($line, "S=angenommen") !== false) {
-                            return true;
-                        }
-                    }
+        if ($fl = fopen(Main::$decissionList, "r")) {
+            while (!feof($fl)) {
+                $line = fgets($fl);
+                # do same stuff with the $line
+                if ((strpos($line, "beschließt") !== false) and  (strpos($line, "Protokoll") !== false ) and (strpos($line, "Sitzung") !== false ) and (strpos($line, $germanDate) !== false)) {
+                    echo $line . "<br />";
+                    return true;
                 }
-                fclose($fl);
             }
         }
+        fclose($fl);
         return false;
     }
 }
@@ -177,7 +172,7 @@ class File
         $this->Filename = Main::$inputpath . "/" . $file;
     }
 
-    function getDate()
+    function getDate() : Date
     {
         return $this->datum;
     }
@@ -187,7 +182,7 @@ class File
     }
     function getOutputFilename()
     {
-        return $this->datum->Filname();
+        return $this->getDate()->Filname();
     }
     function getgermanDate()
     {
