@@ -1,9 +1,3 @@
-<!DOCTYPE html>
-<html>
-<body>
-
-<h1>ProtokollCleaner</h1>
-
 <?php
 /**
  * Created by PhpStorm.
@@ -16,12 +10,15 @@ class Main
 {
     public static $inputpath  = "/home/martin/test/intern/"; //intern part of the Wiki, where the files which will be cleaned are
     public static $outputpath = "/home/martin/test/public/"; //public part of the Wiki, where the cleaned files will be saved
-    public static $decissionList = "/home/martin/test/beschluesse.txt"; //Liste der Beschlüsse
+    public static $decissionList = "/home/martin/test/beschluesse.txt"; //List off StuRa Decissions
     public static $starttag   = "intern"; //start tag of cleaning area
     public static $endtag     = "nointern"; //end tag of cleaning area
+    public  static  $debug = true ; //all as Text on Browser
+    public  static  $onlyNew = true; //only new financial decissions
     private $startMonth = 01;    //Day,
     private $startYear  = 2016;  //Month and
     private $startday   = 01;    //Year of First protokoll which will be cleaned
+    private $financialResolution = array();
 
 
     private $files;
@@ -51,9 +48,19 @@ class Main
             }
             $file = new File($Date, $datei);
             $fn = Main::$outputpath . "/" . $file->getOutputFilename();
-            $this->copy($file->getFilename(), $fn, $this->checkApproved($file->getgermanDate()));
+            $check = $this->checkApproved($file->getgermanDate());
+            if($check)
+            {
+                echo "Published as Final: ";
+            }
+            else
+            {
+                echo "Published as Draft: ";
+            }
+            $this->copy($file->getFilename(), $fn, $check);
             $this->files[] = $file;
         }
+        echo "<br /><br /><br />" . PHP_EOL;
         $this->exportFinancial();
     }
     function copy($fileName, $fn, $check)
@@ -75,7 +82,6 @@ class Main
                         $firstpart = substr($line, strpos($line, "======"), 6 );
                         $secondpart = substr($line, strpos($line, "======") + 6, strlen($line) -1 );
                         $lines[] = $firstpart . " Entwurf:" . $secondpart;
-                        echo "Published as Draft: ";
                     }
                     else {
                         $lines[] = $line;
@@ -116,7 +122,6 @@ class Main
                 $line = fgets($fl);
                 # do same stuff with the $line
                 if ((strpos($line, "beschließt") !== false) and  (strpos($line, "Protokoll") !== false ) and (strpos($line, "Sitzung") !== false ) and (strpos($line, $germanDate) !== false)) {
-                    echo $line . "<br />";
                     return true;
                 }
             }
@@ -133,31 +138,52 @@ class Main
                 $line = fgets($fl);
                 if ((strpos($line, "Budget") !== false)) {
                     if (strpos($line, "https://helfer.stura.tu-ilmenau.de/FinanzAntragUI/") !== false) {
-                        if (strpos($line, "<del>") !== false)
+                        if (!(strpos($line, "<del>") !== false))
                         {
-                            echo substr($line, 2, 8) . " - " . substr($line, strpos($line, "FinanzAntragUI/") + 15, 17) . "</del><br />" . PHP_EOL;
+                            $line = $this->formatLine($line, true);
+                            if(Main::$debug)
+                            {
+                                echo  $line;
+                            }
                         }
-                        else
-                        {
-                            echo substr($line, 2, 8) . " - " . substr($line, strpos($line, "FinanzAntragUI/") + 15, 17) . "<br />" . PHP_EOL;
-                        }
-
                     }
                     else
                     {
-                        if (strpos($line, "<del>") !== false)
+                        if ((!(strpos($line, "<del>") !== false)) and ! Main::$onlyNew)
                         {
-                            echo substr($line, 2, 8) . " - " . "not found </del><br />" . PHP_EOL;
+                            $line = $this->formatLine($line, false);
+                            if(Main::$debug)
+                            {
+                                echo  $line;
+                            }
                         }
-                        else
-                        {
-                            echo substr($line, 2, 8) . " - " . "not found <br />" . PHP_EOL;
-                        }
-
                     }
                 }
             }
         }
+    }
+
+    function formatLine($line, $withToken)
+    {
+        $lineStart = substr($line, strpos($line, "|")+1);
+        $lineStart = substr($lineStart, 0, strpos($lineStart, "|"));
+        $lineStart = str_replace(" ", "", $lineStart);
+        if($withToken)
+        {
+            $lineEnd = substr($line, strpos($line, "|")+1);
+            $lineEnd = substr($lineEnd, strpos($lineEnd, "|") +1 );
+            $lineEnd = substr($lineEnd, strpos($lineEnd, "|") +1 );
+            $lineEnd = substr($lineEnd, strpos($lineEnd, "FinanzAntragUI/") + 15);
+            $lineEnd = substr($lineEnd, 0 , strpos($lineEnd, "|") );
+            $lineEnd = str_replace(" ", "", $lineEnd);
+            $lineS = $lineStart . "#-#" . $lineEnd . "<br />" . PHP_EOL;
+            $financialResolution[$lineEnd] = $lineStart;
+        }
+        else
+        {
+            $lineS = $lineStart . "#-#" . "not found <br />" . PHP_EOL;
+        }
+        return $lineS;
     }
 }
 
@@ -230,5 +256,3 @@ $haupt->getAllFiles();
 
 
 ?>
-</body>
-</html>
