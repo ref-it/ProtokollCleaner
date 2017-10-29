@@ -15,11 +15,12 @@ class Main
     public static $endtag     = "nointern"; //end tag of cleaning area
     public  static  $debug = true ; //all as Text on Browser
     public  static  $onlyNew = true; //only new financial decissions
+    public static  $postData = false; //set to true if you want to post data to another website
+    public static $PostUrl = "http://localhost"; //destination for Posting of financial decission list
+    public static $financialResolution = array();
     private $startMonth = 01;    //Day,
     private $startYear  = 2016;  //Month and
     private $startday   = 01;    //Year of First protokoll which will be cleaned
-    private $financialResolution = array();
-
 
     private $files;
 
@@ -62,6 +63,9 @@ class Main
         }
         echo "<br /><br /><br />" . PHP_EOL;
         $this->exportFinancial();
+        if (Main::$postData) {
+            $this->sendData();
+        }
     }
     function copy($fileName, $fn, $check)
     {
@@ -177,13 +181,39 @@ class Main
             $lineEnd = substr($lineEnd, 0 , strpos($lineEnd, "|") );
             $lineEnd = str_replace(" ", "", $lineEnd);
             $lineS = $lineStart . "#-#" . $lineEnd . "<br />" . PHP_EOL;
-            $financialResolution[$lineEnd] = $lineStart;
+            Main::$financialResolution[$lineEnd] = $lineStart;
         }
         else
         {
             $lineS = $lineStart . "#-#" . "not found <br />" . PHP_EOL;
         }
         return $lineS;
+    }
+
+    function sendData()
+    {
+        $url = Main::$PostUrl;
+        $content = json_encode(Main::$financialResolution); //PHP Array
+
+        $curl = curl_init($url);
+        curl_setopt($curl, CURLOPT_HEADER, false);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
+        curl_setopt($curl, CURLOPT_POST, true);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $content);
+
+
+        //execute Latex on external drive
+        $ret = curl_exec($curl);
+
+        //Dann lade sie runter - optional hier hat die andereWebsite ein PDF Ge-echo'ed
+        //header("Content-type: application/pdf");
+        //header("Content-disposition: inline;filename=Auslagenerstattung-".$antrag_id.".pdf");
+        echo $ret . "<br />" . PHP_EOL;
+        //kann auch eine bel. if abfrage zum testen des ergebnisses sein
+        $status = curl_getinfo($curl, CURLINFO_HTTP_CODE); //tut bestimmt sinnvolle dinge
+        echo $status . "<br />" . PHP_EOL;
+        curl_close($curl); //beendet verbindung, oder so
     }
 }
 
