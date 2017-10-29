@@ -11,21 +11,23 @@ class Main
     public static $inputpath  = "/home/martin/test/intern/"; //intern part of the Wiki, where the files which will be cleaned are
     public static $outputpath = "/home/martin/test/public/"; //public part of the Wiki, where the cleaned files will be saved
     public static $decissionList = "/home/martin/test/beschluesse.txt"; //List off StuRa Decissions
+    public static $helperFilePath = "/home/martin/test/help.txt"; //List off StuRa Decissions
     public static $starttag   = "intern"; //start tag of cleaning area
     public static $endtag     = "nointern"; //end tag of cleaning area
     public  static  $debug = true ; //all as Text on Browser
-    public  static  $onlyNew = true; //only new financial decissions
+    public  static  $onlyNew = false; //only new financial decissions
     public static  $postData = false; //set to true if you want to post data to another website
     public static $PostUrl = "http://localhost"; //destination for Posting of financial decission list
     public static $financialResolution = array();
     private $startMonth = 01;    //Day,
     private $startYear  = 2016;  //Month and
     private $startday   = 01;    //Year of First protokoll which will be cleaned
-
     private $files;
+    private $knownDecissions;
 
     function getAllFiles()
     {
+        $this->knownDecissions = array();
         $this->files = array();
         $alledateien = scandir(Main::$inputpath); //Ordner "files" auslesen
         foreach ($alledateien as $datei) { // Ausgabeschleife
@@ -62,10 +64,12 @@ class Main
             $this->files[] = $file;
         }
         echo "<br /><br /><br />" . PHP_EOL;
+        $this->readAlreadyKnownFinancialDecissions();
         $this->exportFinancial();
         if (Main::$postData) {
             $this->sendData();
         }
+        $this->writeHelperFile();
     }
     function copy($fileName, $fn, $check)
     {
@@ -172,6 +176,10 @@ class Main
         $lineStart = substr($line, strpos($line, "|")+1);
         $lineStart = substr($lineStart, 0, strpos($lineStart, "|"));
         $lineStart = str_replace(" ", "", $lineStart);
+        if($this->checkAlreadyPostedData($lineStart))
+        {
+            return  "";
+        }
         if($withToken)
         {
             $lineEnd = substr($line, strpos($line, "|")+1);
@@ -187,6 +195,7 @@ class Main
         {
             $lineS = $lineStart . "#-#" . "not found <br />" . PHP_EOL;
         }
+        $this->knownDecissions[] = $lineStart . PHP_EOL;
         return $lineS;
     }
 
@@ -201,19 +210,47 @@ class Main
         curl_setopt($curl, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
         curl_setopt($curl, CURLOPT_POST, true);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $content);
-
-
-        //execute Latex on external drive
+        //execute Postback
         $ret = curl_exec($curl);
-
-        //Dann lade sie runter - optional hier hat die andereWebsite ein PDF Ge-echo'ed
-        //header("Content-type: application/pdf");
-        //header("Content-disposition: inline;filename=Auslagenerstattung-".$antrag_id.".pdf");
-        echo $ret . "<br />" . PHP_EOL;
-        //kann auch eine bel. if abfrage zum testen des ergebnisses sein
+        echo $ret . "<br />" . PHP_EOL;  //kann auch eine bel. if abfrage zum testen des ergebnisses sein
         $status = curl_getinfo($curl, CURLINFO_HTTP_CODE); //tut bestimmt sinnvolle dinge
         echo $status . "<br />" . PHP_EOL;
         curl_close($curl); //beendet verbindung, oder so
+    }
+
+    function readAlreadyKnownFinancialDecissions()
+    {
+        if ($fl = fopen(Main::$helperFilePath, "r")) {
+            while (!feof($fl)) {
+                $line = fgets($fl);
+                # do same stuff with the $line
+                $this->knownDecissions[] = $line;
+            }
+        }
+        fclose($fl);
+        return false;
+    }
+
+    function checkAlreadyPostedData($DecissionKey):bool
+    {
+        foreach ($this->knownDecissions as $line)
+        {
+            if (strpos($line, $DecissionKey) !== false)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function writeHelperFile()
+    {
+        if($fl = fopen(Main::$helperFilePath, "w")) {
+            foreach ($this->knownDecissions as $line) {
+                fwrite($fl, $line);
+            }
+        }
+        fclose($fl);
     }
 }
 
