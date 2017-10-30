@@ -29,5 +29,58 @@
 	
 	\maketitle
 	
-	\paragraph{Usage} For Usage please edit the first variables as described in the PHP-Class it self. There are only 8 Variables for a complete Configuration. The files must been named like the scheme 'yyyy-mm-dd.txt'.
+	\clearpage
+	
+	\tableofcontents
+	
+	\clearpage
+	%wozu dient das ganze 
+	\part{Nutzungsanleitung}
+	
+	\section{Verwendung}
+	\paragraph{Beschreibung} Mithilfe dieses Scripts werden Protokolle aus dem internen Teil des StuRa-Teils des Gremienwikis in den öffentlichen Teil des Gremienwikis kopiert. Damit sind sie Hochschulöffentlich für Studierende. Daher muss vor bzw. während des Kopiervorgangs der interne Teil des Protokolls entfernt werden, dies wird durch dieses Script realisiert.
+	
+	\section{Konfiguration}
+	\paragraph{Grundlagen} Für eine Initiale Konfiguration müssen lediglich 16 Variablen auf entsprechende Werte % welche werte 
+	gesetzt werden. Hierzu werden die entsprechenden Daten in die Variablen Definiton am Anfang der 'Main'-Klasse geschrieben. Diese werden für alle Funktionen und anderen Klassen verwendet.
+	
+	\subsection{Eingabepfad}
+	\paragraph{\$inputpath} Der hier zwischen den Anführungszeichen angegebene Pfad, ist der Pfad des Ordners, der alle Protokolle die zu kopieren sind beinhaltet. Die enthaltenen Dateien sollten Text-Dateien im Dokuwikiformat sein. Dabei ist der Titel nach dem Datum des Protokolls zu benennen. Dies geschieht nach dem Schema yyyy-mm-dd. Hierbei ist yyyy die vierstellige Jahreszahl, mm die zweistellige Monatsnummer und dd die zweistellige Tageszahl. Am Ende des Schemas muss noch die korrekte Dateieindung für Textdateien ".txt" befinden. Der Ordner und dessen Inhalt muss für das Script lesbar öffenbar sein.
+	\subsection{Ausgabepfad}
+	\paragraph{\$outputpath} Der hier zwischen den Anführungszeichen angegebene Pfad, ist der Pfad des Ordners, in dem die verarbeiteten Protokolle, die zu kopieren waren, abgelegt werden. Die enthaltenen Dateien werden als Text-Dateien im Dokuwikiformat erzeugt. Dabei wird der Titel nach dem Datum des Protokolls benannt. Dies geschieht nach dem Schema yyyy-mm-dd. Hierbei ist yyyy die vierstellige Jahreszahl, mm die zweistellige Monatsnummer und dd die zweistellige Tageszahl Am Ende des Schemas wird noch die korrekte Dateieindung für Textdateien ".txt" angehangen. All dies geschieht automatisch beim Ausführen des Scripts. Der Ordner und dessen Inhalt muss für das Script schreibbar öffenbar sein.
+	
+	\subsection{Beschlussliste}
+	\paragraph{\$decissionList} Der hier zwischen den Anführungszeichen angegebene Pfad verweist direkt auf die Datei, in der alle Beschlüsse in einer Tabelle im Dokuwikiformat angegeben sind. Aus ihr werden die bereits beschlossenen Protokolle und alle beschlossenen Finanzanträge ausgelesen. Diese Datei wird nur lesend geöffnet. 
+	
+	\subsection{Hilfsdatei} 
+	\paragraph{\$helperFilePath} Der hier zwischen den Anführungszeichen angegebene Pfad verweist direkt auf die Datei, in der das Script bereits erfolgte Ausgaben mitzeichnet, um bei Datenweitergabe an andere Websiten zu verhindern, dass diese Daten doppelt erhalten. Diese Datei muss les- und schreibar zu öffnen sein.
+	
+	\subsection{Starttag}
+	\paragraph{\$starttag} Der hier zwischen den Anführungszeichen angegebene Wert definiert den Inhalt des Dokuwikitags, welches den Beginn eines nicht zu veröffentlichen Teiles kennzeichnet. Hierzu wird nur der Tagname zwischen die Anführungszeichen geschrieben.
+	
+	\subsection{Endtag}
+	\paragraph{\$endtag} Der hier zwischen den Anführungszeichen angegebene Wert definiert den Inhalt des Dokuwikitags, welches das Ende eines nicht zu veröffentlichen Teiles kennzeichnet. Hierzu wird nur der Tagname zwischen die Anführungszeichen geschrieben.
+		
+	\subsection{Debug}
+	\paragraph{\$debug} Wenn hier \textit{false} eingetragen wird, so werden keine Debugausgaben mehr angezeigt. Hierdurch werden alle Ausgaben über die Finanzbeschlüsse, die noch nicht dem Tool bekannt sind, unterdrückt. Jedoch findet bei aktivierter weitergabe diese Trotzdem statt. Falls hier \textit{true} steht, so werden alle Ausgaben über die Finanzbeschlüsse, die das Tool noch nicht kennt erfolgen. \\
+	Bereits dem Tool bekannte Finanzbeschlüsse werden nie angezeigt.
+	
+	\subsection{Nur neue Finanzbeschlüsse ausgeben}
+	\paragraph{\$onlyNew} Wenn hier \textit{false} eingetragen wird, so werden alle Finanzbeschlüsse, die noch nicht dem Tool bekannt sind, durch das Tool bearbeitet. Falls hier \textit{true} steht, so werden nur Finanzbeschlüsse die das Finanzentool kennt, dieses Tool hier jedoch nicht, bearbeitet. \\
+	Diesem Tool bereits bekannte Finanzbeschlüsse werden nie verarbeitet.
+	
+	\subsection{Daten an andere Website weitergeben}
+	\paragraph{\$postData} Wenn hier \textit{false} eingetragen wird, so werden keine Daten zu Finanzbeschlüsse, die noch nicht dem Tool bekannt sind, durch das Tool an eine angegebene andere Website weitergegeben. Falls hier \textit{true} steht, so werden Daten zu Finanzbeschlüsse, die noch nicht dem Tool bekannt sind, durch das Tool an eine angegebene andere Website weitergegeben.
+	
+	\subsection{Webadresse zur weitergabe der Daten per HTTP-Post}
+	\paragraph{\$PostUrl} Hier wird eine HTTP- oder HTTPS-Url angegeben, zu welcher Daten mittels POST-Methode übermittelt werden sollen. Dies geschieht jedoch nur wenn \textit{\$postData} den Wert \textit{true} hat.
+	
+	\subsection{Einstellen des ersten zu verarbeiteten Protokolls}
+	\paragraph{Vorbemerkung} Wenn ein Datum eingestellt werden soll, so müssen die einzelnen Bestandteile des Datums auf die folgenden Parameter aufgeteilt werden.
+	\paragraph{\$startYear} Dieser Parameter stellt die Jahreszahl, ab der Protokolle verarbeitet werden sollen als Integerwert dar. Zum anpassen muss lediglich die vierstellige Jahreszahl angepasst werden.
+	\paragraph{\$startMonth} Dieser Parameter stellt die Monatszahl, ab der Protokolle verarbeitet werden sollen als Integerwert dar. Zum anpassen muss lediglich die zweistellige Monatszahl angepasst werden.
+	\paragraph{\$startday} Dieser Parameter stellt die Tageszahl, ab der Protokolle verarbeitet werden sollen als Integerwert dar. Zum anpassen muss lediglich die zweistellige Tageszahl angepasst werden.
+		
+	\part{Code Dokumentation}
+	
 \end{document}

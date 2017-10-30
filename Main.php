@@ -8,22 +8,30 @@
 
 class Main
 {
-    public static $inputpath  = "/home/martin/test/intern/"; //intern part of the Wiki, where the files which will be cleaned are
-    public static $outputpath = "/home/martin/test/public/"; //public part of the Wiki, where the cleaned files will be saved
-    public static $decissionList = "/home/martin/test/beschluesse.txt"; //List off StuRa Decissions
-    public static $helperFilePath = "/home/martin/test/help.txt"; //List off StuRa Decissions
-    public static $starttag   = "intern"; //start tag of cleaning area
-    public static $endtag     = "nointern"; //end tag of cleaning area
-    public static $debug = true ; //all as Text on Browser
-    public static $onlyNew = false; //only new financial decissions
-    public static $postData = false; //set to true if you want to post data to another website
-    public static $PostUrl = "http://localhost"; //destination for Posting of financial decission list
+    public static $inputpath; //intern part of the Wiki, where the files which will be cleaned are
+    public static $outputpath; //public part of the Wiki, where the cleaned files will be saved
+    public static $decissionList; //List off StuRa Decissions
+    public static $helperFilePath; //List off StuRa Decissions
+    public static $starttag; //start tag of cleaning area
+    public static $endtag; //end tag of cleaning area
+    public static $debug; //all as Text on Browser
+    public static $onlyNew; //only new financial decissions
+    public static $postData; //set to true if you want to post data to another website
+    public static $PostUrl; //destination for Posting of financial decission list
+    private $startMonth;    //Day,
+    private $startYear;  //Month and
+    private $startday;    //Year of First protokoll which will be cleaned
+
+    //Arbeitsvariablen
     public static $financialResolution = array();
-    private $startMonth = 01;    //Day,
-    private $startYear  = 2016;  //Month and
-    private $startday   = 01;    //Year of First protokoll which will be cleaned
     private $files;
     private $knownDecissions;
+
+
+    public function __construct() // or any other method
+    {
+        include 'config.php';
+    }
 
     function getAllFiles()
     {

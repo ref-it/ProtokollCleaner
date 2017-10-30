@@ -1,0 +1,32 @@
+\select@language {ngerman}
+\contentsline {part}{\numberline {I}Nutzungsanleitung}{3}
+\contentsline {section}{\numberline {1}Verwendung}{3}
+\contentsline {paragraph}{\nonumberline Beschreibung}{3}
+\contentsline {section}{\numberline {2}Konfiguration}{3}
+\contentsline {paragraph}{\nonumberline Grundlagen}{3}
+\contentsline {subsection}{\numberline {2.1}Eingabepfad}{3}
+\contentsline {paragraph}{\nonumberline \$inputpath}{3}
+\contentsline {subsection}{\numberline {2.2}Ausgabepfad}{3}
+\contentsline {paragraph}{\nonumberline \$outputpath}{3}
+\contentsline {subsection}{\numberline {2.3}Beschlussliste}{4}
+\contentsline {paragraph}{\nonumberline \$decissionList}{4}
+\contentsline {subsection}{\numberline {2.4}Hilfsdatei}{4}
+\contentsline {paragraph}{\nonumberline \$helperFilePath}{4}
+\contentsline {subsection}{\numberline {2.5}Starttag}{4}
+\contentsline {paragraph}{\nonumberline \$starttag}{4}
+\contentsline {subsection}{\numberline {2.6}Endtag}{4}
+\contentsline {paragraph}{\nonumberline \$endtag}{4}
+\contentsline {subsection}{\numberline {2.7}Debug}{5}
+\contentsline {paragraph}{\nonumberline \$debug}{5}
+\contentsline {subsection}{\numberline {2.8}Nur neue Finanzbeschl\IeC {\"u}sse ausgeben}{5}
+\contentsline {paragraph}{\nonumberline \$onlyNew}{5}
+\contentsline {subsection}{\numberline {2.9}Daten an andere Website weitergeben}{5}
+\contentsline {paragraph}{\nonumberline \$postData}{5}
+\contentsline {subsection}{\numberline {2.10}Webadresse zur weitergabe der Daten per HTTP-Post}{5}
+\contentsline {paragraph}{\nonumberline \$PostUrl}{5}
+\contentsline {subsection}{\numberline {2.11}Einstellen des ersten zu verarbeiteten Protokolls}{5}
+\contentsline {paragraph}{\nonumberline Vorbemerkung}{5}
+\contentsline {paragraph}{\nonumberline \$startYear}{6}
+\contentsline {paragraph}{\nonumberline \$startMonth}{6}
+\contentsline {paragraph}{\nonumberline \$startday}{6}
+\contentsline {part}{\numberline {II}Code Dokumentation}{6}

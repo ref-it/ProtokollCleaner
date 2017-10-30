@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2017.9.14)  30 OCT 2017 15:57
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2017.9.14)  30 OCT 2017 20:06
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -511,26 +511,47 @@ File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
 ) [1
 
 
-{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./documentation.aux) ) 
+{/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./documentation.toc)
+\tf@toc=\write3
+\openout3 = `documentation.toc'.
+
+ [2
+
+]
+part I.
+Package scrkbase Info: You've told me to use the font selection of the element
+(scrkbase)             `partprefix' that is an alias of element `partnumber'
+(scrkbase)              on input line 38.
+(/usr/share/texlive/texmf-dist/tex/latex/ucs/data/uni-0.def
+File: uni-0.def 2013/05/13 UCS: Unicode data U+0000..U+00FF
+) [3
+
+] [4] [5]
+part II.
+Package scrkbase Info: You've told me to use the font selection of the element
+(scrkbase)             `partprefix' that is an alias of element `partnumber'
+(scrkbase)              on input line 84.
+[6] (./documentation.aux) ) 
 Here is how much of TeX's memory you used:
- 8357 strings out of 494879
- 133536 string characters out of 6178491
- 289430 words of memory out of 5000000
- 11544 multiletter control sequences out of 15000+600000
- 12250 words of font info for 37 fonts, out of 8000000 for 9000
+ 8907 strings out of 494879
+ 139407 string characters out of 6178491
+ 290466 words of memory out of 5000000
+ 12074 multiletter control sequences out of 15000+600000
+ 17894 words of font info for 54 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 51i,7n,54p,8840b,223s stack positions out of 5000i,500n,10000p,200000b,80000s
- </
-home/martin/.texlive2017/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1200.600pk> 
-</home/martin/.texlive2017/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsx1200.600pk
-> </home/martin/.texlive2017/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1728.600
-pk> </home/martin/.texlive2017/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsx1440.6
-00pk> </home/martin/.texlive2017/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsx2488
-.600pk>
-Output written on documentation.pdf (1 page, 26528 bytes).
+ 51i,7n,54p,8840b,482s stack positions out of 5000i,500n,10000p,200000b,80000s
+ </home/martin/.texlive2017/texmf-var/fonts/pk/ljfou
+r/jknappen/ec/ecti1200.600pk> </home/martin/.texlive2017/texmf-var/fonts/pk/ljf
+our/jknappen/ec/ecsx1200.600pk> </home/martin/.texlive2017/texmf-var/fonts/pk/l
+jfour/jknappen/ec/ecsx1728.600pk> </home/martin/.texlive2017/texmf-var/fonts/pk
+/ljfour/jknappen/ec/ecrm1200.600pk> </home/martin/.texlive2017/texmf-var/fonts/
+pk/ljfour/jknappen/ec/ecrm1728.600pk> </home/martin/.texlive2017/texmf-var/font
+s/pk/ljfour/jknappen/ec/ecsx1440.600pk> </home/martin/.texlive2017/texmf-var/fo
+nts/pk/ljfour/jknappen/ec/ecsx2488.600pk>
+Output written on documentation.pdf (6 pages, 81724 bytes).
 PDF statistics:
- 106 PDF objects out of 1000 (max. 8388607)
- 24 compressed objects within 1 object stream
+ 280 PDF objects out of 1000 (max. 8388607)
+ 42 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
