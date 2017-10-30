@@ -1,19 +1,19 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2017.10.16)  24 OCT 2017 11:34
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2017.9.14)  30 OCT 2017 15:57
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
 **documentation.tex
 (./documentation.tex
 LaTeX2e <2017-04-15>
-Babel <3.13> and hyphenation patterns for 8 language(s) loaded.
+Babel <3.12> and hyphenation patterns for 8 language(s) loaded.
 (/usr/share/texlive/texmf-dist/tex/latex/koma-script/scrartcl.cls
-Document Class: scrartcl 2017/09/07 v3.24 KOMA-Script document class (article)
+Document Class: scrartcl 2017/04/13 v3.23 KOMA-Script document class (article)
 (/usr/share/texlive/texmf-dist/tex/latex/koma-script/scrkbase.sty
-Package: scrkbase 2017/09/07 v3.24 KOMA-Script package (KOMA-Script-dependent b
+Package: scrkbase 2017/04/13 v3.23 KOMA-Script package (KOMA-Script-dependent b
 asics and keyval usage)
 
 (/usr/share/texlive/texmf-dist/tex/latex/koma-script/scrbase.sty
-Package: scrbase 2017/09/07 v3.24 KOMA-Script package (KOMA-Script-independent 
+Package: scrbase 2017/04/13 v3.23 KOMA-Script package (KOMA-Script-independent 
 basics and keyval usage)
 
 (/usr/share/texlive/texmf-dist/tex/latex/graphics/keyval.sty
@@ -21,22 +21,25 @@ Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
 \KV@toks@=\toks14
 )
 (/usr/share/texlive/texmf-dist/tex/latex/koma-script/scrlfile.sty
-Package: scrlfile 2017/09/07 v3.24 KOMA-Script package (loading files)
-)))
-(/usr/share/texlive/texmf-dist/tex/latex/koma-script/tocbasic.sty
-Package: tocbasic 2017/09/07 v3.24 KOMA-Script package (handling toc-files)
+Package: scrlfile 2017/04/13 v3.23 KOMA-Script package (loading files)
+
+Package scrlfile, 2017/04/13 v3.23 KOMA-Script package (loading files)
+                  Copyright (C) Markus Kohm
+
+))) (/usr/share/texlive/texmf-dist/tex/latex/koma-script/tocbasic.sty
+Package: tocbasic 2017/04/13 v3.23 KOMA-Script package (handling toc-files)
 \scr@dte@tocline@numberwidth=\skip41
 \scr@dte@tocline@numbox=\box26
 )
 Package tocbasic Info: omitting babel extension for `toc'
 (tocbasic)             because of feature `nobabel' available
-(tocbasic)             for `toc' on input line 133.
+(tocbasic)             for `toc' on input line 131.
 Package tocbasic Info: omitting babel extension for `lof'
 (tocbasic)             because of feature `nobabel' available
-(tocbasic)             for `lof' on input line 135.
+(tocbasic)             for `lof' on input line 133.
 Package tocbasic Info: omitting babel extension for `lot'
 (tocbasic)             because of feature `nobabel' available
-(tocbasic)             for `lot' on input line 136.
+(tocbasic)             for `lot' on input line 134.
 Package scrartcl Info: You've used standard option `12pt'.
 (scrartcl)             This is correct!
 (scrartcl)             Internally I'm using `fontsize=12pt'.
@@ -44,14 +47,14 @@ Package scrartcl Info: You've used standard option `12pt'.
 (scrartcl)             you'd have to use `fontsize=12pt' there
 (scrartcl)             instead of `12pt', too.
 Class scrartcl Info: File `scrsize12pt.clo' used to setup font sizes on input l
-ine 2080.
+ine 2059.
 
 (/usr/share/texlive/texmf-dist/tex/latex/koma-script/scrsize12pt.clo
-File: scrsize12pt.clo 2017/09/07 v3.24 KOMA-Script font size class option (12pt
+File: scrsize12pt.clo 2017/04/13 v3.23 KOMA-Script font size class option (12pt
 )
 )
 (/usr/share/texlive/texmf-dist/tex/latex/koma-script/typearea.sty
-Package: typearea 2017/09/07 v3.24 KOMA-Script package (type area)
+Package: typearea 2017/04/13 v3.23 KOMA-Script package (type area)
 \ta@bcor=\skip42
 \ta@div=\count79
 \ta@hblk=\skip43
@@ -74,7 +77,7 @@ Package typearea Info: These are the values describing the layout:
 (typearea)              \topskip        = 12.0pt
 (typearea)              \footskip       = 50.75pt
 (typearea)              \baselineskip   = 14.5pt
-(typearea)              on input line 1686.
+(typearea)              on input line 1647.
 )
 \c@part=\count80
 \c@section=\count81
@@ -88,13 +91,13 @@ Package typearea Info: These are the values describing the layout:
 \scr@dte@subsubsection@maxnumwidth=\skip50
 \scr@dte@paragraph@maxnumwidth=\skip51
 \scr@dte@subparagraph@maxnumwidth=\skip52
-LaTeX Info: Redefining \textsubscript on input line 4161.
+LaTeX Info: Redefining \textsubscript on input line 4094.
 \abovecaptionskip=\skip53
 \belowcaptionskip=\skip54
 \c@pti@nb@sid@b@x=\box27
 \c@figure=\count86
 \c@table=\count87
-Class scrartcl Info: Redefining `\numberline' on input line 5319.
+Class scrartcl Info: Redefining `\numberline' on input line 5233.
 \bibindent=\dimen102
 )
 (/usr/share/texlive/texmf-dist/tex/latex/ucs/ucs.sty
@@ -124,10 +127,10 @@ File: t1enc.def 2017/04/05 v2.0i Standard LaTeX file
 LaTeX Font Info:    Redeclaring font encoding T1 on input line 48.
 ))
 (/usr/share/texlive/texmf-dist/tex/generic/babel/babel.sty
-Package: babel 2017/09/18 3.13 The Babel package
+Package: babel 2017/06/29 3.12 The Babel package
 
 (/usr/share/texlive/texmf-dist/tex/generic/babel/switch.def
-File: switch.def 2017/09/18 3.13 Babel switching mechanism
+File: switch.def 2017/06/29 3.12 Babel switching mechanism
 )
 (/usr/share/texlive/texmf-dist/tex/generic/babel-german/ngerman.ldf
 Language: ngerman 2016/11/02 v2.9 German support for babel (new orthography)
@@ -136,10 +139,10 @@ Language: ngerman 2016/11/02 v2.9 German support for babel (new orthography)
 Language: ngermanb 2016/11/02 v2.9 German support for babel (new orthography)
 
 (/usr/share/texlive/texmf-dist/tex/generic/babel/babel.def
-File: babel.def 2017/09/18 3.13 Babel common definitions
+File: babel.def 2017/06/29 3.12 Babel common definitions
 
 (/usr/share/texlive/texmf-dist/tex/generic/babel/switch.def
-File: switch.def 2017/09/18 3.13 Babel switching mechanism
+File: switch.def 2017/06/29 3.12 Babel switching mechanism
 )
 \babel@savecnt=\count89
 \U@D=\dimen103
@@ -150,7 +153,7 @@ Package babel Info: Making " an active character on input line 125.
 Package: setspace 2011/12/19 v6.7a set line spacing
 )
 (/usr/share/texlive/texmf-dist/tex/latex/koma-script/scrdate.sty
-Package: scrdate 2017/09/07 v3.24 KOMA-Script package (day of the week)
+Package: scrdate 2017/04/13 v3.23 KOMA-Script package (day of the week)
 Package scrdate Info: Language naustrian not defined.
 (scrdate)             \dayname@naustrian skipped.
 Package scrdate Info: Language austrian not defined.
@@ -167,8 +170,6 @@ Package scrdate Info: Language newzealand not defined.
 (scrdate)             \dayname@newzealand skipped.
 Package scrdate Info: Language UKenglish not defined.
 (scrdate)             \dayname@UKenglish skipped.
-Package scrdate Info: Language ukenglish not defined.
-(scrdate)             \dayname@ukenglish skipped.
 Package scrdate Info: Language acadian not defined.
 (scrdate)             \dayname@acadian skipped.
 Package scrdate Info: Language canadien not defined.
@@ -201,7 +202,7 @@ Package scrdate Info: Language slovak not defined.
 (scrdate)             \dayname@slovak skipped.
 )
 (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
-Package: amsmath 2017/09/02 v2.17a AMS math features
+Package: amsmath 2016/11/05 v2.16a AMS math features
 \@mathmargin=\skip55
 
 For additional information on amsmath, use the `?' option.
@@ -414,8 +415,6 @@ Package scrdate Info: \dateenglish not defined.
 (scrdate)             \todaysname probably cannot use \dayname@english.
 Package scrdate Info: \dateUSenglish not defined.
 (scrdate)             \todaysname probably cannot use \dayname@USenglish.
-Package scrdate Info: \dateusenglish not defined.
-(scrdate)             \todaysname probably cannot use \dayname@usenglish.
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: subfig package v1.3 is loaded.
 Package caption Info: listings package is loaded.
@@ -514,10 +513,10 @@ File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
 
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./documentation.aux) ) 
 Here is how much of TeX's memory you used:
- 8380 strings out of 494879
- 134019 string characters out of 6178490
- 292190 words of memory out of 5000000
- 11567 multiletter control sequences out of 15000+600000
+ 8357 strings out of 494879
+ 133536 string characters out of 6178491
+ 289430 words of memory out of 5000000
+ 11544 multiletter control sequences out of 15000+600000
  12250 words of font info for 37 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  51i,7n,54p,8840b,223s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -528,7 +527,7 @@ home/martin/.texlive2017/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1200.600pk>
 pk> </home/martin/.texlive2017/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsx1440.6
 00pk> </home/martin/.texlive2017/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsx2488
 .600pk>
-Output written on documentation.pdf (1 page, 26449 bytes).
+Output written on documentation.pdf (1 page, 26528 bytes).
 PDF statistics:
  106 PDF objects out of 1000 (max. 8388607)
  24 compressed objects within 1 object stream

@@ -14,9 +14,9 @@ class Main
     public static $helperFilePath = "/home/martin/test/help.txt"; //List off StuRa Decissions
     public static $starttag   = "intern"; //start tag of cleaning area
     public static $endtag     = "nointern"; //end tag of cleaning area
-    public  static  $debug = true ; //all as Text on Browser
-    public  static  $onlyNew = false; //only new financial decissions
-    public static  $postData = false; //set to true if you want to post data to another website
+    public static $debug = true ; //all as Text on Browser
+    public static $onlyNew = false; //only new financial decissions
+    public static $postData = false; //set to true if you want to post data to another website
     public static $PostUrl = "http://localhost"; //destination for Posting of financial decission list
     public static $financialResolution = array();
     private $startMonth = 01;    //Day,
