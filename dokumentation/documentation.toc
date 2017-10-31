@@ -22,11 +22,34 @@
 \contentsline {paragraph}{\nonumberline \$onlyNew}{5}
 \contentsline {subsection}{\numberline {2.9}Daten an andere Website weitergeben}{5}
 \contentsline {paragraph}{\nonumberline \$postData}{5}
-\contentsline {subsection}{\numberline {2.10}Webadresse zur weitergabe der Daten per HTTP-Post}{5}
+\contentsline {subsection}{\numberline {2.10}Webadresse zur Weitergabe der Daten per HTTP-Post}{5}
 \contentsline {paragraph}{\nonumberline \$PostUrl}{5}
 \contentsline {subsection}{\numberline {2.11}Einstellen des ersten zu verarbeiteten Protokolls}{5}
 \contentsline {paragraph}{\nonumberline Vorbemerkung}{5}
 \contentsline {paragraph}{\nonumberline \$startYear}{6}
 \contentsline {paragraph}{\nonumberline \$startMonth}{6}
 \contentsline {paragraph}{\nonumberline \$startday}{6}
+\contentsline {section}{\numberline {3}Konfigurationsdatei erstellen}{6}
+\contentsline {paragraph}{\nonumberline Beispiel}{6}
 \contentsline {part}{\numberline {II}Code Dokumentation}{6}
+\contentsline {section}{\numberline {4}Klassen}{6}
+\contentsline {subsection}{\numberline {4.1}Main}{6}
+\contentsline {subsubsection}{\numberline {4.1.1}Variablen}{6}
+\contentsline {paragraph}{\nonumberline \$inputpath}{6}
+\contentsline {paragraph}{\nonumberline \$outputpath}{7}
+\contentsline {paragraph}{\nonumberline \$decissionList}{7}
+\contentsline {paragraph}{\nonumberline \$helperFilePath}{7}
+\contentsline {paragraph}{\nonumberline \$starttag}{7}
+\contentsline {paragraph}{\nonumberline \$endtag}{7}
+\contentsline {paragraph}{\nonumberline \$debug}{7}
+\contentsline {paragraph}{\nonumberline \$onlyNew}{7}
+\contentsline {paragraph}{\nonumberline \$postData}{7}
+\contentsline {paragraph}{\nonumberline \$PostUrl}{7}
+\contentsline {paragraph}{\nonumberline \$startYear}{8}
+\contentsline {paragraph}{\nonumberline \$startMonth}{8}
+\contentsline {paragraph}{\nonumberline \$startday}{8}
+\contentsline {paragraph}{\nonumberline \$financialResolution}{8}
+\contentsline {paragraph}{\nonumberline \$files}{8}
+\contentsline {paragraph}{\nonumberline \$knownDecissions}{8}
+\contentsline {subsubsection}{\numberline {4.1.2}Funktionen}{8}
+\contentsline {paragraph}{\nonumberline \_\_construct()}{8}

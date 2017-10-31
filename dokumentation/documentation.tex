@@ -72,7 +72,7 @@
 	\subsection{Daten an andere Website weitergeben}
 	\paragraph{\$postData} Wenn hier \textit{false} eingetragen wird, so werden keine Daten zu Finanzbeschlüsse, die noch nicht dem Tool bekannt sind, durch das Tool an eine angegebene andere Website weitergegeben. Falls hier \textit{true} steht, so werden Daten zu Finanzbeschlüsse, die noch nicht dem Tool bekannt sind, durch das Tool an eine angegebene andere Website weitergegeben.
 	
-	\subsection{Webadresse zur weitergabe der Daten per HTTP-Post}
+	\subsection{Webadresse zur Weitergabe der Daten per HTTP-Post}
 	\paragraph{\$PostUrl} Hier wird eine HTTP- oder HTTPS-Url angegeben, zu welcher Daten mittels POST-Methode übermittelt werden sollen. Dies geschieht jedoch nur wenn \textit{\$postData} den Wert \textit{true} hat.
 	
 	\subsection{Einstellen des ersten zu verarbeiteten Protokolls}
@@ -80,7 +80,48 @@
 	\paragraph{\$startYear} Dieser Parameter stellt die Jahreszahl, ab der Protokolle verarbeitet werden sollen als Integerwert dar. Zum anpassen muss lediglich die vierstellige Jahreszahl angepasst werden.
 	\paragraph{\$startMonth} Dieser Parameter stellt die Monatszahl, ab der Protokolle verarbeitet werden sollen als Integerwert dar. Zum anpassen muss lediglich die zweistellige Monatszahl angepasst werden.
 	\paragraph{\$startday} Dieser Parameter stellt die Tageszahl, ab der Protokolle verarbeitet werden sollen als Integerwert dar. Zum anpassen muss lediglich die zweistellige Tageszahl angepasst werden.
-		
+	
+	\section{Konfigurationsdatei erstellen}
+	\paragraph{Beispiel} Für eine funktionsfähige Konfigurationsdatei kopieren sie bitte die \textit{config\_example.php} in eine Datei mit dem Namen \textit{config.php}. Dies können sie unter Linux mittels des Befehls \textit{cp config\_example.php config.php} durchführen. Anschließend ändern sie die darin enthaltenen Werte auf ihre benötigten Werte. Passen sie bitte unbedingt alle Pfadvariablen an. Diese sind alle Notwendig. Falls sie das Weitergeben von Daten an andere Websiten deaktiviert haben, so benötigen sie keinen Pfad zur Weitergabe. 
+	
 	\part{Code Dokumentation}
+	\section{Klassen}
+	\subsection{Main}
+	\subsubsection{Variablen}
+	
+	\paragraph{\$inputpath} In dieser öffentlich statischen Variable wird der Pfad zum Ordner mit den internen Protokollen als Zeichenkette gespeichert. Die Variable wird nun einmal im Konstruktor der 'Main'-Klasse gesetzt und im weiteren Programm nur gelesen.
+	
+	\paragraph{\$outputpath} In dieser öffentlich statischen Variable wird der Pfad zum Ordner mit den hochschulöffentlichen Protokollen als Zeichenkette gespeichert. Die Variable wird nun einmal im Konstruktor der 'Main'-Klasse gesetzt und im weiteren Programm nur gelesen.
+	
+	\paragraph{\$decissionList} In dieser öffentlich statischen Variable wird der Pfad zur Datei, welche alle Beschlüsse beinhaltet, als Zeichenkette gespeichert. Die Variable wird nun einmal im Konstruktor der 'Main'-Klasse gesetzt und im weiteren Programm nur gelesen.
+	
+	\paragraph{\$helperFilePath} In dieser öffentlich statischen Variable wird der Pfad zur Hilfsdatei als Zeichenkette gespeichert. Die Variable wird nun einmal im Konstruktor der 'Main'-Klasse gesetzt und im weiteren Programm nur gelesen.
+	
+	\paragraph{\$starttag} In dieser öffentlich statischen Variable wird der Name des Tages gespeichert, welcher den Anfang des nicht zu kopierenden Teils des Dokumentes beschreibt. Die Zeile wird mit dem Tag entfernt. Die Variable ist als Zeichenkette zu interpretieren.
+	
+	\paragraph{\$endtag} In dieser öffentlich statischen Variable wird der Name des Tages gespeichert, welcher das Ende des nicht zu kopierenden Teils des Dokumentes beschreibt. Die Zeile wird mit dem Tag entfernt. Die Variable ist als Zeichenkette zu interpretieren.
+	
+	\paragraph{\$debug} In dieser öffentlich statischen Variable wird fesgelegt, ob alle Testausgaben angezeigt werden. Die Variable ist als Wahrheitswert zu interpretieren.
+	
+	\paragraph{\$onlyNew} In dieser öffentlich statischen Variable wird fesgelegt, ob nur durch das Finanztool mit Links versehene Finanzanträge ausgelesen werden sollen. Die Variable ist als Wahrheitswert zu interpretieren.
+	
+	\paragraph{\$postData} In dieser öffentlich statischen Variable wird fesgelegt, ob neu hinzugekommene Finanzbeschlüsse durch das Tool mittels Http-POST-Methode an eine andere Website weitergegeben werden sollen. Die Variable ist als Wahrheitswert zu interpretieren.
+	
+	\paragraph{\$PostUrl} In dieser öffentlich statischen Variable wird fesgelegt, an welche URL die Datem am Ende durch das Tool mittels Http-POST-Methode weitergegeben werden sollen. Die Variable ist als Zeichenkette zu interpretieren.
+	
+	\paragraph{\$startYear} In dieser privaten Variable wird fesgelegt, ab welchem Jahr die Protokolle bearbeitet werden sollen. Die Variable ist als Ganzzahl zu interpretieren.
+	
+	\paragraph{\$startMonth} In dieser privaten Variable wird fesgelegt, ab welchem Monat, des in \textit{\$startYear} angegbenen Jahres, die Protokolle bearbeitet werden sollen. Die Variable ist als Ganzzahl zu interpretieren.
+	
+	\paragraph{\$startday} In dieser privaten Variable wird fesgelegt, ab welchem Tag, des in \text{\$startMonth} angegeben Monats, des in \textit{\$startYear} angegbenen Jahres, die Protokolle bearbeitet werden sollen. Die Variable ist als Ganzzahl zu interpretieren.
+	
+	\paragraph{\$financialResolution} In diesem öffentlich statischem Array werden alle weiterzugebenden Finanzbeschlüsse gesammelt. Die Initialisierung erfolgt bei der ersten Verwendung der Variable.6
+	
+	\paragraph{\$files} In dieser privaten Variable werden alle Namen der Dateien, die sich im Ordnerm, welcher in der Variablen \textit{\$inputpath} als Pfad angegeben ist, als Array gespeichert.
+	
+	\paragraph{\$knownDecissions} In dieser privaten Variable werden alle in der Hilfsdatei gespeicherten, bereits verarbeiteten Finanzbeschlüsse gespeichert. Die Variable ist als Zeichenkette zu interpretieren.
+	
+	\subsubsection{Funktionen}
+	\paragraph{\_\_construct()}
 	
 \end{document}
