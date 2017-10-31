@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2017.9.14)  31 OCT 2017 03:28
+This is pdfTeX, Version 3.14159265-2.6-1.40.18 (TeX Live 2017/Debian) (preloaded format=pdflatex 2017.9.14)  31 OCT 2017 14:43
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -6,8 +6,8 @@ entering extended mode
 (./documentation.tex
 LaTeX2e <2017-04-15>
 Babel <3.12> and hyphenation patterns for 8 language(s) loaded.
-(/usr/share/texlive/texmf-dist/tex/latex/koma-script/scrartcl.cls
-Document Class: scrartcl 2017/04/13 v3.23 KOMA-Script document class (article)
+(/usr/share/texlive/texmf-dist/tex/latex/koma-script/scrreprt.cls
+Document Class: scrreprt 2017/04/13 v3.23 KOMA-Script document class (report)
 (/usr/share/texlive/texmf-dist/tex/latex/koma-script/scrkbase.sty
 Package: scrkbase 2017/04/13 v3.23 KOMA-Script package (KOMA-Script-dependent b
 asics and keyval usage)
@@ -33,21 +33,23 @@ Package: tocbasic 2017/04/13 v3.23 KOMA-Script package (handling toc-files)
 )
 Package tocbasic Info: omitting babel extension for `toc'
 (tocbasic)             because of feature `nobabel' available
-(tocbasic)             for `toc' on input line 131.
+(tocbasic)             for `toc' on input line 133.
 Package tocbasic Info: omitting babel extension for `lof'
 (tocbasic)             because of feature `nobabel' available
-(tocbasic)             for `lof' on input line 133.
+(tocbasic)             for `lof' on input line 135.
 Package tocbasic Info: omitting babel extension for `lot'
 (tocbasic)             because of feature `nobabel' available
-(tocbasic)             for `lot' on input line 134.
-Package scrartcl Info: You've used standard option `12pt'.
-(scrartcl)             This is correct!
-(scrartcl)             Internally I'm using `fontsize=12pt'.
-(scrartcl)             If you'd like to set the option with \KOMAoptions,
-(scrartcl)             you'd have to use `fontsize=12pt' there
-(scrartcl)             instead of `12pt', too.
-Class scrartcl Info: File `scrsize12pt.clo' used to setup font sizes on input l
-ine 2059.
+(tocbasic)             for `lot' on input line 136.
+Package tocbasic Info: defining new hook before heading of `' on input line 161
+2.
+Package scrreprt Info: You've used standard option `12pt'.
+(scrreprt)             This is correct!
+(scrreprt)             Internally I'm using `fontsize=12pt'.
+(scrreprt)             If you'd like to set the option with \KOMAoptions,
+(scrreprt)             you'd have to use `fontsize=12pt' there
+(scrreprt)             instead of `12pt', too.
+Class scrreprt Info: File `scrsize12pt.clo' used to setup font sizes on input l
+ine 2272.
 
 (/usr/share/texlive/texmf-dist/tex/latex/koma-script/scrsize12pt.clo
 File: scrsize12pt.clo 2017/04/13 v3.23 KOMA-Script font size class option (12pt
@@ -80,24 +82,26 @@ Package typearea Info: These are the values describing the layout:
 (typearea)              on input line 1647.
 )
 \c@part=\count80
-\c@section=\count81
-\c@subsection=\count82
-\c@subsubsection=\count83
-\c@paragraph=\count84
-\c@subparagraph=\count85
+\c@chapter=\count81
+\c@section=\count82
+\c@subsection=\count83
+\c@subsubsection=\count84
+\c@paragraph=\count85
+\c@subparagraph=\count86
 \scr@dte@part@maxnumwidth=\skip47
-\scr@dte@section@maxnumwidth=\skip48
-\scr@dte@subsection@maxnumwidth=\skip49
-\scr@dte@subsubsection@maxnumwidth=\skip50
-\scr@dte@paragraph@maxnumwidth=\skip51
-\scr@dte@subparagraph@maxnumwidth=\skip52
-LaTeX Info: Redefining \textsubscript on input line 4094.
-\abovecaptionskip=\skip53
-\belowcaptionskip=\skip54
+\scr@dte@chapter@maxnumwidth=\skip48
+\scr@dte@section@maxnumwidth=\skip49
+\scr@dte@subsection@maxnumwidth=\skip50
+\scr@dte@subsubsection@maxnumwidth=\skip51
+\scr@dte@paragraph@maxnumwidth=\skip52
+\scr@dte@subparagraph@maxnumwidth=\skip53
+LaTeX Info: Redefining \textsubscript on input line 4841.
+\abovecaptionskip=\skip54
+\belowcaptionskip=\skip55
 \c@pti@nb@sid@b@x=\box27
-\c@figure=\count86
-\c@table=\count87
-Class scrartcl Info: Redefining `\numberline' on input line 5233.
+\c@figure=\count87
+\c@table=\count88
+Class scrreprt Info: Redefining `\numberline' on input line 5988.
 \bibindent=\dimen102
 )
 (/usr/share/texlive/texmf-dist/tex/latex/ucs/ucs.sty
@@ -106,7 +110,7 @@ Package: ucs 2013/05/11 v2.2 UCS: Unicode input support
 (/usr/share/texlive/texmf-dist/tex/latex/ucs/data/uni-global.def
 File: uni-global.def 2013/05/13 UCS: Unicode global data
 )
-\uc@secondtry=\count88
+\uc@secondtry=\count89
 \uc@combtoks=\toks15
 \uc@combtoksb=\toks16
 \uc@temptokena=\toks17
@@ -144,7 +148,7 @@ File: babel.def 2017/06/29 3.12 Babel common definitions
 (/usr/share/texlive/texmf-dist/tex/generic/babel/switch.def
 File: switch.def 2017/06/29 3.12 Babel switching mechanism
 )
-\babel@savecnt=\count89
+\babel@savecnt=\count90
 \U@D=\dimen103
 )
 Package babel Info: Making " an active character on input line 125.
@@ -203,7 +207,7 @@ Package scrdate Info: Language slovak not defined.
 )
 (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsmath.sty
 Package: amsmath 2016/11/05 v2.16a AMS math features
-\@mathmargin=\skip55
+\@mathmargin=\skip56
 
 For additional information on amsmath, use the `?' option.
 (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amstext.sty
@@ -221,13 +225,13 @@ Package: amsbsy 1999/11/29 v1.2d Bold Symbols
 (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty
 Package: amsopn 2016/03/08 v2.02 operator names
 )
-\inf@bad=\count90
+\inf@bad=\count91
 LaTeX Info: Redefining \frac on input line 213.
-\uproot@=\count91
-\leftroot@=\count92
+\uproot@=\count92
+\leftroot@=\count93
 LaTeX Info: Redefining \overline on input line 375.
-\classnum@=\count93
-\DOTSCASE@=\count94
+\classnum@=\count94
+\DOTSCASE@=\count95
 LaTeX Info: Redefining \ldots on input line 472.
 LaTeX Info: Redefining \dots on input line 475.
 LaTeX Info: Redefining \cdots on input line 596.
@@ -236,15 +240,15 @@ LaTeX Info: Redefining \cdots on input line 596.
 \big@size=\dimen106
 LaTeX Font Info:    Redeclaring font encoding OML on input line 712.
 LaTeX Font Info:    Redeclaring font encoding OMS on input line 713.
-\macc@depth=\count95
-\c@MaxMatrixCols=\count96
+\macc@depth=\count96
+\c@MaxMatrixCols=\count97
 \dotsspace@=\muskip10
-\c@parentequation=\count97
-\dspbrk@lvl=\count98
+\c@parentequation=\count98
+\dspbrk@lvl=\count99
 \tag@help=\toks21
-\row@=\count99
-\column@=\count100
-\maxfields@=\count101
+\row@=\count100
+\column@=\count101
+\maxfields@=\count102
 \andhelp@=\toks22
 \eqnshift@=\dimen107
 \alignsep@=\dimen108
@@ -253,8 +257,8 @@ LaTeX Font Info:    Redeclaring font encoding OMS on input line 713.
 \totwidth@=\dimen111
 \lineht@=\dimen112
 \@envbody=\toks23
-\multlinegap=\skip56
-\multlinetaggap=\skip57
+\multlinegap=\skip57
+\multlinetaggap=\skip58
 \mathdisplay@stack=\toks24
 LaTeX Info: Redefining \[ on input line 2817.
 LaTeX Info: Redefining \] on input line 2818.
@@ -278,8 +282,8 @@ Package: array 2016/10/06 v2.4d Tabular extension package (FMi)
 \col@sep=\dimen113
 \extrarowheight=\dimen114
 \NC@list=\toks25
-\extratabsurround=\skip58
-\backup@length=\skip59
+\extratabsurround=\skip59
+\backup@length=\skip60
 )
 (/usr/share/texlive/texmf-dist/tex/latex/subfig/subfig.sty
 Package: subfig 2005/06/28 ver: 1.3 subfig package
@@ -299,51 +303,51 @@ Package caption3 Info: TeX engine: e-TeX on input line 67.
 \caption@hangindent=\dimen121
 )
 Package caption Info: KOMA-Script document class.
-\c@ContinuedFloat=\count102
+\c@ContinuedFloat=\count103
 )
-\c@KVtest=\count103
-\sf@farskip=\skip60
+\c@KVtest=\count104
+\sf@farskip=\skip61
 \sf@captopadj=\dimen122
-\sf@capskip=\skip61
-\sf@nearskip=\skip62
-\c@subfigure=\count104
-\c@subfigure@save=\count105
-\c@lofdepth=\count106
-\c@subtable=\count107
-\c@subtable@save=\count108
-\c@lotdepth=\count109
-\sf@top=\skip63
-\sf@bottom=\skip64
+\sf@capskip=\skip62
+\sf@nearskip=\skip63
+\c@subfigure=\count105
+\c@subfigure@save=\count106
+\c@lofdepth=\count107
+\c@subtable=\count108
+\c@subtable@save=\count109
+\c@lotdepth=\count110
+\sf@top=\skip64
+\sf@bottom=\skip65
 )
 (/usr/share/texlive/texmf-dist/tex/latex/capt-of/capt-of.sty
 Package: capt-of 2009/12/29 v0.2 standard captions outside of floats
 )
 (/usr/share/texlive/texmf-dist/tex/latex/enumitem/enumitem.sty
 Package: enumitem 2011/09/28 v3.5.2 Customized lists
-\labelindent=\skip65
+\labelindent=\skip66
 \enit@outerparindent=\dimen123
 \enit@toks=\toks26
 \enit@inbox=\box30
-\enitdp@description=\count110
+\enitdp@description=\count111
 )
 (/usr/share/texlive/texmf-dist/tex/latex/listings/listings.sty
-\lst@mode=\count111
+\lst@mode=\count112
 \lst@gtempboxa=\box31
 \lst@token=\toks27
-\lst@length=\count112
+\lst@length=\count113
 \lst@currlwidth=\dimen124
-\lst@column=\count113
-\lst@pos=\count114
+\lst@column=\count114
+\lst@pos=\count115
 \lst@lostspace=\dimen125
 \lst@width=\dimen126
-\lst@newlines=\count115
-\lst@lineno=\count116
+\lst@newlines=\count116
+\lst@lineno=\count117
 \lst@maxwidth=\dimen127
 
 (/usr/share/texlive/texmf-dist/tex/latex/listings/lstmisc.sty
 File: lstmisc.sty 2015/06/04 1.6 (Carsten Heinz)
-\c@lstnumber=\count117
-\lst@skipnumbers=\count118
+\c@lstnumber=\count118
+\lst@skipnumbers=\count119
 \lst@framebox=\box32
 )
 (/usr/share/texlive/texmf-dist/tex/latex/listings/listings.cfg
@@ -419,19 +423,19 @@ Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: subfig package v1.3 is loaded.
 Package caption Info: listings package is loaded.
 Package caption Info: End \AtBeginDocument code.
-\c@lstlisting=\count119
+\c@lstlisting=\count120
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count120
+\scratchcounter=\count121
 \scratchdimen=\dimen130
 \scratchbox=\box33
-\nofMPsegments=\count121
-\nofMParguments=\count122
+\nofMPsegments=\count122
+\nofMParguments=\count123
 \everyMPshowfont=\toks28
-\MPscratchCnt=\count123
+\MPscratchCnt=\count124
 \MPscratchDim=\dimen131
-\MPnumerator=\count124
-\makeMPintoPDFobject=\count125
+\MPnumerator=\count125
+\makeMPintoPDFobject=\count126
 \everyMPtoPDFconversion=\toks29
 ) (/usr/share/texlive/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
 Package: epstopdf-base 2016/05/15 v2.6 Base part for package epstopdf
@@ -511,59 +515,92 @@ File: ursfs.fd 1998/03/24 rsfs font definition file (jk)
 ) [1
 
 
+
 {/var/lib/texmf/fonts/map/pdftex/updmap/pdftex.map}] (./documentation.toc)
 \tf@toc=\write3
 \openout3 = `documentation.toc'.
 
  [2
 
+
 ]
 part I.
 Package scrkbase Info: You've told me to use the font selection of the element
 (scrkbase)             `partprefix' that is an alias of element `partnumber'
 (scrkbase)              on input line 38.
+[3
+
+
+]
+chapter 1.
+
+Class scrreprt Warning: \float@addtolists detected!
+(scrreprt)              Implementation of \float@addtolist became
+(scrreprt)              deprecated in KOMA-Script v3.01 2008/11/14 and
+(scrreprt)              has been replaced by several more flexible
+(scrreprt)              features of package `tocbasic`.
+(scrreprt)              Since Version 3.12 support for deprecated
+(scrreprt)              \float@addtolist interface has been
+(scrreprt)              restricted to only some of the KOMA-Script
+(scrreprt)              features and been removed from others.
+(scrreprt)              Loading of package `scrhack' may help to
+(scrreprt)              avoid this warning, if you are using a
+(scrreprt)              a package that still implements the
+(scrreprt)              deprecated \float@addtolist interface .
+
 (/usr/share/texlive/texmf-dist/tex/latex/ucs/data/uni-0.def
 File: uni-0.def 2013/05/13 UCS: Unicode data U+0000..U+00FF
-) [3
+) [4
 
-] [4] [5]
-Overfull \hbox (41.47311pt too wide) in paragraph at lines 85--86
+]
+chapter 2.
+[5
+
+] [6] [7]
+Overfull \hbox (41.47311pt too wide) in paragraph at lines 84--85
 [] \T1/cmss/bx/n/12 Bei-spiel[][] \T1/cmr/m/n/12 Für ei-ne funk-ti-ons-fä-hi-ge
  Kon-fi-gu-ra-ti-ons-da-tei ko-pie-ren sie bit-te die \T1/cmr/m/it/12 con-fig_e
 xample.php
  []
 
+[8]
 part II.
 Package scrkbase Info: You've told me to use the font selection of the element
 (scrkbase)             `partprefix' that is an alias of element `partnumber'
-(scrkbase)              on input line 87.
-[6] [7]
-Overfull \hbox (6.37874pt too wide) in paragraph at lines 116--117
+(scrkbase)              on input line 86.
+[9
+
+]
+chapter 3.
+[10
+
+]
+Overfull \hbox (6.37874pt too wide) in paragraph at lines 115--116
 [] \T1/cmss/bx/n/12 $start-day[][] \T1/cmr/m/n/12 In die-ser pri-va-ten Va-ria-
 ble wird fes-ge-legt, ab wel-chem Tag, des in []
  []
 
-[8] (./documentation.aux) ) 
+[11] [12] [13] [14] [15] (./documentation.aux) ) 
 Here is how much of TeX's memory you used:
- 8909 strings out of 494879
- 139468 string characters out of 6178491
- 290477 words of memory out of 5000000
- 12076 multiletter control sequences out of 15000+600000
+ 9038 strings out of 494879
+ 142024 string characters out of 6178491
+ 301437 words of memory out of 5000000
+ 12205 multiletter control sequences out of 15000+600000
  17894 words of font info for 54 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
- 51i,7n,54p,8840b,482s stack positions out of 5000i,500n,10000p,200000b,80000s
- </home/martin/.texlive2017/texmf-var/fonts/pk/ljfou
-r/jknappen/ec/ecti1200.600pk> </home/martin/.texlive2017/texmf-var/fonts/pk/ljf
-our/jknappen/ec/ecsx1200.600pk> </home/martin/.texlive2017/texmf-var/fonts/pk/l
-jfour/jknappen/ec/ecsx1728.600pk> </home/martin/.texlive2017/texmf-var/fonts/pk
-/ljfour/jknappen/ec/ecrm1200.600pk> </home/martin/.texlive2017/texmf-var/fonts/
-pk/ljfour/jknappen/ec/ecrm1728.600pk> </home/martin/.texlive2017/texmf-var/font
-s/pk/ljfour/jknappen/ec/ecsx1440.600pk> </home/martin/.texlive2017/texmf-var/fo
-nts/pk/ljfour/jknappen/ec/ecsx2488.600pk>
-Output written on documentation.pdf (8 pages, 93270 bytes).
+ 51i,7n,66p,8840b,482s stack positions out of 5000i,500n,10000p,200000b,80000s
+ </home/martin/.texlive2017/tex
+mf-var/fonts/pk/ljfour/jknappen/ec/ecti1200.600pk> </home/martin/.texlive2017/t
+exmf-var/fonts/pk/ljfour/jknappen/ec/ecsx1728.600pk> </home/martin/.texlive2017
+/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1200.600pk> </home/martin/.texlive20
+17/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsx1200.600pk> </home/martin/.texlive
+2017/texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm1728.600pk> </home/martin/.texli
+ve2017/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsx1440.600pk> </home/martin/.tex
+live2017/texmf-var/fonts/pk/ljfour/jknappen/ec/ecsx2488.600pk>
+Output written on documentation.pdf (15 pages, 111877 bytes).
 PDF statistics:
- 311 PDF objects out of 1000 (max. 8388607)
- 48 compressed objects within 1 object stream
+ 363 PDF objects out of 1000 (max. 8388607)
+ 63 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

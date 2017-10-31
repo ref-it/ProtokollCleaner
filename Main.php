@@ -33,7 +33,7 @@ class Main
         include 'config.php';
     }
 
-    function getAllFiles()
+    public function getAllFiles()
     {
         $this->knownDecissions = array();
         $this->files = array();
@@ -117,7 +117,7 @@ class Main
             }
         }
         fclose($fl);
-        echo substr($fileName, strlen($fileName)-14, strlen($fileName) -1) . "<br />";
+        echo substr($fileName, strlen($fileName)-14, strlen($fileName) -1) . "<br />" . PHP_EOL;
     }
 
     function getDateFromFileName($Filename)
@@ -201,6 +201,7 @@ class Main
         }
         else
         {
+            Main::$financialResolution[] = $lineStart;
             $lineS = $lineStart . "#-#" . "not found <br />" . PHP_EOL;
         }
         $this->knownDecissions[] = $lineStart . PHP_EOL;

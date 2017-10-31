@@ -1,4 +1,4 @@
-\documentclass[12pt,parskip=full, pagea4]{scrartcl}
+\documentclass[12pt,parskip=full, pagea4]{scrreprt}
 \usepackage{ucs}
 \usepackage[utf8x]{inputenc}
 \usepackage[T1]{fontenc}
@@ -34,48 +34,47 @@
 	\tableofcontents
 	
 	\clearpage
-	%wozu dient das ganze 
+	
 	\part{Nutzungsanleitung}
 	
-	\section{Verwendung}
-	\paragraph{Beschreibung} Mithilfe dieses Scripts werden Protokolle aus dem internen Teil des StuRa-Teils des Gremienwikis in den öffentlichen Teil des Gremienwikis kopiert. Damit sind sie Hochschulöffentlich für Studierende. Daher muss vor bzw. während des Kopiervorgangs der interne Teil des Protokolls entfernt werden, dies wird durch dieses Script realisiert.
+	\chapter{Verwendung}
+	\section{Beschreibung} Mithilfe dieses Scripts werden Protokolle aus dem internen Teil des StuRa-Teils des Gremienwikis in den öffentlichen Teil des Gremienwikis kopiert. Damit sind sie Hochschulöffentlich für Studierende. Daher muss vor bzw. während des Kopiervorgangs der interne Teil des Protokolls entfernt werden, dies wird durch dieses Script realisiert.
+
+	\chapter{Konfiguration}
+	\section{Grundlagen} Für eine Initiale Konfiguration müssen lediglich 16 Variablen auf entsprechende Werte gesetzt werden. Hierzu werden die entsprechenden Daten in die Variablen Definiton am Anfang der 'Main'-Klasse geschrieben. Diese werden für alle Funktionen und anderen Klassen verwendet.
 	
-	\section{Konfiguration}
-	\paragraph{Grundlagen} Für eine Initiale Konfiguration müssen lediglich 16 Variablen auf entsprechende Werte % welche werte 
-	gesetzt werden. Hierzu werden die entsprechenden Daten in die Variablen Definiton am Anfang der 'Main'-Klasse geschrieben. Diese werden für alle Funktionen und anderen Klassen verwendet.
-	
-	\subsection{Eingabepfad}
+	\section{Eingabepfad}
 	\paragraph{\$inputpath} Der hier zwischen den Anführungszeichen angegebene Pfad, ist der Pfad des Ordners, der alle Protokolle die zu kopieren sind beinhaltet. Die enthaltenen Dateien sollten Text-Dateien im Dokuwikiformat sein. Dabei ist der Titel nach dem Datum des Protokolls zu benennen. Dies geschieht nach dem Schema yyyy-mm-dd. Hierbei ist yyyy die vierstellige Jahreszahl, mm die zweistellige Monatsnummer und dd die zweistellige Tageszahl. Am Ende des Schemas muss noch die korrekte Dateieindung für Textdateien ".txt" befinden. Der Ordner und dessen Inhalt muss für das Script lesbar öffenbar sein.
-	\subsection{Ausgabepfad}
+	\section{Ausgabepfad}
 	\paragraph{\$outputpath} Der hier zwischen den Anführungszeichen angegebene Pfad, ist der Pfad des Ordners, in dem die verarbeiteten Protokolle, die zu kopieren waren, abgelegt werden. Die enthaltenen Dateien werden als Text-Dateien im Dokuwikiformat erzeugt. Dabei wird der Titel nach dem Datum des Protokolls benannt. Dies geschieht nach dem Schema yyyy-mm-dd. Hierbei ist yyyy die vierstellige Jahreszahl, mm die zweistellige Monatsnummer und dd die zweistellige Tageszahl Am Ende des Schemas wird noch die korrekte Dateieindung für Textdateien ".txt" angehangen. All dies geschieht automatisch beim Ausführen des Scripts. Der Ordner und dessen Inhalt muss für das Script schreibbar öffenbar sein.
 	
-	\subsection{Beschlussliste}
+	\section{Beschlussliste}
 	\paragraph{\$decissionList} Der hier zwischen den Anführungszeichen angegebene Pfad verweist direkt auf die Datei, in der alle Beschlüsse in einer Tabelle im Dokuwikiformat angegeben sind. Aus ihr werden die bereits beschlossenen Protokolle und alle beschlossenen Finanzanträge ausgelesen. Diese Datei wird nur lesend geöffnet. 
 	
-	\subsection{Hilfsdatei} 
+	\section{Hilfsdatei} 
 	\paragraph{\$helperFilePath} Der hier zwischen den Anführungszeichen angegebene Pfad verweist direkt auf die Datei, in der das Script bereits erfolgte Ausgaben mitzeichnet, um bei Datenweitergabe an andere Websiten zu verhindern, dass diese Daten doppelt erhalten. Diese Datei muss les- und schreibar zu öffnen sein.
 	
-	\subsection{Starttag}
+	\section{Starttag}
 	\paragraph{\$starttag} Der hier zwischen den Anführungszeichen angegebene Wert definiert den Inhalt des Dokuwikitags, welches den Beginn eines nicht zu veröffentlichen Teiles kennzeichnet. Hierzu wird nur der Tagname zwischen die Anführungszeichen geschrieben.
 	
-	\subsection{Endtag}
+	\section{Endtag}
 	\paragraph{\$endtag} Der hier zwischen den Anführungszeichen angegebene Wert definiert den Inhalt des Dokuwikitags, welches das Ende eines nicht zu veröffentlichen Teiles kennzeichnet. Hierzu wird nur der Tagname zwischen die Anführungszeichen geschrieben.
 		
-	\subsection{Debug}
+	\section{Debug}
 	\paragraph{\$debug} Wenn hier \textit{false} eingetragen wird, so werden keine Debugausgaben mehr angezeigt. Hierdurch werden alle Ausgaben über die Finanzbeschlüsse, die noch nicht dem Tool bekannt sind, unterdrückt. Jedoch findet bei aktivierter weitergabe diese Trotzdem statt. Falls hier \textit{true} steht, so werden alle Ausgaben über die Finanzbeschlüsse, die das Tool noch nicht kennt erfolgen. \\
 	Bereits dem Tool bekannte Finanzbeschlüsse werden nie angezeigt.
 	
-	\subsection{Nur neue Finanzbeschlüsse ausgeben}
+	\section{Nur neue Finanzbeschlüsse ausgeben}
 	\paragraph{\$onlyNew} Wenn hier \textit{false} eingetragen wird, so werden alle Finanzbeschlüsse, die noch nicht dem Tool bekannt sind, durch das Tool bearbeitet. Falls hier \textit{true} steht, so werden nur Finanzbeschlüsse die das Finanzentool kennt, dieses Tool hier jedoch nicht, bearbeitet. \\
 	Diesem Tool bereits bekannte Finanzbeschlüsse werden nie verarbeitet.
 	
-	\subsection{Daten an andere Website weitergeben}
+	\section{Daten an andere Website weitergeben}
 	\paragraph{\$postData} Wenn hier \textit{false} eingetragen wird, so werden keine Daten zu Finanzbeschlüsse, die noch nicht dem Tool bekannt sind, durch das Tool an eine angegebene andere Website weitergegeben. Falls hier \textit{true} steht, so werden Daten zu Finanzbeschlüsse, die noch nicht dem Tool bekannt sind, durch das Tool an eine angegebene andere Website weitergegeben.
 	
-	\subsection{Webadresse zur Weitergabe der Daten per HTTP-Post}
+	\section{Webadresse zur Weitergabe der Daten per HTTP-Post}
 	\paragraph{\$PostUrl} Hier wird eine HTTP- oder HTTPS-Url angegeben, zu welcher Daten mittels POST-Methode übermittelt werden sollen. Dies geschieht jedoch nur wenn \textit{\$postData} den Wert \textit{true} hat.
 	
-	\subsection{Einstellen des ersten zu verarbeiteten Protokolls}
+	\section{Einstellen des ersten zu verarbeiteten Protokolls}
 	\paragraph{Vorbemerkung} Wenn ein Datum eingestellt werden soll, so müssen die einzelnen Bestandteile des Datums auf die folgenden Parameter aufgeteilt werden.
 	\paragraph{\$startYear} Dieser Parameter stellt die Jahreszahl, ab der Protokolle verarbeitet werden sollen als Integerwert dar. Zum anpassen muss lediglich die vierstellige Jahreszahl angepasst werden.
 	\paragraph{\$startMonth} Dieser Parameter stellt die Monatszahl, ab der Protokolle verarbeitet werden sollen als Integerwert dar. Zum anpassen muss lediglich die zweistellige Monatszahl angepasst werden.
@@ -85,9 +84,9 @@
 	\paragraph{Beispiel} Für eine funktionsfähige Konfigurationsdatei kopieren sie bitte die \textit{config\_example.php} in eine Datei mit dem Namen \textit{config.php}. Dies können sie unter Linux mittels des Befehls \textit{cp config\_example.php config.php} durchführen. Anschließend ändern sie die darin enthaltenen Werte auf ihre benötigten Werte. Passen sie bitte unbedingt alle Pfadvariablen an. Diese sind alle Notwendig. Falls sie das Weitergeben von Daten an andere Websiten deaktiviert haben, so benötigen sie keinen Pfad zur Weitergabe. 
 	
 	\part{Code Dokumentation}
-	\section{Klassen}
-	\subsection{Main}
-	\subsubsection{Variablen}
+	\chapter{Klassen}
+	\section{Main}
+	\subsection{Variablen}
 	
 	\paragraph{\$inputpath} In dieser öffentlich statischen Variable wird der Pfad zum Ordner mit den internen Protokollen als Zeichenkette gespeichert. Die Variable wird nun einmal im Konstruktor der 'Main'-Klasse gesetzt und im weiteren Programm nur gelesen.
 	
@@ -121,7 +120,58 @@
 	
 	\paragraph{\$knownDecissions} In dieser privaten Variable werden alle in der Hilfsdatei gespeicherten, bereits verarbeiteten Finanzbeschlüsse gespeichert. Die Variable ist als Zeichenkette zu interpretieren.
 	
-	\subsubsection{Funktionen}
-	\paragraph{\_\_construct()}
+	\subsection{Funktionen}
+	\subsubsection{\_\_construct()} Dies ist der Konstruktor. Hier wird immoment lediglich die Konfiguration einbezogen. Der Konstruktor ist öffentlich, nicht statisch.
+	
+	\subsubsection{getAllFiles()} Die Funktion ist öffentlich, nicht statisch.
+	\paragraph{Vorbereitung}Dies ist die Hauptfunktion der Klasse. Die Funktion stellt die Hauptschleife des Scriptes dar. Es werden die Variablen \textit{\$knownDecissions} und \textit{\$files} als Array instanziiert. Anschließend werden alle Dateinamen des Ordners, welcher unter \textit{\$inputpath} angegeben ist, als Array gespeichert. Anschließend wird dieses Array mithilfe einer 'Für-alle-Schleife' angearbeitet.
+	\paragraph{Hauptschleife} In der Schleife der Funktion wird zunächst überprüft, ob das Protokoll ein Datum nach dem Datum, ab welchem das Script Protokolle verarbeiten soll, hat. Anschließend wird für diese Datei eine Instanz der 'File'-Klasse mittels deren Konstruktor angelegt. Nun wird der Dateiname des bearbeiteten Protokolls festgelegt. Dieser ergibt sich aus dem statischen Pfad zum Ausgabeordner, welcher in der Variablen \textit{\$outputpath} angegeben ist. Anschließend wird geprüft, ob ein Protokoll bereits kontrolliert und abgestimmt wurde, falls dies geschehen ist, so wir es als Endgültig veröffentlicht, andernfalls wird es als Entwurf veröffentlicht. Entsprechend der Überprüfung wird nun eine entsprechende Ausgabe erzeugt. Nun wird das Protokoll mithilfe der \textit{copy}-Methode kopiert. abschließend wird Dateiname in das \textit{\$file}-Array geschrieben.
+	\paragraph{Nachbereitung} Im Nachgang an die Hauptschleife der Funktion werden alle bekannten und durch das Tool bereits verarbeiteten Finanzbeschlüsse aus der Hilfsdatei eingelesen. Anschließend wird die Beschlussliste nach neuen Finanzbeschlüssen durchsucht, dies geschieht mittels \textit{exportFinancial}-Methode. Sollte nun die \textit{\$postData}-Variable auf true gesetzt sein, so wird der Datenaustausch mittels der \textit{sendData}-Funktion ausgeführt. Danach wird die Hilfsdatei mit den neuen Finanzbeschlüssen neu geschrieben.
+	
+	\subsubsection{copy(\$fileName, \$fn, \$check)}
+	\paragraph{Eingabevariablen}
+	\subparagraph{\$fileName} Hier wird der komplette Pfad des zu kopierenden Protokolls angegeben. Die Variable ist als Zeichenkette zu interpretieren.
+	\subparagraph{\$fn} Hier wird der komplette Pfad zur zu schreibenden Datei angegeben. Die Variable ist als Zeichenkette zu interpretieren.
+	\subparagraph{\$check} Die Variable gibt an, ob ein Protokoll bereits beschlossen wurde. Falls sie den Wert \textit{true} hat, so wurde das Protokoll bereits beschlossen. Die Variable ist als Wahrheitswert zu interpretieren.
+	\paragraph{Funktionsinterne Variablen}
+	\subparagraph{\$OffRec} Diese Variable wird nur Funktionsintern benutzt. Wenn sie den Wert \textit{true} hat, so werden die danach kommenden Zeilen übersprungen. Die Variable ist als Wahrheitswert zu interpretieren.
+	\subparagraph{\$lines} Diese Variable wird nur Funktionsintern benutzt. In dieser Variablen werden alle Zeichenketten gespeichert, die in das öffentliche Protokoll geschrieben werden sollen. Die Variable ist als Zeichenketten-Array zu interpretieren. 
+	\paragraph{Funktionsablauf}
+	\subparagraph{Hauptschleife} Nach dem Öffnen der Eingabedatei wird die Datei Zeile für Zeile durchgegangen. Sobald hier auf das Start- oder Endtag eines internen Blockes getroffen wird, so werden, bei einem Starttag, die Zeile selbst und alle nachfolgenden mit der Zeile des Endtags entfernt. Das Endtag wird nur nach einem Starttag erkannt.
+	\subparagraph{Nachschleife} Vor der zweiten Schleife wird die zu schreibende Datei, welche unter dem in der \textit{\$fn}-Variablen angegebenen Pfad befindet, geöffnet. Anschließend wird in die entsprechende Datei alle Zeilen mittels "Für-alle-Schleife" geschrieben.
+	\subparagraph{Funktionsabschluss} Am Ende wird noch der Dateiname ohne Pfad, sowie ein HTML-Seitenumbruch und eine EOL ausgegeben.
+	
+	\subsubsection{getDateFromFileName(\$Filename)}
+	\paragraph{Eingabevariablen}
+	\subparagraph{\$Filename} Hier wird nicht der komplette Pfad einer Protokolldatei angegeben, sondern nur der Dateiname mit Dateiendung. Die Variable ist als Zeichenkette zu interpretieren.
+	\paragraph{Funktionsinterne Variablen}
+	\subparagraph{\$Name} Diese Variable beinhaltet den in \textit{\$Filename} angegebe Zeichenkette ohne die entsprechende Dateiendung. Die Variable ist als Zeichenkette interpretiert und wird nur funktionsintern genutzt.
+	\subparagraph{\$d} Diese Variable stellt die Tageskomponente eines Datums dar. Sie ist als Zeichenkette zu interpretieren und wird nur funktionsintern genutzt.
+	\subparagraph{\$m} Diese Variable stellt die Monatskomponente eines Datums dar. Sie ist als Zeichenkette zu interpretieren und wird nur funktionsintern genutzt.
+	\subparagraph{\$y} Diese Variable stellt die Jahresskomponente eines Datums dar. Sie ist als Zeichenkette zu interpretieren und wird nur funktionsintern genutzt.
+	\subparagraph{\$Date} Diese Variable ist vom Typ \textit{Date}, welche ein vollständiges Datum repräsentiert. Sie wird nur Funktionsintern und als Rückgabewert der Funktion genutzt.
+	\paragraph{Funktionsablauf} Zuerst wird die Länge des Dateinamens bestimmt. Anschließend wird mithilde der Länge des Dateinamens die Dateiendung aus der unter \textit{\$Filename}-Zeichenkette entfernt. Aus dieser gekürzten Zeichenkette wird nun mithilfe der Unterzeichenkettenfunktion die einzelnen Datumsbestandteile herausgetrennt. Abschließend wird eine neue \textit{Date}-Klasse mithilfe des entsprechenden Konstruktors und der \textit{\$d}-, \textit{\$m}- und \textit{\$y}-Variablen erzeugt. Diese erzeugte Klasseninstanz wird nun von der Funktion zurück an den Aufrufer geliefert.
+	
+	\subsubsection{checkApproved(\$germanDate)}
+	
+	\subsubsection{exportFinancial()}
+	
+	\subsubsection{formatLine(\$line, \$withToken)}
+	
+	\subsubsection{sendData()}
+	
+	\subsubsection{readAlreadyKnownFinancialDecissions()}
+	
+	\subsubsection{checkAlreadyPostedData(\$DecissionKey):bool}
+	
+	\subsubsection{writeHelperFile()}
+	
+	\section{Date}
+	\subsection{Variablen}
+	\subsection{Funktionen}
+	
+	\section{File}
+	\subsection{Variablen}
+	\subsection{Funktionen}
 	
 \end{document}
