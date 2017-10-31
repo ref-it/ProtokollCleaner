@@ -224,6 +224,14 @@ class Main
         echo $ret . "<br />" . PHP_EOL;  //kann auch eine bel. if abfrage zum testen des ergebnisses sein
         $status = curl_getinfo($curl, CURLINFO_HTTP_CODE); //tut bestimmt sinnvolle dinge
         echo $status . "<br />" . PHP_EOL;
+        if(strpos($status, "200") !== false)
+        {
+            echo "everything went fine <br />" . PHP_EOL;
+        }
+        else
+        {
+            exit($status);
+        }
         curl_close($curl); //beendet verbindung, oder so
     }
 
