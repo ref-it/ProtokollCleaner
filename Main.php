@@ -18,9 +18,9 @@ class Main
     public static $onlyNew; //only new financial decissions
     public static $postData; //set to true if you want to post data to another website
     public static $PostUrl; //destination for Posting of financial decission list
-    private $startMonth;    //Day,
-    private $startYear;  //Month and
-    private $startday;    //Year of First protokoll which will be cleaned
+    public static $startMonth;    //Day,
+    public static $startYear;  //Month and
+    public static $startday;    //Year of First protokoll which will be cleaned
 
     //Arbeitsvariablen
     public static $financialResolution = array();
@@ -40,20 +40,20 @@ class Main
         $alledateien = scandir(Main::$inputpath); //Ordner "files" auslesen
         foreach ($alledateien as $datei) { // Ausgabeschleife
             $length = strlen($datei);
-            if((substr($datei, 0,1) == ".") and (substr($datei, $length - 4, 4) != ".txt") and ($length < 5))
+            if((substr($datei, 0,1) == ".") or (substr($datei, $length - 4, 4) != ".txt") or ($length !== 14) )
             {
                 continue;
             }
             $Date = $this->getDateFromFileName($datei);
-            if(intval($Date->Year()) < $this->startYear)
+            if(intval($Date->Year()) < Main::$startYear)
             {
                 continue;
             }
-            if((intval($Date->Year()) === $this->startYear) and (intval($Date->Month()) < $this->startMonth))
+            if((intval($Date->Year()) === Main::$startYear) and (intval($Date->Month()) < Main::$startMonth))
             {
                 continue;
             }
-            if((intval($Date->Year()) === $this->startYear) and (intval($Date->Month()) === $this->startMonth) and (intval($Date->Day()) < $this->startday))
+            if((intval($Date->Year()) === Main::$startYear) and (intval($Date->Month()) === Main::$startMonth) and (intval($Date->Day()) < Main::$startday))
             {
                 continue;
             }
@@ -262,6 +262,7 @@ class Main
 
     function writeHelperFile()
     {
+        echo "write Storagefile <br />" . PHP_EOL;
         if($fl = fopen(Main::$helperFilePath, "w")) {
             foreach ($this->knownDecissions as $line) {
                 fwrite($fl, $line);
