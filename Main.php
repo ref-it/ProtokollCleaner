@@ -45,7 +45,7 @@ class Main
             Main::$inputpath  = getcwd() . "/examples/intern/"; //intern part of the Wiki, where the files which will be cleaned are
             Main::$outputpath = getcwd() . "/examples/extern/"; //public part of the Wiki, where the cleaned files will be saved
             Main::$decissionList = getcwd() . "/examples/beschluesse.txt"; //List off StuRa Decissions
-            Main::$helperFilePath = getcwd() . "/help.txt"; //List off StuRa Decissions
+            Main::$helperFilePath = getcwd() . "/examples/help.txt"; //List off StuRa Decissions
             Main::$starttag   = "intern"; //start tag of cleaning area
             Main::$endtag     = "nointern"; //end tag of cleaning area
             Main::$debug = true ; //all as Text on Browser
