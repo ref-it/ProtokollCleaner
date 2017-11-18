@@ -56,7 +56,7 @@ class Main
         }
     }
 
-    public function getAllFiles()
+    public function Main()
     {
         $this->knownDecissions = array();
         $this->files = array();
@@ -360,7 +360,7 @@ class File
 }
 $haupt = new Main();
 
-$haupt->getAllFiles();
+$haupt->Main();
 
 
 ?>
