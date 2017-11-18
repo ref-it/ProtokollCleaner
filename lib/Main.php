@@ -31,28 +31,14 @@ class Main
     public function __construct() // or any other method
     {
         $switch = false;
-        $listFilesCurrentDir = scandir(getcwd());
-        foreach ($listFilesCurrentDir as $file)
-        {
-            if ($file === "config.php")
-            {
-                include 'config.php';
-                $switch = true;
-                break;
-            }
+        if(file_exists('config.php')) {
+            include 'config.php';
+            echo "Die Config wurde genutzt. <br />" . PHP_EOL;
         }
-        if ($switch === false) { //just for example parsing in files
+        else
+        {
             include 'config.default.php';
-        }
-        if (Main::$debug)
-        {
-            if ($switch == false) {
-                echo "Die Reserve-Config wurde genutzt. <br />" . PHP_EOL;
-            }
-            else
-            {
-                echo "Die Config wurde genutzt. <br />" . PHP_EOL;
-            }
+            echo "Die Reserve-Config wurde genutzt. <br />" . PHP_EOL;
         }
     }
 
