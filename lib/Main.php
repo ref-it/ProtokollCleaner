@@ -33,12 +33,16 @@ class Main
         $switch = false;
         if(file_exists('config.php')) {
             include 'config.php';
-            echo "Die Config wurde genutzt. <br />" . PHP_EOL;
+            if(Main::$debug) {
+                echo "Die Config wurde genutzt. <br />" . PHP_EOL;
+            }
         }
         else
         {
             include 'config.default.php';
-            echo "Die Reserve-Config wurde genutzt. <br />" . PHP_EOL;
+            if(Main::$debug) {
+                echo "Die Reserve-Config wurde genutzt. <br />" . PHP_EOL;
+            }
         }
     }
 
