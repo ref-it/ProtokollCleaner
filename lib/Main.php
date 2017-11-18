@@ -358,9 +358,5 @@ class File
         return $this->datum->GermanDate();
     }
 }
-$haupt = new Main();
-
-$haupt->Main();
-
 
 ?>
