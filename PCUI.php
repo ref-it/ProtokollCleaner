@@ -10,7 +10,6 @@ include 'lib/Main.php';
 
 $haupt = new Main();
 
-echo $haupt::$inputpath . "<br />" .PHP_EOL;
 $haupt->Main();
 
 ?>

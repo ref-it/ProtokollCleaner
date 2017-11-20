@@ -34,16 +34,17 @@ class Main
         if(file_exists('config.php')) {
             include 'config.php';
             if(Main::$debug) {
-                echo "Die Config wurde genutzt. <br />" . PHP_EOL;
+                Useroutput::PrintLineDebug("Die Config wurde genutzt.");
             }
         }
         else
         {
             include 'config.default.php';
             if(Main::$debug) {
-                echo "Die Reserve-Config wurde genutzt. <br />" . PHP_EOL;
+                Useroutput::PrintLineDebug("Die Reserve-Config wurde genutzt.");
             }
         }
+        Useroutput::PrintHorizontalSeperator();
     }
 
     public function Main()
@@ -73,18 +74,20 @@ class Main
             $file = new File($Date, $datei);
             $fn = Main::$outputpath . "/" . $file->getOutputFilename();
             $check = $this->checkApproved($file->getgermanDate());
+            $Ausgabe = "";
             if($check)
             {
-                echo "Published as Final: ";
+                $Ausgabe = "Published as Final: ";
             }
             else
             {
-                echo "Published as Draft: ";
+                $Ausgabe = "Published as Draft: ";
             }
-            $this->copy($file->getFilename(), $fn, $check);
+            $Ausgabe = $Ausgabe . $this->copy($file->getFilename(), $fn, $check);
+            Useroutput::PrintLine($Ausgabe);
             $this->files[] = $file;
         }
-        echo "<br /><br /><br />" . PHP_EOL;
+        Useroutput::PrintHorizontalSeperator();
         $this->readAlreadyKnownFinancialDecissions();
         $this->exportFinancial();
         if (Main::$postData) {
@@ -92,7 +95,7 @@ class Main
         }
         $this->writeHelperFile();
     }
-    function copy($fileName, $fn, $check)
+    function copy($fileName, $fn, $check) : string
     {
         $OffRec=false;
         $lines = array();
@@ -130,7 +133,7 @@ class Main
             }
         }
         fclose($fl);
-        echo substr($fileName, strlen($fileName)-14, strlen($fileName) -1) . "<br />" . PHP_EOL;
+        return substr($fileName, strlen($fileName)-14, strlen($fileName) -1);
     }
 
     function getDateFromFileName($Filename)
@@ -172,7 +175,7 @@ class Main
                             $line = $this->formatLine($line, true);
                             if(Main::$debug)
                             {
-                                echo  $line;
+                                Useroutput::PrintLineDebug($line);
                             }
                         }
                     }
@@ -183,7 +186,7 @@ class Main
                             $line = $this->formatLine($line, false);
                             if(Main::$debug)
                             {
-                                echo  $line;
+                                Useroutput::PrintLineDebug($line);
                             }
                         }
                     }
@@ -209,13 +212,13 @@ class Main
             $lineEnd = substr($lineEnd, strpos($lineEnd, "FinanzAntragUI/") + 15);
             $lineEnd = substr($lineEnd, 0 , strpos($lineEnd, "|") );
             $lineEnd = str_replace(" ", "", $lineEnd);
-            $lineS = $lineStart . "#-#" . $lineEnd . "<br />" . PHP_EOL;
+            $lineS = $lineStart . "#-#" . $lineEnd;
             Main::$financialResolution[$lineEnd] = $lineStart;
         }
         else
         {
             Main::$financialResolution[] = $lineStart;
-            $lineS = $lineStart . "#-#" . "not found <br />" . PHP_EOL;
+            $lineS = $lineStart . "#-#" . "not found";
         }
         $this->knownDecissions[] = $lineStart . PHP_EOL;
         return $lineS;
@@ -234,12 +237,18 @@ class Main
         curl_setopt($curl, CURLOPT_POSTFIELDS, $content);
         //execute Postback
         $ret = curl_exec($curl);
-        echo $ret . "<br />" . PHP_EOL;  //kann auch eine bel. if abfrage zum testen des ergebnisses sein
+        if (Main::$debug)
+        {
+            Useroutput::PrintLineDebug($ret);  //kann auch eine bel. if abfrage zum testen des ergebnisses sein
+        }
         $status = curl_getinfo($curl, CURLINFO_HTTP_CODE); //tut bestimmt sinnvolle dinge
-        echo $status . "<br />" . PHP_EOL;
+        if(Main::$debug) {
+            Useroutput::PrintLineDebug($status);
+        }
+        Useroutput::PrintHorizontalSeperator();
         if(strpos($status, "200") !== false)
         {
-            echo "everything went fine <br />" . PHP_EOL;
+            Useroutput::PrintLine("Daten wurden erfolgeich übertragen.");
         }
         else
         {
@@ -275,7 +284,9 @@ class Main
 
     function writeHelperFile()
     {
-        echo "write Storagefile <br />" . PHP_EOL;
+        if(Main::$debug) {
+            Useroutput::PrintLineDebug("write Storagefile");
+        }
         if($fl = fopen(Main::$helperFilePath, "w")) {
             foreach ($this->knownDecissions as $line) {
                 fwrite($fl, $line);
@@ -349,4 +360,20 @@ class File
     }
 }
 
+class Useroutput
+{
+    static function PrintLine($output)
+    {
+        echo $output . "<br />" . PHP_EOL;
+    }
+
+    static function PrintLineDebug($output)
+    {
+        echo $output . "<br />" . PHP_EOL;
+    }
+    static function PrintHorizontalSeperator()
+    {
+        echo "<br /><hr /><br />" . PHP_EOL;
+    }
+}
 ?>
