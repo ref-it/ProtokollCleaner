@@ -147,8 +147,10 @@ class Main
         $check = substr($Name, 0, 10);
         $expression = "/[12][09][0129][0123456789]-[01][0123456789]-[0123][0123456789]/";
         if(preg_match($expression,$check) === false) {
+            if (Main::$debug) {
+                Useroutput::PrintLineDebug("File Discarded: " . $Filename);
+            }
             return -1;
-            Useroutput::PrintLineDebug("File Discarded");
         }
         $d = substr($Name, 8, 2);
         $m = substr($Name, 5, 2);
