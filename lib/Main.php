@@ -145,7 +145,7 @@ class Main
         $length = strlen($Filename);
         $Name = substr($Filename, 0, $length - 4);
         $check = substr($Name, 0, 10);
-        $expression = "/[12][09][0129][0123456789]-[01][0123456789]-[0123][0123456789]/";
+        $expression = "/^[12][09][0129][0123456789]-[01][0123456789]-[0123][0123456789]/";
         if(preg_match($expression,$check) === false) {
             if (Main::$debug) {
                 Useroutput::PrintLineDebug("File Discarded: " . $Filename);
