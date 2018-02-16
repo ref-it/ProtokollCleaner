@@ -31,8 +31,9 @@ class Main
     public function __construct() // or any other method
     {
         $switch = false;
-        if(file_exists('config.php')) {
-            include 'config.php';
+        Useroutput::PrintLine(dirname(__FILE__).'/config.php');
+        if(file_exists(dirname(__FILE__).'/config.php')) {
+            include dirname(__FILE__).'/config.php';
             if(Main::$debug) {
                 Useroutput::PrintLineDebug("Die Config wurde genutzt.");
             }
