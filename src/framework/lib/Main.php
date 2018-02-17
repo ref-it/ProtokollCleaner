@@ -160,46 +160,34 @@ class Main
 
     function checkApproved($germanDate)
     {
-        if ($fl = fopen(Main::$decissionList, "r")) {
-            while (!feof($fl)) {
-                $line = fgets($fl);
-                # do same stuff with the $line
-                if ((strpos($line, "beschließt") !== false) and  (strpos($line, "Protokoll") !== false ) and (strpos($line, "Sitzung") !== false ) and (strpos($line, $germanDate) !== false)) {
-                    return true;
-                }
+        foreach (InOutput::ReadFile(Main::$decissionList) as $line)
+        {
+            # do same stuff with the $line
+            if ((strpos($line, "beschließt") !== false) and  (strpos($line, "Protokoll") !== false ) and (strpos($line, "Sitzung") !== false ) and (strpos($line, $germanDate) !== false)) {
+                return true;
             }
         }
-        fclose($fl);
         return false;
     }
 
     function exportFinancial()
     {
-        if($fl = fopen(Main::$decissionList, "r"))
+        foreach (InOutput::ReadFile(Main::$decissionList) as $line)
         {
-            while (!feof($fl)) {
-                $line = fgets($fl);
-                if ((strpos($line, "Budget") !== false)) {
-                    if (strpos($line, "https://helfer.stura.tu-ilmenau.de/FinanzAntragUI/") !== false) {
-                        if (!(strpos($line, "<del>") !== false))
-                        {
-                            $line = $this->formatLine($line, true);
-                            if(Main::$debug)
-                            {
-                                Useroutput::PrintLineDebug($line);
-                            }
-                        }
-                    }
-                    else
+            if ((strpos($line, "Budget") !== false)) {
+                if (strpos($line, "https://helfer.stura.tu-ilmenau.de/FinanzAntragUI/") !== false) {
+                    if (!(strpos($line, "<del>") !== false))
                     {
-                        if ((!(strpos($line, "<del>") !== false)) and ! Main::$onlyNew)
-                        {
-                            $line = $this->formatLine($line, false);
-                            if(Main::$debug)
-                            {
-                                Useroutput::PrintLineDebug($line);
-                            }
-                        }
+                        $line = $this->formatLine($line, true);
+                        Useroutput::PrintLineDebug($line);
+                    }
+                }
+                else
+                {
+                    if ((!(strpos($line, "<del>") !== false)) and ! Main::$onlyNew)
+                    {
+                        $line = $this->formatLine($line, false);
+                        Useroutput::PrintLineDebug($line);
                     }
                 }
             }
@@ -270,15 +258,11 @@ class Main
 
     function readAlreadyKnownFinancialDecissions()
     {
-        if ($fl = fopen(Main::$helperFilePath, "r")) {
-            while (!feof($fl)) {
-                $line = fgets($fl);
-                # do same stuff with the $line
-                $this->knownDecissions[] = $line;
-            }
+        foreach (InOutput::ReadFile(Main::$helperFilePath)as $line)
+        {
+            # do same stuff with the $line
+            $this->knownDecissions[] = $line;
         }
-        fclose($fl);
-        return false;
     }
 
     function checkAlreadyPostedData($DecissionKey):bool
@@ -298,12 +282,10 @@ class Main
         if(Main::$debug) {
             Useroutput::PrintLineDebug("write Storagefile");
         }
-        if($fl = fopen(Main::$helperFilePath, "w")) {
-            foreach ($this->knownDecissions as $line) {
-                fwrite($fl, $line);
-            }
+        if (InOutput::WriteFile(Main::$helperFilePath, $this->knownDecissions) === false)
+        {
+            exit(11);
         }
-        fclose($fl);
     }
 }
 
