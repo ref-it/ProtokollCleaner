@@ -9,6 +9,8 @@
 include 'Date.php';
 include 'File.php';
 include 'Useroutput.php';
+include 'InOutput.php';
+include 'CopyEmulator.php';
 
 class Main
 {
@@ -107,40 +109,33 @@ class Main
     {
         $OffRec=false;
         $lines = array();
-        if ($fl = fopen($fileName, "r")) {
-            while(!feof($fl)) {
-                $line = fgets($fl);
-                # do same stuff with the $line
-                if(!$OffRec and strpos($line, "tag>" . Main::$starttag) !== false) {
-                    $OffRec=true;
-                    continue;
-                }
-                if(!$OffRec)
+        foreach (InOutput::ReadFile($fileName) as $line) {
+            # do same stuff with the $line
+            if(!$OffRec and strpos($line, "tag>" . Main::$starttag) !== false) {
+                $OffRec=true;
+                continue;
+            }
+            if(!$OffRec)
+            {
+                if(strpos($line, "======") !== false and !$check)
                 {
-                    if(strpos($line, "======") !== false and !$check)
-                    {
-                        $firstpart = substr($line, strpos($line, "======"), 6 );
-                        $secondpart = substr($line, strpos($line, "======") + 6, strlen($line) -1 );
-                        $lines[] = $firstpart . " Entwurf:" . $secondpart;
-                    }
-                    else {
-                        $lines[] = $line;
-                    }
+                    $firstpart = substr($line, strpos($line, "======"), 6 );
+                    $secondpart = substr($line, strpos($line, "======") + 6, strlen($line) -1 );
+                    $lines[] = $firstpart . " Entwurf:" . $secondpart;
+                }
+                else {
+                    $lines[] = $line;
+                }
                     continue;
-                }
-                if($OffRec and strpos($line, "tag>" . Main::$endtag) !== false) {
-                    $OffRec=false;
-                }
-
             }
-            fclose($fl);
-        }
-        if($fl = fopen($fn, "w+")) {
-            foreach ($lines as $line) {
-                fwrite($fl, $line);
+            if($OffRec and strpos($line, "tag>" . Main::$endtag) !== false) {
+                $OffRec=false;
             }
         }
-        fclose($fl);
+        if (InOutput::WriteFile($fn,$lines) === false)
+        {
+            exit(10);
+        }
         return substr($fileName, strlen($fileName)-14, strlen($fileName) -1);
     }
 
