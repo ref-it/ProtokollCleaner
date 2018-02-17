@@ -6,7 +6,7 @@
  * @author michael g
  * @author Stura - Referat IT <ref-it@tu-ilmenau.de>
  * @since 17.02.2018
- * @copyright all rights reserved
+ * @copyright 	Copyright (C) 2018 - All rights reserved
  */
  ?>
 <!DOCTYPE html>
