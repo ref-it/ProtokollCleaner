@@ -1,9 +1,9 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: martin
- * Date: 17.02.18
- * Time: 22:28
+ * InOutput.php
+ * @author Martin S.
+ * @author Stura - Referat IT <ref-it@tu-ilmenau.de>
+ * @since 17.02.18 22:28
  */
 
 

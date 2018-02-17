@@ -1,16 +1,17 @@
 <?php
+
 /**
- * Created by PhpStorm.
- * User: martin
- * Date: 18.10.17
- * Time: 09:54
+ * Main.php
+ * @author Martin S.
+ * @author Stura - Referat IT <ref-it@tu-ilmenau.de>
+ * @since 18.10.17 09:54
  */
 
 include 'Date.php';
 include 'File.php';
 include 'Useroutput.php';
 include 'InOutput.php';
-include 'CopyEmulator.php';
+//include 'CopyEmulator.php';
 
 class Main
 {

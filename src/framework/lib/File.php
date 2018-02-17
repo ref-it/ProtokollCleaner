@@ -1,9 +1,9 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: martin
- * Date: 17.02.18
- * Time: 22:13
+ * File.php
+ * @author Martin S.
+ * @author Stura - Referat IT <ref-it@tu-ilmenau.de>
+ * @since 17.02.18 22:13
  */
 
 class File
