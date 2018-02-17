@@ -1,12 +1,16 @@
-/* ============================= JQuery Editable Plugin ========================================================== */
 /**
- * BASE JS Scripts
- * 
- * @author michael g
- * @author Stura - Referat IT <ref-it@tu-ilmenau.de>
- * @since 17.02.2018
- * @copyright 	Copyright (C) 2018 - All rights reserved
+ * JS SCRIPTS base
+ *
+ * @package         Stura - Referat IT - ProtocolHelper
+ * @category        script
+ * @author 			michael g
+ * @author 			Stura - Referat IT <ref-it@tu-ilmenau.de>
+ * @since 			17.02.2018
+ * @copyright 		Copyright (C) 2018 - All rights reserved
+ * @platform        PHP
+ * @requirements    PHP 7.0 or higher
  */
+/* ============================= JQuery Editable Plugin ========================================================== */
 //plugin to make any element text editable
 $.fn.extend({
 	editable: function (param) {

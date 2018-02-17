@@ -2,11 +2,15 @@
 /**
  * WARNING PAGE ProtocolHelper
  * show warning message for misconfigured webserver
- * 
- * @author michael g
- * @author Stura - Referat IT <ref-it@tu-ilmenau.de>
- * @since 17.02.2018
- * @copyright 	Copyright (C) 2018 - All rights reserved
+ *
+ * @package         Stura - Referat IT - ProtocolHelper
+ * @category        application
+ * @author 			michael g
+ * @author 			Stura - Referat IT <ref-it@tu-ilmenau.de>
+ * @since 			17.02.2018
+ * @copyright 		Copyright (C) 2018 - All rights reserved
+ * @platform        PHP
+ * @requirements    PHP 7.0 or higher
  */
  ?>
 <!DOCTYPE html>
