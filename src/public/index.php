@@ -6,10 +6,16 @@
  * @author michael g
  * @author Stura - Referat IT <ref-it@tu-ilmenau.de>
  * @since 17.02.2018
- *
+ * @copyright all rights reserved
  */
-require_once ("../config.php");
+// ===== load framework =====
+if (!file_exists ( dirname(__FILE__, 2).'/config.php' )){
+	echo 'No configuration file found!. Please create and edit "config.php".';
+	die();
+}
+require_once (dirname(__FILE__, 2).'/config.php');
 
+// ===== start page =====
 $t = new template();
 
 	$t->printPageHeader();

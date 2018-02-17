@@ -1,0 +1,27 @@
+<?php 
+/**
+ * WARNING PAGE 403 error page
+ * 
+ * @author michael g
+ * @author Stura - Referat IT <ref-it@tu-ilmenau.de>
+ * @since 17.02.2018
+ * @copyright all rights reserved
+ */
+?>
+<div class="half_container access_not_found">
+	<h3>404 - Uups...</h3>
+	<span>Da ist wohl etwas schief gegangen. Die angeforderte Seite konnte nicht gefunden werden.</span>
+	<div>
+		<h4>Weitere Informationen</h4>
+		<p>Möglicherweise sind Sie über einen veralteten Link auf diese Seite gestoßen. Informieren Sie doch bitte den entsprechenden Seitenbetreiber, so dass dieser entfernt, oder korrigiert werden kann.</p>
+		<h5>Angeforderte Seite</h5>
+		<span>&#62; <?php
+			$protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off')? 'https://' : 'http://'; 
+		
+		echo htmlentities(urldecode($protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'])); ?></span>
+		<?php if (isset($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER']){ ?>
+			<h5>Sie sind von folgender Seite hier gelandet</h5>
+			<span>&#62; <?php echo htmlentities(urldecode($_SERVER['HTTP_REFERER'])); ?></span>
+		<?php } ?>
+	</div>
+</div>

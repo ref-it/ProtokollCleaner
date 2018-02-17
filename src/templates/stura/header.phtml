@@ -1,0 +1,93 @@
+<?php 
+/**
+ * PAGE global header
+ * 
+ * @author michael g
+ * @author Stura - Referat IT <ref-it@tu-ilmenau.de>
+ * @since 17.02.2018
+ * @copyright all rights reserved
+ */
+ ?>
+<!DOCTYPE html>
+<html lang="de">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="description" content="stura protocol helper" />
+		<meta name="keywords" content="" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="theme-color" content="#173d92" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="mobile-web-app-capable" content="yes">
+		<link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon" />
+
+		<?php $this->printCss(true); ?>
+		<?php $this->printScript(true); ?>
+
+		<script type="text/javascript">
+			function printPage(){
+				document.getElementById('content').style.marginLeft = "0px";
+				document.getElementById('content').style.transition = "all 0s";
+				window.print();
+				document.getElementById('content').removeAttribute("style");
+			}
+		</script>
+	    <title><? $this->getTitle(true); ?></title>
+	</head>
+	<body id="body" <?php if ($this->extra_body_class) echo 'class="'.$this->extra_body_class.'"'; ?> >
+		<input type="checkbox" id="menu_toggle_check" value="0">
+		<header class="header" id="page_header" style="position: fixed;">
+			<a href="<?php echo BASE_URL; ?>" target="_self">
+				<img class="logo noprint" src="/images/logo_wt.png" width="83" height="39" /><img class="logo printonly" src="/images/logo.png" width="83" height="39" /><img class="logo_fav noprint" src="/images/favicon.ico"/></a> Bestellinfosystem<span>Vertragshändler für DOOSAN, MOXY und SCHAEFF</span>
+			<div class="menubutton_wrapper" style="position: fixed;">
+				<div tabindex="0" class="help_printbutton" onclick="printPage();">&#xe803;</div>
+				<?php if($this->logged_in_user){ ?>
+					<form action="?logout=1" method="POST" class="logout"><input type="submit" tabindex="0" value="&#xe812;"></form>
+				 <?php } ?>
+				<label tabindex="0" class="noselect menu_toggle" for="menu_toggle_check">&#xf0c9;</label>
+			</div>
+		</header>
+
+		<div class="sidenav_wrapper menu navigation nav">
+			<div class="sidenav menu">
+				<div class="scroll_relative">
+					<ul class="menu-top">
+						<li class="menu-first<?php if($this->title_prefix == '') echo ' menu-current';?>">
+							<a href="/index.php" target="_self" title="Home"><i>&#xe816;</i><span><?php echo ($_SESSION['USER_ID']==0)? 'Login' : 'Home'; ?></span></a>
+						</li>
+						<?php if (function_exists('checkUserPermission')){ ?>
+							<?php if (checkUserPermission('permission1')||checkUserPermission('permission2')){ ?>
+								<li class="<?php if($this->title_prefix == 'Live') echo ' menu-current';?>">
+									<a href="/pages/page1/index.php" target="_self" title="Page 1"><i>&#xf0ca;</i><span>Page 1</span></a></li>
+							<?php } ?>
+							<?php if (checkUserPermission('user')){ ?>
+								<li class="<?php if($this->title_prefix == 'Benutzereinstellungen') echo ' menu-current';?>">
+									<a href="/pages/user/index.php" target="_self" title="Benutzereinstellungen"><i>&#xf2be;</i><span>Benutzer</span></a></li>
+							<?php } ?>
+							<?php if (checkUserPermission('admin')){ ?>
+								<li class="<?php if($this->title_prefix == 'Admin') echo ' menu-current';?>">
+									<a href="/pages/admin/index.php" target="_self" title="Admin"><i>&#xe817;</i><span>Admin</span></a></li>
+							<?php } ?>
+						<?php } ?>
+					</ul>
+					<div class="nav_footer_placeholder"></div>
+					<footer>
+						<ul>
+							<li>
+								<a href="https://stura.tu-ilmenau.de/impressum" target="_self" title="Impressum"><i>&#xf129;</i><span>Impressum</span></a>
+							</li>
+							<li><?php /* TODO Datenschutzlink zeigt noch auf Uni Datenschutzerklärung */ ?>
+								<a href="https://www.tu-ilmenau.de/impressum/datenschutz/" target="_self" title="Datenschutz"><i>&#xf1c0;</i><span>Datenschutz</span></a>
+							</li>
+						</ul>
+					</footer>
+				</div>
+			</div>
+		</div>
+		<div class="content_wrapper">
+			<div class="main content" id="content">
+				<div class="modalwrapper">
+					<div class="modal_bg" style="position: fixed"></div>
+					<div class="modal_close noselect" style="position: fixed">&#x274C;</div>
+					<?php $this->printModal(true); ?>
+				</div>
+				<div class="message_relative"><div id="silmph__message_container" class="silmph__message_container" style="position:fixed"></div></div>
