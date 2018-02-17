@@ -31,16 +31,15 @@ class Main
     public function __construct() // or any other method
     {
         $switch = false;
-        Useroutput::PrintLine(dirname(__FILE__).'/config.php');
-        if(file_exists(dirname(__FILE__).'/config.php')) {
-            include dirname(__FILE__).'/config.php';
+        if(file_exists(dirname(__FILE__).'/../conf/config.php')) {
+            include dirname(__FILE__).'/../conf/config.php';
             if(Main::$debug) {
                 Useroutput::PrintLineDebug("Die Config wurde genutzt.");
             }
         }
         else
         {
-            include 'config.default.php';
+            include dirname(__FILE__).'/../conf/config.default.php';
             if(Main::$debug) {
                 Useroutput::PrintLineDebug("Die Reserve-Config wurde genutzt.");
             }
