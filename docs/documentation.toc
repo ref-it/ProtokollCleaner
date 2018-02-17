@@ -1,0 +1,94 @@
+\select@language {ngerman}
+\contentsline {part}{\numberline {I}Nutzungsanleitung}{3}
+\contentsline {chapter}{\numberline {1}Verwendung}{4}
+\contentsline {section}{\numberline {1.1}Beschreibung}{4}
+\contentsline {chapter}{\numberline {2}Konfiguration}{5}
+\contentsline {section}{\numberline {2.1}Grundlagen}{5}
+\contentsline {section}{\numberline {2.2}Eingabepfad}{5}
+\contentsline {paragraph}{\nonumberline \$inputpath}{5}
+\contentsline {section}{\numberline {2.3}Ausgabepfad}{5}
+\contentsline {paragraph}{\nonumberline \$outputpath}{5}
+\contentsline {section}{\numberline {2.4}Beschlussliste}{6}
+\contentsline {paragraph}{\nonumberline \$decissionList}{6}
+\contentsline {section}{\numberline {2.5}Hilfsdatei}{6}
+\contentsline {paragraph}{\nonumberline \$helperFilePath}{6}
+\contentsline {section}{\numberline {2.6}Starttag}{6}
+\contentsline {paragraph}{\nonumberline \$starttag}{6}
+\contentsline {section}{\numberline {2.7}Endtag}{6}
+\contentsline {paragraph}{\nonumberline \$endtag}{6}
+\contentsline {section}{\numberline {2.8}Debug}{6}
+\contentsline {paragraph}{\nonumberline \$debug}{6}
+\contentsline {section}{\numberline {2.9}Nur neue Finanzbeschl\IeC {\"u}sse ausgeben}{7}
+\contentsline {paragraph}{\nonumberline \$onlyNew}{7}
+\contentsline {section}{\numberline {2.10}Daten an andere Website weitergeben}{7}
+\contentsline {paragraph}{\nonumberline \$postData}{7}
+\contentsline {section}{\numberline {2.11}Webadresse zur Weitergabe der Daten per HTTP-Post}{7}
+\contentsline {paragraph}{\nonumberline \$PostUrl}{7}
+\contentsline {section}{\numberline {2.12}Einstellen des ersten zu verarbeiteten Protokolls}{7}
+\contentsline {paragraph}{\nonumberline Vorbemerkung}{7}
+\contentsline {paragraph}{\nonumberline \$startYear}{8}
+\contentsline {paragraph}{\nonumberline \$startMonth}{8}
+\contentsline {paragraph}{\nonumberline \$startday}{8}
+\contentsline {section}{\numberline {2.13}Konfigurationsdatei erstellen}{8}
+\contentsline {paragraph}{\nonumberline Beispiel}{8}
+\contentsline {part}{\numberline {II}Code Dokumentation}{9}
+\contentsline {chapter}{\numberline {3}Klassen}{10}
+\contentsline {section}{\numberline {3.1}Main}{10}
+\contentsline {subsection}{\numberline {3.1.1}Variablen}{10}
+\contentsline {paragraph}{\nonumberline \$inputpath}{10}
+\contentsline {paragraph}{\nonumberline \$outputpath}{10}
+\contentsline {paragraph}{\nonumberline \$decissionList}{10}
+\contentsline {paragraph}{\nonumberline \$helperFilePath}{10}
+\contentsline {paragraph}{\nonumberline \$starttag}{10}
+\contentsline {paragraph}{\nonumberline \$endtag}{10}
+\contentsline {paragraph}{\nonumberline \$debug}{11}
+\contentsline {paragraph}{\nonumberline \$onlyNew}{11}
+\contentsline {paragraph}{\nonumberline \$postData}{11}
+\contentsline {paragraph}{\nonumberline \$PostUrl}{11}
+\contentsline {paragraph}{\nonumberline \$startYear}{11}
+\contentsline {paragraph}{\nonumberline \$startMonth}{11}
+\contentsline {paragraph}{\nonumberline \$startday}{11}
+\contentsline {paragraph}{\nonumberline \$financialResolution}{11}
+\contentsline {paragraph}{\nonumberline \$files}{11}
+\contentsline {paragraph}{\nonumberline \$knownDecissions}{12}
+\contentsline {subsection}{\numberline {3.1.2}Funktionen}{12}
+\contentsline {subsubsection}{\nonumberline \_\_construct()}{12}
+\contentsline {subsubsection}{\nonumberline getAllFiles()}{12}
+\contentsline {paragraph}{\nonumberline Vorbereitung}{12}
+\contentsline {paragraph}{\nonumberline Hauptschleife}{12}
+\contentsline {paragraph}{\nonumberline Nachbereitung}{12}
+\contentsline {subsubsection}{\nonumberline copy(\$fileName, \$fn, \$check)}{13}
+\contentsline {paragraph}{\nonumberline Eingabevariablen}{13}
+\contentsline {subparagraph}{\nonumberline \$fileName}{13}
+\contentsline {subparagraph}{\nonumberline \$fn}{13}
+\contentsline {subparagraph}{\nonumberline \$check}{13}
+\contentsline {paragraph}{\nonumberline Funktionsinterne Variablen}{13}
+\contentsline {subparagraph}{\nonumberline \$OffRec}{13}
+\contentsline {subparagraph}{\nonumberline \$lines}{13}
+\contentsline {paragraph}{\nonumberline Funktionsablauf}{13}
+\contentsline {subparagraph}{\nonumberline Hauptschleife}{13}
+\contentsline {subparagraph}{\nonumberline Nachschleife}{14}
+\contentsline {subparagraph}{\nonumberline Funktionsabschluss}{14}
+\contentsline {subsubsection}{\nonumberline getDateFromFileName(\$Filename)}{14}
+\contentsline {paragraph}{\nonumberline Eingabevariablen}{14}
+\contentsline {subparagraph}{\nonumberline \$Filename}{14}
+\contentsline {paragraph}{\nonumberline Funktionsinterne Variablen}{14}
+\contentsline {subparagraph}{\nonumberline \$Name}{14}
+\contentsline {subparagraph}{\nonumberline \$d}{14}
+\contentsline {subparagraph}{\nonumberline \$m}{14}
+\contentsline {subparagraph}{\nonumberline \$y}{14}
+\contentsline {subparagraph}{\nonumberline \$Date}{14}
+\contentsline {paragraph}{\nonumberline Funktionsablauf}{15}
+\contentsline {subsubsection}{\nonumberline checkApproved(\$germanDate)}{15}
+\contentsline {subsubsection}{\nonumberline exportFinancial()}{15}
+\contentsline {subsubsection}{\nonumberline formatLine(\$line, \$withToken)}{15}
+\contentsline {subsubsection}{\nonumberline sendData()}{15}
+\contentsline {subsubsection}{\nonumberline readAlreadyKnownFinancialDecissions()}{15}
+\contentsline {subsubsection}{\nonumberline checkAlreadyPostedData(\$DecissionKey):bool}{15}
+\contentsline {subsubsection}{\nonumberline writeHelperFile()}{15}
+\contentsline {section}{\numberline {3.2}Date}{15}
+\contentsline {subsection}{\numberline {3.2.1}Variablen}{15}
+\contentsline {subsection}{\numberline {3.2.2}Funktionen}{15}
+\contentsline {section}{\numberline {3.3}File}{15}
+\contentsline {subsection}{\numberline {3.3.1}Variablen}{15}
+\contentsline {subsection}{\numberline {3.3.2}Funktionen}{15}
