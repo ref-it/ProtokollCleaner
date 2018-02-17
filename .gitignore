@@ -4,4 +4,4 @@ config.php
 .project
 .settings/
 .src/config.php
-
+.src/framework/conf/config.php
