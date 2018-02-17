@@ -6,6 +6,9 @@
  * Time: 09:54
  */
 
+include 'Date.php';
+include 'File.php';
+
 class Main
 {
     public static $inputpath; //intern part of the Wiki, where the files which will be cleaned are
@@ -305,70 +308,6 @@ class Main
             }
         }
         fclose($fl);
-    }
-}
-
-class Date
-{
-    function __construct($Year, $Month, $Day)
-    {
-        $this->y = $Year;
-        $this->m = $Month;
-        $this->d = $Day;
-    }
-
-    private $y;
-    private $m;
-    private $d;
-
-    function Year()
-    {
-        return $this->y;
-    }
-    function Month()
-    {
-        return $this->m;
-    }
-    function Day()
-    {
-        return $this->d;
-    }
-    function GermanDate()
-    {
-        return $this->d . "." . $this->m . "." . $this->y;
-    }
-    function Filname()
-    {
-        return $this->y . "-" . $this->m . "-" . $this->d . ".txt";
-    }
-
-}
-class File
-{
-    private $datum;
-    private $Filename;
-
-    function __construct($date, $file)
-    {
-        $this->datum = $date;
-        $this->Filename = Main::$inputpath . "/" . $file;
-    }
-
-    function getDate() : Date
-    {
-        return $this->datum;
-    }
-    function getFilename()
-    {
-        return $this->Filename;
-    }
-    function getOutputFilename()
-    {
-        return $this->getDate()->Filname();
-    }
-    function getgermanDate()
-    {
-        return $this->datum->GermanDate();
     }
 }
 
