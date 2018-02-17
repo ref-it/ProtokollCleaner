@@ -8,6 +8,7 @@
 
 include 'Date.php';
 include 'File.php';
+include 'Useroutput.php';
 
 class Main
 {
@@ -311,20 +312,4 @@ class Main
     }
 }
 
-class Useroutput
-{
-    static function PrintLine($output)
-    {
-        echo $output . "<br />" . PHP_EOL;
-    }
-
-    static function PrintLineDebug($output)
-    {
-        echo $output . "<br />" . PHP_EOL;
-    }
-    static function PrintHorizontalSeperator()
-    {
-        echo "<br /><hr /><br />" . PHP_EOL;
-    }
-}
 ?>
