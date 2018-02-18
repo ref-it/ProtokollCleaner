@@ -28,12 +28,12 @@ class  AuthHandler{
     
     function getUserFullName(){
         $this->requireAuth();
-        return $this->getAttributes()["displayName"][0];
+        return $this->getAttributes()["displayName"];
     }
     
     function getUserMail(){
         $this->requireAuth();
-        return $this->getAttributes()["mail"][0];
+        return $this->getAttributes()["mail"];
     }
     
     function getAttributes(){
@@ -116,8 +116,8 @@ class  AuthHandler{
         $attributes = $this->getAttributes();
         if (isset($attributes["eduPersonPrincipalName"]) && isset($attributes["eduPersonPrincipalName"][0]))
             return $attributes["eduPersonPrincipalName"][0];
-        if (isset($attributes["mail"]) && isset($attributes["mail"][0]))
-            return $attributes["mail"][0];
+        if (isset($attributes["mail"]) && isset($attributes["mail"]))
+            return $attributes["mail"];
         return null;
     }
     
