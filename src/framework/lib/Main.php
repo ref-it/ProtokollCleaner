@@ -40,7 +40,6 @@ class Main
 
     public function __construct() // or any other method
     {
-        $switch = false;
         if(file_exists(dirname(__FILE__).'/../conf/config.php')) {
             include dirname(__FILE__).'/../conf/config.php';
             if(Main::$debug) {
@@ -57,9 +56,9 @@ class Main
         Useroutput::PrintHorizontalSeperator();
     }
 
-    public function generateDiff($Protokoll) : string
+    public function generateDiff($Protokoll, $check)
     {
-        return VisualCopyEmulator::generateDiffTable($Protokoll);
+        VisualCopyEmulator::generateDiffTable($Protokoll, $check);
     }
 
     public function Main()
@@ -93,7 +92,6 @@ class Main
             $file = new File($Date, $datei);
             $fn = Main::$outputpath . "/" . $file->getOutputFilename();
             $check = $this->checkApproved($file->getgermanDate());
-            $Ausgabe = "";
             if($check)
             {
                 $Ausgabe = "Published as Final: ";
@@ -104,8 +102,7 @@ class Main
             }
             $Ausgabe = $Ausgabe . $this->copy($file->getFilename(), $fn, $check);
             Useroutput::PrintLine($Ausgabe);
-            $print = VisualCopyEmulator::generateDiffTable(InOutput::ReadFile($file->getFilename()),$check);
-            echo $print;
+            VisualCopyEmulator::generateDiffTable(InOutput::ReadFile($file->getFilename()), $check);
             $this->files[] = $file;
         }
         Useroutput::PrintHorizontalSeperator();

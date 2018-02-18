@@ -13,10 +13,15 @@ class Useroutput
     {
         echo $output . "<br />" . PHP_EOL;
     }
-
+    static function Print($output)
+    {
+        echo $output . PHP_EOL;
+    }
     static function PrintLineDebug($output)
     {
-        echo $output . "<br />" . PHP_EOL;
+        if (Main::$debug) {
+            echo $output . "<br />" . PHP_EOL;
+        }
     }
     static function PrintHorizontalSeperator()
     {
