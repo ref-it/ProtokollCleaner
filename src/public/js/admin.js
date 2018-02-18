@@ -25,7 +25,7 @@
 				dataset[fchal.getAttribute("name")] = fchal.value;
 				$.ajax({
 					type: "POST",
-					url: 'save.php',
+					url: 'savemail',
 					data: dataset,
 					success: function(data){
 						pdata = {};

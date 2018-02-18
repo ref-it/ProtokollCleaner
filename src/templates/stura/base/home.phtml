@@ -1,0 +1,30 @@
+<?php 
+/**
+ * PAGE TEMPLATE home
+ *
+ * @package         Stura - Referat IT - ProtocolHelper
+ * @category        page template
+ * @author 			michael g
+ * @author 			Stura - Referat IT <ref-it@tu-ilmenau.de>
+ * @since 			17.02.2018
+ * @copyright 		Copyright (C) 2018 - All rights reserved
+ * @platform        PHP
+ * @requirements    PHP 7.0 or higher
+ */
+?>
+<h2 class="printonly">Hauptmenu</h2>
+<?php 
+	$tnav = $this->t->getNavigation();
+	$counter = 0;
+	foreach ($tnav as $route => $linkdata){ 
+		if ($linkdata[2] == '') continue;		?>
+		<div class="button_container">
+			<a href="<?= $route?>" target="_self" title="<?= $linkdata[0] ?>">
+				<h3><?= $linkdata[0] ?></h3>
+				<div class="img" style="background-image: url('/images/<?= $linkdata[2] ?>')"></div>
+			</a>
+		</div>
+	<?php 
+		$counter++;
+	} ?>
+	<div class="clear"></div>
