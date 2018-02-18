@@ -177,10 +177,15 @@ class Main
         foreach (InOutput::ReadFile(Main::$decissionList) as $line)
         {
             if ((strpos($line, "Budget") !== false)) {
+                $lineStart = $this->getLineStartFinancialDeccision($line);
+                if($this->checkAlreadyPostedData($lineStart))
+                {
+                    continue;
+                }
                 if (strpos($line, "https://helfer.stura.tu-ilmenau.de/FinanzAntragUI/") !== false) {
                     if (!(strpos($line, "<del>") !== false))
                     {
-                        $line = $this->formatLine($line, true);
+                        $line = $this->formatLine($line, true, $lineStart);
                         if (strpos($line, "AlreadyInside") === false) {
                             Useroutput::PrintLineDebug($line);
                         }
@@ -190,7 +195,7 @@ class Main
                 {
                     if ((!(strpos($line, "<del>") !== false)) and ! Main::$onlyNew)
                     {
-                        $line = $this->formatLine($line, false);
+                        $line = $this->formatLine($line, false, $lineStart);
                         if (strpos($line, "AlreadyInside") === false) {
                             Useroutput::PrintLineDebug($line);
                         }
@@ -200,15 +205,15 @@ class Main
         }
     }
 
-    function formatLine($line, $withToken)
+    function getLineStartFinancialDeccision ($line) :string
     {
         $lineStart = substr($line, strpos($line, "|")+1);
         $lineStart = substr($lineStart, 0, strpos($lineStart, "|"));
         $lineStart = str_replace(" ", "", $lineStart);
-        if($this->checkAlreadyPostedData($lineStart))
-        {
-            return  "AlreadyInside";
-        }
+        return $lineStart;
+    }
+    function formatLine($line, $withToken, $lineStart)
+    {
         if($withToken)
         {
             $lineEnd = substr($line, strpos($line, "|")+1);
