@@ -1,10 +1,10 @@
 <?php
 /**
- * CONFIG FILE ProtocolHelper
- * Application initialisation
+ * FRAMEWORK ProtocolHelper
+ * database connection
  *
  * @package         Stura - Referat IT - ProtocolHelper
- * @category        classes
+ * @category        framework
  * @author 			michael g
  * @author 			Stura - Referat IT <ref-it@tu-ilmenau.de>
  * @since 			17.02.2018

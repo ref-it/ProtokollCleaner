@@ -1,10 +1,10 @@
 <?php
 /**
- * CONFIG FILE ProtocolHelper
- * Application initialisation
+ * FRAMEWORK session
+ * handles user session
  *
  * @package         Stura - Referat IT - ProtocolHelper
- * @category        configuration
+ * @category        framework
  * @author 			michael g
  * @author 			Stura - Referat IT <ref-it@tu-ilmenau.de>
  * @since 			17.02.2018

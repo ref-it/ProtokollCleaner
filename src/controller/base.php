@@ -12,7 +12,7 @@
  * @requirements    PHP 7.0 or higher
  */
  
-require_once (SYSBASE . '/controller/mother.php');
+require_once (SYSBASE . '/framework/MotherController.php');
 
 class BaseController extends MotherController {
 	
