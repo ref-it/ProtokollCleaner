@@ -17,9 +17,8 @@
  * define global variables
  */
 define('SILMPH', true);
-define('PERMISSION_CHECKUP', 10); //dont set to 0
-define('SESSION_EXPIRES_AFTER', 20); //timeout for inactive session (in minutes)
 define('MAIL_TEST_TIMEOUT', 10); //prevent mailspam with testmails (in minutes)
+define('SYSBASE', dirname(__FILE__, 2));
 define('FRAMEWORK_PATH', dirname(__FILE__));
 
 /**
@@ -41,7 +40,7 @@ ini_set('session.cookie_lifetime', '0');
 /**
  * set php error settings
  */
-ini_set('display_errors', 0);
+ini_set('display_errors', (DEBUG)? 1:0);
 ini_set("log_errors", 1);
 error_reporting(E_ALL);
 ini_set("error_log", dirname(__FILE__, 2)."/logs/error.log");
@@ -117,8 +116,11 @@ require_once (dirname(__FILE__)."/SilmphMailer.php");
 /**
  * include session handler
  */
-require_once (dirname(__FILE__)."/session.php");
+require_once (dirname(__FILE__)."/router.php");
 
-//TODO session, Router / router table
+/**
+ * include session handler
+ */
+require_once (dirname(__FILE__)."/session.php");
 
 // end of file -------------
