@@ -23,11 +23,13 @@
 								};
 				fchal = document.getElementById('fchal');
 				dataset[fchal.getAttribute("name")] = fchal.value;
+				console.log(dataset);
 				$.ajax({
 					type: "POST",
-					url: 'savemail',
+					url: 'admin/savemail',
 					data: dataset,
 					success: function(data){
+						console.log(data);
 						pdata = {};
 						try {
 							pdata = JSON.parse(data);
@@ -53,6 +55,7 @@
 						}
 					},
 					error: function(data){
+						console.log(data);
 						if (validator != "password"){
 							$elem.html(old_data);
 						}
@@ -220,7 +223,7 @@
 			dataset[fchal.getAttribute("name")] = fchal.value;
 			$.ajax({
 				type: "POST",
-				url: 'save.php',
+				url: 'admin/testmail',
 				data: dataset,
 				success: function(data){
 					pdata = {};

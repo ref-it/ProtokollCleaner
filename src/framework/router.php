@@ -1,10 +1,10 @@
 <?php
 /**
- * CONFIG FILE ProtocolHelper
- * Application initialisation
+ * FRAMEWORK Router
+ * Route requested URL Paths
  *
  * @package         Stura - Referat IT - ProtocolHelper
- * @category        configuration
+ * @category        framework
  * @author 			michael g
  * @author 			Stura - Referat IT <ref-it@tu-ilmenau.de>
  * @since 			17.02.2018
@@ -115,10 +115,12 @@ class Router {
 		if (isset($_GET['page_error'])){
 			if (is_numeric($_GET['page_error'])){
 				$val = intval($_GET['page_error']);
+				require_once (SYSBASE.'/framework/MotherController.php');
+				$c = new MotherController($this->db, $this->auth, NULL);
 				if ($val > 0){
-					$this->renderErrorPage($val);
+					$c->renderErrorPage($val, $this->navigation);
 				} else {
-					$this->renderErrorPage(-1);
+					$c->renderErrorPage(-1, $this->navigation);
 				}
 			}
 		}
@@ -167,12 +169,16 @@ class Router {
 			}
 		} else {
 			//route not found --> 404 Not Found
-			$this->renderErrorPage(404);
+			require_once (SYSBASE.'/framework/MotherController.php');
+			$c = new MotherController($this->db, $this->auth, NULL);
+			$c->renderErrorPage(404, $this->navigation);
 		}
 		
 		if (!$route_access){
 			//route no access --> 403 Access Denied
-			$this->renderErrorPage(403);
+			require_once (SYSBASE.'/framework/MotherController.php');
+			$c = new MotherController($this->db, $this->auth, NULL);
+			$c->renderErrorPage(403, $this->navigation);
 		}
 	}
 	
@@ -194,37 +200,13 @@ class Router {
 				$c->{$routedata[1]}($routedata);
 			} else {
 				error_log("Router: Controller Action '{$routedata[1]}' could not be found.");
-				$this->renderErrorPage(404);
+				$c->renderErrorPage(404, $this->navigation);
 			}
 		} else {
 			error_log("Router: Controller '{$routedata[0]}' could not be found.");
-			$this->renderErrorPage(404);
+			require_once (SYSBASE.'/framework/MotherController.php');
+			$c = new MotherController($this->db, $this->auth, NULL);
+			$c->renderErrorPage(404, $this->navigation);
 		}
-	}
-	
-	/**
-	 * handles and show html error codes
-	 * 
-	 * @param integer $code HTML error code
-	 */
-	function renderErrorPage($code){
-		$t = new template($this->auth, $this->navigation);
-		if ($code === 404){
-			http_response_code (404);
-			$t->setTitlePrefix('404 - Seite nicht gefunden');
-			$t->printPageHeader();
-			include (SYSBASE."/templates/".TEMPLATE."/404.phtml");
-			$t->printPageFooter();
-		} else if ($code === 403){
-			http_response_code (403);
-			$t->setTitlePrefix('403 - Zugriff verweigert');
-			$t->printPageHeader();
-			include (SYSBASE."/templates/".TEMPLATE."/403.phtml");
-			$t->printPageFooter();
-		} else {
-			error_log("Router: Unhandled error code: $code");
-		}
-		$this->db->close();
-		die();
 	}
 }

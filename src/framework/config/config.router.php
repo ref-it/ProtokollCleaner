@@ -15,7 +15,8 @@ $routes = [
 		'admin'				=> ['ref-it',	'admin', 	'admin'],
 	],
 	'POST' => [
-		'admin/savemail'	=> ['ref-it',	'admin', 	'save_mail'],
+		'admin/savemail'	=> ['ref-it',	'admin', 	'mail_update_setting'],
+		'admin/testmail'	=> ['ref-it',	'admin', 	'mail_testmessage'],
 	]
 ];
 

@@ -67,7 +67,7 @@ class MotherController extends JsonController {
 	 * @param integer $code HTML error code
 	 */
 	function renderErrorPage($code, $nav){
-		if ($this->t == NULL) $this->t = new template($this->auth, $nav)
+		if ($this->t == NULL) $this->t = new template($this->auth, $nav);
 		if ($code === 404){
 			http_response_code (404);
 			$this->t->setTitlePrefix('404 - Seite nicht gefunden');

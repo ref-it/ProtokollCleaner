@@ -1,10 +1,9 @@
 <?php
 /**
- * AJAX HANFLER admin
- * Application starting point
+ * CONTROLLER Admin Controller
  *
- * @package         TODO
- * @category        script
+ * @package         Stura - Referat IT - ProtocolHelper
+ * @category        controller
  * @author 			michael g
  * @author 			Stura - Referat IT <ref-it@tu-ilmenau.de>
  * @since 			17.02.2018
@@ -12,45 +11,40 @@
  * @platform        PHP
  * @requirements    PHP 7.0 or higher
  */
-// ===== load framework =====
-if (!file_exists ( dirname(__FILE__, 4).'/config.php' )){
-	echo 'No configuration file found!. Please create and edit "config.php".';
-	die();
-}
-require_once (dirname(__FILE__, 4).'/config.php');
+ 
+require_once (SYSBASE . '/framework/MotherController.php');
 
-class currentJsonHandler extends jsonHandler {
-	function __construct(){
-		parent::__construct();
-		$this->functionAccess['function_name'] = 'permission1';
-		$this->functionAccess['update_mail_setting'] = 'admin';
-		$this->functionAccess['send_testmail'] = 'admin';
-	}
+class AdminController extends MotherController {
+	
 	/**
-	 * handles json request: dummy ajax handler
+	 * 
+	 * @param database $db
+	 * @param AuthHandler $auth
+	 * @param template $template
 	 */
-	public function silmph_function_name(){
-		if (isset($_POST['data'])){
-			//do something
-			//maybe access database
-			//$this->db->doSomething();
-			$this->json_result = array('success' => true, 'msg' => 'ok', 'id'=> 4, 'name' => 'return text');
-			$this->json_result = array('success' => false, 'eMsg' => 'Out Error Message');
-				
-			$this->print_json_result();
-		
-		} else {
-			$this->access_denied_json();
-		}
+	function __construct($db, $auth, $template){
+		parent::__construct($db, $auth, $template);
 	}
+	
 	/**
-	 * handles json request: admin update email settings
+	 * ACTION admin
 	 */
-	public function silmph_update_mail_setting(){
+	public function admin(){
+		$this->t->setTitlePrefix('Admin');
+		$this->t->appendJsLink('admin.js');
+		$this->t->printPageHeader();
+		$this->includeTemplate(__FUNCTION__);
+		$this->t->printPageFooter();
+	}
+	
+	/**
+	 * ACTION JSON save mail settings
+	 */
+	public function mail_update_setting(){
 		if (isset($_POST['value']) && isset($_POST['data'])){
 			$data_value = trim(strip_tags($_POST['value']));
 			$data_key = $typed_username = trim(preg_replace("/^[^a-z]+|[^a-z_]*|[^a-z]+$/", "", $_POST['data']));
-	
+		
 			if ($data_key != '' && $data_key == $_POST['data']){
 				$data_key = '' . strtoupper($data_key);
 				//lookup customers
@@ -134,7 +128,7 @@ class currentJsonHandler extends jsonHandler {
 							}
 							break;
 						default:
-							$this->access_not_found();
+							$this->json_not_found();
 							break;
 					}
 					if ($valid) {
@@ -152,19 +146,16 @@ class currentJsonHandler extends jsonHandler {
 						$this->print_json_result();
 					}
 				}
-	
+		
 			} else {
-				$this->access_denied_json();
+				$this->json_access_denied();
 			}
 		} else {
-			$this->access_denied_json();
+			$this->json_access_denied();
 		}
 	}
 	
-	/**
-	 * handles json request: admin update email settings
-	 */
-	public function silmph_send_testmail(){
+	public function mail_testmessage(){
 		$settings=$this->db->getSettings();
 		if(( MAIL_TEST_TIMEOUT * 60 ) - (time() - $settings['LAST_TESTMAIL']) > 0){
 			$this->json_result = array('success' => false, 'eMsg' => 'In den letzten '.MAIL_TEST_TIMEOUT.' Minuten wurde bereits eine Test-EMail versendet. Prüfen Sie bitte Ihren Posteingang.');
@@ -173,13 +164,13 @@ class currentJsonHandler extends jsonHandler {
 			$initOk = $mailer->init($settings);
 			$mail_address = '';
 			if($initOk){
-				if ($_SESSION['USER_SET']['email'] != '' ) $mail_address = $_SESSION['USER_SET']['email'];
+				if ($this->auth->getUserMail() != '' ) $mail_address = $this->auth->getUserMail();
 				else if ($settings['MAIL_FROM'] != '' ) $mail_address = $settings['MAIL_FROM'];
 				$mailer->mail->addAddress($mail_address);
 				$mailer->mail->Subject = "Testmail - ".BASE_TITLE;
 					
 				$mailer->bindVariables(array(
-					'name' 			=> $_SESSION['USER_SET']['username'],
+					'name' 			=> $this->auth->getUserFullName().' ('.$this->auth->getUsername().')',
 					'time' 			=> date_create()->format('H:i d.m.Y'),
 					'base_url' 		=> BASE_URL
 				));
@@ -200,13 +191,3 @@ class currentJsonHandler extends jsonHandler {
 		$this->print_json_result();
 	}
 }
-
-$jh = currentJsonHandler::getInstance();
-
-if (isset($_POST['mfunction'])&& $_POST['mfunction']==='function_name'){
-	//TODO maybe create and call input validator
-	$jh->call('function_name');
-} else {
-	$jh->call('not_found');
-}
-?>
