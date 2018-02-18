@@ -6,7 +6,7 @@
  * @since 20.03.2017
  * @package SILMPH_framework
  */
-class SilmphMailer
+class MailHandler
 {
 	/**
 	 * 
@@ -114,7 +114,7 @@ class SilmphMailer
 	 */
 	public function bindVariables($set){
 		if (!is_array($set)){
-			throw (new Exception("ERROR: Silmph_Mailer: BindVariables: Das gegebene Datenset ist kein Array. Benötigtes Format: array('key' => 'value')"));
+			throw (new Exception("ERROR: MailHandler: BindVariables: Das gegebene Datenset ist kein Array. Benötigtes Format: array('key' => 'value')"));
 			return false;
 		}
 		$this->templateVars = $set;
@@ -131,7 +131,7 @@ class SilmphMailer
 	public function addTemplateVariable($key, $value){
 		$key = trim('' . $key);
 		if ($key === null || !is_string('' . $key) || $key = ''){
-			throw (new Exception('ERROR: Silmph_Mailer: AddTemplateVariable: Ungültige Variable: $key'));
+			throw (new Exception('ERROR: MailHandler: AddTemplateVariable: Ungültige Variable: $key'));
 			return false;
 		}
 		$this->templateVars[$key] = $value;
@@ -151,7 +151,7 @@ class SilmphMailer
 				echo 'Mailinitialisierung fehlgeschlagen. Bitte Informieren Sie den Webseitenbetreiber über diesen Fehler.';
 			}
 			if ($toSesstionMessage){
-				$_SESSION['MESSAGES'][] = array('Mailinitialisierung fehlgeschlagen. Bitte Informieren Sie den Webseitenbetreiber über diesen Fehler.', 'WARNING');
+				$_SESSION['SILMPH']['MESSAGES'][] = array('Mailinitialisierung fehlgeschlagen. Bitte Informieren Sie den Webseitenbetreiber über diesen Fehler.', 'WARNING');
 			}
 			return false;
 		} else if ($this->templateName == ''){
@@ -159,7 +159,7 @@ class SilmphMailer
 				echo 'Kein Mail-Template gewählt. Bitte Informieren Sie den Webseitenbetreiber über diesen Fehler.';
 			}
 			if ($toSesstionMessage){
-				$_SESSION['MESSAGES'][] = array('Kein Mail-Template gewählt. Bitte Informieren Sie den Webseitenbetreiber über diesen Fehler.', 'WARNING');
+				$_SESSION['SILMPH']['MESSAGES'][] = array('Kein Mail-Template gewählt. Bitte Informieren Sie den Webseitenbetreiber über diesen Fehler.', 'WARNING');
 			}
 			ob_start();
 			debug_print_backtrace(0, 5);
@@ -172,7 +172,7 @@ class SilmphMailer
 				echo 'Mail-Template konnte nicht gefunden werden. Bitte Informieren Sie den Webseitenbetreiber über diesen Fehler.';
 			}
 			if ($toSesstionMessage){
-				$_SESSION['MESSAGES'][] = array('Mail-Template konnte nicht gefunden werden. Bitte Informieren Sie den Webseitenbetreiber über diesen Fehler.', 'WARNING');
+				$_SESSION['SILMPH']['MESSAGES'][] = array('Mail-Template konnte nicht gefunden werden. Bitte Informieren Sie den Webseitenbetreiber über diesen Fehler.', 'WARNING');
 			}
 			ob_start();
 			debug_print_backtrace(0, 5);
@@ -207,7 +207,7 @@ class SilmphMailer
 					echo 'Message could not be sent.'.(($showPhpmailError)? ' '.$this->mail->ErrorInfo : '');
 				}
 				if ($toSesstionMessage){
-					$_SESSION['MESSAGES'][] = array('Die Nachricht konnte nicht gesendet werden.'.(($showPhpmailError)? ' '.$this->mail->ErrorInfo : ''), 'WARNING');
+					$_SESSION['SILMPH']['MESSAGES'][] = array('Die Nachricht konnte nicht gesendet werden.'.(($showPhpmailError)? ' '.$this->mail->ErrorInfo : ''), 'WARNING');
 				}
 				ob_start();
 				debug_print_backtrace(0, 5);
@@ -219,7 +219,7 @@ class SilmphMailer
 					if (!$suppressOKMsg) echo 'Die E-Mail wurde erfolgreich verschickt.';
 				}
 				if ($toSesstionMessage){
-					if (!$suppressOKMsg) $_SESSION['MESSAGES'][] = array('Die E-Mail wurde erfolgreich verschickt.', 'SUCCESS');
+					if (!$suppressOKMsg) $_SESSION['SILMPH']['MESSAGES'][] = array('Die E-Mail wurde erfolgreich verschickt.', 'SUCCESS');
 				}
 				return true;
 			}

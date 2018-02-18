@@ -72,14 +72,14 @@ class  AuthHandler{
 		if ($_SESSION['SILMPH']['USER_ID'] !== 0 && ( isset($_GET['logout']) || strpos($_SERVER['REQUEST_URI'], '&logout=1') !== false || strpos($_SERVER['REQUEST_URI'], '?logout=1') !== false )){
 			session_destroy();
 			session_start();
-			$_SESSION['SILMPH']['MESSAGE'] = ["Sie haben sich erfolgreich abgemeldet."];
-			$_SESSION['SILMPH']['MESSAGE'][] = 'New Session Started!';
+			$_SESSION['SILMPH']['MESSAGES'] = [["Sie haben sich erfolgreich abgemeldet.", 'INFO']];
+			$_SESSION['SILMPH']['MESSAGES'][] = ['New Session Started!', 'INFO'];
 			header('Location: '.BASE_URL . $_SERVER['PHP_SELF']);
 			die();
 		}
 		
 		if ($_SESSION['SILMPH']['USER_ID'] === 0 && ( isset($_GET['login']) || strpos($_SERVER['REQUEST_URI'], '&login=1') !== false || strpos($_SERVER['REQUEST_URI'], '?login=1') !== false )){
-			$_SESSION['SILMPH']['MESSAGE'][] = ["Sie haben sich erfolgreich angemeldet."];
+			$_SESSION['SILMPH']['MESSAGES'][] = ["Sie haben sich erfolgreich angemeldet.", 'INFO'];
 			$_SESSION['SILMPH']['USER_ID'] = 1;
 		}
 		

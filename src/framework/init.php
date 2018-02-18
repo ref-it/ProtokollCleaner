@@ -111,7 +111,7 @@ define('MAIL_LANGUAGE_PATH', dirname(__FILE__).'/external_libraries/phpmailer/la
 /**
  * include framework mail script
  */
-require_once (dirname(__FILE__)."/SilmphMailer.php");
+require_once (dirname(__FILE__)."/MailHandler.php");
 
 /**
  * include session handler

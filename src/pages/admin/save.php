@@ -169,7 +169,7 @@ class currentJsonHandler extends jsonHandler {
 		if(( MAIL_TEST_TIMEOUT * 60 ) - (time() - $settings['LAST_TESTMAIL']) > 0){
 			$this->json_result = array('success' => false, 'eMsg' => 'In den letzten '.MAIL_TEST_TIMEOUT.' Minuten wurde bereits eine Test-EMail versendet. Prüfen Sie bitte Ihren Posteingang.');
 		} else {
-			$mailer = new SilmphMailer();
+			$mailer = new MailHandler();
 			$initOk = $mailer->init($settings);
 			$mail_address = '';
 			if($initOk){
