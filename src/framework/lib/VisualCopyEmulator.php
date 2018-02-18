@@ -74,7 +74,7 @@ class VisualCopyEmulator
     }
     private static function generateRemovedLine($line, $ln) :string
     {
-        $lineresult = "<tr style='background-color: lightcoral;'>".PHP_EOL;
+        $lineresult = "<tr style='background-color: ". Main::$removedLineColor .";'>".PHP_EOL;
         $lineresult = $lineresult."<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none; '>".strval($ln)."</td>".PHP_EOL;
         $lineresult = $lineresult."<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'></td>".PHP_EOL;
         $lineresult = $lineresult."<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'>-</td>".PHP_EOL;
@@ -85,7 +85,7 @@ class VisualCopyEmulator
     }
     private static function generateCopiedLine($line, $ln) :string
     {
-        $lineresult = "<tr style='background-color: lightgreen;'>".PHP_EOL;
+        $lineresult = "<tr style='background-color: ". Main::$copiedLineColor .";'>".PHP_EOL;
         $lineresult = $lineresult."<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'>".strval($ln)."</td>".PHP_EOL;
         $lineresult = $lineresult."<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'>+</td>".PHP_EOL;
         $lineresult = $lineresult."<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'></td>".PHP_EOL;
@@ -96,7 +96,7 @@ class VisualCopyEmulator
     }
     private static function generateCopiedChangedLine($line, $ln) :string
     {
-        $lineresult = "<tr style='background-color: lightsteelblue;'>".PHP_EOL;
+        $lineresult = "<tr style='background-color: ". Main::$copiedEditedLineColor .";'>".PHP_EOL;
         $lineresult = $lineresult."<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'>".strval($ln)."</td>".PHP_EOL;
         $lineresult = $lineresult."<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'>+</td>".PHP_EOL;
         $lineresult = $lineresult."<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'></td>".PHP_EOL;

@@ -19,3 +19,6 @@ Main::$PostUrl = "http://localhost"; //destination for Posting of financial deci
 Main::$startMonth = 01;    //Day,
 Main::$startYear  = 2016;  //Month and
 Main::$startday   = 01;    //Y
+Main::$copiedLineColor = "lightgreen"; #Color for copied Line in Diff
+Main::$copiedEditedLineColor = "lightsteelblue"; #Color for copied edited Line in Diff
+Main::$removedLineColor = "lightcoral"; #Standard Color for removed Line in Diff

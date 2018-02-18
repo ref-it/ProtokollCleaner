@@ -28,6 +28,9 @@ class Main
     public static $startMonth;    //Day,
     public static $startYear;  //Month and
     public static $startday;    //Year of First protokoll which will be cleaned
+    public static $copiedLineColor;
+    public static $copiedEditedLineColor;
+    public static $removedLineColor;
 
     //Arbeitsvariablen
     public static $financialResolution = array();
