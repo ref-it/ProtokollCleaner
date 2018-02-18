@@ -57,9 +57,9 @@ class Main
         Useroutput::PrintHorizontalSeperator();
     }
 
-    public function generateDiff($Protokoll)
+    public function generateDiff($Protokoll) : string
     {
-        VisualCopyEmulator::generateDiffTable($Protokoll);
+        return VisualCopyEmulator::generateDiffTable($Protokoll);
     }
 
     public function Main()
@@ -104,7 +104,8 @@ class Main
             }
             $Ausgabe = $Ausgabe . $this->copy($file->getFilename(), $fn, $check);
             Useroutput::PrintLine($Ausgabe);
-            VisualCopyEmulator::generateDiffTable(InOutput::ReadFile($file->getFilename()),$check);
+            $print = VisualCopyEmulator::generateDiffTable(InOutput::ReadFile($file->getFilename()),$check);
+            echo $print;
             $this->files[] = $file;
         }
         Useroutput::PrintHorizontalSeperator();
