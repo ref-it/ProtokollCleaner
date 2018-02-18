@@ -42,16 +42,12 @@ class Main
     {
         if(file_exists(dirname(__FILE__).'/../conf/config.php')) {
             include dirname(__FILE__).'/../conf/config.php';
-            if(Main::$debug) {
-                Useroutput::PrintLineDebug("Die Config wurde genutzt.");
-            }
+            Useroutput::PrintLineDebug("Die Config wurde genutzt.");
         }
         else
         {
             include dirname(__FILE__).'/../conf/config.default.php';
-            if(Main::$debug) {
-                Useroutput::PrintLineDebug("Die Reserve-Config wurde genutzt.");
-            }
+            Useroutput::PrintLineDebug("Die Reserve-Config wurde genutzt.");
         }
         Useroutput::PrintHorizontalSeperator();
     }
@@ -154,9 +150,7 @@ class Main
         $check = substr($Name, 0, 10);
         $expression = "/^[12][09][0129][0123456789]-[01][0123456789]-[0123][0123456789]/";
         if(preg_match($expression,$check) === false) {
-            if (Main::$debug) {
-                Useroutput::PrintLineDebug("File Discarded: " . $Filename);
-            }
+            Useroutput::PrintLineDebug("File Discarded: " . $Filename);
             return -1;
         }
         $d = substr($Name, 8, 2);
@@ -187,7 +181,9 @@ class Main
                     if (!(strpos($line, "<del>") !== false))
                     {
                         $line = $this->formatLine($line, true);
-                        Useroutput::PrintLineDebug($line);
+                        if (strpos($line, "AlreadyInside") === false) {
+                            Useroutput::PrintLineDebug($line);
+                        }
                     }
                 }
                 else
@@ -195,7 +191,9 @@ class Main
                     if ((!(strpos($line, "<del>") !== false)) and ! Main::$onlyNew)
                     {
                         $line = $this->formatLine($line, false);
-                        Useroutput::PrintLineDebug($line);
+                        if (strpos($line, "AlreadyInside") === false) {
+                            Useroutput::PrintLineDebug($line);
+                        }
                     }
                 }
             }
@@ -209,7 +207,7 @@ class Main
         $lineStart = str_replace(" ", "", $lineStart);
         if($this->checkAlreadyPostedData($lineStart))
         {
-            return  "";
+            return  "AlreadyInside";
         }
         if($withToken)
         {
@@ -244,14 +242,9 @@ class Main
         curl_setopt($curl, CURLOPT_POSTFIELDS, $content);
         //execute Postback
         $ret = curl_exec($curl);
-        if (Main::$debug)
-        {
-            Useroutput::PrintLineDebug($ret);  //kann auch eine bel. if abfrage zum testen des ergebnisses sein
-        }
+        Useroutput::PrintLineDebug($ret);  //kann auch eine bel. if abfrage zum testen des ergebnisses sein
         $status = curl_getinfo($curl, CURLINFO_HTTP_CODE); //tut bestimmt sinnvolle dinge
-        if(Main::$debug) {
-            Useroutput::PrintLineDebug($status);
-        }
+        Useroutput::PrintLineDebug($status);
         Useroutput::PrintHorizontalSeperator();
         if(strpos($status, "200") !== false)
         {
@@ -287,9 +280,7 @@ class Main
 
     function writeHelperFile()
     {
-        if(Main::$debug) {
-            Useroutput::PrintLineDebug("write Storagefile");
-        }
+        Useroutput::PrintLineDebug("write Storagefile");
         if (InOutput::WriteFile(Main::$helperFilePath, $this->knownDecissions) === false)
         {
             exit(11);
