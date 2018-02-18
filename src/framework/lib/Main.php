@@ -11,7 +11,7 @@ include 'Date.php';
 include 'File.php';
 include 'Useroutput.php';
 include 'InOutput.php';
-//include 'CopyEmulator.php';
+include 'VisualCopyEmulator.php';
 
 class Main
 {
@@ -52,6 +52,11 @@ class Main
             }
         }
         Useroutput::PrintHorizontalSeperator();
+    }
+
+    public function generateDiff($Protokoll)
+    {
+        VisualCopyEmulator::generateDiffTable($Protokoll);
     }
 
     public function Main()
@@ -96,6 +101,7 @@ class Main
             }
             $Ausgabe = $Ausgabe . $this->copy($file->getFilename(), $fn, $check);
             Useroutput::PrintLine($Ausgabe);
+            VisualCopyEmulator::generateDiffTable(InOutput::ReadFile($file->getFilename()),$check);
             $this->files[] = $file;
         }
         Useroutput::PrintHorizontalSeperator();
