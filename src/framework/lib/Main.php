@@ -12,6 +12,7 @@ include 'File.php';
 include 'Useroutput.php';
 include 'InOutput.php';
 include 'VisualCopyEmulator.php';
+include 'DatabaseConnector.php';
 
 class Main
 {
@@ -31,11 +32,12 @@ class Main
     public static $copiedLineColor;
     public static $copiedEditedLineColor;
     public static $removedLineColor;
+    public static $notDoubled;
 
     //Arbeitsvariablen
     public static $financialResolution = array();
+    public static $DatabaseCon;
     private $files;
-    private $knownDecissions;
 
 
     public function __construct() // or any other method
@@ -49,6 +51,7 @@ class Main
             include dirname(__FILE__).'/../conf/config.default.php';
             Useroutput::PrintLineDebug("Die Reserve-Config wurde genutzt.");
         }
+        Main::$DatabaseCon = new DatabaseConnector();
         Useroutput::PrintHorizontalSeperator();
     }
 
@@ -59,7 +62,6 @@ class Main
 
     public function Main()
     {
-        $this->knownDecissions = array();
         $this->files = array();
         $alledateien = scandir(Main::$inputpath); //Ordner "files" auslesen
         foreach ($alledateien as $datei) { // Ausgabeschleife
@@ -90,11 +92,27 @@ class Main
             $check = $this->checkApproved($file->getgermanDate());
             if($check)
             {
+                if (Main::$DatabaseCon->alreadyPublishedFinal($file->getOutputFilename()) and Main::$notDoubled)
+                {
+                    Useroutput::PrintLineDebug('Already Published as Final.');
+                    continue;
+                }
                 $Ausgabe = "Published as Final: ";
+                Main::$DatabaseCon->newPublishedFinal($file->getOutputFilename());
+                if (Main::$DatabaseCon->alreadyPublishedDraft($file->getOutputFilename()))
+                {
+                    Main::$DatabaseCon->removeFromDraft($file->getOutputFilename());
+                }
             }
             else
             {
+                if (Main::$DatabaseCon->alreadyPublishedDraft($file->getOutputFilename()) and Main::$notDoubled)
+                {
+                    Useroutput::PrintLineDebug('Already Published as Draft.');
+                    continue;
+                }
                 $Ausgabe = "Published as Draft: ";
+                Main::$DatabaseCon->newPublishedDraft($file->getOutputFilename());
             }
             $Ausgabe = $Ausgabe . $this->copy($file->getFilename(), $fn, $check);
             Useroutput::PrintLine($Ausgabe);
@@ -102,12 +120,10 @@ class Main
             $this->files[] = $file;
         }
         Useroutput::PrintHorizontalSeperator();
-        $this->readAlreadyKnownFinancialDecissions();
         $this->exportFinancial();
         if (Main::$postData) {
             $this->sendData();
         }
-        $this->writeHelperFile();
     }
     function copy($fileName, $fn, $check) : string
     {
@@ -230,7 +246,7 @@ class Main
             Main::$financialResolution[] = $lineStart;
             $lineS = $lineStart . "#-#" . "not found";
         }
-        $this->knownDecissions[] = $lineStart . PHP_EOL;
+        Main::$DatabaseCon->newFinancialDecission($lineStart);
         return $lineS;
     }
 
@@ -262,34 +278,9 @@ class Main
         curl_close($curl); //beendet verbindung, oder so
     }
 
-    function readAlreadyKnownFinancialDecissions()
-    {
-        foreach (InOutput::ReadFile(Main::$helperFilePath)as $line)
-        {
-            # do same stuff with the $line
-            $this->knownDecissions[] = $line;
-        }
-    }
-
     function checkAlreadyPostedData($DecissionKey):bool
     {
-        foreach ($this->knownDecissions as $line)
-        {
-            if (strpos($line, $DecissionKey) !== false)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    function writeHelperFile()
-    {
-        Useroutput::PrintLineDebug("write Storagefile");
-        if (InOutput::WriteFile(Main::$helperFilePath, $this->knownDecissions) === false)
-        {
-            exit(11);
-        }
+        return Main::$DatabaseCon->knownDecissionFinancial($DecissionKey);
     }
 }
 

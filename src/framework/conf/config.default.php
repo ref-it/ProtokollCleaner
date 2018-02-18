@@ -22,3 +22,4 @@ Main::$startday   = 01;    //Y
 Main::$copiedLineColor = "lightgreen"; #Color for copied Line in Diff
 Main::$copiedEditedLineColor = "lightsteelblue"; #Color for copied edited Line in Diff
 Main::$removedLineColor = "lightcoral"; #Standard Color for removed Line in Diff
+Main::$notDoubled = false; #do you want copy protokolls doubled
