@@ -29,30 +29,54 @@ class template
 {
 	/**
 	 * 
-	 * @var database $db
 	 * @var array $scripts
 	 * @var array $css
 	 * @var array $modals
 	 */
-	private $db;
 	private $scripts;
 	private $css;
 	private $modals;
+	
+	/**
+	 * AuthHandler
+	 */
+	private $auth;
+	
+	/**
+	 * $navigation array
+	 * 
+	 * array
+	 */
+	private $nav;
+	
+	/**
+	 * current url path
+	 * string
+	 */
+	private $path;
 
 	/**
 	 * 
-	 * @var string $title_prefix
-	 * @var boolean $header_printed
-	 * @var string|boolean $logged_in_user
-	 * @var string $extra_body_class
+	 * string $title_prefix
 	 */
 	private $title_prefix;
+	
+	/**
+	 * boolean $header_printed
+	 */
 	private $header_printed;
+	
+	/**
+	 * string|boolean $logged_in_user
+	 */
 	private $logged_in_user;
+	
+	/**
+	 * string $extra_body_class
+	 */
 	private $extra_body_class;
 	
 	/**
-	 * 
 	 * @var boolean $_isLogout
 	 */
 	private $_isLogout = false;
@@ -63,8 +87,13 @@ class template
 	 * @param boolean $appendDefaultCSS append default css scripts set to template
 	 * @param boolean $appendMessages append message js to template
 	 */
-	function __construct($appendDefaultScripts = true, $appendDefaultCSS = true, $appendMessages = true)
+	function __construct(
+		$auth = NULL, $navigation=array(), $path = '',
+		$appendDefaultScripts = true, $appendDefaultCSS = true, $appendMessages = true)
 	{
+		$this->auth = $auth;
+		$this->nav = $navigation;
+		$this->path = $path;
 		$this->scripts = array();
 		$this->css = array();
 		$this->modals = array();
@@ -73,26 +102,21 @@ class template
 		$this->logged_in_user = false;
 		$this->extra_body_class = '';
 		
-		if(isset($_SESSION['LOGOUT'])){
-			$this->_isLogout = $_SESSION['LOGOUT'];
-			unset($_SESSION['LOGOUT']);
-		}
-		if(isset($_SESSION['USER_ID']) && $_SESSION['USER_ID'] > 0){
-			$this->logged_in_user = $_SESSION['USER_SET']['username'];
+		if(isset($auth)){
+			$this->logged_in_user = $this->auth->getUserFullName();
 		}
 		
-		global $db;
-		$this->db = $db;
 		if ($appendDefaultScripts){
-			$this->appendJsLink('jquery-3.1.1.min.js');
-			$this->appendJsLink('screenfull.js');
+			$this->appendJsLink('libs/jquery-3.1.1.min.js');
+			$this->appendJsLink('libs/bootstrap.min.js');
+			$this->appendJsLink('libs/screenfull.js');
 			$this->appendJsLink('base.js');
 		}
 		if ($appendDefaultCSS){
+			//TODO $this->appendCssLink('bootstrap.min.css', 'screen,projection');
+			$this->appendCssLink('font-awesome.css');
 			$this->appendCssLink('style.css', 'screen,projection');
 			$this->appendCssLink('print.css', 'print');
-			$this->appendCssLink('fontello.css');
-			$this->appendCssLink('fontello-ie7.css');
 		}
 		if ($appendMessages){
 			//info admin creation possible
@@ -108,11 +132,11 @@ class template
 				$this->appendJsInline("$(document).ready(function(){ silmph__add_message('".$this->_isLogout[0]."', MESSAGE_TYPE_".$this->_isLogout[1].", 3000); });");
 			}
 			//messages
-			if(count($_SESSION['MESSAGES']) > 0){
-				foreach ($_SESSION['MESSAGES'] as $msg){
+			if(count($_SESSION['SILMPH']['MESSAGES']) > 0){
+				foreach ($_SESSION['SILMPH']['MESSAGES'] as $msg){
 					$this->appendJsInline("$(document).ready(function(){ silmph__add_message('".$msg[0]."', MESSAGE_TYPE_".$msg[1].", 3000); });");
 				}
-				$_SESSION['MESSAGES'] = array();
+				$_SESSION['SILMPH']['MESSAGES'] = array();
 			}
 		}
 	}
@@ -236,14 +260,14 @@ class template
 	 */
 	public function printPageHeader(){
 		$this->header_printed = true;
-		include (dirname(__FILE__)."/../templates/".TEMPLATE."/header.phtml");
+		include (dirname(__FILE__, 2)."/templates/".TEMPLATE."/header.phtml");
 	}
 
 	/**
 	 * print template footer
 	 */
 	public function printPageFooter(){
-		include (dirname(__FILE__)."/../templates/".TEMPLATE."/footer.phtml");
+		include (dirname(__FILE__, 2)."/templates/".TEMPLATE."/footer.phtml");
 	}
 
 	/**
@@ -256,6 +280,26 @@ class template
 		$result .= BASE_TITLE;
 		if ($echo) echo $result;
 		return $result;
+	}
+	
+	/**
+	 * @return array list of current available navigation entries
+	 */
+	public function getNavigation(){
+		$out = [];
+		if ($this->auth !== NULL){
+			foreach ($this->nav as $route => $data){
+				if ($this->auth->hasGroup($data[0])){
+					$key = $route;
+					if ($key != '/') $key = '/'.$key;
+					$out[$key] = array_slice($data, 1);
+					if ($this->path === $route){
+						$out[$key]['active'] = true;
+					}
+				}
+			}
+		}
+		return $out;
 	}
 }
 ?>

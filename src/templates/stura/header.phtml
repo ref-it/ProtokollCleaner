@@ -37,11 +37,11 @@
 		<input type="checkbox" id="menu_toggle_check" value="0">
 		<header class="header" id="page_header" style="position: fixed;">
 			<a href="<?php echo BASE_URL; ?>" target="_self">
-				<img class="logo noprint" src="/images/logo_wt.png" width="83" height="39" /><img class="logo printonly" src="/images/logo.png" width="83" height="39" /><img class="logo_fav noprint" src="/images/favicon.ico"/></a> Bestellinfosystem<span>Vertragshändler für DOOSAN, MOXY und SCHAEFF</span>
+				<img class="logo noprint" src="/images/logo_wt.png" width="83" height="39" /><img class="logo printonly" src="/images/logo.png" width="83" height="39" /><img class="logo_fav noprint" src="/images/favicon.ico"/></a> Protokollautomatisierung
 			<div class="menubutton_wrapper" style="position: fixed;">
-				<div tabindex="0" class="help_printbutton" onclick="printPage();">&#xe803;</div>
+				<div tabindex="0" class="help_printbutton" onclick="printPage();">&#xf02f;</div>
 				<?php if($this->logged_in_user){ ?>
-					<form action="?logout=1" method="POST" class="logout"><input type="submit" tabindex="0" value="&#xe812;"></form>
+					<form action="<?= $this->auth->getLogoutURL(); ?>" method="POST" class="logout"><input type="submit" tabindex="0" value="&#xf011;"></form>
 				 <?php } ?>
 				<label tabindex="0" class="noselect menu_toggle" for="menu_toggle_check">&#xf0c9;</label>
 			</div>
@@ -51,23 +51,16 @@
 			<div class="sidenav menu">
 				<div class="scroll_relative">
 					<ul class="menu-top">
-						<li class="menu-first<?php if($this->title_prefix == '') echo ' menu-current';?>">
-							<a href="/index.php" target="_self" title="Home"><i>&#xe816;</i><span><?php echo ($_SESSION['USER_ID']==0)? 'Login' : 'Home'; ?></span></a>
-						</li>
-						<?php if (function_exists('checkUserPermission')){ ?>
-							<?php if (checkUserPermission('permission1')||checkUserPermission('permission2')){ ?>
-								<li class="<?php if($this->title_prefix == 'Live') echo ' menu-current';?>">
-									<a href="/pages/page1/index.php" target="_self" title="Page 1"><i>&#xf0ca;</i><span>Page 1</span></a></li>
-							<?php } ?>
-							<?php if (checkUserPermission('user')){ ?>
-								<li class="<?php if($this->title_prefix == 'Benutzereinstellungen') echo ' menu-current';?>">
-									<a href="/pages/user/index.php" target="_self" title="Benutzereinstellungen"><i>&#xf2be;</i><span>Benutzer</span></a></li>
-							<?php } ?>
-							<?php if (checkUserPermission('admin')){ ?>
-								<li class="<?php if($this->title_prefix == 'Admin') echo ' menu-current';?>">
-									<a href="/pages/admin/index.php" target="_self" title="Admin"><i>&#xe817;</i><span>Admin</span></a></li>
-							<?php } ?>
-						<?php } ?>
+						<?php $tnav = $this->getNavigation();
+							$counter = 0;
+							foreach ($tnav as $route => $linkdata){ ?>
+								<li class="<?= (($counter == 0)? 'menu-first':'').((isset($linkdata['active']))?' menu-current':'') ?>">
+									<a href="<?= $route?>" target="_self" title="<?= $linkdata[0] ?>"><i><?= $linkdata[1] ?></i><span><?= $linkdata[0] ?></span></a>
+								</li>
+							<?php 
+								$counter++;
+							}
+						?>
 					</ul>
 					<div class="nav_footer_placeholder"></div>
 					<footer>
