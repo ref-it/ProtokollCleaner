@@ -1,6 +1,3 @@
-[submodule "src/framework/external_libraries/crypto"]
-	path = src/framework/external_libraries/crypto
-	url = https://github.com/defuse/php-encryption
 [submodule "src/framework/external_libraries/phpmailer"]
 	path = src/framework/external_libraries/phpmailer
 	url = https://github.com/PHPMailer/PHPMailer.git
