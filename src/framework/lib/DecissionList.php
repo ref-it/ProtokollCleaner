@@ -164,8 +164,13 @@ class DecissionList
     }
     public function processProtokoll($Protokoll, $Legislatur, $fn)
     {
+        if (Main::$DatabaseCon->alreadyOnDecissionList($fn))
+        {
+            return;
+        }
         $SitzungsNummer = $this->crawlSitzungsnummer($Protokoll);
         $this->crawlDecission($Protokoll, $Legislatur, $SitzungsNummer);
         $this->addDecissions($fn, $SitzungsNummer);
+        Main::$DatabaseCon->addToDecissionList($fn);
     }
 }

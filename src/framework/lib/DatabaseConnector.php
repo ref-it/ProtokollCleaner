@@ -11,12 +11,14 @@ class DatabaseConnector
     private $publishedDraft;
     private $publishedFinal;
     private $financialDecission;
+    private $decissionList;
 
     public function __construct() // or any other method
     {
         $this->publishedDraft = Array();
         $this->publishedFinal = Array();
         $this->financialDecission = Array();
+        $this->decissionList = array();
         self::readHelperFile();
     }
 
@@ -31,13 +33,18 @@ class DatabaseConnector
                 $this->publishedFinal[] = substr($changedLine, 2);
             } else if (substr($line, 0, 2) === "fd") {
                 $this->financialDecission[] = substr($changedLine, 2);
+            } else if (substr($line, 0, 2) === "dl") {
+                $this->decissionList[] = substr($changedLine, 2);
             }
         }
     }
-
+    public function alreadyOnDecissionList($ProtokollName)
+    {
+        return in_array($ProtokollName, $this->decissionList);
+    }
     public function knownDecissionFinancial($Decssion): bool
     {
-        return in_array($Decssion, $this->financialDecission, false);
+        return in_array($Decssion, $this->financialDecission);
     }
     public function alreadyPublishedFinal($fn): bool
     {
@@ -62,6 +69,11 @@ class DatabaseConnector
         $this->financialDecission[] = $DecissionNumber;
         $this->writeHelperFile();
     }
+    public function addToDecissionList($ProtokollName)
+    {
+        $this->decissionList[] = $ProtokollName;
+        $this->writeHelperFile();
+    }
     public function removeFromDraft($fn)
     {
         $this->publishedDraft = array_diff($this->publishedDraft, array($fn));
@@ -81,6 +93,10 @@ class DatabaseConnector
         foreach ($this->financialDecission as $line)
         {
             $lines[] = "fd" . $line . PHP_EOL;
+        }
+        foreach ($this->decissionList as $line)
+        {
+            $lines[] = "dl" . $line . PHP_EOL;
         }
         InOutput::WriteFile(Main::$helperFilePath, $lines);
     }
