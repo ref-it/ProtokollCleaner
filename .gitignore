@@ -3,5 +3,7 @@ config.php
 .buildpath
 .project
 .settings/
-.src/config.php
-.src/secret.php
+src/config.php
+src/secret.php
+src/framework/AuthHandler.php
+src/logs/error.log
