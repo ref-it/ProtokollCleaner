@@ -24,6 +24,9 @@ class InOutput
 
     static function WriteFile($FileName, $content) : bool
     {
+    	if (Main::$DisableWrite) {
+    	   return true;
+        }
         try {
             if ($fl = fopen($FileName, "w+")) {
                 foreach ($content as $line) {

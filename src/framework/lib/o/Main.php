@@ -40,7 +40,8 @@ class Main
     public static $ignoreDBPublishedList; #ignores Database already published list
     public static $EnableLegislaturAutomization; #enables Legislaturnummerautomatisiserung
     public static $currentLegislaturnumber; # legt aktuelle Legislatur bei $EnableLegislaturAutomization = false fest
-
+    public static $DisableWrite = true;
+    
     //Arbeitsvariablen
     public static $financialResolution = array();
     public static $DatabaseCon;
