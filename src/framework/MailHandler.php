@@ -83,7 +83,7 @@ class MailHandler
 			error_log("Mailsettings unvollständig");
 			return false;
 		}		
-		$this->mail = new PHPMailer;
+		$this->mail = new PHPMailer\PHPMailer\PHPMailer;
 		$this->mail->setLanguage('de', MAIL_LANGUAGE_PATH); //TODO set Language //from Session
 		$this->mail->CharSet = 'UTF-8';
 		

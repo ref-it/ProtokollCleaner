@@ -105,7 +105,9 @@ require_once (dirname(__FILE__)."/Template.php");
 /**
  * include external library: phpmailer
  */
-require_once (dirname(__FILE__).'/external_libraries/phpmailer/PHPMailerAutoload.php');
+require_once (dirname(__FILE__).'/external_libraries/phpmailer/src/PHPMailer.php');
+require_once (dirname(__FILE__).'/external_libraries/phpmailer/src/SMTP.php');
+require_once (dirname(__FILE__).'/external_libraries/phpmailer/src/Exception.php');
 define('MAIL_LANGUAGE_PATH', dirname(__FILE__).'/external_libraries/phpmailer/language');
 
 /**
