@@ -38,6 +38,7 @@ class Main
     public static $newDecissionList; #Path to new DecissionList
     public static $restDecissionListTitel; #rest Titel after 'week of'
     public static $ignoreDBPublishedList; #ignores Database already published list
+    public static $EnableLegislaturAutomization; #enables Legislaturnummerautomatisiserung
 
     //Arbeitsvariablen
     public static $financialResolution = array();
@@ -122,7 +123,15 @@ class Main
             $Ausgabe = $Ausgabe . $this->copy($file->getFilename(), $fn, $check);
             Useroutput::PrintLine($Ausgabe);
             $ListDecission = new DecissionList();
-            $ListDecission->processProtokoll(InOutput::ReadFile($file->getFilename()),'28', substr($file->getOutputFilename(), 0, 10));
+            if (Main::$EnableLegislaturAutomization)
+            {
+                $legislaturnumber = LegislaturCrawler::getLegislatur(substr($file->getOutputFilename(),0,10), DecissionList::crawlSitzungsnummer(InOutput::ReadFile($file->getFilename())));
+            }
+            else
+            {
+                $legislaturnumber = "28";
+            }
+            $ListDecission->processProtokoll(InOutput::ReadFile($file->getFilename()),$legislaturnumber, substr($file->getOutputFilename(), 0, 10));
             VisualCopyEmulator::generateDiffTable(InOutput::ReadFile($file->getFilename()), $check);
             $this->files[] = $file;
         }

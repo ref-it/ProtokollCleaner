@@ -144,7 +144,7 @@ class DecissionList
             }
         }
     }
-    private function crawlSitzungsnummer($Protokoll) :string
+    public static function crawlSitzungsnummer($Protokoll) :string
     {
         foreach ($Protokoll as $line )
         {
@@ -168,7 +168,7 @@ class DecissionList
         {
             return;
         }
-        $SitzungsNummer = $this->crawlSitzungsnummer($Protokoll);
+        $SitzungsNummer = self::crawlSitzungsnummer($Protokoll);
         $this->crawlDecission($Protokoll, $Legislatur, $SitzungsNummer);
         $this->addDecissions($fn, $SitzungsNummer);
         Main::$DatabaseCon->addToDecissionList($fn);
