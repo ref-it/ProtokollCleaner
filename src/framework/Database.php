@@ -24,12 +24,12 @@ if(defined('SILMPH') == false) { die('Illegale file access /'.basename(__DIR__).
  * @since 01.03.2017
  * @package SILMPH_framework
  */
-class database
+class Database
 {
 	/**
 	 * database member
-	 * @var database
-	 * @see database.php
+	 * @var Database
+	 * @see Database.php
 	 */
 	public $db;
 	

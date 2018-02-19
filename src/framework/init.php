@@ -94,13 +94,13 @@ if (!file_exists(dirname(__FILE__, 2).'/secret.php')){
 /**
  * include database
  */
-require_once (dirname(__FILE__)."/database.php");
+require_once (dirname(__FILE__)."/Database.php");
 $db = NULL; //set in session
 
 /**
  * include template
  */
-require_once (dirname(__FILE__)."/template.php");
+require_once (dirname(__FILE__)."/Template.php");
 
 /**
  * include external library: phpmailer
@@ -116,7 +116,7 @@ require_once (dirname(__FILE__)."/MailHandler.php");
 /**
  * include session handler
  */
-require_once (dirname(__FILE__)."/router.php");
+require_once (dirname(__FILE__)."/Router.php");
 
 /**
  * include session handler

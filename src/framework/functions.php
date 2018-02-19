@@ -19,59 +19,13 @@ if (!function_exists('checkUserPermission')){
 	 * @return boolean
 	 */
 	function checkUserPermission( $requested_permission ){
-		if (!isset($_SESSION['USER_PERMISSIONS']) || !is_array($_SESSION['USER_PERMISSIONS'])){
-			return false;
-		}
-		return in_array($requested_permission, $_SESSION['USER_PERMISSIONS']);
-	}
-}
-
-/* VALIDATORS ---------------------------------------------------------------------- */
-
-if (!function_exists('endsWith')){
-	/**
-	 * check if string is ends with other string
-	 * @param string $haystack
-	 * @param array|string $needle
-	 * @param null|string $needleprefix
-	 * @return boolean
-	 */
-	function endsWith($haystack, $needle, $needleprefix = null)
-	{
-		if (is_array($needle)){
-			foreach ($needle as $sub){
-				$n=(($needleprefix)?$needleprefix:'').$sub;
-				if (substr($haystack, -strlen($n))===$n) {
-					return true;
-				}
-			}
-			return false;
-		} else if (strlen($needle) == 0){
-			return true;
+		$map = Router::getPermissionMap();
+		if (isset($map[$requested_permission])){
+			$auth = AuthHandler::getInstance();
+			return $auth->requireGroup($map[$requested_permission]);
 		} else {
-			return substr($haystack, -strlen($needle))===$needle;
-		}
-	}
-}
-
-// 0/false no match, 1 -> ip address, 2 -> hostname, 3 -> hostname idn format
-
-
-
-if (!function_exists('isValidMailUsername')){
-	/**
-	 * check if string is a valid username for mail login
-	 * @param string $name
-	 * @return boolean
-	 */
-	function isValidMailUsername($name){
-		if (preg_match( '/^[a-zA-Z0-9]+[a-zA-Z0-9\-_.]*[a-zA-Z0-9]+$/', $name)) {
-			if (strlen($name) < 64){
-				return true;
-			}
 			return false;
 		}
-		return false;
 	}
 }
 

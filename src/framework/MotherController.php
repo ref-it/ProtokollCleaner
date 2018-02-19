@@ -18,7 +18,7 @@ require_once (SYSBASE . '/framework/Validator.php');
 class MotherController extends JsonController {
 	/**
 	 * contains the database connection
-	 * database
+	 * Database
 	 */
 	protected $db;
 	
@@ -29,16 +29,16 @@ class MotherController extends JsonController {
 	protected $auth;
 	
 	/**
-	 * contains the template instance
-	 * template
+	 * contains the Template instance
+	 * Template
 	 */
 	protected $t;
 	
 	/**
 	 * 
-	 * @param database $db
+	 * @param Database $db
 	 * @param AuthHandler $auth
-	 * @param template $template
+	 * @param Template $template
 	 */
 	function __construct($db, $auth, $template){
 		$this->db = $db;
@@ -68,7 +68,7 @@ class MotherController extends JsonController {
 	 * @param integer $code HTML error code
 	 */
 	function renderErrorPage($code, $nav){
-		if ($this->t == NULL) $this->t = new template($this->auth, $nav);
+		if ($this->t == NULL) $this->t = new Template($this->auth, $nav);
 		if ($code === 404){
 			http_response_code (404);
 			$this->t->setTitlePrefix('404 - Seite nicht gefunden');

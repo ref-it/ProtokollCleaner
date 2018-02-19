@@ -21,7 +21,7 @@ $hasAuth = $auth->requireGroup(SIMPLESAML_ACCESS_GROUP);
 $db = null;
 
 if (!$hasAuth){
-	$t = new template();
+	$t = new Template();
 	http_response_code (404);
 	$t->setTitlePrefix('404 - Seite nicht gefunden');
 	$t->printPageHeader();
@@ -35,7 +35,7 @@ if (!isset($_SESSION['SILMPH']['FORM_CHALLENGE_NAME'])){
 	$_SESSION['SILMPH']['FORM_CHALLENGE_VALUE'] = generateRandomString(22);
 }
 
-if($db === NULL) $db = new database();
+if($db === NULL) $db = new Database();
 
 $router = Router::getInstance();
 $router->route();

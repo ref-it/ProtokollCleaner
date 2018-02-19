@@ -18,9 +18,9 @@ class AdminController extends MotherController {
 	
 	/**
 	 * 
-	 * @param database $db
+	 * @param Database $db
 	 * @param AuthHandler $auth
-	 * @param template $template
+	 * @param Template $template
 	 */
 	function __construct($db, $auth, $template){
 		parent::__construct($db, $auth, $template);

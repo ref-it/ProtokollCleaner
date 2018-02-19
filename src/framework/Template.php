@@ -1,6 +1,6 @@
 <?php
 /**
- * FRAMEWORK template
+ * FRAMEWORK Template
  *
  * @package         Stura - Referat IT - ProtocolHelper
  * @category        framework
@@ -19,12 +19,13 @@ if(defined('SILMPH') == false) { die('Illegale file access /'.basename(__DIR__).
 /* -------------------------------------------------------- */
 
 /**
+ * Template class
  * 
  * @author Michael Gnehr <michael@gnehr.de>
  * @since 08.03.2017
  * @package SILMPH_framework
  */
-class template
+class Template
 {
 	/**
 	 * 
@@ -81,7 +82,7 @@ class template
 	private $_isLogout = false;
 
 	/**
-	 * template constructor
+	 * Template constructor
 	 * @param boolean $appendDefaultScripts append default js scripts set to template
 	 * @param boolean $appendDefaultCSS append default css scripts set to template
 	 * @param boolean $appendMessages append message js to template

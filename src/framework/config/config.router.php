@@ -35,10 +35,19 @@ $rawRoutes = [
  * Path => [Permission, Alias, Symbol, Image]
  * @var array
  */
-
 $navigation = [
 	'/' 	=> ['stura', 	'Home', 	'&#xf015',	''],
 	'admin' => ['ref-it', 	'Admin', 	'&#xf085;',	'gearLogo.png'],
+];
+
+/**
+ * provide granular permissions
+ * ['permission']
+ * @var array
+ */
+$permission_map = [
+	'stura' => 'stura',
+	'ref-it' => 'ref-it'
 ];
 
 ?>

@@ -411,6 +411,29 @@ class Validator {
 		}
 	}
 	
+	/**
+	 * check if string is ends with other string
+	 * @param string $haystack
+	 * @param array|string $needle
+	 * @param null|string $needleprefix
+	 * @return boolean
+	 */
+	public static function endsWith($haystack, $needle, $needleprefix = null)
+	{
+		if (is_array($needle)){
+			foreach ($needle as $sub){
+				$n=(($needleprefix)?$needleprefix:'').$sub;
+				if (substr($haystack, -strlen($n))===$n) {
+					return true;
+				}
+			}
+			return false;
+		} else if (strlen($needle) == 0){
+			return true;
+		} else {
+			return substr($haystack, -strlen($needle))===$needle;
+		}
+	}
 	
 	/**
 	 * domain validator

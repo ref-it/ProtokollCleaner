@@ -23,7 +23,7 @@ class Router {
 	
 	/**
 	 * contains the database connection
-	 * @var database::inctance
+	 * @var Database::inctance
 	 */
 	protected $db;
 	
@@ -35,8 +35,8 @@ class Router {
 	
 	/**
 	 * contains route map
-	 * GET routes are handled with template
-	 * POST routes are handled with json_handler
+	 * GET routes are handled with Template
+	 * POST routes are handled with Controller
 	 * @var $routes
 	 */
 	protected $routes;
@@ -53,7 +53,14 @@ class Router {
 	 * controller are called directly
 	 * @var $rawRoutes
 	 */
-	protected $navigation;
+	private $navigation;
+	
+	/**
+	 * permission map
+	 * @var array 
+	 */
+	protected static $permission_map;
+	
 	
 	// ================================================================================================
 	
@@ -72,8 +79,16 @@ class Router {
 		$this->routes = $routes;
 		$this->rawRoutes = $rawRoutes;
 		$this->navigation = $navigation;
+		self::$permission_map = $permission_map;
 	}
 	
+	/**
+	 * return permission map
+	 * @return array
+	 */
+	public static function getPermissionMap(){
+		return self::$permission_map;
+	}
 	
 	/**
 	 * returns instance of this class
@@ -194,14 +209,14 @@ class Router {
 	 * @param array $routedata, passed from routing config
 	 * @param String $method, server request method
 	 * @param String $path, requested server path
-	 * @param boolean $template, create template instance
+	 * @param boolean $template, create Template instance
 	 */
 	private function callController($routedata, $method, $path, $template = false){
 		if (file_exists(SYSBASE.'/controller/'.$routedata[0].'.php')){
 			require_once(SYSBASE.'/controller/'.$routedata[0].'.php');
 			$controllername = ucfirst($routedata[0]).'Controller';
 			
-			$t = ($template)? new template($this->auth, $this->navigation, $path): NULL;
+			$t = ($template)? new Template($this->auth, $this->navigation, $path): NULL;
 			$c = new $controllername($this->db, $this->auth, $t);
 			if (method_exists($c, $routedata[1]) && is_callable([$c, $routedata[1]]) ){
 				$c->{$routedata[1]}($routedata);
