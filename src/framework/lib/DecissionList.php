@@ -41,8 +41,13 @@ class DecissionList
             {
                 continue;
             }
+            $number = strval($DecissionNumber);
+            if (strlen($number) === 1)
+            {
+                $number = "0". $number;
+            }
             if ((strpos($line, "beschließt") !== false) and  (strpos($line, "Protokoll") !== false ) and (strpos($line, "Sitzung") !== false ) and (strpos($line, "angenommen") !== false )) {
-                $addedLine="| " .$legislatur."/".$Sitzungsnummer."-".$DecissionNumber . " | Protokoll | ";
+                $addedLine="| " .$legislatur."/".$Sitzungsnummer."-".$number . " | Protokoll | ";
                 $text = substr($line,strpos($line,"=") +1 );
                 $text = substr($text, 0, strpos($text, "|"));
                 $addedLine = $addedLine . $text . "|";
@@ -64,6 +69,78 @@ class DecissionList
                 $addedLine = $addedLine . $text . " |";
                 $this->newDecissions[] = $addedLine . PHP_EOL;
                 $financialDecissionNumberF = $financialDecissionNumberF + 1;
+            }
+            else if ((strpos($line, "Gründung") !== false) and  (strpos($line, "angenommen") !== false )) {
+                $addedLine="| " .$legislatur."/".$Sitzungsnummer."-".$number . " | Wahl | ";
+                $text = substr($line,strpos($line,"=") +1 );
+                $text = substr($text, 0, strpos($text, "|"));
+                $addedLine = $addedLine . $text . " |";
+                $this->newDecissions[] = $addedLine . PHP_EOL;
+                $DecissionNumber = $DecissionNumber + 1;
+            }
+            else if ((strpos($line, "Auflösung") !== false) and  (strpos($line, "angenommen") !== false )) {
+                $addedLine="| " .$legislatur."/".$Sitzungsnummer."-".$number . " | Wahl | ";
+                $text = substr($line,strpos($line,"=") +1 );
+                $text = substr($text, 0, strpos($text, "|"));
+                $addedLine = $addedLine . $text . " |";
+                $this->newDecissions[] = $addedLine . PHP_EOL;
+                $DecissionNumber = $DecissionNumber + 1;
+            }
+            else if ((strpos($line, "bestätigt") !== false) and  (strpos($line, "angenommen") !== false )  and  (strpos($line, "Amt") !== false )) {
+                $addedLine="| " .$legislatur."/".$Sitzungsnummer."-".$number . " | Wahl | ";
+                $text = substr($line,strpos($line,"=") +1 );
+                $text = substr($text, 0, strpos($text, "|"));
+                $addedLine = $addedLine . $text . " |";
+                $this->newDecissions[] = $addedLine . PHP_EOL;
+                $DecissionNumber = $DecissionNumber + 1;
+            }
+            else if ((strpos($line, "Leiter") !== false)  and  (strpos($line, "angenommen") !== false )) {
+                $addedLine="| " .$legislatur."/".$Sitzungsnummer."-".$number . " | Wahl | ";
+                $text = substr($line,strpos($line,"=") +1 );
+                $text = substr($text, 0, strpos($text, "|"));
+                $addedLine = $addedLine . $text . " |";
+                $this->newDecissions[] = $addedLine . PHP_EOL;
+                $DecissionNumber = $DecissionNumber + 1;
+            }
+            else if ((strpos($line, "Mitglied") !== false)  and  (strpos($line, "angenommen") !== false )) {
+                $addedLine="| " .$legislatur."/".$Sitzungsnummer."-".$number . " | Wahl | ";
+                $text = substr($line,strpos($line,"=") +1 );
+                $text = substr($text, 0, strpos($text, "|"));
+                $addedLine = $addedLine . $text . " |";
+                $this->newDecissions[] = $addedLine . PHP_EOL;
+                $DecissionNumber = $DecissionNumber + 1;
+            }
+            else if ((strpos($line, "bestätigt") !== false)  and  (strpos($line, "angenommen") !== false )) {
+                $addedLine="| " .$legislatur."/".$Sitzungsnummer."-".$number . " | Wahl | ";
+                $text = substr($line,strpos($line,"=") +1 );
+                $text = substr($text, 0, strpos($text, "|"));
+                $addedLine = $addedLine . $text . " |";
+                $this->newDecissions[] = $addedLine . PHP_EOL;
+                $DecissionNumber = $DecissionNumber + 1;
+            }
+            else if ((strpos($line, "wählt") !== false)  and  (strpos($line, "angenommen") !== false )) {
+                $addedLine="| " .$legislatur."/".$Sitzungsnummer."-".$number . " | Wahl | ";
+                $text = substr($line,strpos($line,"=") +1 );
+                $text = substr($text, 0, strpos($text, "|"));
+                $addedLine = $addedLine . $text . " |";
+                $this->newDecissions[] = $addedLine . PHP_EOL;
+                $DecissionNumber = $DecissionNumber + 1;
+            }
+            else if ((strpos($line, "Ordnung") !== false)  and  (strpos($line, "angenommen") !== false )) {
+                $addedLine="| " .$legislatur."/".$Sitzungsnummer."-".$number . " | Ordnung | ";
+                $text = substr($line,strpos($line,"=") +1 );
+                $text = substr($text, 0, strpos($text, "|"));
+                $addedLine = $addedLine . $text . " |";
+                $this->newDecissions[] = $addedLine . PHP_EOL;
+                $DecissionNumber = $DecissionNumber + 1;
+            }
+            else if ((strpos($line, "angenommen") !== false )) {
+                $addedLine="| " .$legislatur."/".$Sitzungsnummer."-".$number . " | Sonstiges | ";
+                $text = substr($line,strpos($line,"=") +1 );
+                $text = substr($text, 0, strpos($text, "|"));
+                $addedLine = $addedLine . $text . " |";
+                $this->newDecissions[] = $addedLine . PHP_EOL;
+                $DecissionNumber = $DecissionNumber + 1;
             }
         }
     }
