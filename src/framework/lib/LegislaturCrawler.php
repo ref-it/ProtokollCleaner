@@ -13,5 +13,14 @@ class LegislaturCrawler
     {
 
     }
+    public function getLegislatur($date, $sn)
+    {
+        settype($date, Date::class);
+        $result = Main::$DatabaseCon->getlegislatur(substr($date->Filname(), 0, 10));
+        if ($result === -1)
+        {
 
+        }
+        return $result;
+    }
 }

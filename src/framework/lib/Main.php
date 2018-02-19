@@ -14,6 +14,7 @@ include 'InOutput.php';
 include 'VisualCopyEmulator.php';
 include 'DatabaseConnector.php';
 include 'DecissionList.php';
+include 'LegislaturCrawler.php';
 
 class Main
 {

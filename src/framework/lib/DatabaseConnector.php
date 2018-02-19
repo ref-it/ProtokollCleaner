@@ -12,6 +12,7 @@ class DatabaseConnector
     private $publishedFinal;
     private $financialDecission;
     private $decissionList;
+    private $Legislaturliste;
 
     public function __construct() // or any other method
     {
@@ -19,6 +20,7 @@ class DatabaseConnector
         $this->publishedFinal = Array();
         $this->financialDecission = Array();
         $this->decissionList = array();
+        $this->Legislaturliste = array();
         self::readHelperFile();
     }
 
@@ -35,8 +37,50 @@ class DatabaseConnector
                 $this->financialDecission[] = substr($changedLine, 2);
             } else if (substr($line, 0, 2) === "dl") {
                 $this->decissionList[] = substr($changedLine, 2);
+            } else if (substr($line, 0, 2) === "ln") {
+                $this->Legislaturliste[] = substr($changedLine, 2);
             }
         }
+    }
+    public function getlegislatur($datumUS) : string
+    {
+        foreach ($this->Legislaturliste as $Date) {
+            $begin = substr($Date, 0,10);
+            $end = substr($Date, 10,10);
+            $Legislatur = substr($Date, 20);
+            settype($startdatum, Date::class);
+            settype($enddatum, Date::class);
+            settype($datum, Date::class);
+            $startdatum = new Date(substr($begin,0,4), substr($begin, 5,2), substr($begin,7,2));
+            $enddatum = new Date(substr($end,0,4), substr($end, 5,2), substr($end,7,2));
+            $datum = new Date(substr($datumUS,0,4), substr($datumUS, 5,2), substr($datumUS,7,2));
+            if (intval($datum->Year()) > intval($enddatum->Year()) )
+            {
+                continue;
+            }
+            if ((intval($datum->Month()) > intval($enddatum->Month()) and (intval($datum->Year()) === intval($enddatum->Year()))))
+            {
+                continue;
+            }
+            if (( intval($datum->Day()) > intval($enddatum->Day()) ) and (intval($datum->Month()) === intval($enddatum->Month()) and (intval($datum->Year()) === intval($enddatum->Year()))))
+            {
+                continue;
+            }
+            if (intval($datum->Year()) < intval($startdatum->Year()) )
+            {
+                continue;
+            }
+            if ((intval($datum->Month()) < intval($startdatum->Month()) and (intval($datum->Year()) === intval($startdatum->Year()))))
+            {
+                continue;
+            }
+            if (( intval($datum->Day()) < intval($startdatum->Day()) ) and (intval($datum->Month()) === intval($startdatum->Month()) and (intval($datum->Year()) === intval($startdatum->Year()))))
+            {
+                continue;
+            }
+            return $Legislatur;
+        }
+        return -1;
     }
     public function alreadyOnDecissionList($ProtokollName)
     {
@@ -106,7 +150,16 @@ class DatabaseConnector
         {
             $lines[] = "dl" . $line . PHP_EOL;
         }
+        foreach ($this->Legislaturliste as $line)
+        {
+            $lines[] = "ln" . $line . PHP_EOL;
+        }
         InOutput::WriteFile(Main::$helperFilePath, $lines);
+    }
+    private function newLegislatur($Startdatum, $EndDatum, $Legislaturnummer)
+    {
+        $this->Legislaturliste[] = $Startdatum  . $EndDatum . $Legislaturnummer .PHP_EOL;
+        $this->writeHelperFile();
     }
 }
 
