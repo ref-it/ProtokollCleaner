@@ -64,18 +64,18 @@ class VisualCopyEmulator
     {
         $head="<table style='border-collapse: collapse; border-color: black; border-style: solid; border-width: 1px; text-align: center'>".PHP_EOL.
             "<tr>".PHP_EOL.
-            "<th style='width: auto'>ln</th>".PHP_EOL.
-            "<th style='width: 2em'>+</th>".PHP_EOL.
-            "<th style='width: 2em'>-</th>".PHP_EOL.
-            "<th style='width: 2em'></th>".PHP_EOL.
-            "<th style='width: auto'></th>".PHP_EOL.
+            "<th style='width: 3em; border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom-color: black;'>Linenumber</th>".PHP_EOL.
+            "<th style='width: 2em; border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom-color: black;'>+</th>".PHP_EOL.
+            "<th style='width: 2em; border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom-color: black;'>-</th>".PHP_EOL.
+            "<th style='width: 2em; border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom-color: black;'>C</th>".PHP_EOL.
+            "<th style='width: auto; border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom-color: black;'>Content</th>".PHP_EOL.
             "</tr>".PHP_EOL;
         Useroutput::Print($head);
     }
     private static function generateRemovedLine($line, $ln)
     {
         $lineresult = "<tr style='background-color: ". Main::$removedLineColor .";'>".PHP_EOL .
-            "<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none; '>".strval($ln)."</td>".PHP_EOL.
+            "<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'>".strval($ln)."</td>".PHP_EOL.
             "<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'></td>".PHP_EOL.
             "<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'>-</td>".PHP_EOL.
             "<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'></td>".PHP_EOL.

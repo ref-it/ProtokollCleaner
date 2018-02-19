@@ -48,10 +48,18 @@ class DatabaseConnector
     }
     public function alreadyPublishedFinal($fn): bool
     {
+        if (Main::$ignoreDBPublishedList)
+        {
+            return false;
+        }
         return in_array($fn, $this->publishedFinal);
     }
     public function alreadyPublishedDraft($fn) : bool
     {
+        if (Main::$ignoreDBPublishedList)
+        {
+            return false;
+        }
         return in_array($fn, $this->publishedDraft);
     }
     public function newPublishedDraft($fn)

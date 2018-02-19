@@ -25,3 +25,4 @@ Main::$removedLineColor = "lightcoral"; #Standard Color for removed Line in Diff
 Main::$notDoubled = false; #do you want copy protokolls doubled
 Main::$decissionList = 'examples/beschluesseNeu.txt'; //List off StuRa Decissions
 Main::$restDecissionListTitel = ":examples:intern:"; #rest Titel after 'week of'
+Main::$ignoreDBPublishedList = false; #ignores Database already published list

@@ -36,6 +36,7 @@ class Main
     public static $notDoubled; #do you want copy protokolls doubled
     public static $newDecissionList; #Path to new DecissionList
     public static $restDecissionListTitel; #rest Titel after 'week of'
+    public static $ignoreDBPublishedList; #ignores Database already published list
 
     //Arbeitsvariablen
     public static $financialResolution = array();
