@@ -162,6 +162,32 @@ button, input{
     border-left: 2px solid #5b9bd1;
     margin-left: -2px;
 }
+/* Profiling  ==============================================  */
+.profiling-output {
+    position: fixed;
+    background-color: white;
+    top: calc(100% - 35px);
+    left: 10px;
+    z-index: 10;
+}
+.profiling-output h3 {
+	font-size: 18px;
+	padding: 5px;
+}
+.profiling-output:hover {
+    position: fixed;
+    bottom: 0;
+    top: inherit;
+    max-height: 35%;
+    overflow-y: auto;
+}
+.fa-angle-toggle::before {
+    content: "\f106";
+}
+
+.profiling-output:hover .fa-angle-toggle::before {
+    content: "\f107";
+}
 /* GENERAL CONTENT  ==============================================  */
 .content_wrapper {
 	width: 85%;
@@ -632,7 +658,7 @@ div.silmph__message_success {
 	width: calc(100% - 15px);
 	max-width: 250px;
 }
-/* RADIO TOGGLES =================================================*/
+/* RADIO TOGGLES ================================================*/
 div.radiogroup {
 	width: 140px;
 	border: 2px solid #E5891A;

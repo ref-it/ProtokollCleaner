@@ -35,7 +35,8 @@
 	</head>
 	<body id="body" <?php if ($this->extra_body_class) echo 'class="'.$this->extra_body_class.'"'; ?> >
 		<nav class="navbar fixed-top navbar-expand-md navbar-dark bg-<?= (DEBUG)? 'danger':'dark' ?> noprint" style="position:fixed">
-     		<a class="navbar-brand mr-auto" href="<?= BASE_URL ?>">Protokollautomatisierung</a>
+     		<a class="navbar-brand mr-auto" href="<?= BASE_URL ?>">
+     			<img alt="logo" src="/images/logo_wt.png" height="30px">Protokollautomatisierung</a>
 	  		<button class="btn btn-outline-light mr-1 fa ml-auto d-block d-md-none" onclick="printPage();" type="button">&#xf02f;</button>
 	  		<a class="btn btn-outline-light mr-1 fa ml-0 d-block d-md-none" href="<?= $this->auth->getLogoutURL(); ?>">&#xf011;</a>
 		  	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
@@ -43,7 +44,7 @@
 		  	</button>
 	  		<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
 	    		<div class="navbar-nav mr-auto d-block d-md-none">
-	    			<?php 
+	    			<?php
 	    				$tnav = $this->getNavigation();
 						foreach ($tnav as $route => $linkdata){ ?>
 							<a target="_self" href="<?= $route?>" title="<?= $linkdata[0] ?>" class="nav-item nav-link <?= ((isset($linkdata['active']))?'active':'') ?>"><i class="fa fa-fw"><?= $linkdata[1] ?></i><?= $linkdata[0] ?></a>
@@ -55,8 +56,8 @@
 			<button class="btn btn-outline-light mr-1 fa ml-auto d-none d-md-block" onclick="printPage();" type="button">&#xf02f;</button>
 		  	<a class="btn btn-outline-light fa ml-0 d-none d-md-block" href="<?= $this->auth->getLogoutURL(); ?>">&#xf011;</a>
 		</nav>
-		<div class="bar_placeholder"></div>
-		<div class="d-none d-md-block">
+		<div class="bar_placeholder noprint"></div>
+		<div class="d-none d-md-block noprint">
 			<div class="profile-sidebar noprint">
 		        <div class="profile-usertitle">
 		            <div class="profile-usertitle-name"><?= $this->auth->getUserFullName(); ?></div>
@@ -80,7 +81,7 @@
 				</div>
 	        </div>
 	    </div>
-		<div class="header printonly" style="position: fixed;">
+		<div class="printheader printonly" style="position: fixed;">
 			<img class="logo printonly" src="/images/logo.png" width="83" height="39" />Protokollautomatisierung
 		</div>
 

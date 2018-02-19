@@ -267,6 +267,9 @@ class Template
 	 * print template footer
 	 */
 	public function printPageFooter(){
+		if (DEBUG){
+			prof_flag('template_footer');
+		}
 		include (dirname(__FILE__, 2)."/templates/".TEMPLATE."/footer.phtml");
 	}
 

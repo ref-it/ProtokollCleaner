@@ -115,7 +115,7 @@ h3{
     text-align: left;
 }
 header, 
-#page_header {
+.printheader {
 	text-align: left;
 	font-size: 20px;
 	font-weight: bold;

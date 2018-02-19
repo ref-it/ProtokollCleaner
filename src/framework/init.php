@@ -55,6 +55,10 @@ date_default_timezone_set(TIMEZONE);
  */
 require_once (dirname(__FILE__)."/functions.php"); //load helper function set
 
+if (DEBUG){
+	prof_flag('app_start');
+}
+
 /**
  * generate app secret key
  */
@@ -124,5 +128,9 @@ require_once (dirname(__FILE__)."/Router.php");
  * include session handler
  */
 require_once (dirname(__FILE__)."/session.php");
+
+if (DEBUG){
+	prof_flag('app_end');
+}
 
 // end of file -------------
