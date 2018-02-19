@@ -1,10 +1,20 @@
 <?php
+
 /**
- * Created by PhpStorm.
- * User: martin
- * Date: 18.10.17
- * Time: 09:54
+ * Main.php
+ * @author Martin S.
+ * @author Stura - Referat IT <ref-it@tu-ilmenau.de>
+ * @since 18.10.17 09:54
  */
+
+include 'Date.php';
+include 'File.php';
+include 'Useroutput.php';
+include 'InOutput.php';
+include 'VisualCopyEmulator.php';
+include 'DatabaseConnector.php';
+include 'DecissionList.php';
+include 'LegislaturCrawler.php';
 
 class Main
 {
@@ -21,36 +31,44 @@ class Main
     public static $startMonth;    //Day,
     public static $startYear;  //Month and
     public static $startday;    //Year of First protokoll which will be cleaned
+    public static $copiedLineColor; #Color for copied Line in Diff
+    public static $copiedEditedLineColor; #Color for copied edited Line in Diff
+    public static $removedLineColor; #Standard Color for removed Line in Diff
+    public static $notDoubled; #do you want copy protokolls doubled
+    public static $newDecissionList; #Path to new DecissionList
+    public static $restDecissionListTitel; #rest Titel after 'week of'
+    public static $ignoreDBPublishedList; #ignores Database already published list
+    public static $EnableLegislaturAutomization; #enables Legislaturnummerautomatisiserung
+    public static $currentLegislaturnumber; # legt aktuelle Legislatur bei $EnableLegislaturAutomization = false fest
 
     //Arbeitsvariablen
     public static $financialResolution = array();
+    public static $DatabaseCon;
     private $files;
-    private $knownDecissions;
 
 
     public function __construct() // or any other method
     {
-        $switch = false;
-        Useroutput::PrintLine(dirname(__FILE__).'/config.php');
-        if(file_exists(dirname(__FILE__).'/config.php')) {
-            include dirname(__FILE__).'/config.php';
-            if(Main::$debug) {
-                Useroutput::PrintLineDebug("Die Config wurde genutzt.");
-            }
+        if(file_exists(dirname(__FILE__).'/../conf/config.php')) {
+            include dirname(__FILE__).'/../conf/config.php';
+            Useroutput::PrintLineDebug("Die Config wurde genutzt.");
         }
         else
         {
-            include 'config.default.php';
-            if(Main::$debug) {
-                Useroutput::PrintLineDebug("Die Reserve-Config wurde genutzt.");
-            }
+            include dirname(__FILE__).'/../conf/config.default.php';
+            Useroutput::PrintLineDebug("Die Reserve-Config wurde genutzt.");
         }
+        Main::$DatabaseCon = new DatabaseConnector();
         Useroutput::PrintHorizontalSeperator();
+    }
+
+    public function generateDiff($Protokoll, $check)
+    {
+        VisualCopyEmulator::generateDiffTable($Protokoll, $check);
     }
 
     public function Main()
     {
-        $this->knownDecissions = array();
         $this->files = array();
         $alledateien = scandir(Main::$inputpath); //Ordner "files" auslesen
         foreach ($alledateien as $datei) { // Ausgabeschleife
@@ -79,65 +97,82 @@ class Main
             $file = new File($Date, $datei);
             $fn = Main::$outputpath . "/" . $file->getOutputFilename();
             $check = $this->checkApproved($file->getgermanDate());
-            $Ausgabe = "";
             if($check)
             {
+                if (Main::$DatabaseCon->alreadyPublishedFinal($file->getOutputFilename()) and Main::$notDoubled)
+                {
+                    Useroutput::PrintLineDebug('Already Published as Final.');
+                    continue;
+                }
                 $Ausgabe = "Published as Final: ";
+                Main::$DatabaseCon->newPublishedFinal($file->getOutputFilename());
+                if (Main::$DatabaseCon->alreadyPublishedDraft($file->getOutputFilename()))
+                {
+                    Main::$DatabaseCon->removeFromDraft($file->getOutputFilename());
+                }
             }
             else
             {
+                if (Main::$DatabaseCon->alreadyPublishedDraft($file->getOutputFilename()) and Main::$notDoubled)
+                {
+                    Useroutput::PrintLineDebug('Already Published as Draft.');
+                    continue;
+                }
                 $Ausgabe = "Published as Draft: ";
+                Main::$DatabaseCon->newPublishedDraft($file->getOutputFilename());
             }
             $Ausgabe = $Ausgabe . $this->copy($file->getFilename(), $fn, $check);
             Useroutput::PrintLine($Ausgabe);
+            $ListDecission = new DecissionList();
+            if (Main::$EnableLegislaturAutomization)
+            {
+                $legislaturnumber = LegislaturCrawler::getLegislatur(substr($file->getOutputFilename(),0,10), DecissionList::crawlSitzungsnummer(InOutput::ReadFile($file->getFilename())));
+            }
+            else
+            {
+                $legislaturnumber = Main::$currentLegislaturnumber;
+            }
+            $ListDecission->processProtokoll(InOutput::ReadFile($file->getFilename()),$legislaturnumber, substr($file->getOutputFilename(), 0, 10));
+            VisualCopyEmulator::generateDiffTable(InOutput::ReadFile($file->getFilename()), $check);
             $this->files[] = $file;
         }
         Useroutput::PrintHorizontalSeperator();
-        $this->readAlreadyKnownFinancialDecissions();
         $this->exportFinancial();
         if (Main::$postData) {
             $this->sendData();
         }
-        $this->writeHelperFile();
     }
     function copy($fileName, $fn, $check) : string
     {
         $OffRec=false;
         $lines = array();
-        if ($fl = fopen($fileName, "r")) {
-            while(!feof($fl)) {
-                $line = fgets($fl);
-                # do same stuff with the $line
-                if(!$OffRec and strpos($line, "tag>" . Main::$starttag) !== false) {
-                    $OffRec=true;
-                    continue;
-                }
-                if(!$OffRec)
+        foreach (InOutput::ReadFile($fileName) as $line) {
+            # do same stuff with the $line
+            if(!$OffRec and strpos($line, "tag>" . Main::$starttag) !== false) {
+                $OffRec=true;
+                continue;
+            }
+            if(!$OffRec)
+            {
+                if(strpos($line, "======") !== false and !$check)
                 {
-                    if(strpos($line, "======") !== false and !$check)
-                    {
-                        $firstpart = substr($line, strpos($line, "======"), 6 );
-                        $secondpart = substr($line, strpos($line, "======") + 6, strlen($line) -1 );
-                        $lines[] = $firstpart . " Entwurf:" . $secondpart;
-                    }
-                    else {
-                        $lines[] = $line;
-                    }
+                    $firstpart = substr($line, strpos($line, "======"), 6 );
+                    $secondpart = substr($line, strpos($line, "======") + 6, strlen($line) -1 );
+                    $lines[] = $firstpart . " Entwurf:" . $secondpart;
+                }
+                else {
+                    $lines[] = $line;
+                }
                     continue;
-                }
-                if($OffRec and strpos($line, "tag>" . Main::$endtag) !== false) {
-                    $OffRec=false;
-                }
-
             }
-            fclose($fl);
-        }
-        if($fl = fopen($fn, "w+")) {
-            foreach ($lines as $line) {
-                fwrite($fl, $line);
+            if($OffRec and strpos($line, "tag>" . Main::$endtag) !== false) {
+                $OffRec=false;
             }
         }
-        fclose($fl);
+        if (InOutput::WriteFile($fn,$lines) === false)
+        {
+            exit(10);
+        }
         return substr($fileName, strlen($fileName)-14, strlen($fileName) -1);
     }
 
@@ -148,9 +183,7 @@ class Main
         $check = substr($Name, 0, 10);
         $expression = "/^[12][09][0129][0123456789]-[01][0123456789]-[0123][0123456789]/";
         if(preg_match($expression,$check) === false) {
-            if (Main::$debug) {
-                Useroutput::PrintLineDebug("File Discarded: " . $Filename);
-            }
+            Useroutput::PrintLineDebug("File Discarded: " . $Filename);
             return -1;
         }
         $d = substr($Name, 8, 2);
@@ -162,45 +195,42 @@ class Main
 
     function checkApproved($germanDate)
     {
-        if ($fl = fopen(Main::$decissionList, "r")) {
-            while (!feof($fl)) {
-                $line = fgets($fl);
-                # do same stuff with the $line
-                if ((strpos($line, "beschließt") !== false) and  (strpos($line, "Protokoll") !== false ) and (strpos($line, "Sitzung") !== false ) and (strpos($line, $germanDate) !== false)) {
-                    return true;
-                }
+        foreach (InOutput::ReadFile(Main::$decissionList) as $line)
+        {
+            # do same stuff with the $line
+            if ((strpos($line, "beschließt") !== false) and  (strpos($line, "Protokoll") !== false ) and (strpos($line, "Sitzung") !== false ) and (strpos($line, $germanDate) !== false)) {
+                return true;
             }
         }
-        fclose($fl);
         return false;
     }
 
     function exportFinancial()
     {
-        if($fl = fopen(Main::$decissionList, "r"))
+        foreach (InOutput::ReadFile(Main::$decissionList) as $line)
         {
-            while (!feof($fl)) {
-                $line = fgets($fl);
-                if ((strpos($line, "Budget") !== false)) {
-                    if (strpos($line, "https://helfer.stura.tu-ilmenau.de/FinanzAntragUI/") !== false) {
-                        if (!(strpos($line, "<del>") !== false))
-                        {
-                            $line = $this->formatLine($line, true);
-                            if(Main::$debug)
-                            {
-                                Useroutput::PrintLineDebug($line);
-                            }
+            if ((strpos($line, "Budget") !== false)) {
+                $lineStart = $this->getLineStartFinancialDeccision($line);
+                if($this->checkAlreadyPostedData($lineStart))
+                {
+                    continue;
+                }
+                if (strpos($line, "https://helfer.stura.tu-ilmenau.de/FinanzAntragUI/") !== false) {
+                    if (!(strpos($line, "<del>") !== false))
+                    {
+                        $line = $this->formatLine($line, true, $lineStart);
+                        if (strpos($line, "AlreadyInside") === false) {
+                            Useroutput::PrintLineDebug($line);
                         }
                     }
-                    else
+                }
+                else
+                {
+                    if ((!(strpos($line, "<del>") !== false)) and ! Main::$onlyNew)
                     {
-                        if ((!(strpos($line, "<del>") !== false)) and ! Main::$onlyNew)
-                        {
-                            $line = $this->formatLine($line, false);
-                            if(Main::$debug)
-                            {
-                                Useroutput::PrintLineDebug($line);
-                            }
+                        $line = $this->formatLine($line, false, $lineStart);
+                        if (strpos($line, "AlreadyInside") === false) {
+                            Useroutput::PrintLineDebug($line);
                         }
                     }
                 }
@@ -208,15 +238,15 @@ class Main
         }
     }
 
-    function formatLine($line, $withToken)
+    function getLineStartFinancialDeccision ($line) :string
     {
         $lineStart = substr($line, strpos($line, "|")+1);
         $lineStart = substr($lineStart, 0, strpos($lineStart, "|"));
         $lineStart = str_replace(" ", "", $lineStart);
-        if($this->checkAlreadyPostedData($lineStart))
-        {
-            return  "";
-        }
+        return $lineStart;
+    }
+    function formatLine($line, $withToken, $lineStart)
+    {
         if($withToken)
         {
             $lineEnd = substr($line, strpos($line, "|")+1);
@@ -233,7 +263,7 @@ class Main
             Main::$financialResolution[] = $lineStart;
             $lineS = $lineStart . "#-#" . "not found";
         }
-        $this->knownDecissions[] = $lineStart . PHP_EOL;
+        Main::$DatabaseCon->newFinancialDecission($lineStart);
         return $lineS;
     }
 
@@ -250,14 +280,9 @@ class Main
         curl_setopt($curl, CURLOPT_POSTFIELDS, $content);
         //execute Postback
         $ret = curl_exec($curl);
-        if (Main::$debug)
-        {
-            Useroutput::PrintLineDebug($ret);  //kann auch eine bel. if abfrage zum testen des ergebnisses sein
-        }
+        Useroutput::PrintLineDebug($ret);  //kann auch eine bel. if abfrage zum testen des ergebnisses sein
         $status = curl_getinfo($curl, CURLINFO_HTTP_CODE); //tut bestimmt sinnvolle dinge
-        if(Main::$debug) {
-            Useroutput::PrintLineDebug($status);
-        }
+        Useroutput::PrintLineDebug($status);
         Useroutput::PrintHorizontalSeperator();
         if(strpos($status, "200") !== false)
         {
@@ -270,123 +295,10 @@ class Main
         curl_close($curl); //beendet verbindung, oder so
     }
 
-    function readAlreadyKnownFinancialDecissions()
-    {
-        if ($fl = fopen(Main::$helperFilePath, "r")) {
-            while (!feof($fl)) {
-                $line = fgets($fl);
-                # do same stuff with the $line
-                $this->knownDecissions[] = $line;
-            }
-        }
-        fclose($fl);
-        return false;
-    }
-
     function checkAlreadyPostedData($DecissionKey):bool
     {
-        foreach ($this->knownDecissions as $line)
-        {
-            if (strpos($line, $DecissionKey) !== false)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    function writeHelperFile()
-    {
-        if(Main::$debug) {
-            Useroutput::PrintLineDebug("write Storagefile");
-        }
-        if($fl = fopen(Main::$helperFilePath, "w")) {
-            foreach ($this->knownDecissions as $line) {
-                fwrite($fl, $line);
-            }
-        }
-        fclose($fl);
+        return Main::$DatabaseCon->knownDecissionFinancial($DecissionKey);
     }
 }
 
-class Date
-{
-    function __construct($Year, $Month, $Day)
-    {
-        $this->y = $Year;
-        $this->m = $Month;
-        $this->d = $Day;
-    }
-
-    private $y;
-    private $m;
-    private $d;
-
-    function Year()
-    {
-        return $this->y;
-    }
-    function Month()
-    {
-        return $this->m;
-    }
-    function Day()
-    {
-        return $this->d;
-    }
-    function GermanDate()
-    {
-        return $this->d . "." . $this->m . "." . $this->y;
-    }
-    function Filname()
-    {
-        return $this->y . "-" . $this->m . "-" . $this->d . ".txt";
-    }
-
-}
-class File
-{
-    private $datum;
-    private $Filename;
-
-    function __construct($date, $file)
-    {
-        $this->datum = $date;
-        $this->Filename = Main::$inputpath . "/" . $file;
-    }
-
-    function getDate() : Date
-    {
-        return $this->datum;
-    }
-    function getFilename()
-    {
-        return $this->Filename;
-    }
-    function getOutputFilename()
-    {
-        return $this->getDate()->Filname();
-    }
-    function getgermanDate()
-    {
-        return $this->datum->GermanDate();
-    }
-}
-
-class Useroutput
-{
-    static function PrintLine($output)
-    {
-        echo $output . "<br />" . PHP_EOL;
-    }
-
-    static function PrintLineDebug($output)
-    {
-        echo $output . "<br />" . PHP_EOL;
-    }
-    static function PrintHorizontalSeperator()
-    {
-        echo "<br /><hr /><br />" . PHP_EOL;
-    }
-}
 ?>

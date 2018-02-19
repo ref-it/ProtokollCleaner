@@ -19,3 +19,12 @@ Main::$PostUrl = "http://localhost"; //destination for Posting of financial deci
 Main::$startMonth = 01;    //Day,
 Main::$startYear  = 2016;  //Month and
 Main::$startday   = 01;    //Y
+Main::$copiedLineColor = "lightgreen"; #Color for copied Line in Diff
+Main::$copiedEditedLineColor = "lightsteelblue"; #Color for copied edited Line in Diff
+Main::$removedLineColor = "lightcoral"; #Standard Color for removed Line in Diff
+Main::$notDoubled = false; #do you want copy protokolls doubled
+Main::$decissionList = 'examples/beschluesseNeu.txt'; //List off StuRa Decissions
+Main::$restDecissionListTitel = ":examples:intern:"; #rest Titel after 'week of'
+Main::$ignoreDBPublishedList = false; #ignores Database already published list
+Main::$EnableLegislaturAutomization = false; #enables Legislaturnummerautomatisiserung
+Main::$currentLegislaturnumber = "XX"; # legt aktuelle Legislatur bei $EnableLegislaturAutomization = false fest
