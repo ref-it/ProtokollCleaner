@@ -7,7 +7,7 @@
  * @since 18.11.17 21:33
  */
 
-include 'lib/Main.php';
+include 'Main.php';
 
 $haupt = new Main();
 

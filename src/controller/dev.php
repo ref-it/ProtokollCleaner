@@ -14,7 +14,8 @@
  
 require_once (SYSBASE . '/framework/MotherController.php');
 
-class BaseController extends MotherController {
+class DevController extends MotherController
+{
 	
 	/**
 	 * 

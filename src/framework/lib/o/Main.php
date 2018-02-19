@@ -51,12 +51,12 @@ class Main
     public function __construct() // or any other method
     {
         if(file_exists(dirname(__FILE__).'/../conf/config.php')) {
-            include dirname(__FILE__).'/../conf/config.php';
+            include dirname(__FILE__) . '/../../conf/config.php';
             Useroutput::PrintLineDebug("Die Config wurde genutzt.");
         }
         else
         {
-            include dirname(__FILE__).'/../conf/config.default.php';
+            include dirname(__FILE__) . '/../../conf/config.default.php';
             Useroutput::PrintLineDebug("Die Reserve-Config wurde genutzt.");
         }
         Main::$DatabaseCon = new DatabaseConnector();
