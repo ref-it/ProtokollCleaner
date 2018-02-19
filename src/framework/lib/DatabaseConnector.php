@@ -55,6 +55,9 @@ class DatabaseConnector
     }
     public function getCurrentLegislatur() : string
     {
+        if (Main::$EnableLegislaturAutomization === false) {
+            return Main::$currentLegislaturnumber;
+        }
         return $this->cl;
     }
     public function getlegislatur($datumUS) : string

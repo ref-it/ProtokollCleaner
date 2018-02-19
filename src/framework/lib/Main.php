@@ -39,6 +39,7 @@ class Main
     public static $restDecissionListTitel; #rest Titel after 'week of'
     public static $ignoreDBPublishedList; #ignores Database already published list
     public static $EnableLegislaturAutomization; #enables Legislaturnummerautomatisiserung
+    public static $currentLegislaturnumber; # legt aktuelle Legislatur bei $EnableLegislaturAutomization = false fest
 
     //Arbeitsvariablen
     public static $financialResolution = array();
@@ -129,7 +130,7 @@ class Main
             }
             else
             {
-                $legislaturnumber = "28";
+                $legislaturnumber = Main::$currentLegislaturnumber;
             }
             $ListDecission->processProtokoll(InOutput::ReadFile($file->getFilename()),$legislaturnumber, substr($file->getOutputFilename(), 0, 10));
             VisualCopyEmulator::generateDiffTable(InOutput::ReadFile($file->getFilename()), $check);

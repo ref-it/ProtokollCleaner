@@ -26,3 +26,4 @@ Main::$newDecissionList = "/var/www/dokuwiki/troll/beschluesseNeu.txt"; #Path to
 Main::$restDecissionListTitel = ":examples:intern:"; #rest Titel after 'week of'
 Main::$ignoreDBPublishedList = false; #ignores Database already published list
 Main::$EnableLegislaturAutomization = false; #enables Legislaturnummerautomatisiserung
+Main::$currentLegislaturnumber = "XX"; # legt aktuelle Legislatur bei $EnableLegislaturAutomization = false fest
