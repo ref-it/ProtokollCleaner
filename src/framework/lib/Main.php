@@ -34,6 +34,7 @@ class Main
     public static $removedLineColor; #Standard Color for removed Line in Diff
     public static $notDoubled; #do you want copy protokolls doubled
     public static $newDecissionList; #Path to new DecissionList
+    public static $restDecissionListTitel; #rest Titel after 'week of'
 
     //Arbeitsvariablen
     public static $financialResolution = array();

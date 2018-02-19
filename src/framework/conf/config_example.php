@@ -23,3 +23,4 @@ Main::$copiedEditedLineColor = "lightsteelblue"; #Color for copied edited Line i
 Main::$removedLineColor = "lightcoral"; #Standard Color for removed Line in Diff
 Main::$notDoubled = false; #do you want copy protokolls doubled
 Main::$newDecissionList = "/var/www/dokuwiki/troll/beschluesseNeu.txt"; #Path to new DecissionList
+Main::$restDecissionListTitel = ":examples:intern:"; #rest Titel after 'week of'

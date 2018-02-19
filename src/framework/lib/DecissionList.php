@@ -16,14 +16,14 @@ class DecissionList
         $this->DecissioList = Array();
         $this->DecissioList = InOutput::ReadFile(Main::$newDecissionList);
     }
-    private function addDecissions($date, $SitzungsNumer)
+    private function addDecissions($fn, $SitzungsNumer)
     {
         $result = array();
         foreach ($this->DecissioList as $line)
         {
             $result[] = $line;
         }
-        $result[] = "^ Woche ". $SitzungsNumer . " vom " . $date . "   ^^^";
+        $result[] = "^ Woche ". $SitzungsNumer . " vom [[" .Main::$restDecissionListTitel . $fn . "]]   ^^^";
         foreach ($this->newDecissions as $line2)
         {
             $result[] = $line2;
@@ -81,10 +81,10 @@ class DecissionList
         }
         return -1;
     }
-    public function processProtokoll($Protokoll, $Legislatur, $DatumGer)
+    public function processProtokoll($Protokoll, $Legislatur, $fn)
     {
         $SitzungsNummer = $this->crawlSitzungsnummer($Protokoll);
         $this->crawlDecission($Protokoll, $Legislatur, $SitzungsNummer);
-        $this->addDecissions($DatumGer);
+        $this->addDecissions($fn);
     }
 }
