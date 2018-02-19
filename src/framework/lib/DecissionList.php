@@ -23,12 +23,12 @@ class DecissionList
         {
             $result[] = $line;
         }
-        $result[] = "^ Woche ". $SitzungsNumer . " vom [[" .Main::$restDecissionListTitel . $fn . "]]   ^^^";
+        $result[] = "^ Woche ". $SitzungsNumer . " vom [[" .Main::$restDecissionListTitel . $fn . "]]   ^^^" . PHP_EOL;
         foreach ($this->newDecissions as $line2)
         {
             $result[] = $line2;
         }
-        InOutput::WriteFile(Main::$newDecissionList);
+        InOutput::WriteFile(Main::$newDecissionList, $result);
     }
     private function crawlDecission($Protokoll, $legislatur, $Sitzungsnummer)
     {
@@ -41,28 +41,28 @@ class DecissionList
             {
                 continue;
             }
-            if ((strpos($line, "beschließt") !== false) and  (strpos($line, "Protokoll") !== false ) and (strpos($line, "Sitzung") !== false ) and (strpos($line, "angenommen") !== false ) and (strpos($line, $germanDate) !== false)) {
-                $addedLine="| " .$legislatur."/".$Sitzungsnummer."-".$DecissionNumber . " | Protokoll |";
+            if ((strpos($line, "beschließt") !== false) and  (strpos($line, "Protokoll") !== false ) and (strpos($line, "Sitzung") !== false ) and (strpos($line, "angenommen") !== false )) {
+                $addedLine="| " .$legislatur."/".$Sitzungsnummer."-".$DecissionNumber . " | Protokoll | ";
                 $text = substr($line,strpos($line,"=") +1 );
-                $text = substr($line, 0, strpos($text, "|"));
+                $text = substr($text, 0, strpos($text, "|"));
                 $addedLine = $addedLine . $text . "|";
-                $this->newDecissions[] = $addedLine;
+                $this->newDecissions[] = $addedLine . PHP_EOL;
                 $DecissionNumber = $DecissionNumber + 1;
             }
-            else if ((strpos($line, "beschließt") !== false) and  (strpos($line, "Haushaltsverantwortliche") !== false ) and (strpos($line, "Budget") !== false ) and (strpos($line, $germanDate) !== false)) {
-                $addedLine="| " .$legislatur."/".$Sitzungsnummer."-H".$financialDecissionNumberH . " | Finanzen |";
+            else if ((strpos($line, "beschließt") !== false) and  (strpos($line, "Haushaltsverantwortliche") !== false ) and (strpos($line, "Budget") !== false )) {
+                $addedLine="| " .$legislatur."/".$Sitzungsnummer."-H".$financialDecissionNumberH . " | Finanzen | ";
                 $text = substr($line,strpos($line,"=") +1 );
-                $text = substr($line, 0, strpos($text, "|"));
+                $text = substr($text, 0, strpos($text, "|"));
                 $addedLine = $addedLine . $text . "|";
-                $this->newDecissions[] = $addedLine;
+                $this->newDecissions[] = $addedLine . PHP_EOL;
                 $financialDecissionNumberH = $financialDecissionNumberH + 1;
             }
-            else if ((strpos($line, "beschließt") !== false) and  (strpos($line, "angenommen") !== false ) and (strpos($line, "Budget") !== false ) and (strpos($line, $germanDate) !== false)) {
-                $addedLine="| " .$legislatur."/".$Sitzungsnummer."-F".$financialDecissionNumberF . " | Finanzen |";
+            else if ((strpos($line, "beschließt") !== false) and  (strpos($line, "angenommen") !== false ) and (strpos($line, "Budget") !== false )) {
+                $addedLine="| " .$legislatur."/".$Sitzungsnummer."-F".$financialDecissionNumberF . " | Finanzen | ";
                 $text = substr($line,strpos($line,"=") +1 );
-                $text = substr($line, 0, strpos($text, "|"));
-                $addedLine = $addedLine . $text . "|";
-                $this->newDecissions[] = $addedLine;
+                $text = substr($text, 0, strpos($text, "|"));
+                $addedLine = $addedLine . $text . " |";
+                $this->newDecissions[] = $addedLine . PHP_EOL;
                 $financialDecissionNumberF = $financialDecissionNumberF + 1;
             }
         }
@@ -73,9 +73,13 @@ class DecissionList
         {
             if(strpos($line, "======") !== false)
             {
-                $result = substr($line, strpos($line, "======"), 6 );
-                $result = substr($result, strpos($result, '.'));
+                $result = substr($line, strpos($line, "======") + 7);
+                $result = substr($result, 0, strpos($result, '.'));
                 $result = str_replace(" ", "", $result);
+                if (strlen($result) === 1)
+                {
+                    $result = "0" . $result;
+                }
                 return $result;
             }
         }
@@ -85,6 +89,6 @@ class DecissionList
     {
         $SitzungsNummer = $this->crawlSitzungsnummer($Protokoll);
         $this->crawlDecission($Protokoll, $Legislatur, $SitzungsNummer);
-        $this->addDecissions($fn);
+        $this->addDecissions($fn, $SitzungsNummer);
     }
 }

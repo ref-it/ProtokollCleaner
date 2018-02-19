@@ -13,6 +13,7 @@ include 'Useroutput.php';
 include 'InOutput.php';
 include 'VisualCopyEmulator.php';
 include 'DatabaseConnector.php';
+include 'DecissionList.php';
 
 class Main
 {
@@ -118,6 +119,8 @@ class Main
             }
             $Ausgabe = $Ausgabe . $this->copy($file->getFilename(), $fn, $check);
             Useroutput::PrintLine($Ausgabe);
+            $ListDecission = new DecissionList();
+            $ListDecission->processProtokoll(InOutput::ReadFile($file->getFilename()),'28', substr($file->getOutputFilename(), 0, 10));
             VisualCopyEmulator::generateDiffTable(InOutput::ReadFile($file->getFilename()), $check);
             $this->files[] = $file;
         }
