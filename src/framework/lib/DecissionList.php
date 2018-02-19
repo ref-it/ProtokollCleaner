@@ -9,15 +9,25 @@
 class DecissionList
 {
     private $DecissioList;
+    private $newDecissions;
     public function __construct() // or any other method
     {
-        $this->DecissioList=Array();
-        $this->DecissioList=InOutput::ReadFile(Main::$newDecissionList);
+        $this->newDecissions= array();
+        $this->DecissioList = Array();
+        $this->DecissioList = InOutput::ReadFile(Main::$newDecissionList);
     }
     private function addDecissions($date, $SitzungsNumer)
     {
         $result = array();
+        foreach ($this->DecissioList as $line)
+        {
+            $result[] = $line;
+        }
         $result[] = "^ Woche ". $SitzungsNumer . " vom " . $date . "   ^^^";
+        foreach ($this->newDecissions as $line2)
+        {
+            $result[] = $line2;
+        }
         InOutput::WriteFile(Main::$newDecissionList);
     }
     private function crawlDecission($Protokoll, $legislatur, $Sitzungsnummer)
@@ -25,7 +35,6 @@ class DecissionList
         $financialDecissionNumberF = 1;
         $financialDecissionNumberH = 1;
         $DecissionNumber = 1;
-        $Decissions = array();
         foreach ($Protokoll as $line)
         {
             if (strpos($line, "template>:vorlagen:stimmen") ===false)
@@ -37,7 +46,7 @@ class DecissionList
                 $text = substr($line,strpos($line,"=") +1 );
                 $text = substr($line, 0, strpos($text, "|"));
                 $addedLine = $addedLine . $text . "|";
-                $Decissions[] = $addedLine;
+                $this->newDecissions[] = $addedLine;
                 $DecissionNumber = $DecissionNumber + 1;
             }
             else if ((strpos($line, "beschließt") !== false) and  (strpos($line, "Haushaltsverantwortliche") !== false ) and (strpos($line, "Budget") !== false ) and (strpos($line, $germanDate) !== false)) {
@@ -45,7 +54,7 @@ class DecissionList
                 $text = substr($line,strpos($line,"=") +1 );
                 $text = substr($line, 0, strpos($text, "|"));
                 $addedLine = $addedLine . $text . "|";
-                $Decissions[] = $addedLine;
+                $this->newDecissions[] = $addedLine;
                 $financialDecissionNumberH = $financialDecissionNumberH + 1;
             }
             else if ((strpos($line, "beschließt") !== false) and  (strpos($line, "angenommen") !== false ) and (strpos($line, "Budget") !== false ) and (strpos($line, $germanDate) !== false)) {
@@ -53,7 +62,7 @@ class DecissionList
                 $text = substr($line,strpos($line,"=") +1 );
                 $text = substr($line, 0, strpos($text, "|"));
                 $addedLine = $addedLine . $text . "|";
-                $Decissions[] = $addedLine;
+                $this->newDecissions[] = $addedLine;
                 $financialDecissionNumberF = $financialDecissionNumberF + 1;
             }
         }
