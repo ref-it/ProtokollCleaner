@@ -29,10 +29,10 @@ class Main
     public static $startMonth;    //Day,
     public static $startYear;  //Month and
     public static $startday;    //Year of First protokoll which will be cleaned
-    public static $copiedLineColor;
-    public static $copiedEditedLineColor;
-    public static $removedLineColor;
-    public static $notDoubled;
+    public static $copiedLineColor; #Color for copied Line in Diff
+    public static $copiedEditedLineColor; #Color for copied edited Line in Diff
+    public static $removedLineColor; #Standard Color for removed Line in Diff
+    public static $notDoubled; #do you want copy protokolls doubled
 
     //Arbeitsvariablen
     public static $financialResolution = array();
