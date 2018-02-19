@@ -30,9 +30,9 @@ if (!$hasAuth){
 	die();
 }
 
-if (!isset($_SESSION['SILMPH']['FORM_CHALLANGE_NAME'])){
-	$_SESSION['SILMPH']['FORM_CHALLANGE_NAME'] = generateRandomString(10);
-	$_SESSION['SILMPH']['FORM_CHALLANGE_VALUE'] = generateRandomString(22);
+if (!isset($_SESSION['SILMPH']['FORM_CHALLENGE_NAME'])){
+	$_SESSION['SILMPH']['FORM_CHALLENGE_NAME'] = generateRandomString(10);
+	$_SESSION['SILMPH']['FORM_CHALLENGE_VALUE'] = generateRandomString(22);
 }
 
 if($db === NULL) $db = new database();

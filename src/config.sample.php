@@ -37,8 +37,8 @@ define('TEMPLATE', 'stura');
 define('SIMPLESAML_ACCESS_GROUP', 'stura');
 
 // ===== Security Settings =====
-define('PW_PEPPER', 'XXXXX_PLEASECHANGE_TO_CRYPTIC_LETTERS_a-zA-Z0-9_MIN_LENGTH_32_XXXXX'); //TODO REMOVE not needed anymore
-define('RENAME_FILES_ON_UPLOAD', 'ph.*?,cgi,pl,pm,exe,com,bat,pif,cmd,src,asp,aspx,js,lnk,html,htm'); //TODO remove
+define('PW_PEPPER', 'XXXXX_PLEASECHANGE_TO_CRYPTIC_LETTERS_a-zA-Z0-9_MIN_LENGTH_32_XXXXX');
+define('RENAME_FILES_ON_UPLOAD', 'ph.*?,cgi,pl,pm,exe,com,bat,pif,cmd,src,asp,aspx,js,lnk,html,htm');
 define('ENABLE_ADMIN_INSTALL', false);
 define('DEBUG', false);
 

@@ -144,15 +144,22 @@ class Router {
 						array_slice($this->routes[$method][$path], 1 ), $method, $path, true
 					);
 				} else if ($method == 'POST') {
-					//TODO POST parameter validation
-					//TODO validate POST TOKEN
-					if (true){
+					// validate POST CHALLENGE
+					if(!isset($_SESSION['SILMPH']['FORM_CHALLENGE_NAME'])
+						|| $_SESSION['SILMPH']['FORM_CHALLENGE_NAME'] == ''
+						|| !isset($_SESSION['SILMPH']['FORM_CHALLENGE_VALUE'])
+						|| $_SESSION['SILMPH']['FORM_CHALLENGE_VALUE'] == ''
+						|| !isset($_POST[$_SESSION['SILMPH']['FORM_CHALLENGE_NAME']])
+						|| $_POST[$_SESSION['SILMPH']['FORM_CHALLENGE_NAME']] 
+							!= $_SESSION['SILMPH']['FORM_CHALLENGE_VALUE']){
+						require_once (SYSBASE.'/framework/MotherController.php');
+						$c = new MotherController($this->db, $this->auth, NULL);
+						$c->renderErrorPage(403, $this->navigation);
+					} else {
 						$this->callController(
 							array_slice($this->routes[$method][$path], 1 ), $method, $path
 						);
-					} else { //TODO add errormessages with validation state
-						echo 'Access Denied';
-					}
+					} 
 				} else {
 					$this->callController(
 						array_slice($this->routes[$method][$path], 1 ), $method, $path

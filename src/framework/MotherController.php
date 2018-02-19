@@ -13,6 +13,7 @@
  */
  
 require_once (SYSBASE . '/framework/JsonController.php');
+require_once (SYSBASE . '/framework/Validator.php');
 
 class MotherController extends JsonController {
 	/**

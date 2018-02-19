@@ -37,121 +37,70 @@ class AdminController extends MotherController {
 		$this->t->printPageFooter();
 	}
 	
+	private static $mail_validators = [
+		'SMTP_HOST' 	=> ['value' => ['domain', 'empty']],
+		'SMTP_USER' 	=> ['value' => ['regex', 
+			'pattern' => '/^[a-zA-Z0-9]+[a-zA-Z0-9\-_.]*[a-zA-Z0-9]+$/', 
+			'maxlength' => 64,
+			'error' => 'Kein gültiger Nutzername für den SMTP Server.']],
+		'MAIL_PASSWORD' => ['value' => ['password', 
+			'encrypt', 
+			'minlength' => 4, 
+			'empty']],
+		'SMTP_SECURE' 	=> ['value' => ['regex', 
+			'pattern' => '/SSL|TLS/',
+			'upper',
+			'error' => 'Der Sicherheitstyp muss TLS oder SSL sein.' ]],
+		'SMTP_PORT' 	=> ['value' => ['integer', 
+			'min' => 0, 
+			'max' => 65535,
+			'error' => 'Der SMTP Port muss eine ganze Zahl zwischen 1 und 65535 sein.']],
+		'MAIL_FROM' 	=> ['value' => ['mail', 'empty']],
+		'MAIL_FROM_ALIAS' => ['value' => ['regex', 
+			'pattern' => "/^[a-zA-Z0-9äöüÄÖÜß]+[a-zA-Z0-9\-_&#\/ .äöüÄÖÜß]*[a-zA-Z0-9äöüÄÖÜß]+$/",
+			'maxlength' => 64,
+			'error' => 'Der Aliasname für den Mailabsender enthält ungültige Zeichen.']],
+	];
+	
 	/**
 	 * ACTION JSON save mail settings
 	 */
 	public function mail_update_setting(){
-		if (isset($_POST['value']) && isset($_POST['data'])){
-			$data_value = trim(strip_tags($_POST['value']));
-			$data_key = $typed_username = trim(preg_replace("/^[^a-z]+|[^a-z_]*|[^a-z]+$/", "", $_POST['data']));
-		
-			if ($data_key != '' && $data_key == $_POST['data']){
-				$data_key = '' . strtoupper($data_key);
-				//lookup customers
-				$settings = $this->db->getSettings();
-				if (!array_key_exists($data_key, $settings)){
-					$this->access_not_found();
-				} else {
-					$valid = false;
-					$value_to_store = '';
-					switch ($data_key){
-						case 'SMTP_HOST': {
-							$res = isValidDomain($data_value);
-							if ($res > 0 && $res < 3){
-								$value_to_store = $data_value;
-								$valid = true;
-							} else if ($res == 3) {
-								$value_to_store = idn_to_ascii($data_value);
-								$valid = true;
-							} else if ($data_value === ''){
-								$value_to_store = '';
-								$valid = true;
-							} else {
-								$this->json_result = array('success' => false, 'eMsg' => 'Kein gültiger Hostname angegeben.');
-								$this->print_json_result();
-							}
-						} 	break;
-						case 'SMTP_USER':
-							if(isValidMailUsername($data_value) || $data_value === ''){
-								$value_to_store = $data_value;
-								$valid = true;
-							} else {
-								$this->json_result = array('success' => false, 'eMsg' => 'Kein gültiger Nutzername für den SMTP Server.');
-								$this->print_json_result();
-							} break;
-						case 'MAIL_PASSWORD':
-							if (strlen($data_value) >= 4) {
-								$value_to_store = silmph_encrypt_key ($data_value, SILMPH_KEY_SECRET);
-								$valid = true;
-							} else if ( $data_value === ''){
-								$value_to_store = '';
-								$valid = true;
-							} else {
-								$this->json_result = array('success' => false, 'eMsg' => 'Das Passwort muss aus mindestens 4 Zeichen bestehen.');
-								$this->print_json_result();
-							}
-							break;
-						case 'SMTP_SECURE':
-							if($data_value === "SSL" || $data_value === "TLS"){
-								$value_to_store = $data_value;
-								$valid = true;
-							} else {
-								$this->json_result = array('success' => false, 'eMsg' => 'Der Sicherheitstyp muss TLS oder SSL sein.');
-								$this->print_json_result();
-							} break;
-						case 'SMTP_PORT': {
-							$data_port = filter_var($data_value, FILTER_VALIDATE_INT, array("options" => array("min_range"=>1, "max_range"=>99999, "default"=>0)));
-							if($data_port > 0){
-								$value_to_store = $data_port;
-								$valid = true;
-							} else {
-								$this->json_result = array('success' => false, 'eMsg' => 'Der SMTP Port muss eine ganze Zahl zwischen 1 und 99999 sein.');
-								$this->print_json_result();
-							}
-						}	break;
-						case 'MAIL_FROM':
-							if(isValidEmail($data_value) || $data_value === ''){
-								$value_to_store = $data_value;
-								$valid = true;
-							} else {
-								$this->json_result = array('success' => false, 'eMsg' => 'Der Wert für den Mailabsender ist keine gültige E-Mailadresse.');
-								$this->print_json_result();
-							}
-							break;
-						case 'MAIL_FROM_ALIAS':
-							if(isValidMailName($data_value) || $data_value === ''){
-								$value_to_store = $data_value;
-								$valid = true;
-							} else {
-								$this->json_result = array('success' => false, 'eMsg' => 'Der Aliasname für den Mailabsender enthält ungültige Zeichen.');
-								$this->print_json_result();
-							}
-							break;
-						default:
-							$this->json_not_found();
-							break;
-					}
-					if ($valid) {
-						if ($settings[$data_key] == $value_to_store) {
-							$this->json_result = array('success' => false, 'eMsg' => 'Es wurde kein Wert geändert.');
-						} else {
-							if($this->db->setSettings($data_key, $value_to_store)){
-								$this->db->setSettings('LAST_TESTMAIL', 0);
-								$this->json_result = array('success' => true, 'msg' => 'E-Maileinstellungen erfolgreich aktualisiert.', 'val' => (($data_key != 'SMTP_PASSWORD')? $value_to_store : ''));
-							} else {
-								$this->json_result = array('success' => false, 'eMsg' => 'Unbekannter DB Fehler aufgetreten.');
-								error_log('DB Error on Mail Settings update. Key: "' . $data_key . '" Value: "' . $value_to_store);
-							}
-						}
-						$this->print_json_result();
-					}
-				}
-		
-			} else {
+		$vali = new Validator();
+		$vali->validatePostGroup(self::$mail_validators, 'data', true);
+		if ($vali->getIsError()){
+			if($vali->getLastErrorCode() == 403){
 				$this->json_access_denied();
+			} else if($vali->getLastErrorCode() == 404){
+				$this->json_not_found();
+			} else {
+				http_response_code ($vali->getLastErrorCode());
+				$this->json_result = array('success' => false, 'eMsg' => $vali->getLastErrorMsg());
+				$this->print_json_result();
 			}
 		} else {
-			$this->json_access_denied();
+			$filtered = $vali->getFiltered();
+			$data_key = trim(array_keys($filtered)[0]);
+			$data_value = trim(array_values($filtered)[0]['value']);
+			
+			//lookup customers
+			$settings = $this->db->getSettings();
+			if (!array_key_exists($data_key, $settings)){
+				$this->json_not_found();
+			} else {
+				if ($settings[$data_key] == $data_value) {
+					$this->json_result = array('success' => false, 'eMsg' => 'Es wurde kein Wert geändert.');
+				} else {
+					if($this->db->setSettings($data_key, $data_value)){
+						$this->db->setSettings('LAST_TESTMAIL', 0);
+						$this->json_result = array('success' => true, 'msg' => 'E-Maileinstellungen erfolgreich aktualisiert.', 'val' => (($data_key != 'SMTP_PASSWORD')? $data_value : ''));
+					} else {
+						$this->json_result = array('success' => false, 'eMsg' => 'Unbekannter DB Fehler aufgetreten.');
+						error_log('DB Error on Mail Settings update. Key: "' . $data_key . '" Value: "' . $data_value);
+					}
+				}
+				$this->print_json_result();
+			}
 		}
 	}
 	

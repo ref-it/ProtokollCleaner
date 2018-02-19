@@ -1,4 +1,4 @@
-<?= (isset($_SESSION['SILMPH']) && isset($_SESSION['SILMPH']['FORM_CHALLANGE_NAME']))? '<input type="hidden" id="fchal" name="'.$_SESSION['SILMPH']['FORM_CHALLANGE_NAME'].'" value="'.$_SESSION['SILMPH']['FORM_CHALLANGE_VALUE'].'">': ''?>
+<?= (isset($_SESSION['SILMPH']) && isset($_SESSION['SILMPH']['FORM_CHALLENGE_NAME']))? '<input type="hidden" id="fchal" name="'.$_SESSION['SILMPH']['FORM_CHALLENGE_NAME'].'" value="'.$_SESSION['SILMPH']['FORM_CHALLENGE_VALUE'].'">': ''?>
 
 <div class="half_container mail_settings admin"><h3 class="noprint">E-Maileinstellungen</h3><h3 class="printonly">E-Maileinstellungen</h3>
 	<?php $settings = $this->db->getSettings(); ?>
@@ -9,31 +9,31 @@
 		</tr>
 		<tr>
 			<th>SMTP Ausgangs-Server</th>
-			<td><div class="editable mail" tabindex="0" data-value="smtp_host" data-validator="host"><?php echo $settings['SMTP_HOST']; ?></div></td>
+			<td><div class="editable mail" tabindex="0" data-value="SMTP_HOST" data-validator="host"><?php echo $settings['SMTP_HOST']; ?></div></td>
 		</tr>
 		<tr>
 			<th>SMTP Nutzer</th>
-			<td><div class="editable mail" tabindex="0" data-value="smtp_user" data-validator="username"><?php echo $settings['SMTP_USER']; ?></div></td>
+			<td><div class="editable mail" tabindex="0" data-value="SMTP_USER" data-validator="username"><?php echo $settings['SMTP_USER']; ?></div></td>
 		</tr>
 		<tr>
 			<th>SMTP Passwort</th>
-			<td><div class="editable mail" tabindex="0" data-value="mail_password" data-validator="password"><?php for ($i=0; $i<16; $i++) echo '&#8226;'; ?></div></td>
+			<td><div class="editable mail" tabindex="0" data-value="MAIL_PASSWORD" data-validator="password"><?php for ($i=0; $i<16; $i++) echo '&#8226;'; ?></div></td>
 		</tr>
 		<tr>
 			<th>SMTP Sicherheit</th>
-			<td><div class="editable mail" tabindex="0" data-value="smtp_secure" data-validator="ssltls"><?php echo $settings['SMTP_SECURE']; ?></div></td>
+			<td><div class="editable mail" tabindex="0" data-value="SMTP_SECURE" data-validator="ssltls"><?php echo $settings['SMTP_SECURE']; ?></div></td>
 		</tr>
 		<tr>
 			<th>SMTP Port</th>
-			<td><div class="editable mail" tabindex="0" data-value="smtp_port" data-validator="integer"><?php echo $settings['SMTP_PORT']; ?></div></td>
+			<td><div class="editable mail" tabindex="0" data-value="SMTP_PORT" data-validator="integer"><?php echo $settings['SMTP_PORT']; ?></div></td>
 		</tr>
 		<tr>
 			<th>Absender E-Mailadresse</th>
-			<td><div class="editable mail" tabindex="0" data-value="mail_from" data-validator="mail"><?php echo $settings['MAIL_FROM']; ?></div></td>
+			<td><div class="editable mail" tabindex="0" data-value="MAIL_FROM" data-validator="mail"><?php echo $settings['MAIL_FROM']; ?></div></td>
 		</tr>
 		<tr>
 			<th>Absender Name</th>
-			<td><div class="editable mail" tabindex="0" data-value="mail_from_alias" data-validator="user"><?php echo $settings['MAIL_FROM_ALIAS']; ?></div></td>
+			<td><div class="editable mail" tabindex="0" data-value="MAIL_FROM_ALIAS" data-validator="user"><?php echo $settings['MAIL_FROM_ALIAS']; ?></div></td>
 		</tr>
 	</table>
 	<div class="addfooterspace"></div>
