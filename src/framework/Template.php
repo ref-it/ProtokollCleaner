@@ -109,11 +109,11 @@ class Template
 		if ($appendDefaultScripts){
 			$this->appendJsLink('libs/jquery-3.1.1.min.js');
 			$this->appendJsLink('libs/bootstrap.min.js');
-			$this->appendJsLink('libs/screenfull.js');
+			//$this->appendJsLink('libs/screenfull.js');
 			$this->appendJsLink('base.js');
 		}
 		if ($appendDefaultCSS){
-			//TODO $this->appendCssLink('bootstrap.min.css', 'screen,projection');
+			$this->appendCssLink('bootstrap.min.css', 'screen,projection');
 			$this->appendCssLink('font-awesome.css');
 			$this->appendCssLink('style.css', 'screen,projection');
 			$this->appendCssLink('print.css', 'print');
@@ -291,7 +291,7 @@ class Template
 			foreach ($this->nav as $route => $data){
 				if ($this->auth->hasGroup($data[0])){
 					$key = $route;
-					if ($key != '/') $key = '/'.$key;
+					if ($key != '/' && substr($key, 0, 4) != 'http') $key = '/'.$key;
 					$out[$key] = array_slice($data, 1);
 					if ($this->path === $route){
 						$out[$key]['active'] = true;

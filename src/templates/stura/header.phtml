@@ -19,7 +19,7 @@
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="mobile-web-app-capable" content="yes">
 		<link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon" />
-
+		
 		<?php $this->printCss(true); ?>
 		<?php $this->printScript(true); ?>
 
@@ -34,48 +34,56 @@
 	    <title><? $this->getTitle(true); ?></title>
 	</head>
 	<body id="body" <?php if ($this->extra_body_class) echo 'class="'.$this->extra_body_class.'"'; ?> >
-		<input type="checkbox" id="menu_toggle_check" value="0">
-		<header class="header" id="page_header" style="position: fixed;">
-			<a href="<?php echo BASE_URL; ?>" target="_self">
-				<img class="logo noprint" src="/images/logo_wt.png" width="83" height="39" /><img class="logo printonly" src="/images/logo.png" width="83" height="39" /><img class="logo_fav noprint" src="/images/favicon.ico"/></a> Protokollautomatisierung
-			<div class="menubutton_wrapper" style="position: fixed;">
-				<div tabindex="0" class="help_printbutton" onclick="printPage();">&#xf02f;</div>
-				<?php if($this->logged_in_user){ ?>
-					<form action="<?= $this->auth->getLogoutURL(); ?>" method="POST" class="logout"><input type="submit" tabindex="0" value="&#xf011;"></form>
-				 <?php } ?>
-				<label tabindex="0" class="noselect menu_toggle" for="menu_toggle_check">&#xf0c9;</label>
-			</div>
-		</header>
+		<nav class="navbar fixed-top navbar-expand-md navbar-dark bg-<?= (DEBUG)? 'danger':'dark' ?> noprint" style="position:fixed">
+     		<a class="navbar-brand mr-auto" href="<?= BASE_URL ?>">Protokollautomatisierung</a>
+	  		<button class="btn btn-outline-light mr-1 fa ml-auto d-block d-md-none" onclick="printPage();" type="button">&#xf02f;</button>
+	  		<a class="btn btn-outline-light mr-1 fa ml-0 d-block d-md-none" href="<?= $this->auth->getLogoutURL(); ?>">&#xf011;</a>
+		  	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+		    	<span class="navbar-toggler-icon"></span>
+		  	</button>
+	  		<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+	    		<div class="navbar-nav mr-auto d-block d-md-none">
+	    			<?php 
+	    				$tnav = $this->getNavigation();
+						foreach ($tnav as $route => $linkdata){ ?>
+							<a target="_self" href="<?= $route?>" title="<?= $linkdata[0] ?>" class="nav-item nav-link <?= ((isset($linkdata['active']))?'active':'') ?>"><i class="fa fa-fw"><?= $linkdata[1] ?></i><?= $linkdata[0] ?></a>
+					<?php }	?>
+					<div class="nav-link nav-item ml-auto mr-0 pull-right"><?= $this->auth->getUserFullName(); ?></div>
+				</div>
 
-		<div class="sidenav_wrapper menu navigation nav">
-			<div class="sidenav menu">
-				<div class="scroll_relative">
-					<ul class="menu-top">
-						<?php $tnav = $this->getNavigation();
+			</div>
+			<button class="btn btn-outline-light mr-1 fa ml-auto d-none d-md-block" onclick="printPage();" type="button">&#xf02f;</button>
+		  	<a class="btn btn-outline-light fa ml-0 d-none d-md-block" href="<?= $this->auth->getLogoutURL(); ?>">&#xf011;</a>
+		</nav>
+		<div class="bar_placeholder"></div>
+		<div class="d-none d-md-block">
+			<div class="profile-sidebar noprint">
+		        <div class="profile-usertitle">
+		            <div class="profile-usertitle-name"><?= $this->auth->getUserFullName(); ?></div>
+	            </div>
+	            <div class="profile-usermenu">
+	            	<ul class="">
+	            		<?php $tnav = $this->getNavigation();
 							$counter = 0;
 							foreach ($tnav as $route => $linkdata){ ?>
-								<li class="<?= (($counter == 0)? 'menu-first':'').((isset($linkdata['active']))?' menu-current':'') ?>">
-									<a href="<?= $route?>" target="_self" title="<?= $linkdata[0] ?>"><i><?= $linkdata[1] ?></i><span><?= $linkdata[0] ?></span></a>
+								<li <?= (isset($linkdata['active']))?'class="active"':'' ?>>
+									<a href="<?= $route?>" target="_self" title="<?= $linkdata[0] ?>">
+										<i class="fa fa-fw"><?= $linkdata[1] ?></i>
+										<?= $linkdata[0] ?>
+									</a>
 								</li>
 							<?php 
 								$counter++;
 							}
 						?>
 					</ul>
-					<div class="nav_footer_placeholder"></div>
-					<footer>
-						<ul>
-							<li>
-								<a href="https://stura.tu-ilmenau.de/impressum" target="_self" title="Impressum"><i>&#xf129;</i><span>Impressum</span></a>
-							</li>
-							<li><?php /* TODO Datenschutzlink zeigt noch auf Uni Datenschutzerklärung */ ?>
-								<a href="https://www.tu-ilmenau.de/impressum/datenschutz/" target="_self" title="Datenschutz"><i>&#xf1c0;</i><span>Datenschutz</span></a>
-							</li>
-						</ul>
-					</footer>
 				</div>
-			</div>
+	        </div>
+	    </div>
+		<div class="header printonly" style="position: fixed;">
+			<img class="logo printonly" src="/images/logo.png" width="83" height="39" />Protokollautomatisierung
 		</div>
+
 		<div class="content_wrapper">
 			<div class="main content" id="content">
 				<div class="modalwrapper">
@@ -84,3 +92,4 @@
 					<?php $this->printModal(true); ?>
 				</div>
 				<div class="message_relative"><div id="silmph__message_container" class="silmph__message_container" style="position:fixed"></div></div>
+				

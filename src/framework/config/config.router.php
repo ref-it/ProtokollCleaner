@@ -38,6 +38,8 @@ $rawRoutes = [
 $navigation = [
 	'/' 	=> ['stura', 	'Home', 	'&#xf015',	''],
 	'admin' => ['ref-it', 	'Admin', 	'&#xf085;',	'gearLogo.png'],
+	'https://stura.tu-ilmenau.de/impressum' => ['stura', 'Impressum', '&#xf129;', ''],
+	'https://www.tu-ilmenau.de/impressum/datenschutz/' => ['stura', 'Datenschutz', '&#xf1c0;', ''],
 ];
 
 /**
