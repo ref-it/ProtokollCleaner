@@ -96,7 +96,7 @@ class AdminController extends MotherController {
 						$this->json_result = array('success' => true, 'msg' => 'E-Maileinstellungen erfolgreich aktualisiert.', 'val' => (($data_key != 'SMTP_PASSWORD')? $data_value : ''));
 					} else {
 						$this->json_result = array('success' => false, 'eMsg' => 'Unbekannter DB Fehler aufgetreten.');
-						error_log('DB Error on Mail Settings update. Key: "' . $data_key . '" Value: "' . $data_value);
+						error_log('DB Error on Mail Settings update. Key: "' . addslashes($data_key) . '" Value: "' . $data_value);
 					}
 				}
 				$this->print_json_result();
