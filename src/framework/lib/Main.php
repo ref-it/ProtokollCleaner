@@ -33,6 +33,7 @@ class Main
     public static $copiedEditedLineColor; #Color for copied edited Line in Diff
     public static $removedLineColor; #Standard Color for removed Line in Diff
     public static $notDoubled; #do you want copy protokolls doubled
+    public static $newDecissionList; #Path to new DecissionList
 
     //Arbeitsvariablen
     public static $financialResolution = array();
