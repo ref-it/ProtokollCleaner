@@ -64,11 +64,11 @@ class VisualCopyEmulator
     {
         $head="<table style='border-collapse: collapse; border-color: black; border-style: solid; border-width: 1px; text-align: center'>".PHP_EOL.
             "<tr>".PHP_EOL.
-            "<th style='width: 3em; border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom-color: black;'>Linenumber</th>".PHP_EOL.
-            "<th style='width: 2em; border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom-color: black;'>+</th>".PHP_EOL.
-            "<th style='width: 2em; border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom-color: black;'>-</th>".PHP_EOL.
-            "<th style='width: 2em; border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom-color: black;'>C</th>".PHP_EOL.
-            "<th style='width: auto; border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom-color: black;'>Content</th>".PHP_EOL.
+            "<th style='width: 3em; border-width: 1px; border-style: solid; border-color: black;'>Linenumber</th>".PHP_EOL.
+            "<th style='width: 2em; border-width: 1px; border-style: solid; border-color: black;'>+</th>".PHP_EOL.
+            "<th style='width: 2em; border-width: 1px; border-style: solid; border-color: black;'>-</th>".PHP_EOL.
+            "<th style='width: 2em; border-width: 1px; border-style: solid; border-color: black;'>C</th>".PHP_EOL.
+            "<th style='width: auto; border-width: 1px; border-style: solid; border-color: black;'>Content</th>".PHP_EOL.
             "</tr>".PHP_EOL;
         Useroutput::Print($head);
     }
