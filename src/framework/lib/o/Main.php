@@ -50,7 +50,7 @@ class Main
 
     public function __construct() // or any other method
     {
-        if(file_exists(dirname(__FILE__).'/../conf/config.php')) {
+        if (file_exists(dirname(__FILE__) . '/../../conf/config.php')) {
             include dirname(__FILE__) . '/../../conf/config.php';
             Useroutput::PrintLineDebug("Die Config wurde genutzt.");
         }
