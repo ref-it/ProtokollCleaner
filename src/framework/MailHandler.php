@@ -99,7 +99,7 @@ class MailHandler
 		
 		$this->mail->setFrom($settings['MAIL_FROM'], $settings['MAIL_FROM_ALIAS']);
 		
-		$this->mail->AddEmbeddedImage(FRAMEWORK_PATH.'/../public/images/mailLogo.png', "logoattach", "mailLogo.png");
+		$this->mail->AddEmbeddedImage(FRAMEWORK_PATH.'/../public/images/logo_wt.png', "logoattach", "mailLogo.png");
 		
 		$this->mail->isHTML(true);							// Set email format to HTML	
 		$this->initOk = true;
