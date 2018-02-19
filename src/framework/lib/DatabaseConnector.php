@@ -178,16 +178,18 @@ class DatabaseConnector
     }
     private function newLegislatur($Startdatum, $EndDatum, $Legislaturnummer)
     {
-        $this->Legislaturliste[] = $Startdatum  . $EndDatum . $Legislaturnummer .PHP_EOL;
+        $this->Legislaturliste[] = $Startdatum . $EndDatum . $Legislaturnummer . PHP_EOL; //YYYY-MM-DDYYYY-MM-DDLN
         $this->writeHelperFile();
     }
     public function setCurrentLegislatur($ln)
     {
         $this->cl = $ln;
+        $this->writeHelperFile();
     }
     public  function setNewSitzungsnummer($sn)
     {
         $this->lsn = $sn;
+        $this->writeHelperFile();
     }
 }
 

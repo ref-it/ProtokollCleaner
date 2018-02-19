@@ -29,7 +29,7 @@ class LegislaturCrawler
             }
             else
             {
-                throw new Exception("An Error Occured");
+                throw new Exception("An Error Occured.");
             }
         }
         return $result;

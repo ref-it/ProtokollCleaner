@@ -37,7 +37,7 @@ class DecissionList
         $DecissionNumber = 1;
         foreach ($Protokoll as $line)
         {
-            if (strpos($line, "template>:vorlagen:stimmen") ===false)
+            if (strpos($line, "template>:vorlagen:stimmen") === false)
             {
                 continue;
             }
