@@ -13,6 +13,8 @@ class DatabaseConnector
     private $financialDecission;
     private $decissionList;
     private $Legislaturliste;
+    private $cl;
+    private $lsn;
 
     public function __construct() // or any other method
     {
@@ -39,8 +41,21 @@ class DatabaseConnector
                 $this->decissionList[] = substr($changedLine, 2);
             } else if (substr($line, 0, 2) === "ln") {
                 $this->Legislaturliste[] = substr($changedLine, 2);
+            } else if (substr($line, 0, 2) === "cl") {
+                $this->cl = substr($changedLine, 2);
+            }  else if (substr($line, 0, 2) === "ls") {
+                $this->cl = substr($changedLine, 2);
             }
         }
+    }
+
+    public function getLastSitzungsnummer() : string
+    {
+        return $this->lsn;
+    }
+    public function getCurrentLegislatur() : string
+    {
+        return $this->cl;
     }
     public function getlegislatur($datumUS) : string
     {
@@ -154,12 +169,22 @@ class DatabaseConnector
         {
             $lines[] = "ln" . $line . PHP_EOL;
         }
+        $lines[] = "cl" . $this->cl . PHP_EOL;
+        $lines[] = "ls" . $this->cl . PHP_EOL;
         InOutput::WriteFile(Main::$helperFilePath, $lines);
     }
     private function newLegislatur($Startdatum, $EndDatum, $Legislaturnummer)
     {
         $this->Legislaturliste[] = $Startdatum  . $EndDatum . $Legislaturnummer .PHP_EOL;
         $this->writeHelperFile();
+    }
+    public function setCurrentLegislatur($ln)
+    {
+        $this->cl = $ln;
+    }
+    public  function setNewSitzungsnummer($sn)
+    {
+        $this->lsn = $sn;
     }
 }
 

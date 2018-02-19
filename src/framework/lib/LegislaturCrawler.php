@@ -8,18 +8,29 @@
 
 class LegislaturCrawler
 {
-
-    public function __construct()
-    {
-
-    }
-    public function getLegislatur($date, $sn)
+    public static function getLegislatur($date, $sn)
     {
         settype($date, Date::class);
         $result = Main::$DatabaseCon->getlegislatur(substr($date->Filname(), 0, 10));
         if ($result === -1)
         {
-
+            if (($date->Year() === date("Y")) or ( intval($date->Year()) === intval(date("Y") -1 )))
+            {
+                if (intval(Main::$DatabaseCon->getLastSitzungsnummer()) < intval($sn) )
+                {
+                    $result = Main::$DatabaseCon->getCurrentLegislatur();
+                    Main::$DatabaseCon->setNewSitzungsnummer(strval(intval($sn)+1));
+                }
+                else
+                {
+                    $result = strval(intval(Main::$DatabaseCon->getCurrentLegislatur()) + 1);
+                    Main::$DatabaseCon->setCurrentLegislatur($result);
+                }
+            }
+            else
+            {
+                throw new Exception("An Error Occured");
+            }
         }
         return $result;
     }
