@@ -47,7 +47,10 @@ class DevController extends MotherController
 		echo '<pre>'; var_dump($x->getSturaProtokolls()); echo '</pre>';
 		$this->t->printPageFooter();
 	}
-
+	
+	/**
+	 * ACTION Data
+	 */
     public function Data()
     {
         $this->t->printPageHeader();
@@ -55,6 +58,9 @@ class DevController extends MotherController
         $this->t->printPageFooter();
     }
 
+    /**
+     * ACTION DeleteFiles
+     */
     public function DeleteFiles()
     {
         $this->t->printPageHeader();
