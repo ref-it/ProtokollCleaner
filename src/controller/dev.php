@@ -28,7 +28,7 @@ class DevController extends MotherController
 	}
 	
 	/**
-	 * ACTION home
+	 * ACTION link
 	 */
 	public function link(){
 		$this->t->printPageHeader();
@@ -37,17 +37,14 @@ class DevController extends MotherController
 	}
 	
 	/**
-	 * ACTION home
+	 * ACTION wiki
 	 */
 	public function wiki(){
 		$this->t->printPageHeader();
-		require_once (SYSBASE.'/framework/class.xrpcClient.php');
+		require_once (SYSBASE.'/framework/class.wikiClient.php');
 		
-		$x = new xrpcClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
-		$x->setMethod('');
-		$x->setParams([]);
-		$x->send();
-		
+		$x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
+		echo '<pre>'; var_dump($x->getSturaProtokolls()); echo '</pre>';
 		$this->t->printPageFooter();
 	}
 }
