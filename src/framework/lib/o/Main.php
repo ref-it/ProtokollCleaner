@@ -76,8 +76,13 @@ class Main
         $alledateien = scandir(Main::$inputpath); //Ordner "files" auslesen
         foreach ($alledateien as $datei) { // Ausgabeschleife
             $length = strlen($datei);
-            if((substr($datei, 0,1) == ".") or (substr($datei, $length - 4, 4) != ".txt") or ($length !== 14) )
+            if ((substr($datei, 0, 1) == ".") or (substr($datei, $length - 4, 4) != ".txt"))
             {
+                continue;
+            }
+            $expression = "/^[12][09][0129][0123456789]-[01][0123456789]-[0123][0123456789]/";
+            if (preg_match($expression, substr($datei, 0, 10)) === false) {
+                Useroutput::PrintLineDebug("File Discarded: " . $datei);
                 continue;
             }
             $Date = $this->getDateFromFileName($datei);
@@ -176,7 +181,7 @@ class Main
         {
             exit(10);
         }
-        return substr($fileName, strlen($fileName)-14, strlen($fileName) -1);
+        return substr($fn, strlen($fn) - 14);
     }
 
     function getDateFromFileName($Filename)
@@ -188,6 +193,9 @@ class Main
         if(preg_match($expression,$check) === false) {
             Useroutput::PrintLineDebug("File Discarded: " . $Filename);
             return -1;
+        }
+        if (strlen($Name) > 10) {
+            $Name = substr($Name, 0, 10);
         }
         $d = substr($Name, 8, 2);
         $m = substr($Name, 5, 2);

@@ -47,4 +47,18 @@ class DevController extends MotherController
 		echo '<pre>'; var_dump($x->getSturaProtokolls()); echo '</pre>';
 		$this->t->printPageFooter();
 	}
+
+    public function Data()
+    {
+        $this->t->printPageHeader();
+        include(SYSBASE . '/framework/lib/o/ShowFiles.php');
+        $this->t->printPageFooter();
+    }
+
+    public function DeleteFiles()
+    {
+        $this->t->printPageHeader();
+        include(SYSBASE . '/framework/lib/o/delete.php');
+        $this->t->printPageFooter();
+    }
 }
