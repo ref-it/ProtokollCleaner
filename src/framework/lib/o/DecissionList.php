@@ -79,8 +79,8 @@ class DecissionList
         {
             if (strpos($line, "TODO") !== false) {
                 $todo = substr($line, strpos($line, "TODO"));
-                if (substr($todo, 4, 2) === " ") {
-                    $todo = substr($todo, 6);
+                if (substr($todo, 4, 1) === " ") {
+                    $todo = substr($todo, 5);
                 } else {
                     $todo = substr($todo, strpos($todo, ' '));
                 }
