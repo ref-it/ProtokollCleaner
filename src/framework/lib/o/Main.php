@@ -41,6 +41,8 @@ class Main
     public static $EnableLegislaturAutomization; #enables Legislaturnummerautomatisiserung
     public static $currentLegislaturnumber; # legt aktuelle Legislatur bei $EnableLegislaturAutomization = false fest
     public static $DisableWrite; #'Disables Writing Files'
+    public static $enableToDoList; # enables externes Crawlen der noch zu bearbeitenden Dinge
+    public static $PathToToDOList; #Path to bearebitenden DInge List
     
     //Arbeitsvariablen
     public static $financialResolution = array();

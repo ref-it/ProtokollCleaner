@@ -10,10 +10,26 @@ class DecissionList
 {
     private $DecissioList;
     private $newDecissions;
+    private $TodoList;
+    private $TodoListDebug;
     public function __construct() // or any other method
     {
         $this->newDecissions= array();
         $this->DecissioList = Array();
+        $this->TodoList = Array();
+        if (Main::$enableToDoList) {
+            $this->TodoList = InOutput::ReadFile(Main::$PathToToDOList);
+            if (Main::$debug) {
+                $this->TodoListDebug = array();
+                foreach ($this->TodoList as $item) {
+                    $name = substr($item, strpos($item, ' ') + 1);
+                    $aufgabe = substr($name, strpos($item, " | ") + 3);
+                    $name = substr($name, strpos($name, ' |'));
+                    $aufgabe = substr($aufgabe, strpos($aufgabe, ' |'));
+                    $this->TodoListDebug[] = "<tr>" . PHP_EOL . "<td>" . $name . "</td>" . PHP_EOL . "<td>" . $aufgabe . "</td>" . PHP_EOL . "</tr>" . PHP_EOL;
+                }
+            }
+        }
         $this->DecissioList = InOutput::ReadFile(Main::$newDecissionList);
     }
     private function addDecissions($fn, $SitzungsNumer)
@@ -29,14 +45,63 @@ class DecissionList
             $result[] = $line2;
         }
         InOutput::WriteFile(Main::$newDecissionList, $result);
+        if (Main::$enableToDoList) {
+            Useroutput::PrintLineDebug("Writing ToDo-List");
+            InOutput::WriteFile(Main::$PathToToDOList, $this->TodoList);
+        }
+    }
+
+    private function getToDoLine($name, $aufgabe): string
+    {
+        $aufgabe = str_replace(PHP_EOL, "", $aufgabe);
+        $name = str_replace(PHP_EOL, "", $name);
+        $line = "|  " . $name . " | " . $aufgabe . " |" . PHP_EOL;
+        $this->TodoListDebug[] = "<tr>" . PHP_EOL . "<td>" . $name . "</td>" . PHP_EOL . "<td>" . $aufgabe . "</td>" . PHP_EOL . "</tr>" . PHP_EOL;
+        return $line;
+    }
+
+    private function ToDoListDebugHelperAnfang()
+    {
+        Useroutput::PrintLineDebug("<table style='border: solid 1px black'>" . PHP_EOL . "<tr>" . PHP_EOL . "<th>Name</th>" . PHP_EOL . "<th>Aufgabe</th>" . PHP_EOL . "</tr>" . PHP_EOL);
+    }
+
+    private function ToDoListDebugHelperEnde()
+    {
+        Useroutput::PrintLineDebug("</table>");
+    }
+
+    private function removeEmptyBegin($line): string
+    {
+        $result = $line;
+        $check = true;
+        do {
+            if (substr($result, 0, 1) === " ") {
+                $result = substr($result, 1);
+            } else {
+                $check = false;
+            }
+        } while ($check);
+        return $result;
     }
     private function crawlDecission($Protokoll, $legislatur, $Sitzungsnummer)
     {
+        $this->ToDoListDebugHelperAnfang();
         $financialDecissionNumberF = 1;
         $financialDecissionNumberH = 1;
         $DecissionNumber = 1;
         foreach ($Protokoll as $line)
         {
+            if (strpos($line, "TODO") !== false) {
+                $todo = substr($line, strpos($line, "TODO") + 4);
+                if (strpos($todo, ':')) {
+                    $name = $this->removeEmptyBegin(substr($todo, strpos($todo, $line), strpos($todo, ':')));
+                    $aufgabe = $this->removeEmptyBegin(substr($todo, strpos($todo, ':') + 1));
+                } else {
+                    $name = "Everybody";
+                    $aufgabe = $this->removeEmptyBegin(substr($todo, strpos($todo, ' ')));
+                }
+                $this->TodoList[] = $this->getToDoLine($name, $aufgabe);
+            }
             if (strpos($line, "template>:vorlagen:stimmen") ===false)
             {
                 continue;
@@ -141,6 +206,19 @@ class DecissionList
                 $addedLine = $addedLine . $text . " |";
                 $this->newDecissions[] = $addedLine . PHP_EOL;
                 $DecissionNumber = $DecissionNumber + 1;
+            }
+        }
+        if (Main::$debug) {
+            Useroutput::PrintLineDebug("ToDo's");
+            foreach ($this->TodoListDebug as $line) {
+                Useroutput::PrintLineDebug($line);
+            }
+        }
+        $this->ToDoListDebugHelperEnde();
+        if (Main::$debug) {
+            Useroutput::PrintLineDebug("ToDo's");
+            foreach ($this->TodoList as $line) {
+                Useroutput::PrintLineDebug($line);
             }
         }
     }
