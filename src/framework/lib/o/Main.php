@@ -76,8 +76,13 @@ class Main
         $alledateien = scandir(Main::$inputpath); //Ordner "files" auslesen
         foreach ($alledateien as $datei) { // Ausgabeschleife
             $length = strlen($datei);
-            if((substr($datei, 0,1) == ".") or (substr($datei, $length - 4, 4) != ".txt") or ($length !== 14) )
+            if ((substr($datei, 0, 1) == ".") or (substr($datei, $length - 4, 4) != ".txt"))
             {
+                continue;
+            }
+            $expression = "/^[12][09][0129][0123456789]-[01][0123456789]-[0123][0123456789]/";
+            if (preg_match($expression, $datei) === false) {
+                Useroutput::PrintLineDebug("File Discarded: " . $datei);
                 continue;
             }
             $Date = $this->getDateFromFileName($datei);
