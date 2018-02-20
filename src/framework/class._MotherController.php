@@ -12,8 +12,8 @@
  * @requirements    PHP 7.0 or higher
  */
  
-require_once (SYSBASE . '/framework/JsonController.php');
-require_once (SYSBASE . '/framework/Validator.php');
+require_once (SYSBASE . '/framework/class._JsonController.php');
+require_once (SYSBASE . '/framework/class.validator.php');
 
 class MotherController extends JsonController {
 	/**

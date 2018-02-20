@@ -98,13 +98,13 @@ if (!file_exists(dirname(__FILE__, 2).'/secret.php')){
 /**
  * include database
  */
-require_once (dirname(__FILE__)."/Database.php");
+require_once (dirname(__FILE__)."/class.database.php");
 $db = NULL; //set in session
 
 /**
  * include template
  */
-require_once (dirname(__FILE__)."/Template.php");
+require_once (dirname(__FILE__)."/class.template.php");
 
 /**
  * include external library: phpmailer
@@ -117,12 +117,12 @@ define('MAIL_LANGUAGE_PATH', dirname(__FILE__).'/external_libraries/phpmailer/la
 /**
  * include framework mail script
  */
-require_once (dirname(__FILE__)."/MailHandler.php");
+require_once (dirname(__FILE__)."/class.mailHandler.php");
 
 /**
  * include session handler
  */
-require_once (dirname(__FILE__)."/Router.php");
+require_once (dirname(__FILE__)."/class.router.php");
 
 /**
  * include session handler
