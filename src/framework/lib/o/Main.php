@@ -80,7 +80,7 @@ class Main
             {
                 continue;
             }
-            $expression = "/^[12][09][0129][0123456789]-[01][0123456789]-[0123][0123456789]/";
+            $expression = "/^[12][09][0129][0123456789]-[01][0123456789]-[0123][0123456789].*/";
             if (preg_match($expression, $datei) === false) {
                 Useroutput::PrintLineDebug("File Discarded: " . $datei);
                 continue;
