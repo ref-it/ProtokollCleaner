@@ -62,12 +62,26 @@ class DecissionList
 
     private function ToDoListDebugHelperAnfang()
     {
-        Useroutput::PrintLineDebug("<table>" . PHP_EOL . "<tr>" . PHP_EOL . "<th>Name</th>" . PHP_EOL . "<th>Aufgabe</th>" . PHP_EOL . "</tr>" . PHP_EOL);
+        Useroutput::PrintLineDebug("<table style='border: solid 1px black'>" . PHP_EOL . "<tr>" . PHP_EOL . "<th>Name</th>" . PHP_EOL . "<th>Aufgabe</th>" . PHP_EOL . "</tr>" . PHP_EOL);
     }
 
     private function ToDoListDebugHelperEnde()
     {
         Useroutput::PrintLineDebug("</table>");
+    }
+
+    private function removeEmptyBegin($line): string
+    {
+        $result = $line;
+        $check = true;
+        do {
+            if (substr($result, 0, 1) === " ") {
+                $result = substr($result, 1);
+            } else {
+                $check = false;
+            }
+        } while ($check);
+        return $result;
     }
     private function crawlDecission($Protokoll, $legislatur, $Sitzungsnummer)
     {
@@ -78,22 +92,14 @@ class DecissionList
         foreach ($Protokoll as $line)
         {
             if (strpos($line, "TODO") !== false) {
-                $todo = substr($line, strpos($line, "TODO"));
-                if (substr($todo, 4, 1) === " ") {
-                    $todo = substr($todo, 5);
+                $todo = substr($line, strpos($line, "TODO") + 4);
+                if (strpos($todo, ':')) {
+                    $name = $this->removeEmptyBegin(substr($todo, strpos($todo, $line), strpos($todo, ':')));
+                    $aufgabe = $this->removeEmptyBegin(substr($todo, strpos($todo, ':') + 1));
                 } else {
-                    $todo = substr($todo, strpos($todo, ' '));
+                    $name = "Everybody";
+                    $aufgabe = $this->removeEmptyBegin(substr($todo, strpos($todo, ' ')));
                 }
-                $name = substr($todo, strpos($todo, $line), strpos($todo, ':'));
-                $aufgabe = substr($todo, strpos($todo, ':') + 1);
-                $check = true;
-                do {
-                    if (substr($aufgabe, 0, 1) === " ") {
-                        $aufgabe = substr($aufgabe, 1);
-                    } else {
-                        $check = false;
-                    }
-                } while ($check);
                 $this->TodoList[] = $this->getToDoLine($name, $aufgabe);
             }
             if (strpos($line, "template>:vorlagen:stimmen") ===false)
