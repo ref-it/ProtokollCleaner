@@ -28,3 +28,5 @@ Main::$ignoreDBPublishedList = false; #ignores Database already published list
 Main::$EnableLegislaturAutomization = false; #enables Legislaturnummerautomatisiserung
 Main::$currentLegislaturnumber = "XX"; # legt aktuelle Legislatur bei $EnableLegislaturAutomization = false fest
 Main::$DisableWrite = false; #'Disables Writing Files'
+Main::$enableToDoList = false; # enables externes Crawlen der noch zu bearbeitenden Dinge
+Main::$PathToToDOList = "/var/www/helper/ToDo.txt"; #Path to bearebitenden DInge List
