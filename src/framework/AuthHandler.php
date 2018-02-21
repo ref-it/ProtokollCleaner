@@ -12,7 +12,7 @@ class  AuthHandler{
 		session_start();
 		$this->attributes = [
 			'displayName' => 'Michael G',
-			'mail' => 'michaelg@example.org',
+			'mail' => 'michael@gnehr.de',
 			'groups' => ['stura', 'ref-it'],
 			'eduPersonPrincipalName' => ['michaguser'],
 		];

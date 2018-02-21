@@ -85,7 +85,7 @@ class InOutput
         $x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
         echo '<pre>';
         if (Main::$debug) {
-            var_dump($x->putSpielwiese($name, $fileAsString));
+        	var_dump($x->putPage('spielwiese:test:' . $name, $fileAsString, ['sum' => "", 'minor' => false]));
         }
         echo '</pre>';
     }
