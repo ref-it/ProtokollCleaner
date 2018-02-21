@@ -36,11 +36,17 @@ define('TEMPLATE', 'stura');
 // ===== SimpleSAML Settings & Konstants
 define('SIMPLESAML_ACCESS_GROUP', 'stura');
 
+// ===== Wiki Settings =====
+define('WIKI_URL', 'https://wiki.stura.tu-ilmenau.de');
+define('WIKI_XMLRPX_PATH', '/lib/exe/xmlrpc.php');
+define('WIKI_USER', 'wikiuser_xxx');
+define('WIKI_PASSWORD', 'wikipassword_xxx');
+
 // ===== Security Settings =====
 define('PW_PEPPER', 'XXXXX_PLEASECHANGE_TO_CRYPTIC_LETTERS_a-zA-Z0-9_MIN_LENGTH_32_XXXXX');
 define('RENAME_FILES_ON_UPLOAD', 'ph.*?,cgi,pl,pm,exe,com,bat,pif,cmd,src,asp,aspx,js,lnk,html,htm');
 define('ENABLE_ADMIN_INSTALL', false);
-define('DEBUG', false);
+define('DEBUG', false); //Level = false / 0 => disabled || 1 => Basic debug information || 2 => additional information || 3 => all
 
 // ===== DO NOT CHANGE THIS =====
 require_once (dirname(__FILE__)."/framework/init.php");
