@@ -44,7 +44,7 @@ class DevController extends MotherController
 		require_once (SYSBASE.'/framework/class.wikiClient.php');
 		
 		$x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
-		echo '<pre>'; var_dump($x->getSturaProtokolls()); echo '</pre>';
+		echo '<pre>'; var_dump($x->getSturaInternProtokolls()); echo '</pre>';
 		$this->t->printPageFooter();
 	}
 	
