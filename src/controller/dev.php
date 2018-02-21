@@ -44,7 +44,20 @@ class DevController extends MotherController
 		require_once (SYSBASE.'/framework/class.wikiClient.php');
 		
 		$x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
-		echo '<pre>'; var_dump($x->getSturaInternProtokolls()); echo '</pre>';
+		$a = $x->getAttachement('spielwiese:test:utf8test:badge3.png');
+		
+		echo '<pre>'; var_dump(
+			$x->putAttachement('spielwiese:test:utf8test:badge5.png', $a)
+		); 
+		echo '</pre>';
+		echo '<pre>'; var_dump(
+		
+			$x->listAttachements('spielwiese:test:utf8test')
+		
+		
+		
+		); echo '</pre>';
+		
 		$this->t->printPageFooter();
 	}
 	
@@ -65,6 +78,18 @@ class DevController extends MotherController
     {
         $this->t->printPageHeader();
         include(SYSBASE . '/framework/lib/o/delete.php');
+        $this->t->printPageFooter();
+    }
+
+    public function putwiki()
+    {
+        $this->t->printPageHeader();
+        require_once(SYSBASE . '/framework/class.wikiClient.php');
+
+        $x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
+        echo '<pre>';
+        var_dump($x->putSpielwiese('test2', 'blubb'));
+        echo '</pre>';
         $this->t->printPageFooter();
     }
 }

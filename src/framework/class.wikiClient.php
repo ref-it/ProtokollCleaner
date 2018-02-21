@@ -98,11 +98,11 @@ class wikiClient extends xrpcClient
 	}
 	
 	/**
-	 * get docuWiki append to wikipage
+	 * docuWiki append text to wikipage
 	 * @param string $filename
 	 * @param string $text
 	 * @param array $attr
-	 * @return string
+	 * @return boolean
 	 */
 	public function appendPage($filename = '', $text = '', $attr = NULL){
 		$this->setMethod('dokuwiki.appendPage');
@@ -121,19 +121,50 @@ class wikiClient extends xrpcClient
 		$this->setParams($param);
 		if ($this->send()){
 			$this->parse_response();
-			return $this->parsed_result;
+			return ($this->parsed_result[0] == 1);
 		} else {
 			return '';
 		}
 	}
+
+	/**
+	 * docuWiki create/overwrite wikipage
+	 * @param string $filename
+	 * @param string $text
+	 * @param array $attr
+	 * @return boolean
+	 */
+    public function putPage($filename = '', $text = '', $attr = NULL)
+    {
+    	$this->setMethod('wiki.putPage');
+    	$param=[];
+    	if ($filename == '' || !is_string($filename)){
+    		return;
+    	}
+    	$param[] = $filename;
+    	if (!is_string($text)){
+    		return;
+    	}
+    	$param[] = $text;
+    	if ($attr != null){
+    		$param[2]=['attr', $attr];
+    	}
+    	$this->setParams($param);
+    	if ($this->send()){
+    		$this->parse_response();
+    		return (isset($this->parsed_result[0]) && $this->parsed_result[0] == 1);
+    	} else {
+    		return '';
+    	}
+    }
 	
 	/**
-	 * get docuWiki delete wiki page
+	 * docuWiki delete wiki page
 	 * @param string $filename
 	 * @return string
 	 */
 	public function deletePage($filename){
-		return $this->appendPage($filename , '');
+		return $this->putPage($filename , '');
 	}
 	
 	/**
@@ -150,7 +181,7 @@ class wikiClient extends xrpcClient
 		$this->setParams($param);
 		if ($this->send()){
 			$this->parse_response();
-			return $this->parsed_result;
+			return $this->parsed_result[0];
 		} else {
 			return '';
 		}
@@ -170,7 +201,7 @@ class wikiClient extends xrpcClient
 		$this->setParams($param);
 		if ($this->send()){
 			$this->parse_response();
-			return $this->parsed_result;
+			return $this->parsed_result[0];
 		} else {
 			return '';
 		}
@@ -194,7 +225,7 @@ class wikiClient extends xrpcClient
 		$this->setParams($param);
 		if ($this->send()){
 			$this->parse_response();
-			return $this->parsed_result;
+			return $this->parsed_result['paths'];
 		} else {
 			return '';
 		}
@@ -216,7 +247,7 @@ class wikiClient extends xrpcClient
 		$this->setParams($param);
 		if ($this->send()){
 			$this->parse_response();
-			return $this->parsed_result;
+			return (isset($this->parsed_result[0]))?$this->parsed_result[0] : false;
 		} else {
 			return '';
 		}
@@ -242,14 +273,14 @@ class wikiClient extends xrpcClient
 		if ($base64 == '' || !is_string($base64)){
 			return;
 		}
-		$param[] = $base64;
+		$param[] = ['base64', $base64];
 		if ($attr != null){
-			$param[1]=['attr', $attr];
+			$param[]=['attr', $attr];
 		}
 		$this->setParams($param);
 		if ($this->send()){
 			$this->parse_response();
-			return $this->parsed_result;
+			return isset($this->parsed_result[0]);
 		} else {
 			return '';
 		}
@@ -271,7 +302,7 @@ class wikiClient extends xrpcClient
 		$this->setParams($param);
 		if ($this->send()){
 			$this->parse_response();
-			return $this->parsed_result;
+			return (isset($this->parsed_result[0]));
 		} else {
 			return '';
 		}
@@ -320,7 +351,6 @@ class wikiClient extends xrpcClient
 	public function getSturaInternProtokolls(){
 		return $this->getPagelist('protokoll:stura:intern:', ['depth' => 4]);
 	}
-	
 }
 
 ?>
