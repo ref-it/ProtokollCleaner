@@ -48,6 +48,9 @@ if (DEBUG) {
 	$routes['GET']['wiki'] = ['ref-it', 'dev',  'wiki'];
 	$navigation['wiki'] = ['ref-it', 'WikiTest', '&#xf266;', ''];
 
+    $routes['GET']['wikiPut'] = ['ref-it', 'dev', 'putwiki'];
+    $navigation['wikiPut'] = ['ref-it', 'WikiTestPut', '&#xf266;', ''];
+
     $routes['GET']['data'] = ['ref-it', 'dev', 'Data'];
     $navigation['data'] = ['ref-it', 'WriteFiles', '&#xf0c5;', ''];
 

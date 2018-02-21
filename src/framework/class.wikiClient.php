@@ -69,6 +69,18 @@ class wikiClient extends xrpcClient
 			return '';
 		}
 	}
+
+    public function putPage($param = [])
+    {
+        $this->setMethod('wiki.putPage');
+        $this->setParams($param);
+        if ($this->send()) {
+            $this->parse_response();
+            return $this->parsed_result;
+        } else {
+            return '';
+        }
+    }
 	
 	//==================================================================================
 	// protocol helper Functions
@@ -90,6 +102,11 @@ class wikiClient extends xrpcClient
 	public function getSturaInternProtokolls(){
 		return $this->getPagelist(['protokoll:stura:intern:', ['attr', ['depth' => 4]]])['paths'];
 	}
+
+    public function putSpielwiese($name, $inhalt)
+    {
+        return $this->putPage(['spielwiese:test:' . $name, $inhalt, ['attr', ['sum' => "", 'minor' => false]]]);
+    }
 	
 	
 	

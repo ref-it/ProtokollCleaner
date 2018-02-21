@@ -22,6 +22,18 @@ class InOutput
         return $result;
     }
 
+    static function WriteTestWiki($name, $content = [])
+    {
+        $fileAsString = "";
+        foreach ($content as $item) {
+            $fileAsString = $fileAsString . PHP_EOL . $item;
+        }
+        require_once(SYSBASE . '/framework/class.wikiClient.php');
+        $x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
+        echo '<pre>';
+        var_dump($x->putSpielwiese($name, $fileAsString));
+        echo '</pre>';
+    }
     static function WriteFile($FileName, $content) : bool
     {
     	if (Main::$DisableWrite) {
@@ -41,6 +53,16 @@ class InOutput
             Useroutput::PrintLineDebug($e);
             return false;
         }
+        $check = true;
+        do {
+            if (strpos($FileName, "/")) {
+
+            } else {
+
+            }
+        } while ();
+        $FileName =
+            self::WriteTestWiki($FileName, $content);
         return true;
     }
 
