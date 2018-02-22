@@ -35,6 +35,15 @@ class DevController extends MotherController
 		include (SYSBASE.'/framework/lib/o/PCUI.php');
 		$this->t->printPageFooter();
 	}
+
+    public function link2()
+    {
+        $this->t->printPageHeader();
+        include(SYSBASE . '/framework/lib/o/Main.php');
+        $x = new Main();
+        $x->WikiMain();
+        $this->t->printPageFooter();
+    }
 	
 	/**
 	 * ACTION wiki

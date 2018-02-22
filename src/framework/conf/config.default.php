@@ -31,3 +31,7 @@ Main::$currentLegislaturnumber = "XX"; # legt aktuelle Legislatur bei $EnableLeg
 Main::$DisableWrite = false; #'Disables Writing Files'
 Main::$enableToDoList = false; # enables externes Crawlen der noch zu bearbeitenden Dinge
 Main::$PathToToDOList = "examples/Todo.txt"; #Path to bearebitenden DInge List
+Main::$NameSpaces = [["protokollGremiumA:intern:", "protokollGremiumA:public:"], ["protokollGremiumB:intern:", "protokollGremiumB:public:"]]; #Namespaces to crawl in Wiki as Array
+Main::$DecissionListWiki = "examples:intern:beschluesse"; #DecissionListToRead
+Main::$decissionListWikiWrite = "examples:public:beschluesse"; #DecssionListToWrite
+Main::$TodoListWiki = "examples:ToDo"; # TodoList in Wiki

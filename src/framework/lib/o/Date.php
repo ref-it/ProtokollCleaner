@@ -40,5 +40,10 @@ class Date
         return $this->y . "-" . $this->m . "-" . $this->d . ".txt";
     }
 
+    function WikiPath()
+    {
+        return $this->y . "-" . $this->m . "-" . $this->d;
+    }
+
 }
 ?>
