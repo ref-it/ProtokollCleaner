@@ -13,6 +13,7 @@ $routes = [
 	'GET' => [
 		'/'					=> ['stura',	'base' , 	'home'],
 		'admin'				=> ['ref-it',	'admin', 	'admin'],
+		'protolist'			=> ['stura',	'protocol', 	'slist'],
 	],
 	'POST' => [
 		'admin/savemail'	=> ['ref-it',	'admin', 	'mail_update_setting'],
@@ -38,12 +39,16 @@ $rawRoutes = [
 $navigation = [
 	'/' 	=> ['stura', 	'Home', 	'&#xf015',	''],
 	'admin' => ['ref-it', 	'Admin', 	'&#xf085;',	'gearLogo.png'],
+	'protolist' => ['ref-it', 	'Protokolle', 	'&#xf266;',	'log.png'],
 	'https://stura.tu-ilmenau.de/impressum' => ['stura', 'Impressum', '&#xf129;', ''],
 	'https://www.tu-ilmenau.de/impressum/datenschutz/' => ['stura', 'Datenschutz', '&#xf1c0;', ''],
 ];
 if (DEBUG >= 1) {
 	$routes['GET']['dev'] = ['ref-it', 'dev',  'link'];
 	$navigation['dev'] = ['ref-it', 'Dev', '&#xf20e;', ''];
+
+	$routes['GET']['devWiki'] = ['ref-it', 'dev', 'link2'];
+	$navigation['devWiki'] = ['ref-it', 'devWiki', '&#xf20e;', ''];
 	
 	$routes['GET']['wiki'] = ['ref-it', 'dev',  'wiki'];
 	$navigation['wiki'] = ['ref-it', 'WikiTest', '&#xf266;', ''];
