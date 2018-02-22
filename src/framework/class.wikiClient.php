@@ -114,7 +114,7 @@ class wikiClient extends xrpcClient
 		if (!is_string($text)){
 			return;
 		}
-		$param[] = $text;
+		$param[] = htmlspecialchars($text);
 		if ($attr != null){
 			$param[2]=['attr', $attr];
 		}
@@ -145,7 +145,7 @@ class wikiClient extends xrpcClient
     	if (!is_string($text)){
     		return;
     	}
-    	$param[] = $text;
+    	$param[] = htmlspecialchars($text);
     	if ($attr != null){
     		$param[2]=['attr', $attr];
     	}
