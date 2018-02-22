@@ -24,7 +24,12 @@ class DecissionList
             if ($wiki === false) {
                 $this->TodoList = InOutput::ReadFile(Main::$PathToToDOList);
             } else {
-                $this->TodoList = InOutput::ReadWiki(Main::$TodoListWiki);
+                $helpList = InOutput::ReadWiki(Main::$TodoListWiki);
+                foreach ($helpList as $line) {
+                    if (($line !== "") or (trim($line) !== "")) {
+                        $this->TodoList[] = $line;
+                    }
+                }
             }
             if (Main::$debug) {
                 $this->TodoListDebug = array();
