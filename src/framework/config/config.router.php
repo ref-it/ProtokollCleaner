@@ -44,6 +44,9 @@ $navigation = [
 if (DEBUG >= 1) {
 	$routes['GET']['dev'] = ['ref-it', 'dev',  'link'];
 	$navigation['dev'] = ['ref-it', 'Dev', '&#xf20e;', ''];
+
+    $routes['GET']['devWiki'] = ['ref-it', 'dev', 'link2'];
+    $navigation['devWiki'] = ['ref-it', 'devWiki', '&#xf20e;', ''];
 	
 	$routes['GET']['wiki'] = ['ref-it', 'dev',  'wiki'];
 	$navigation['wiki'] = ['ref-it', 'WikiTest', '&#xf266;', ''];

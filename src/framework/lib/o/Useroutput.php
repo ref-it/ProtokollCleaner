@@ -27,6 +27,15 @@ class Useroutput
     {
         echo "<br /><hr /><br />" . PHP_EOL;
     }
+
+    static function makeDump($dump)
+    {
+        if (Main::$debug) {
+            echo '<pre>';
+            var_dump($dump);
+            echo '</pre>';
+        }
+    }
 }
 
 ?>

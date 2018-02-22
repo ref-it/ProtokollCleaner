@@ -30,3 +30,7 @@ Main::$currentLegislaturnumber = "XX"; # legt aktuelle Legislatur bei $EnableLeg
 Main::$DisableWrite = false; #'Disables Writing Files'
 Main::$enableToDoList = false; # enables externes Crawlen der noch zu bearbeitenden Dinge
 Main::$PathToToDOList = "/var/www/helper/ToDo.txt"; #Path to bearebitenden DInge List
+Main::$NameSpaces = [["protokollGremiumA:intern:", "protokollGremiumA:public:"], ["protokollGremiumB:intern:", "protokollGremiumB:public:"]]; #Namespaces to crawl in Wiki as Array
+Main::$DecissionListWiki = "troll:intern:beschluesse"; #DecissionListToRead
+Main::$decissionListWikiWrite = "troll:public:beschluesse"; #DecssionListToWrite
+Main::$TodoListWiki = "troll:ToDo"; # TodoList in Wiki

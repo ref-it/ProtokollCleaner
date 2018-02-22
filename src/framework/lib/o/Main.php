@@ -44,7 +44,11 @@ class Main
     public static $DisableWrite; #'Disables Writing Files'
     public static $enableToDoList; # enables externes Crawlen der noch zu bearbeitenden Dinge
     public static $PathToToDOList; #Path to bearebitenden DInge List
-    
+    public static $NameSpaces;#Namespaces to crawl in Wiki as Array
+    public static $DecissionListWiki; #DecissionListToRead
+    public static $decissionListWikiWrite; #DecssionListToWrite
+    public static $TodoListWiki; # TodoList in Wiki
+
     //Arbeitsvariablen
     public static $financialResolution = array();
     public static $DatabaseCon;
@@ -56,9 +60,7 @@ class Main
         if (file_exists(SYSBASE . '/framework/conf/config.php')) {
             include SYSBASE . '/framework/conf/config.php';
             Useroutput::PrintLineDebug("Die Config wurde genutzt.");
-        }
-        else
-        {
+        } else {
             include SYSBASE . '/framework/conf/config.default.php';
             Useroutput::PrintLineDebug("Die Reserve-Config wurde genutzt.");
         }
@@ -71,118 +73,72 @@ class Main
         VisualCopyEmulator::generateDiffTable($Protokoll, $check);
     }
 
-    public function Main()
+    public function WikiMain()
     {
-        $this->files = array();
-        $alledateien = scandir(Main::$inputpath); //Ordner "files" auslesen
-        foreach ($alledateien as $datei) { // Ausgabeschleife
-            $length = strlen($datei);
-            if ((substr($datei, 0, 1) == ".") or (substr($datei, $length - 4, 4) != ".txt"))
-            {
-                continue;
-            }
-            $expression = "/^[12][09][0129][0123456789]-[01][0123456789]-[0123][0123456789]/";
-            if (preg_match($expression, substr($datei, 0, 10)) === false) {
-                Useroutput::PrintLineDebug("File Discarded: " . $datei);
-                continue;
-            }
-            $Date = $this->getDateFromFileName($datei);
-            if ($Date === -1)
-            {
-                continue;
-            }
-            if(intval($Date->Year()) < Main::$startYear)
-            {
-                continue;
-            }
-            if((intval($Date->Year()) === Main::$startYear) and (intval($Date->Month()) < Main::$startMonth))
-            {
-                continue;
-            }
-            if((intval($Date->Year()) === Main::$startYear) and (intval($Date->Month()) === Main::$startMonth) and (intval($Date->Day()) < Main::$startday))
-            {
-                continue;
-            }
-            $file = new File($Date, $datei);
-            $fn = Main::$outputpath . "/" . $file->getOutputFilename();
-            $check = $this->checkApproved($file->getgermanDate());
-            if($check)
-            {
-                if (Main::$DatabaseCon->alreadyPublishedFinal($file->getOutputFilename()) and Main::$notDoubled)
-                {
-                    Useroutput::PrintLineDebug('Already Published as Final.');
+        Useroutput::makeDump(Main::$NameSpaces);
+        foreach (Main::$NameSpaces as $Namespace) {
+            $this->files = array();
+            $alledateien = InOutput::getWikiPageList($Namespace[0]);
+            foreach ($alledateien as $datei) { // Ausgabeschleife
+                $expression = "/^[12][09][0129][0123456789]-[01][0123456789]-[0123][0123456789]/";
+                if (preg_match($expression, substr($datei, strlen($Namespace[0]), 10)) === false) {
+                    Useroutput::PrintLineDebug("File Discarded: " . $datei);
                     continue;
                 }
-                $Ausgabe = "Published as Final: ";
-                Main::$DatabaseCon->newPublishedFinal($file->getOutputFilename());
-                if (Main::$DatabaseCon->alreadyPublishedDraft($file->getOutputFilename()))
-                {
-                    Main::$DatabaseCon->removeFromDraft($file->getOutputFilename());
-                }
-            }
-            else
-            {
-                if (Main::$DatabaseCon->alreadyPublishedDraft($file->getOutputFilename()) and Main::$notDoubled)
-                {
-                    Useroutput::PrintLineDebug('Already Published as Draft.');
+                $Date = $this->getDateFromWikipath($datei, $Namespace[0]);
+                if ($Date === -1) {
                     continue;
                 }
-                $Ausgabe = "Published as Draft: ";
-                Main::$DatabaseCon->newPublishedDraft($file->getOutputFilename());
-            }
-            $Ausgabe = $Ausgabe . $this->copy($file->getFilename(), $fn, $check);
-            Useroutput::PrintLine($Ausgabe);
-            $ListDecission = new DecissionList();
-            if (Main::$EnableLegislaturAutomization)
-            {
-                $legislaturnumber = LegislaturCrawler::getLegislatur(substr($file->getOutputFilename(),0,10), DecissionList::crawlSitzungsnummer(InOutput::ReadFile($file->getFilename())));
-            }
-            else
-            {
-                $legislaturnumber = Main::$currentLegislaturnumber;
-            }
-            $ListDecission->processProtokoll(InOutput::ReadFile($file->getFilename()),$legislaturnumber, substr($file->getOutputFilename(), 0, 10));
-            VisualCopyEmulator::generateDiffTable(InOutput::ReadFile($file->getFilename()), $check);
-            $this->files[] = $file;
-        }
-        Useroutput::PrintHorizontalSeperator();
-        $this->exportFinancial();
-        if (Main::$postData) {
-            $this->sendData();
-        }
-    }
-    function copy($fileName, $fn, $check) : string
-    {
-        $OffRec=false;
-        $lines = array();
-        foreach (InOutput::ReadFile($fileName) as $line) {
-            # do same stuff with the $line
-            if(!$OffRec and strpos($line, "tag>" . Main::$starttag) !== false) {
-                $OffRec=true;
-                continue;
-            }
-            if(!$OffRec)
-            {
-                if(strpos($line, "======") !== false and !$check)
-                {
-                    $firstpart = substr($line, strpos($line, "======"), 6 );
-                    $secondpart = substr($line, strpos($line, "======") + 6, strlen($line) -1 );
-                    $lines[] = $firstpart . " Entwurf:" . $secondpart;
-                }
-                else {
-                    $lines[] = $line;
-                }
+                if (intval($Date->Year()) < Main::$startYear) {
                     continue;
+                }
+                if ((intval($Date->Year()) === Main::$startYear) and (intval($Date->Month()) < Main::$startMonth)) {
+                    continue;
+                }
+                if ((intval($Date->Year()) === Main::$startYear) and (intval($Date->Month()) === Main::$startMonth) and (intval($Date->Day()) < Main::$startday)) {
+                    continue;
+                }
+                Useroutput::makeDump($Date);
+                $file = new File($Date, $datei);
+                $fn = $Namespace[1] . $file->getWikiPath();
+                Useroutput::makeDump($fn);
+                $check = $this->checkApprovedWiki($file->getgermanDate());
+                if ($check) {
+                    if (Main::$DatabaseCon->alreadyPublishedFinal($file->getWikiPath()) and Main::$notDoubled) {
+                        Useroutput::PrintLineDebug('Already Published as Final.');
+                        continue;
+                    }
+                    $Ausgabe = "Published as Final: ";
+                    Main::$DatabaseCon->newPublishedFinal($file->getOutputFilename());
+                    if (Main::$DatabaseCon->alreadyPublishedDraft($file->getOutputFilename())) {
+                        Main::$DatabaseCon->removeFromDraft($file->getOutputFilename());
+                    }
+                } else {
+                    if (Main::$DatabaseCon->alreadyPublishedDraft($file->getOutputFilename()) and Main::$notDoubled) {
+                        Useroutput::PrintLineDebug('Already Published as Draft.');
+                        continue;
+                    }
+                    $Ausgabe = "Published as Draft: ";
+                    Main::$DatabaseCon->newPublishedDraft($file->getOutputFilename());
+                }
+                $Ausgabe = $Ausgabe . $this->copyWiki($file->getFilenameWiki(), $fn, $check);
+                Useroutput::PrintLine($Ausgabe);
+                $ListDecission = new DecissionList(true);
+                if (Main::$EnableLegislaturAutomization) {
+                    $legislaturnumber = LegislaturCrawler::getLegislatur(substr($file->getWikiPath(), 0, 10), DecissionList::crawlSitzungsnummer(InOutput::ReadWiki($file->getFilenameWiki())));
+                } else {
+                    $legislaturnumber = Main::$currentLegislaturnumber;
+                }
+                $ListDecission->processProtokollWiki(InOutput::ReadWiki($file->getFilenameWiki()), $legislaturnumber, substr($file->getWikiPath(), 0, 10));
+                VisualCopyEmulator::generateDiffTable(InOutput::ReadWiki($file->getFilenameWiki()), $check);
+                $this->files[] = $file;
             }
-            if($OffRec and strpos($line, "tag>" . Main::$endtag) !== false) {
-                $OffRec=false;
+            Useroutput::PrintHorizontalSeperator();
+            $this->exportFinancial();
+            if (Main::$postData) {
+                $this->sendData();
             }
         }
-        if (InOutput::WriteFile($fn,$lines) === false)
-        {
-            exit(10);
-        }
-        return substr($fn, strlen($fn) - 14);
     }
 
     function getDateFromFileName($Filename)
@@ -191,7 +147,7 @@ class Main
         $Name = substr($Filename, 0, $length - 4);
         $check = substr($Name, 0, 10);
         $expression = "/^[12][09][0129][0123456789]-[01][0123456789]-[0123][0123456789]/";
-        if(preg_match($expression,$check) === false) {
+        if (preg_match($expression, $check) === false) {
             Useroutput::PrintLineDebug("File Discarded: " . $Filename);
             return -1;
         }
@@ -201,45 +157,135 @@ class Main
         $d = substr($Name, 8, 2);
         $m = substr($Name, 5, 2);
         $y = substr($Name, 0, 4);
-        $Date = new Date($y,$m,$d);
+        $Date = new Date($y, $m, $d);
+        return $Date;
+    }
+
+    function getDateFromWikipath($Filename, $NameSpace)
+    {
+        $Name = substr($Filename, strlen($NameSpace));
+        $check = substr($Name, 0, 10);
+        $expression = "/^[12][09][0129][0123456789]-[01][0123456789]-[0123][0123456789]/";
+        if (preg_match($expression, $check) === false) {
+            Useroutput::PrintLineDebug("File Discarded: " . $Filename);
+            return -1;
+        }
+        if (strlen($Name) > 10) {
+            $Name = substr($Name, 0, 10);
+        }
+        $d = substr($Name, 8, 2);
+        $m = substr($Name, 5, 2);
+        $y = substr($Name, 0, 4);
+        $Date = new Date($y, $m, $d);
         return $Date;
     }
 
     function checkApproved($germanDate)
     {
-        foreach (InOutput::ReadFile(Main::$decissionList) as $line)
-        {
+        foreach (InOutput::ReadFile(Main::$decissionList) as $line) {
             # do same stuff with the $line
-            if ((strpos($line, "beschließt") !== false) and  (strpos($line, "Protokoll") !== false ) and (strpos($line, "Sitzung") !== false ) and (strpos($line, $germanDate) !== false)) {
+            if ((strpos($line, "beschließt") !== false) and (strpos($line, "Protokoll") !== false) and (strpos($line, "Sitzung") !== false) and (strpos($line, $germanDate) !== false)) {
                 return true;
             }
         }
         return false;
     }
 
+    function checkApprovedWiki($germanDate)
+    {
+        foreach (InOutput::ReadWiki(Main::$DecissionListWiki) as $line) {
+            # do same stuff with the $line
+            if ((strpos($line, "beschließt") !== false) and (strpos($line, "Protokoll") !== false) and (strpos($line, "Sitzung") !== false) and (strpos($line, $germanDate) !== false)) {
+                return true;
+            }
+        }
+        foreach (InOutput::ReadWiki(Main::$decissionListWikiWrite) as $line) {
+            # do same stuff with the $line
+            if ((strpos($line, "beschließt") !== false) and (strpos($line, "Protokoll") !== false) and (strpos($line, "Sitzung") !== false) and (strpos($line, $germanDate) !== false)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function copy($fileName, $fn, $check): string
+    {
+        $OffRec = false;
+        $lines = array();
+        foreach (InOutput::ReadFile($fileName) as $line) {
+            # do same stuff with the $line
+            if (!$OffRec and strpos($line, "tag>" . Main::$starttag) !== false) {
+                $OffRec = true;
+                continue;
+            }
+            if (!$OffRec) {
+                if (strpos($line, "======") !== false and !$check) {
+                    $firstpart = substr($line, strpos($line, "======"), 6);
+                    $secondpart = substr($line, strpos($line, "======") + 6, strlen($line) - 1);
+                    $lines[] = $firstpart . " Entwurf:" . $secondpart;
+                } else {
+                    $lines[] = $line;
+                }
+                continue;
+            }
+            if ($OffRec and strpos($line, "tag>" . Main::$endtag) !== false) {
+                $OffRec = false;
+            }
+        }
+        if (InOutput::WriteFile($fn, $lines) === false) {
+            exit(10);
+        }
+        return substr($fn, strlen($fn) - 14);
+    }
+
+    function copyWiki($fileName, $fn, $check): string
+    {
+        Useroutput::makeDump($fn);
+        $OffRec = false;
+        $lines = array();
+        foreach (InOutput::ReadWiki($fileName) as $line) {
+            # do same stuff with the $line
+            if (!$OffRec and strpos($line, "tag>" . Main::$starttag) !== false) {
+                $OffRec = true;
+                continue;
+            }
+            if (!$OffRec) {
+                if (strpos($line, "======") !== false and !$check) {
+                    $firstpart = substr($line, strpos($line, "======"), 6);
+                    $secondpart = substr($line, strpos($line, "======") + 6, strlen($line) - 1);
+                    $lines[] = $firstpart . " Entwurf:" . $secondpart;
+                } else {
+                    $lines[] = $line;
+                }
+                continue;
+            }
+            if ($OffRec and strpos($line, "tag>" . Main::$endtag) !== false) {
+                $OffRec = false;
+            }
+        }
+        if (InOutput::WriteWiki($fn, $lines) === false) {
+            exit(10);
+        }
+        return substr($fn, strlen($fn) - 10);
+    }
+
     function exportFinancial()
     {
-        foreach (InOutput::ReadFile(Main::$decissionList) as $line)
-        {
+        foreach (InOutput::ReadFile(Main::$decissionList) as $line) {
             if ((strpos($line, "Budget") !== false)) {
                 $lineStart = $this->getLineStartFinancialDeccision($line);
-                if($this->checkAlreadyPostedData($lineStart))
-                {
+                if ($this->checkAlreadyPostedData($lineStart)) {
                     continue;
                 }
                 if (strpos($line, "https://helfer.stura.tu-ilmenau.de/FinanzAntragUI/") !== false) {
-                    if (!(strpos($line, "<del>") !== false))
-                    {
+                    if (!(strpos($line, "<del>") !== false)) {
                         $line = $this->formatLine($line, true, $lineStart);
                         if (strpos($line, "AlreadyInside") === false) {
                             Useroutput::PrintLineDebug($line);
                         }
                     }
-                }
-                else
-                {
-                    if ((!(strpos($line, "<del>") !== false)) and ! Main::$onlyNew)
-                    {
+                } else {
+                    if ((!(strpos($line, "<del>") !== false)) and !Main::$onlyNew) {
                         $line = $this->formatLine($line, false, $lineStart);
                         if (strpos($line, "AlreadyInside") === false) {
                             Useroutput::PrintLineDebug($line);
@@ -250,28 +296,58 @@ class Main
         }
     }
 
-    function getLineStartFinancialDeccision ($line) :string
+    function exportFinancialWiki()
     {
-        $lineStart = substr($line, strpos($line, "|")+1);
+        foreach (InOutput::ReadWiki(Main::$decissionListWikiWrite) as $line) {
+            if ((strpos($line, "Budget") !== false)) {
+                $lineStart = $this->getLineStartFinancialDeccision($line);
+                if ($this->checkAlreadyPostedData($lineStart)) {
+                    continue;
+                }
+                if (strpos($line, "https://helfer.stura.tu-ilmenau.de/FinanzAntragUI/") !== false) {
+                    if (!(strpos($line, "<del>") !== false)) {
+                        $line = $this->formatLine($line, true, $lineStart);
+                        if (strpos($line, "AlreadyInside") === false) {
+                            Useroutput::PrintLineDebug($line);
+                        }
+                    }
+                } else {
+                    if ((!(strpos($line, "<del>") !== false)) and !Main::$onlyNew) {
+                        $line = $this->formatLine($line, false, $lineStart);
+                        if (strpos($line, "AlreadyInside") === false) {
+                            Useroutput::PrintLineDebug($line);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    function getLineStartFinancialDeccision($line): string
+    {
+        $lineStart = substr($line, strpos($line, "|") + 1);
         $lineStart = substr($lineStart, 0, strpos($lineStart, "|"));
         $lineStart = str_replace(" ", "", $lineStart);
         return $lineStart;
     }
+
+    function checkAlreadyPostedData($DecissionKey): bool
+    {
+        return Main::$DatabaseCon->knownDecissionFinancial($DecissionKey);
+    }
+
     function formatLine($line, $withToken, $lineStart)
     {
-        if($withToken)
-        {
-            $lineEnd = substr($line, strpos($line, "|")+1);
-            $lineEnd = substr($lineEnd, strpos($lineEnd, "|") +1 );
-            $lineEnd = substr($lineEnd, strpos($lineEnd, "|") +1 );
+        if ($withToken) {
+            $lineEnd = substr($line, strpos($line, "|") + 1);
+            $lineEnd = substr($lineEnd, strpos($lineEnd, "|") + 1);
+            $lineEnd = substr($lineEnd, strpos($lineEnd, "|") + 1);
             $lineEnd = substr($lineEnd, strpos($lineEnd, "FinanzAntragUI/") + 15);
-            $lineEnd = substr($lineEnd, 0 , strpos($lineEnd, "|") );
+            $lineEnd = substr($lineEnd, 0, strpos($lineEnd, "|"));
             $lineEnd = str_replace(" ", "", $lineEnd);
             $lineS = $lineStart . "#-#" . $lineEnd;
             Main::$financialResolution[$lineEnd] = $lineStart;
-        }
-        else
-        {
+        } else {
             Main::$financialResolution[] = $lineStart;
             $lineS = $lineStart . "#-#" . "not found";
         }
@@ -296,20 +372,79 @@ class Main
         $status = curl_getinfo($curl, CURLINFO_HTTP_CODE); //tut bestimmt sinnvolle dinge
         Useroutput::PrintLineDebug($status);
         Useroutput::PrintHorizontalSeperator();
-        if(strpos($status, "200") !== false)
-        {
+        if (strpos($status, "200") !== false) {
             Useroutput::PrintLine("Daten wurden erfolgeich übertragen.");
-        }
-        else
-        {
+        } else {
             exit($status);
         }
         curl_close($curl); //beendet verbindung, oder so
     }
 
-    function checkAlreadyPostedData($DecissionKey):bool
+    public function Main()
     {
-        return Main::$DatabaseCon->knownDecissionFinancial($DecissionKey);
+        $this->files = array();
+        $alledateien = scandir(Main::$inputpath); //Ordner "files" auslesen
+        foreach ($alledateien as $datei) { // Ausgabeschleife
+            $length = strlen($datei);
+            if ((substr($datei, 0, 1) == ".") or (substr($datei, $length - 4, 4) != ".txt")) {
+                continue;
+            }
+            $expression = "/^[12][09][0129][0123456789]-[01][0123456789]-[0123][0123456789]/";
+            if (preg_match($expression, substr($datei, 0, 10)) === false) {
+                Useroutput::PrintLineDebug("File Discarded: " . $datei);
+                continue;
+            }
+            $Date = $this->getDateFromFileName($datei);
+            if ($Date === -1) {
+                continue;
+            }
+            if (intval($Date->Year()) < Main::$startYear) {
+                continue;
+            }
+            if ((intval($Date->Year()) === Main::$startYear) and (intval($Date->Month()) < Main::$startMonth)) {
+                continue;
+            }
+            if ((intval($Date->Year()) === Main::$startYear) and (intval($Date->Month()) === Main::$startMonth) and (intval($Date->Day()) < Main::$startday)) {
+                continue;
+            }
+            $file = new File($Date, $datei);
+            $fn = Main::$outputpath . "/" . $file->getOutputFilename();
+            $check = $this->checkApproved($file->getgermanDate());
+            if ($check) {
+                if (Main::$DatabaseCon->alreadyPublishedFinal($file->getOutputFilename()) and Main::$notDoubled) {
+                    Useroutput::PrintLineDebug('Already Published as Final.');
+                    continue;
+                }
+                $Ausgabe = "Published as Final: ";
+                Main::$DatabaseCon->newPublishedFinal($file->getOutputFilename());
+                if (Main::$DatabaseCon->alreadyPublishedDraft($file->getOutputFilename())) {
+                    Main::$DatabaseCon->removeFromDraft($file->getOutputFilename());
+                }
+            } else {
+                if (Main::$DatabaseCon->alreadyPublishedDraft($file->getOutputFilename()) and Main::$notDoubled) {
+                    Useroutput::PrintLineDebug('Already Published as Draft.');
+                    continue;
+                }
+                $Ausgabe = "Published as Draft: ";
+                Main::$DatabaseCon->newPublishedDraft($file->getOutputFilename());
+            }
+            $Ausgabe = $Ausgabe . $this->copy($file->getFilename(), $fn, $check);
+            Useroutput::PrintLine($Ausgabe);
+            $ListDecission = new DecissionList();
+            if (Main::$EnableLegislaturAutomization) {
+                $legislaturnumber = LegislaturCrawler::getLegislatur(substr($file->getOutputFilename(), 0, 10), DecissionList::crawlSitzungsnummer(InOutput::ReadFile($file->getFilename())));
+            } else {
+                $legislaturnumber = Main::$currentLegislaturnumber;
+            }
+            $ListDecission->processProtokoll(InOutput::ReadFile($file->getFilename()), $legislaturnumber, substr($file->getOutputFilename(), 0, 10));
+            VisualCopyEmulator::generateDiffTable(InOutput::ReadFile($file->getFilename()), $check);
+            $this->files[] = $file;
+        }
+        Useroutput::PrintHorizontalSeperator();
+        $this->exportFinancial();
+        if (Main::$postData) {
+            $this->sendData();
+        }
     }
 }
 
