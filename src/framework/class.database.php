@@ -359,6 +359,21 @@ class Database
 	
 	// ======================== DATA FUNCTIONS ========================================================
 	// --------- GET FUCNTIONS --------------------------------------
+	/**
+	 * return protocol list
+	 * @return array protocol list
+	 */
+	function getSturaProtocols( $draftOnly = false ){
+		$a = ($draftOnly)? 'WHERE entwurf_url IS NULL' : '';
+		$sql = "SELECT * FROM `".TABLE_PREFIX."protocol` $a;";
+		$result = $this->getResultSet($sql);
+		
+		$r = [];
+		foreach ($result as $pro){
+			$r[$pro['name']] = $pro;
+		}
+		return $r;
+	}
 	
 	
 	// --------- CREATE FUCNTIONS -----------------------------------------
