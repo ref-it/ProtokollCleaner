@@ -40,7 +40,7 @@ ini_set('session.cookie_lifetime', '0');
 /**
  * set php error settings
  */
-ini_set('display_errors', (DEBUG)? 1:0);
+ini_set('display_errors', (DEBUG>=1)? 1:0);
 ini_set("log_errors", 1);
 error_reporting(E_ALL);
 ini_set("error_log", dirname(__FILE__, 2)."/logs/error.log");
@@ -55,7 +55,7 @@ date_default_timezone_set(TIMEZONE);
  */
 require_once (dirname(__FILE__)."/functions.php"); //load helper function set
 
-if (DEBUG){
+if (DEBUG>=1){
 	prof_flag('app_start');
 }
 
@@ -129,7 +129,7 @@ require_once (dirname(__FILE__)."/class.router.php");
  */
 require_once (dirname(__FILE__)."/session.php");
 
-if (DEBUG){
+if (DEBUG>=1){
 	prof_flag('app_end');
 }
 

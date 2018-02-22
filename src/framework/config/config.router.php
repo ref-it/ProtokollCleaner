@@ -41,7 +41,7 @@ $navigation = [
 	'https://stura.tu-ilmenau.de/impressum' => ['stura', 'Impressum', '&#xf129;', ''],
 	'https://www.tu-ilmenau.de/impressum/datenschutz/' => ['stura', 'Datenschutz', '&#xf1c0;', ''],
 ];
-if (DEBUG) {
+if (DEBUG >= 1) {
 	$routes['GET']['dev'] = ['ref-it', 'dev',  'link'];
 	$navigation['dev'] = ['ref-it', 'Dev', '&#xf20e;', ''];
 	

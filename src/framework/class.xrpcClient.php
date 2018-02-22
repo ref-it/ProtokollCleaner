@@ -273,7 +273,7 @@ class xrpcClient extends hServerClient
 		}
 		$this->render();
 		
-		if (WIKI_DEBUG){
+		if (DEBUG >= 2){
 			echo '<pre>X: '; var_dump(htmlspecialchars($this->rendered_xml)); echo '</pre>';
 		}
 		
@@ -286,7 +286,7 @@ class xrpcClient extends hServerClient
 			));
 		} catch (\Exception $e) {
 		}
-		if (WIKI_DEBUG){
+		if (DEBUG >= 2){
 			echo '<pre>C: '; var_dump($this->status_code); echo '</pre>';
 		}
 		return ($this->status_code == 200);
@@ -303,7 +303,7 @@ class xrpcClient extends hServerClient
 		}
 		$content = $this->response->getBody()->getContents();
 		
-		if (WIKI_DEBUG){
+		if (DEBUG >= 3){
 			echo '<pre>'; var_dump(htmlspecialchars($content)); echo '</pre>';
 		}
 		
