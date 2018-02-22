@@ -53,10 +53,12 @@ class DecissionList
 
     private function getToDoLine($name, $aufgabe): string
     {
-        $aufgabe = str_replace(PHP_EOL, "", $aufgabe);
+        /*$aufgabe = str_replace(PHP_EOL, "", $aufgabe);
         $name = str_replace(PHP_EOL, "", $name);
         $name = str_replace("|", "oder", $name);
-        $aufgabe = str_replace("|", "oder", $aufgabe);
+        $aufgabe = str_replace("|", "oder", $aufgabe);*/
+        $aufgabe = SearchAndRescue::SearchAndReplace($aufgabe);
+        $name = SearchAndRescue::SearchAndReplace($name);
         $line = "|  " . $name . " | " . $aufgabe . " |" . PHP_EOL;
         $this->TodoListDebug[] = "<tr>" . PHP_EOL . "<td>" . $name . "</td>" . PHP_EOL . "<td>" . $aufgabe . "</td>" . PHP_EOL . "</tr>" . PHP_EOL;
         return $line;
