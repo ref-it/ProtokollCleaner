@@ -1,0 +1,53 @@
+.protolist .proto {
+	display: block;
+	padding: 0 5px 0 15px;
+	width: 100%; 
+	max-width: 500px;
+	position: relative;
+	line-height: 2.8em;
+	box-sizing: border-box;
+}
+.protolist .proto:hover {
+	background-color: #ddd;
+}
+.protolist .proto:hover > div {
+	background-color: #ddd;
+}
+.protolist .proto > div {
+	display: inline-block;
+	position: relative;
+	float: right;
+	width: 272px;
+	right: 0;
+	background-color: white;
+	padding-left: 5px;
+}
+.protolist .proto.privat {
+	color: #7e0000;
+}
+.protolist .proto.draft {
+	color: #e06700;
+}
+.protolist .proto::after{
+	content: "";
+    clear: both;
+    display: block;
+}
+.protolist .proto > span {
+	font-weight: bold;
+}
+.protolist .proto > div > span {
+	display: inline-block;
+	width: 72px;
+	text-align: center;
+}
+.protolist .proto > div > span > a {
+	display: inline-block;
+	padding-left: 5px;
+}
+.protolist .proto > div > span > a::before {
+	content:'\f06e';
+	display: inline-block;
+	font-family: FontAwesome;
+	padding-right: 3px;
+}

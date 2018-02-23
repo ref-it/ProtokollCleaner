@@ -120,9 +120,15 @@ define('MAIL_LANGUAGE_PATH', dirname(__FILE__).'/external_libraries/phpmailer/la
 require_once (dirname(__FILE__)."/class.mailHandler.php");
 
 /**
- * include session handler
+ * include router
  */
 require_once (dirname(__FILE__)."/class.router.php");
+
+/**
+ * include protocol helper class
+ */
+require_once (FRAMEWORK_PATH."/lib/class.protocolHelper.php");
+
 
 /**
  * include session handler

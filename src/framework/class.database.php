@@ -361,12 +361,16 @@ class Database
 	// --------- GET FUCNTIONS --------------------------------------
 	/**
 	 * return protocol list
+	 * @param $draftOnly only get protocols with draft status
+	 * @param $publicOnly only get protocols with public status (overwrites $draftOnly)
 	 * @return array protocol list
 	 */
-	function getSturaProtocols( $draftOnly = false ){
-		$a = ($draftOnly)? 'WHERE entwurf_url IS NULL' : '';
-		$sql = "SELECT * FROM `".TABLE_PREFIX."protocol` $a;";
-		$result = $this->getResultSet($sql);
+	function getProtocols( $committee , $draftOnly = false , $publicOnly = false ){
+		$a = ($draftOnly)? 'AND P.entwurf_url IS NULL' : '';
+		$a = ($publicOnly)? 'AND P.public_url IS NULL' : '';
+		//TODO optional join and count todos and resolutions
+		$sql = "SELECT * FROM `".TABLE_PREFIX."protocol` P, `".TABLE_PREFIX."_gremium` G WHERE P.gremium = G.id AND G.name = '?' $a;";
+		$result = $this->getResultSet($sql, 's', $committee);
 		
 		$r = [];
 		foreach ($result as $pro){

@@ -13,7 +13,8 @@ $routes = [
 	'GET' => [
 		'/'					=> ['stura',	'base' , 	'home'],
 		'admin'				=> ['ref-it',	'admin', 	'admin'],
-		'protolist'			=> ['stura',	'protocol', 	'slist'],
+		'protolist'			=> ['stura',	'protocol', 	'plist'],
+		'protoedit'			=> ['stura',	'protocol', 	'pedit_view'],
 	],
 	'POST' => [
 		'admin/savemail'	=> ['ref-it',	'admin', 	'mail_update_setting'],
