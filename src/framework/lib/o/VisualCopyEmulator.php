@@ -16,7 +16,7 @@ class VisualCopyEmulator
         $OffRec = false;
         $countInTag = 0;
         $countOutTag = 0;
-        foreach ($Protokoll as $ln => $line) //loop throught $protocol lines
+        foreach ($Protokoll as $line) //loop throught $protocol lines
         {
             if (strpos($line, "tag>" . Main::$starttag) !== false)
             {
@@ -36,7 +36,7 @@ class VisualCopyEmulator
             }
             if(!$OffRec and strpos($line, "tag>" . Main::$starttag) !== false) {
                 $OffRec=true;
-                self::generateRemovedLine($line, $ln + 1);
+                self::generateRemovedLine($line);
                 continue;
             }
             if(!$OffRec)
@@ -46,17 +46,17 @@ class VisualCopyEmulator
                     $firstpart = substr($line, strpos($line, "======"), 6 );
                     $secondpart = substr($line, strpos($line, "======") + 6, strlen($line) -1 );
                     $newTitel = $firstpart . " Entwurf:" . $secondpart;
-                    self::generateCopiedChangedLine($newTitel, $ln + 1);
+                    self::generateCopiedChangedLine($newTitel);
                 }
                 else {
-                    self::generateCopiedLine($line, $ln + 1);
+                    self::generateCopiedLine($line);
                 }
                 continue;
             }
             if($OffRec and strpos($line, "tag>" . Main::$endtag) !== false) {
                 $OffRec=false;
             }
-            self::generateRemovedLine($line, $ln);
+            self::generateRemovedLine($line);
         }
         self::generateFooter();
     }
@@ -65,8 +65,8 @@ class VisualCopyEmulator
     {
     	$head=
      	"<div class='difftable'>\n".
-     		"<div class='headline'>\n".
-     			"<span>Linenumber</span>\n".
+     		"<div class='headline noselect'>\n".
+     			"<span>Line</span>\n".
      			"<span>+</span>\n".
      			"<span>-</span>\n".
      			"<span>C</span>\n".
@@ -75,40 +75,31 @@ class VisualCopyEmulator
         Useroutput::Print($head);
     }
     //write removed protocol line (red)
-    private static function generateRemovedLine($line, $ln)
+    private static function generateRemovedLine($line)
     {
         $lineresult = 
         "<div class='line removed'>\n".
-        	"<span></span>\n".
-        	"<span></span>\n".
-        	"<span>-</span>\n".
-        	"<span></span>\n".
+        	"<span></span><span></span><span></span><span></span>\n".
         	'<span>'.htmlspecialchars($line)."</span>\n".
         "</div>\n";
         Useroutput::Print($lineresult);
     }
     //write normal copied protocol line (white)
-    private static function generateCopiedLine($line, $ln)
+    private static function generateCopiedLine($line)
     {
     	$lineresult =
     	"<div class='line normal'>\n".
-	    	"<span>$ln</span>\n".
-	    	"<span>+</span>\n".
-	    	"<span></span>\n".
-	    	"<span></span>\n".
+	    	"<span></span><span></span><span></span><span></span>\n".
 	    	'<span>'.htmlspecialchars($line)."</span>\n".
     	"</div>\n";
         Useroutput::Print($lineresult);
     }
     //write changed protocol line (gray)
-    private static function generateCopiedChangedLine($line, $ln)
+    private static function generateCopiedChangedLine($line)
     {
     	$lineresult =
     	"<div class='line changed'>\n".
-	    	"<span>$ln</span>\n".
-	    	"<span>+</span>\n".
-	    	"<span></span>\n".
-	    	"<span>C</span>\n".
+	    	"<span></span><span></span><span></span><span></span>\n".
 	    	'<span>'.htmlspecialchars($line)."</span>\n".
     	"</div>\n";
         Useroutput::Print($lineresult);

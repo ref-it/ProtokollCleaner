@@ -56,6 +56,7 @@
 	display: table;
 	border: 1px solid black;
 	counter-reset: protoline;
+	table-layout: fixed;
 }
 .difftable > .headline{
 	display: table-row;
@@ -63,30 +64,58 @@
 }
 .difftable > .line {
 	display: table-row;
-
+	counter-increment: section;
+}
+.difftable > .headline > span,
+.difftable > .line > span {
+	display: table-cell;
+	padding: 0 3px;
+	border-bottom: 1px solid #eee;
+	min-width: 30px;
+	text-align: center;
+}
+.difftable > .headline > span:last-child,
+.difftable > .line > span:last-child {
+	text-align: left;
+}
+.difftable > .line > span:nth-child(1) {
+	width: 30px;
+	text-align: right;
+	background-color: #eee;
+	font-style: italic;
+	padding: 1px 5px;
+	border-color: white;
 }
 .difftable > .line > span:nth-child(1)::before {
-
+	content: "" counter(section);
 	display: inline-block;
 }
 .difftable > .line.normal {
 	background-color: transparent;
 }
-.difftable > .line.normal > span:nth-child(){
-	
+.difftable > .line.normal > span:nth-child(2)::before{
+	content: '+';
+	display:inline-block;
 }
 .difftable > .line.removed {
 	background-color: lightcoral;
 }
+.difftable > .line.removed > span:nth-child(3)::before{
+	content: '-';
+	display:inline-block;
+}
 .difftable > .line.changed {
 	background-color: lightsteelblue;
 }
-.difftable > .headline > span,
-.difftable > .line > span {
-	display: table-cell;
-	padding: 1px 3px;
-	border-bottom: 1px solid #eee;
+.difftable > .line.changed > span:nth-child(2)::before{
+	content: '+';
+	display:inline-block;
 }
+.difftable > .line.changed > span:nth-child(4)::before{
+	content: 'C';
+	display:inline-block;
+}
+
 .difftable > .line:hover {
 	background-color: #ddd;
 }
