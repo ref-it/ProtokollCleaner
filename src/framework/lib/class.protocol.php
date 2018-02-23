@@ -84,11 +84,16 @@ class Protocol
 	public $tags;
 	
 	/**
-	 * internal protocol part
-	 * $internal = [[open, closed], [open, closed]];
-	 * array
+	 * external protocol part
+	 * string
 	 */
-	public $internal;
+	public $external;
+	
+	/**
+	 * protocol preview text
+	 * string
+	 */
+	public $preview;
 	
 	/**
 	 * protocol resolutions
@@ -122,6 +127,12 @@ class Protocol
 	{
 		$this->text = $text;
 		$this->text_a = $output = preg_split( "/(\r\n|\n|\r)/", $text );
+		
+		$this->tags = [];
+		$this->external = '';
+		$this->preview = '';
+		$this->todos = [];
+		$this->resolutions = [];
 	}
 }
 

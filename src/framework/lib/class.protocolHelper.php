@@ -145,63 +145,7 @@ class protocolHelper
 		}
 		
 		
-		
-		/*
-		$protodiff = protocolDiff::generateHeader();
-		$OffRec = false;
-		$countInTag = 0;
-		$countOutTag = 0;
-		
-		
-			
-			
-		
-				if (strpos($line, "tag>" . 'intern') !== false)
-				{
-					$countInTag = $countInTag + 1;
-				}
-				if (strpos($line, "tag>" . 'extern') !== false)
-				{
-					if ($countInTag === 0)
-					{
-						Useroutput::PrintLine("<p>Warning Endtag vor Anfangstag</p><br />" .PHP_EOL);
-					}
-					if ($countInTag === $countOutTag)
-					{
-						Useroutput::PrintLine("<p>Warning Endtag vor Anfangstag</p><br />" .PHP_EOL);
-					}
-					$countOutTag = $countOutTag + 1;
-				}
-				if(!$OffRec and strpos($line, "tag>" . 'intern') !== false) {
-					$OffRec=true;
-					$protodiff .= protocolDiff::generateRemovedLine($line);
-					continue;
-				}
-				if(!$OffRec)
-				{
-					if(strpos($line, "======") !== false and !$check)
-					{
-						$firstpart = substr($line, strpos($line, "======"), 6 );
-						$secondpart = substr($line, strpos($line, "======") + 6, strlen($line) -1 );
-						$newTitel = $firstpart . " Entwurf:" . $secondpart;
-						$protodiff .= protocolDiff::generateCopiedChangedLine($newTitel);
-					}
-					else {
-						$protodiff .= protocolDiff::generateCopiedLine($line);
-					}
-					continue;
-				}
-				if($OffRec and strpos($line, "tag>" . Main::$endtag) !== false) {
-					$OffRec=false;
-				}
-				$protodiff .= protocolDiff::generateRemovedLine($line);
-		
-		}
-		*/
 		$p->preview .= protocolDiff::generateFooter();
-		
-		
-
 		prof_flag('parseProto_end');
 		// return pointer to protocol object
 		return $p;

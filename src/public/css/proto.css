@@ -115,7 +115,22 @@
 	content: 'C';
 	display:inline-block;
 }
-
+.difftable > .line.error {
+	background-color: orange;
+	font-weight: bolder;
+}
+.difftable > .line.error > span:nth-child(2)::before{
+	content: 'E';
+	display:inline-block;
+}
+.difftable > .line.error > span:nth-child(3)::before{
+	content: 'E';
+	display:inline-block;
+}
+.difftable > .line.error > span:nth-child(4)::before{
+	content: 'E';
+	display:inline-block;
+}
 .difftable > .line:hover {
 	background-color: #ddd;
 }

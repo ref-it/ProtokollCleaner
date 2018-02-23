@@ -65,9 +65,9 @@ class ProtocolController extends MotherController {
 					"<span>$p</span>".
 					"<div>".
 					(($state!='private')?'<button class="btn" type="button">Bearbeiten</button>':'').
-					'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_IN.'/'.$p.'">Intern</a></span>'.
+					'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_IN.'/'.$p.'" target="_blank">Intern</a></span>'.
 					(($state != 'privat')?
-					'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_OUT.'/'.$p.'">Extern</a></span>':'').
+					'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_OUT.'/'.$p.'" target="_blank">Extern</a></span>':'').
 			'</div></div>';
 		}
 		echo '<!div>';
@@ -104,19 +104,35 @@ class ProtocolController extends MotherController {
 				echo '<h3>'.$vali->getLastErrorMsg().'</h3>';
 				$this->t->printPageFooter();
 			}
+		} else if (false) {
+			//TODO remember on save dont allow intern == extern protocol path =>> parse view is ok, but no storing
+			//remove this else here
 		} else {
 			$x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
+			prof_flag('fetch internal protocols');
 			$intern = $x->getSturaInternProtokolls();
+			prof_flag('fetch extern-public protocols');
+			$extern = $x->getSturaProtokolls();
+			prof_flag('end fetch');
 			$drafts = $this->db->getProtocols($vali->getFiltered()['committee'], true);
 			if (in_array($vali->getFiltered()['proto'], $drafts)){
 				$this->t->printPageHeader();
+				//insert protocol link + refresh
+				echo '<pre>'; var_dump(WIKI_URL.'/', PROTOMAP[$vali->getFiltered()['committee']][0].'/'.$vali->getFiltered()['proto']); echo '</pre>';
+				echo '<pre>'; var_dump($expression); echo '</pre>';
+				echo '<a href="'.WIKI_URL.'/'.str_replace(':', '/', PROTOMAP[$vali->getFiltered()['committee']][0]).'/'.$vali->getFiltered()['proto'].'" class="btn" target="_blank">Edit Protocol</a>';
+				echo '<a href="" class="btn reload">Reload</a>';
 				$ph = new protocolHelper();
-				$ph->parseProto($vali->getFiltered()['committee'], $vali->getFiltered()['proto']);
+				echo $ph->parseProto($vali->getFiltered()['committee'], $vali->getFiltered()['proto'], true)->preview;
 				$this->t->printPageFooter();
-			} else if (in_array(PROTOMAP[$vali->getFiltered()['committee']][0].':'.$vali->getFiltered()['proto'], $intern)){
+			} else if (in_array(PROTOMAP[$vali->getFiltered()['committee']][0].':'.$vali->getFiltered()['proto'], $intern)
+				&& !in_array(PROTOMAP[$vali->getFiltered()['committee']][1].':'.$vali->getFiltered()['proto'], $extern)){
 				$this->t->printPageHeader();
+				//insert protocol link + refresh
+				echo '<a href="'.WIKI_URL.'/'.str_replace(':', '/', PROTOMAP[$vali->getFiltered()['committee']][0]).'/'.$vali->getFiltered()['proto'].'" class="btn" target="_blank">Edit Protocol</a>';
+				echo '<a href="" class="btn reload">Reload</a>';
 				$ph = new protocolHelper();
-				$ph->parseProto($vali->getFiltered()['committee'], $vali->getFiltered()['proto']);
+				echo $ph->parseProto($vali->getFiltered()['committee'], $vali->getFiltered()['proto'])->preview;
 				$this->t->printPageFooter();
 			} else {
 				$this->renderErrorPage(403, null);

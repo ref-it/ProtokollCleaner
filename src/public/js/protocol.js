@@ -9,7 +9,7 @@
 			console.log($e.parent().prev().text());
 			proto = $e.parent().prev().text();
 			perm = 'stura';
-			window.location.replace('/protoedit?committee='+perm+'&proto='+proto);
+			window.location.href = '/protoedit?committee='+perm+'&proto='+proto;
 		});
 	});
 })();
