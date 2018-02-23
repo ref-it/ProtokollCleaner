@@ -148,10 +148,10 @@ class Validator {
 	 * @param boolean $required key is required
 	 * @return boolean
 	 */
-	public function validatePost($map, $required = true){
+	public function validateMap(&$source_unsafe, $map, $required = true){
 		$out = [];
 		foreach($map as $key => $validator){
-			if (!isset($_POST[$key])){
+			if (!isset($source_unsafe[$key])){
 				if ($required){
 					$this->setError(true, 403, 'Access Denied', "POST missing parameter: '$key'");
 					return !$this->isError;
@@ -159,7 +159,7 @@ class Validator {
 					$this->setError(false);
 				}
 			} else {
-				$this->validate($_POST[$key], $validator);
+				$this->validate($source_unsafe[$key], $validator);
 				if ($this->isError) break;
 				$out[$key] = $this->filtered;
 			}
@@ -190,7 +190,7 @@ class Validator {
 			$this->setError(true, 403, 'Access Denied', "POST request don't match $groupKey.");
 			return !$this->isError;
 		} else {
-			$ret = $this->validatePost($map[$_POST[$groupKey]], $required);
+			$ret = $this->validatePost($_POST, $map[$_POST[$groupKey]], $required);
 			if ($ret) $this->filtered = [$_POST[$groupKey].'' => $this->filtered];
 			return $ret;
 		}
