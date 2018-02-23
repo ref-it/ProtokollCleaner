@@ -24,7 +24,12 @@ class DecissionList
             if ($wiki === false) {
                 $this->TodoList = InOutput::ReadFile(Main::$PathToToDOList);
             } else {
-                $this->TodoList = InOutput::ReadWiki(Main::$TodoListWiki);
+                $helpList = InOutput::ReadWiki(Main::$TodoListWiki);
+                foreach ($helpList as $line) {
+                    if (($line !== "") or (trim($line) !== "")) {
+                        $this->TodoList[] = $line;
+                    }
+                }
             }
             if (Main::$debug) {
                 $this->TodoListDebug = array();
@@ -41,9 +46,14 @@ class DecissionList
             $this->DecissioList = InOutput::ReadWiki(Main::$decissionListWikiWrite);
             $newDecissions2 = InOutput::ReadWiki(Main::$DecissionListWiki);
             $ToDoList2 = array_diff($newDecissions2, $this->DecissioList);
-            $this->DecissioList = array_merge($this->DecissioList, $ToDoList2);
+            foreach (array_merge($this->DecissioList, $ToDoList2) as $line) {
+                if (($line !== "") or (trim($line) !== "")) {
+                    $this->DecissioList[] = $line;
+                }
+            }
         } else {
             $this->DecissioList = InOutput::ReadFile(Main::$newDecissionList);
+
         }
     }
 

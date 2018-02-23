@@ -32,6 +32,11 @@ class InOutput
             Useroutput::makeDump($completeFile);
         }
         $result = explode(PHP_EOL, $completeFile);
+        $newResult = array();
+        foreach ($result as $line) {
+            $line = str_replace(PHP_EOL, "", $line);
+            $newResult[] = $line;
+        }
         return $result;
     }
 
