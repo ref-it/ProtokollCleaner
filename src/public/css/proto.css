@@ -51,3 +51,42 @@
 	font-family: FontAwesome;
 	padding-right: 3px;
 }
+/* -- diff table -- */
+.difftable {
+	display: table;
+	border: 1px solid black;
+	counter-reset: protoline;
+}
+.difftable > .headline{
+	display: table-row;
+	font-weight: bold;
+}
+.difftable > .line {
+	display: table-row;
+
+}
+.difftable > .line > span:nth-child(1)::before {
+
+	display: inline-block;
+}
+.difftable > .line.normal {
+	background-color: transparent;
+}
+.difftable > .line.normal > span:nth-child(){
+	
+}
+.difftable > .line.removed {
+	background-color: lightcoral;
+}
+.difftable > .line.changed {
+	background-color: lightsteelblue;
+}
+.difftable > .headline > span,
+.difftable > .line > span {
+	display: table-cell;
+	padding: 1px 3px;
+	border-bottom: 1px solid #eee;
+}
+.difftable > .line:hover {
+	background-color: #ddd;
+}

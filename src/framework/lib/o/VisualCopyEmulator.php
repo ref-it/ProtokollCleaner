@@ -1,5 +1,7 @@
 <?php
 /**
+ * search for internal part in protocolls
+ * checks open and closing tags
  * VisualCopyEmulator.php
  * @author Martin S.
  * @author Stura - Referat IT <ref-it@tu-ilmenau.de>
@@ -10,14 +12,12 @@ class VisualCopyEmulator
 {
     public static function generateDiffTable($Protokoll, $check)
     {
-        $ln = 0;
         self::generateHeader();
         $OffRec = false;
         $countInTag = 0;
         $countOutTag = 0;
-        foreach ($Protokoll as $line)
+        foreach ($Protokoll as $ln => $line) //loop throught $protocol lines
         {
-            $ln = $ln +1 ;
             if (strpos($line, "tag>" . Main::$starttag) !== false)
             {
                 $countInTag = $countInTag + 1;
@@ -36,7 +36,7 @@ class VisualCopyEmulator
             }
             if(!$OffRec and strpos($line, "tag>" . Main::$starttag) !== false) {
                 $OffRec=true;
-                self::generateRemovedLine($line, $ln);
+                self::generateRemovedLine($line, $ln + 1);
                 continue;
             }
             if(!$OffRec)
@@ -46,10 +46,10 @@ class VisualCopyEmulator
                     $firstpart = substr($line, strpos($line, "======"), 6 );
                     $secondpart = substr($line, strpos($line, "======") + 6, strlen($line) -1 );
                     $newTitel = $firstpart . " Entwurf:" . $secondpart;
-                    self::generateCopiedChangedLine($newTitel, $ln);
+                    self::generateCopiedChangedLine($newTitel, $ln + 1);
                 }
                 else {
-                    self::generateCopiedLine($line, $ln);
+                    self::generateCopiedLine($line, $ln + 1);
                 }
                 continue;
             }
@@ -60,54 +60,63 @@ class VisualCopyEmulator
         }
         self::generateFooter();
     }
+    //write table header to stdout
     private static function generateHeader()
     {
-        $head="<table style='border-collapse: collapse; border-color: black; border-style: solid; border-width: 1px; text-align: center'>".PHP_EOL.
-            "<tr>".PHP_EOL.
-            "<th style='width: 3em; border-width: 1px; border-style: solid; border-color: black;'>Linenumber</th>".PHP_EOL.
-            "<th style='width: 2em; border-width: 1px; border-style: solid; border-color: black;'>+</th>".PHP_EOL.
-            "<th style='width: 2em; border-width: 1px; border-style: solid; border-color: black;'>-</th>".PHP_EOL.
-            "<th style='width: 2em; border-width: 1px; border-style: solid; border-color: black;'>C</th>".PHP_EOL.
-            "<th style='width: auto; border-width: 1px; border-style: solid; border-color: black;'>Content</th>".PHP_EOL.
-            "</tr>".PHP_EOL;
+    	$head=
+     	"<div class='difftable'>\n".
+     		"<div class='headline'>\n".
+     			"<span>Linenumber</span>\n".
+     			"<span>+</span>\n".
+     			"<span>-</span>\n".
+     			"<span>C</span>\n".
+     			"<span>Content</span>\n".
+     		"</div>\n";
         Useroutput::Print($head);
     }
+    //write removed protocol line (red)
     private static function generateRemovedLine($line, $ln)
     {
-        $lineresult = "<tr style='background-color: ". Main::$removedLineColor .";'>".PHP_EOL .
-            "<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'>".strval($ln)."</td>".PHP_EOL.
-            "<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'></td>".PHP_EOL.
-            "<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'>-</td>".PHP_EOL.
-            "<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'></td>".PHP_EOL.
-            "<td style='border-width: 1px; text-align: right; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'>".$line."</td>".PHP_EOL.
-            "</tr>".PHP_EOL;
+        $lineresult = 
+        "<div class='line removed'>\n".
+        	"<span></span>\n".
+        	"<span></span>\n".
+        	"<span>-</span>\n".
+        	"<span></span>\n".
+        	'<span>'.htmlspecialchars($line)."</span>\n".
+        "</div>\n";
         Useroutput::Print($lineresult);
     }
+    //write normal copied protocol line (white)
     private static function generateCopiedLine($line, $ln)
     {
-        $lineresult = "<tr style='background-color: ". Main::$copiedLineColor .";'>".PHP_EOL.
-            "<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'>".strval($ln)."</td>".PHP_EOL.
-            "<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'>+</td>".PHP_EOL.
-            "<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'></td>".PHP_EOL.
-            "<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'></td>".PHP_EOL.
-            "<td style='border-width: 1px; text-align: left; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'>".$line."</td>".PHP_EOL.
-            "</tr>".PHP_EOL;
+    	$lineresult =
+    	"<div class='line normal'>\n".
+	    	"<span>$ln</span>\n".
+	    	"<span>+</span>\n".
+	    	"<span></span>\n".
+	    	"<span></span>\n".
+	    	'<span>'.htmlspecialchars($line)."</span>\n".
+    	"</div>\n";
         Useroutput::Print($lineresult);
     }
+    //write changed protocol line (gray)
     private static function generateCopiedChangedLine($line, $ln)
     {
-        $lineresult = "<tr style='background-color: ". Main::$copiedEditedLineColor .";'>".PHP_EOL.
-            "<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'>".strval($ln)."</td>".PHP_EOL.
-            "<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'>+</td>".PHP_EOL.
-            "<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'></td>".PHP_EOL.
-            "<td style='border-width: 1px; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'>C</td>".PHP_EOL.
-            "<td style='border-width: 1px; text-align: center; border-style: solid; border-left-color: black; border-right-color: black; border-top: none; border-bottom: none;'>".$line."</td>".PHP_EOL.
-            "</tr>".PHP_EOL;
+    	$lineresult =
+    	"<div class='line changed'>\n".
+	    	"<span>$ln</span>\n".
+	    	"<span>+</span>\n".
+	    	"<span></span>\n".
+	    	"<span>C</span>\n".
+	    	'<span>'.htmlspecialchars($line)."</span>\n".
+    	"</div>\n";
         Useroutput::Print($lineresult);
     }
+    //write table footer to stdout
     private static function generateFooter()
     {
-        $footer="</table>".PHP_EOL;
+        $footer="</div>\n";
         Useroutput::PrintLine($footer);
     }
 }
