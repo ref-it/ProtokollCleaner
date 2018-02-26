@@ -41,14 +41,14 @@ class Protocol
 	public $date;
 	
 	/**
-	 * protocol name
+	 * protocol name / url_name
 	 * @var string
 	 */
 	public $name;
 	
 	/**
-	 * pointer to resolution
-	 * @var int | NULL
+	 * contains array with resolution in which this protocol was accepted
+	 * @var array | NULL
 	 */
 	public $agreed_on;
 	
@@ -85,12 +85,14 @@ class Protocol
 	
 	/**
 	 * external protocol part
+	 * contains protocol text without the internal/nonpublic part
 	 * string
 	 */
 	public $external;
 	
 	/**
 	 * protocol preview text
+	 * contains rendered html with: public<->nonpublic diff
 	 * string
 	 */
 	public $preview;
@@ -128,6 +130,7 @@ class Protocol
 		$this->text = $text;
 		$this->text_a = $output = preg_split( "/(\r\n|\n|\r)/", $text );
 		
+		$this->agreed_on = NULL;
 		$this->tags = [];
 		$this->external = '';
 		$this->preview = '';

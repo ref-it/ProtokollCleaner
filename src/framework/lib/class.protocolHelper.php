@@ -33,57 +33,57 @@ class protocolHelper
 	{
 	}
 	
+	
+	
 	private $isLineError = false;
 	private $lineError = '';
 	
 	private static $tagRegex = '/(({{tag>[a-zA-Z0-9]+(_[a-zA-Z0-9]+)*([ ]*[a-zA-Z0-9]+(_[a-zA-Z0-9]+)*)*( )*}}|===== geschlossener Teil =====|===== öffentlicher Teil =====)+)/';
 	private static $oldTags = ['===== geschlossener Teil =====', '===== öffentlicher Teil ====='];
 	
-	
-	public function parseProto($gremium, $protokoll, $isdraft = false, $nopreview = false){
+	/**
+	 * 
+	 * @param Protocol $p
+	 * @param string $addDraftText
+	 * @param string $nopreview
+	 */
+	public function parseProto($p, $publising_user, $addDraftText = false, $nopreview = false){
 		prof_flag('parseProto_start');
-		$x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
-		prof_flag('get wikipage');
-		$a = $x->getPage(PROTOMAP[$gremium][0].':'.$protokoll);
-		prof_flag('got single page');
-		$p = NULL;
-		if ($a) {
-			$p = new Protocol($a);
-		} else {
-			echo 'Protocol not found';
-			return;
-		}
 		
 		$isInternal = false;	// dont copy internal parts to public part
 		$isLineError = false;	// found parsing error
 		$lastTagClosed = true; 	// prevent duplicate closing tags and closing internal part before opening
-		$writeDraftText = 1;
+		$writeUserText = 1;		// used to detect protocol head
 		
 		//only fill preview or output
 		if (!$nopreview) $p->preview = protocolDiff::generateHeader();
 		
-		
 		// parser main loop - loop throught $protocol lines
 		// create internal <==> external diff
 		foreach($p->text_a as $linenumber => $line){
-			//detect protocol head to insert draft state
-			if ($isdraft) {
-				if ($writeDraftText >= 3) {
-					if (!$nopreview) $p->preview .= protocolDiff::generateCopiedChangedLine('====== ENTWURF - PROTOKOLL ======');
-					else $p->external .= '====== ENTWURF - PROTOKOLL ======'."\n";
-					$isdraft = false;
+			//detect protocol head to insert draft state + publishung user
+			if ($writeUserText == 3) {
+				if (!$nopreview){
+					if ($addDraftText) $p->preview .= protocolDiff::generateCopiedChangedLine('====== ENTWURF - PROTOKOLL ======');
+					$p->preview .= protocolDiff::generateCopiedChangedLine('====== GENERIERT mit '.BASE_TITLE.' von ('.$publising_user.') ======'."\n");
+				} else {
+					if ($addDraftText) $p->external .= '====== ENTWURF - PROTOKOLL ======'."\n";
+					$p->external .= '====== GENERIERT mit '.BASE_TITLE.' von ('.$publising_user.') ======'."\n";
 				}
-				if ($writeDraftText >= 2) {
-					if (strpos($line, "}}") !== false){
-						$writeDraftText = 3;
-					}
-				} else if ($writeDraftText >= 1){
-					if (strpos($line, "{{template>:vorlagen:Protokoll") !== false){
-						$writeDraftText = 2;
-					}
+				$addDraftText = false;
+				$writeUserText = 0;
+			}
+			if ($writeUserText == 2) {
+				if (strpos($line, "}}") !== false){
+					$writeUserText++;
+				}
+			} else if ($writeUserText == 1){
+				if (strpos($line, "{{template>:vorlagen:Protokoll") !== false){
+					$writeUserText++;
 				}
 			}
-			// detect nonpublic parts
+
+			// detect nonpublic/internal parts
 			$matches = [];
 			$match = preg_match(self::$tagRegex, $line, $matches, PREG_OFFSET_CAPTURE, 0);
 			$matchcount = 0;
@@ -138,6 +138,10 @@ class protocolHelper
 				if (!$nopreview) $p->preview .= protocolDiff::generateCopiedLine($line);
 				else $p->external .= "$line\n";
 			}
+			//detect fixme, todo, resolutions
+			
+			
+			
 		}
 		if ($this->isLineError == true){ // error handling: show error to user
 			if (!$nopreview) $p->preview .= protocolDiff::generateErrorLine($this->lineError);
@@ -147,17 +151,17 @@ class protocolHelper
 		
 		$p->preview .= protocolDiff::generateFooter();
 		prof_flag('parseProto_end');
-		// return pointer to protocol object
+		
+		// object
 		return $p;
 		
-		//echo '<pre>'; var_dump($p); echo '</pre>';
-		//TODO open and close tags
-		//TODO detect internal part
+		
+		
 		//TODO detect todos
 		//TODO detect resolutions
 		//TODO cleanup array
 		//TODO check attachements
-		echo 'run parser';
+		//TODO detect Legislatur
 	}
 }
 
