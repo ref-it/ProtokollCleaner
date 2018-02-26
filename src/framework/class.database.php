@@ -363,10 +363,10 @@ class Database
 	 * return protocol list
 	 * @param $draftOnly only get protocols with draft status
 	 * @param $publicOnly only get protocols with public status (overwrites $draftOnly)
-	 * @return array protocol list
+	 * @return array protocol list by protocol name
 	 */
 	function getProtocols( $committee , $draftOnly = false , $publicOnly = false ){
-		$a = ($draftOnly)? 'AND P.entwurf_url IS NULL' : '';
+		$a = ($draftOnly)? 'AND P.draft_url IS NULL' : '';
 		$a = ($publicOnly)? 'AND P.public_url IS NULL' : '';
 		//TODO optional join and count todos and resolutions
 		$sql = "SELECT * FROM `".TABLE_PREFIX."protocol` P, `".TABLE_PREFIX."_gremium` G WHERE P.gremium = G.id AND G.name = '?' $a;";
@@ -379,6 +379,29 @@ class Database
 		return $r;
 	}
 	
+	
+	/**
+	 * return protocol resolutions by gremium and protocol name
+	 * used to check if protocol was accepted
+	 * @param string $committee
+	 * @param string $protocolName
+	 * @return NULL|array
+	 */
+	function getResolutionByPTag( $committee, $protocolName ){
+		if (!is_string($committee) || $committee === ''
+			|| !is_string($protocolName) || $protocolName === '' ) {
+			throw new Exception('Wrong parameter in Database function. Require two nonempty strings.');
+			return NULL;
+		}
+		$tag = $committee.':'.$protocolName;
+		$sql = "SELECT * FROM `".TABLE_PREFIX."resolution` R WHERE R.p_tag = '?';";
+		$result = $this->getResultSet($sql, 's', $tag);
+		$r = [];
+		foreach ($result as $res){
+			$r[] = $res;
+		}
+		return $r;
+	}
 	
 	// --------- CREATE FUCNTIONS -----------------------------------------
 	
