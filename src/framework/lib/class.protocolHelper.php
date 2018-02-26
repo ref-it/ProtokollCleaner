@@ -33,13 +33,35 @@ class protocolHelper
 	{
 	}
 	
-	
+	private static $regexFinder = [
+		'multimatch' => [
+			'todo' => '/todo/i',
+			'fixme' => '/fixme/i',
+		],
+		'no_multimatch' => [
+			'resolution' => '/^{{template>:vorlagen:stimmen.*(angenommen).*$/i',
+		]		
+	];
 	
 	private $isLineError = false;
 	private $lineError = '';
 	
 	private static $tagRegex = '/(({{tag>[a-zA-Z0-9]+(_[a-zA-Z0-9]+)*([ ]*[a-zA-Z0-9]+(_[a-zA-Z0-9]+)*)*( )*}}|===== geschlossener Teil =====|===== öffentlicher Teil =====)+)/';
 	private static $oldTags = ['===== geschlossener Teil =====', '===== öffentlicher Teil ====='];
+	
+	/**
+	 * categorize and split raw resolution strings to array
+	 * @param array $resolutions array of raw resolution strings
+	 * @return array of resolutions
+	 */
+	private static function parseResolutions($resolutions){
+		$result = [];
+		foreach ($resolutions as $rawres){
+			$result[] = $rawres;
+		}
+		//TODO parse resolutions: categorize, and split to array
+		return $result;
+	}
 	
 	/**
 	 * 
@@ -54,6 +76,9 @@ class protocolHelper
 		$isLineError = false;	// found parsing error
 		$lastTagClosed = true; 	// prevent duplicate closing tags and closing internal part before opening
 		$writeUserText = 1;		// used to detect protocol head
+		
+		//init preg_match results
+		$pregFind = ['todo' => [], 'resolution' => [], 'fixme' => []];		// contains preg matches (todos, fixmes, resolutions)
 		
 		//only fill preview or output
 		if (!$nopreview) $p->preview = protocolDiff::generateHeader();
@@ -139,26 +164,37 @@ class protocolHelper
 				else $p->external .= "$line\n";
 			}
 			//detect fixme, todo, resolutions
-			
-			
-			
+			//maybe run this on whole text globally
+			foreach(self::$regexFinder['no_multimatch'] as $key => $pattern){
+				if (preg_match($pattern, $line)){
+					$pregFind[$key][] = $line;
+				}
+			}
+			//detect fixme, todo, resolutions
+			//maybe run this on whole text globally
+			foreach(self::$regexFinder['multimatch'] as $key => $pattern){
+				$tmp_matches = preg_match_all($pattern, $line);
+				if ($tmp_matches){
+					$pregFind[$key][] = [$line, $tmp_matches];
+				}
+			}
 		}
 		if ($this->isLineError == true){ // error handling: show error to user
 			if (!$nopreview) $p->preview .= protocolDiff::generateErrorLine($this->lineError);
 			else $p->external .= protocolDiff::generateErrorChangedLine($this->lineError);
 		}
 		
-		
 		$p->preview .= protocolDiff::generateFooter();
 		prof_flag('parseProto_end');
+		
+		//categorize pregmatches
+		$p->resolutions = self::parseResolutions($pregFind['resolution']);
+		$p->todos['fixme'] = $pregFind['fixme'];
+		$p->todos['todo'] = $pregFind['todo'];
 		
 		// object
 		return $p;
 		
-		
-		
-		//TODO detect todos
-		//TODO detect resolutions
 		//TODO cleanup array
 		//TODO check attachements
 		//TODO detect Legislatur
