@@ -35,6 +35,8 @@ class ProtocolController extends MotherController {
 		}
 		if ($p->public_url){
 			echo '<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][1]).'/'.$p->name.'" class="btn" target="_blank">View Public</a>';
+		} else {
+			echo '<button class="btn btn-danger mr-1" type="button" class="btn">'.(($p->agreed_on === NULL)?'Entwurf ': '' ).'Veröffentlichen</button>';
 		}
 		echo '</div>';
 	}
@@ -390,7 +392,7 @@ class ProtocolController extends MotherController {
 			
 			//run protocol parser
 			$ph = new protocolHelper();
-			$ph->parseProto($p, $this->auth->getUserFullName(), true);
+			$ph->parseProto($p, $this->auth->getUserFullName(), $p->agreed_on === NULL );
 			//insert protocol link + status
 			self::printProtoStatus($p);
 			//protocol errors

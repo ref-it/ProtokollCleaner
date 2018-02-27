@@ -186,6 +186,9 @@
 .protostatus .legislatur button.sub  {
 	margin-right: 5px;
 }
+.protostatus .btn {
+	margin-top: 5px;
+}
 /* -------------------- */
 .resolutionlist .resolution {
 	position: relative;
