@@ -237,19 +237,20 @@
 	border-top: 1px solid #0c5460;
 	margin-top: 10px;
 }
-.resolutionlist .resolution .togglebox span:nth-child(1),
-.resolutionlist .resolution .togglebox span:nth-child(2),
-.resolutionlist .resolution .togglebox span:nth-child(3){
+.resolutionlist .resolution .togglebox span.yes,
+.resolutionlist .resolution .togglebox span.no,
+.resolutionlist .resolution .togglebox span.abstention{
 	display: inline-block;
 	width: 33%;
 	padding: 10px;
 }
-.resolutionlist .resolution .togglebox span:nth-child(4),
-.resolutionlist .resolution .togglebox span:nth-child(5){
+.resolutionlist .resolution .togglebox span.result,
+.resolutionlist .resolution .togglebox span.ptag,
+.resolutionlist .resolution .togglebox span.category{
 	font-weight: bold;
 	display: block;
 }
-.resolutionlist .resolution .togglebox span:last-child{
+.resolutionlist .resolution .togglebox span.category{
 	font-weight: bold;
 	display: block;
 	text-align: right;

@@ -130,18 +130,18 @@ class ProtocolController extends MotherController {
 			echo '<input class="resotoggle" id="reso_toggle_'.$pos.'" type="checkbox" value="1">';
 			echo '<label tabindex="0" class="label resotoggle btn btn-outline-info" for="reso_toggle_'.$pos.'"></label>';
 			echo '<div class="togglebox" tabindex="-1">';
-			echo "<span>Ja: {$reso['Ja']}</span>"; //TODO
-			echo "<span>Nein: {$reso['Nein']}</span>";
-			echo "<span>Enthaltungen: {$reso['Enthaltungen']}</span>";
-			echo "<span>Beschluss: {$reso['Beschluss']}</span>";
+			if (isset($reso['Ja'])) echo "<span class='yes'>Ja: {$reso['Ja']}</span>";
+			if (isset($reso['Nein'])) echo "<span class='no'>Nein: {$reso['Nein']}</span>";
+			if (isset($reso['Enthaltungen'])) echo "<span class='abstention'>Enthaltungen: {$reso['Enthaltungen']}</span>";
+			echo "<span class='result'>Beschluss: {$reso['Beschluss']}</span>";
 			if (isset($reso['p_tag'])){
 				if ($reso['p_tag']){
-					echo "<span>Protokoll: PARSE ERROR</span>";
+					echo "<span class='ptag'>Protokoll: {$reso['p_tag']}</span>";
 				} else {
-					echo "<span>Protokoll: {$reso['p_tag']}</span>";
+					echo "<span class='ptag'>Protokoll: PARSE ERROR</span>";
 				}
 			}
-			echo "<span>Kategorie: {$reso['type_long']}</span>";
+			echo "<span class='category'>Kategorie: {$reso['type_long']}</span>";
 			echo '</div></div>';
 		}
 		if ($opened) {
@@ -284,7 +284,9 @@ class ProtocolController extends MotherController {
 			$p->agreed_on = $resolution;
 		}
 		if ($load_attachements){
+			prof_flag('get wiki attachement list');
 			$p->attachements = $x->listAttachements(self::$protomap[$p->committee][0].':'.$p->name );
+			prof_flag('got wiki attachement list');
 		}
 		//TODO create legislatur map
 		$p->legislatur = intval($this->db->getSettings()['LEGISLATUR']);
@@ -410,11 +412,7 @@ class ProtocolController extends MotherController {
 			//echo protocol diff
 			echo $p->preview;
 			
-			
-
-		//TODO cleanup array
-		//TODO check attachements
-		//TODO detect Legislatur
+			//TODO detect Legislatur
 	
 			$this->t->printPageFooter();
 		}

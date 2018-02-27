@@ -173,9 +173,15 @@ class protocolHelper
 			$tmp = $result['Titel'];
 			$tmp = preg_replace('/[^\d.-]/', '', $tmp);
 			$tmp = str_replace('.', '-', $tmp);
-			if (strlen($tmp) > 8) $tmp = substr($tmp, 0, 8);
-			//try parse date
-			$date = date_create_from_format('d-m-y', $tmp);
+			$date = false;
+			//try to parse date
+			if (strlen($tmp) >= 10){
+				$tmp = substr($tmp, 0, 10);
+				$date = date_create_from_format('d-m-Y', $tmp);
+			} else if (strlen($tmp) >= 8){
+				$tmp = substr($tmp, 0, 8);
+				$date = date_create_from_format('d-m-y', $tmp);
+			}			
 			if ($date) {
 				$result['p_tag'] = $p->committee.':'.$date->format('Y-m-d');
 			} else {
@@ -357,9 +363,6 @@ class protocolHelper
 		
 		// object
 		return $p;
-		
-		//TODO cleanup array
-		//TODO check attachements
 		//TODO detect Legislatur
 	}
 }
