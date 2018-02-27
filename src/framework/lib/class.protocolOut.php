@@ -119,43 +119,50 @@ class protocolOut
      * @param Protocol $p Protocol object
      * @param boolean $includeUrls call printProtoLinks automatically
      */
-    public static function printProtoStatus($p, $includeUrls = true){
-    	echo '<div class="protostatus">'.
-    		'<div class="general">'.
-    		'<span class="committee"><span>Gremium:</span><span>'.$p->committee.'</span></span>'.
-    		'<span class="date"><span>Protokoll vom:</span><span>'.$p->date->format('d.m.Y').'</span></span>'.
-    		'<span class="state"><span>Status:</span><span>'.
-	    		(($p->id == NULL)? 'Nicht öffentlich':
-	    			(($p->draft_url!=NULL)?'Entwurf':
-	    				(($p->public_url!=NULL)?'Veröffentlicht':'Unbekannt'))).'</span></span>'.
-    		'<span class="legislatur"><span>Legislatur:</span><span><button type="button" class="btn btn-outline-primary sub">-</button>'.$p->legislatur.'<button type="button" class="add btn btn-outline-primary">+</button></span></span>'.
-    		'<span class="sitzung"><span>Sitzung:</span><span>'.$p->protocol_number.'</span></span>'.
-    		'<span class="resolutions"><span>Angenommene Beschlüsse:</span><span>'.count($p->resolutions).'</span></span>'.
-    
-    		'<span class="sitzung"><span>TODOs:</span><span>'.(
-	    		((isset($p->todos['todo']['public']))? count($p->todos['todo']['public']): 0)
-	    		+((isset($p->todos['todo']['intern']))? count($p->todos['todo']['intern']): 0)
-    		).'</span></span>'.
-    		'<span class="sitzung"><span>Fixme:</span><span>'.(
-	    		((isset($p->todos['fixme']['public']))? count($p->todos['fixme']['public']): 0)
-	    		+((isset($p->todos['fixme']['intern']))? count($p->todos['fixme']['intern']): 0)
-	    	).'</span></span>'.(($includeUrls)? self::printProtoLinks($p) : '').
-    		'</div></div>';
-    }
+	public static function printProtoStatus($p, $includeUrls = true){
+		echo '<div class="protostatus">';
+		echo '<div class="general">';
+		echo '<span class="committee"><span>Gremium:</span><span>'.$p->committee.'</span></span>';
+		echo '<span class="date"><span>Protokoll vom:</span><span>'.$p->date->format('d.m.Y').'</span></span>';
+		echo '<span class="state"><span>Status:</span><span>'.
+			(($p->id == NULL)? 'Nicht öffentlich': 
+			(($p->draft_url!=NULL)?'Entwurf':
+			(($p->public_url!=NULL)?'Veröffentlicht':'Unbekannt'))).'</span></span>';
+		echo '<span class="legislatur"><span>Legislatur:</span><span><button type="button" class="btn btn-outline-primary sub">-</button>'.$p->legislatur.'<button type="button" class="add btn btn-outline-primary">+</button></span></span>';
+		echo '<span class="sitzung"><span>Sitzung:</span><span>'.$p->protocol_number.'</span></span>';
+		echo '<span class="resolutions"><span>Angenommene Beschlüsse:</span><span>'.count($p->resolutions).'</span></span>';
+		
+		echo '<span class="sitzung"><span>TODOs:</span><span>'.(
+			((isset($p->todos['todo']['public']))? count($p->todos['todo']['public']): 0)
+			+((isset($p->todos['todo']['intern']))? count($p->todos['todo']['intern']): 0)
+		).'</span></span>';
+		echo '<span class="sitzung"><span>Fixme:</span><span>'.(
+			((isset($p->todos['fixme']['public']))? count($p->todos['fixme']['public']): 0)
+			+((isset($p->todos['fixme']['intern']))? count($p->todos['fixme']['intern']): 0)
+		).'</span></span>';
+		if ($includeUrls) self::printProtoLinks($p);
+		echo '</div></div>';
+	}
     
     /**
      * echo protocol links to wiki page in html form
      * @param Protocol $p
      */
     public static function printProtoLinks($p){
-    	echo '<div class="protolinks">'.
-    		'<a class="btn btn-primary mr-1" href="" class="btn reload">Reload</a>'.
-    		'<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][0]).'/'.$p->name.'?do=edit" class="btn" target="_blank">Edit Protocol</a>'.
-    		(($p->draft_url)?'<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][1]).'/'.$p->name.'" class="btn" target="_blank">View Draft</a>': '').
-    		(($p->public_url)?'<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][1]).'/'.$p->name.'" class="btn" target="_blank">View Public</a>':
-    			'<button class="btn btn-danger mr-1" type="button" class="btn">'.(($p->agreed_on === NULL)?'Entwurf ': '' ).'Veröffentlichen</button>').
-    		'</div>';
+    	echo '<div class="protolinks">';
+    	echo '<a class="btn btn-primary mr-1 reload" href="">Reload</a>';
+    	echo '<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][0]).'/'.$p->name.'?do=edit" target="_blank">Edit Protocol</a>';
+    	if ($p->draft_url){
+    		echo '<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][1]).'/'.$p->name.'" target="_blank">View Draft</a>';
+    	}
+    	if ($p->public_url){
+    		echo '<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][1]).'/'.$p->name.'" target="_blank">View Public</a>';
+    	} else {
+    		echo '<button class="btn btn-danger mr-1" type="button">'.(($p->agreed_on === NULL)?'Entwurf ': '' ).'Veröffentlichen</button>';
+    	}
+    	echo '</div>';
     }
+    
     
     /**
      * echo protocol tag errors in html form

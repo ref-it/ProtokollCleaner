@@ -38,7 +38,7 @@ $rawRoutes = [
  * @var array
  */
 $navigation = [
-	'/' 	=> ['stura', 	'Home', 	'&#xf015',	''],
+	'/' 	=> ['stura', 	'Home', 	'&#xf015;',	''],
 	'admin' => ['ref-it', 	'Admin', 	'&#xf085;',	'gearLogo.png'],
 	'protolist' => ['ref-it', 	'Protokolle', 	'&#xf266;',	'log.png'],
 	'https://stura.tu-ilmenau.de/impressum' => ['stura', 'Impressum', '&#xf129;', ''],

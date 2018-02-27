@@ -95,7 +95,7 @@ class ProtocolController extends MotherController {
 	/**
 	 * ACTION plist
 	 * (stura) protocol list
-	 * render and show protocoll list
+	 * render and show protocol list
 	 * displays 
 	 */
 	public function plist(){
@@ -178,6 +178,7 @@ class ProtocolController extends MotherController {
 				$this->renderErrorPage(404, null);
 				return;
 			}
+			$this->t->appendJsLink('protocol.js');
 			$this->t->printPageHeader();
 			
 			//run protocol parser
