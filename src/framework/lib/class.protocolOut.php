@@ -10,10 +10,15 @@
 
 class protocolOut
 {
-    //write table header to stdout
-    public static function generateHeader()
+	// Protocol Internal <--> Public Diff =========================================================
+
+    /**
+     * return div protocol diff table header
+     * @return string
+     */
+    public static function printDiffHeader()
     {
-    	return self::generateLegend(). "<div class='difftable'>\n".
+    	return self::printDiffLegend(). "<div class='difftable'>\n".
      		"<div class='headline noselect'>\n".
      			"<span>Line</span>\n".
      			"<span>+</span>\n".
@@ -22,8 +27,12 @@ class protocolOut
      			"<span>Content</span>\n".
      		"</div>\n";
     }
-    //write table header to stdout
-    public static function generateLegend()
+
+    /**
+     * return protocol diff table legend
+     * @return string
+     */
+    public static function printDiffLegend()
     {
     	return "<h3>Protokollvorschau</h3>\n".
     		"<div class='protolegend'><div>\n".
@@ -33,35 +42,59 @@ class protocolOut
     		'<div><span class="color border border-dark"></span><span class="symbol">C</span><span class="desc">Automatisch ergänzte Zeilen</span></div>'."\n".
     		"</div></div>\n";
     }
-    //write removed protocol line (red)
+  
+    /**
+     * return removed protocol line (red) (diff table)
+     * @param string $line
+     * @return string
+     */
     public static function generateRemovedLine($line)
     {
         return "<div class='line removed'>\n".
         	'<span></span><span></span><span></span><span></span><span>'.htmlspecialchars($line)."</span>\n".
         "</div>\n";
     }
-    //write normal copied protocol line (white)
+    
+    /**
+     * return normal cloned protocol line (white) (diff table)
+     * @param string $line
+     * @return string
+     */
     public static function generateCopiedLine($line)
     {
     	return "<div class='line normal'>\n".
 	    	'<span></span><span></span><span></span><span></span><span>'.htmlspecialchars($line)."</span>\n".
     	"</div>\n";
     }
-    //write error protocol line (orange)
+    
+    /**
+     * return error protocol line (orange) (diff table)
+     * @param string $line
+     * @return string
+     */
     public static function generateErrorLine($line)
     {
     	return "<div class='line error'>\n".
     		'<span></span><span></span><span></span><span></span><span>'.htmlspecialchars($line)."</span>\n".
     		"</div>\n";
     }
-    //write changed protocol line (gray)
+    
+    /**
+     * return changed protocol line (gray) (diff table)
+     * @param string $line
+     * @return string
+     */
     public static function generateCopiedChangedLine($line)
     {
     	return "<div class='line changed'>\n".
 	    	'<span></span><span></span><span></span><span></span><span>'.htmlspecialchars($line)."</span>\n".
     	"</div>\n";
     }
-    //write table footer to stdout
+    
+    /**
+     * return div protocol diff table footer
+     * @return string
+     */
     public static function generateFooter()
     {
         return "</div>\n";
