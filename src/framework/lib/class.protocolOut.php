@@ -16,7 +16,7 @@ class protocolOut
      * return div protocol diff table header
      * @return string
      */
-    public static function printDiffHeader()
+    protected static function printDiffHeader()
     {
     	return self::printDiffLegend(). "<div class='difftable'>\n".
      		"<div class='headline noselect'>\n".
@@ -32,7 +32,7 @@ class protocolOut
      * return protocol diff table legend
      * @return string
      */
-    public static function printDiffLegend()
+    protected static function printDiffLegend()
     {
     	return "<h3>Protokollvorschau</h3>\n".
     		"<div class='protolegend'><div>\n".
@@ -48,7 +48,7 @@ class protocolOut
      * @param string $line
      * @return string
      */
-    public static function printDiffRemovedLine($line)
+    protected static function printDiffRemovedLine($line)
     {
         return "<div class='line removed'>\n".
         	'<span></span><span></span><span></span><span></span><span>'.htmlspecialchars($line)."</span>\n".
@@ -60,7 +60,7 @@ class protocolOut
      * @param string $line
      * @return string
      */
-    public static function printDiffCopiedLine($line)
+    protected static function printDiffCopiedLine($line)
     {
     	return "<div class='line normal'>\n".
 	    	'<span></span><span></span><span></span><span></span><span>'.htmlspecialchars($line)."</span>\n".
@@ -72,7 +72,7 @@ class protocolOut
      * @param string $line
      * @return string
      */
-    public static function printDiffErrorLine($line)
+    protected static function printDiffErrorLine($line)
     {
     	return "<div class='line error'>\n".
     		'<span></span><span></span><span></span><span></span><span>'.htmlspecialchars($line)."</span>\n".
@@ -84,7 +84,7 @@ class protocolOut
      * @param string $line
      * @return string
      */
-    public static function printDiffCopiedChangedLine($line)
+    protected static function printDiffCopiedChangedLine($line)
     {
     	return "<div class='line changed'>\n".
 	    	'<span></span><span></span><span></span><span></span><span>'.htmlspecialchars($line)."</span>\n".
@@ -95,8 +95,11 @@ class protocolOut
      * return div protocol diff table footer
      * @return string
      */
-    public static function printDiffFooter()
+    protected static function printDiffFooter()
     {
         return "</div>\n";
     }
+    
+    
+    
 }
