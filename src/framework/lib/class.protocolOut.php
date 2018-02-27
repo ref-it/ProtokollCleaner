@@ -1,14 +1,14 @@
 <?php
 /**
- * search for internal part in protocolls
+ * create html strings for protocols
  * checks open and closing tags
- * protocolDiff.php (old: VisualCopyEmulator.php)
+ * protocolOut.php (old: VisualCopyEmulator.php)
  * @author Martin S.
  * @author Stura - Referat IT <ref-it@tu-ilmenau.de>
  * @since 18.02.18 18:02
  */
 
-class protocolDiff
+class protocolOut
 {
     //write table header to stdout
     public static function generateHeader()

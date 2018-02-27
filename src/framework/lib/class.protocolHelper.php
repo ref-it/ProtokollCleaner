@@ -16,7 +16,7 @@
  
 require_once (FRAMEWORK_PATH."/config/config.protocol.php");
 require_once (FRAMEWORK_PATH."/lib/class.protocol.php");
-require_once (FRAMEWORK_PATH."/lib/class.protocolDiff.php");
+require_once (FRAMEWORK_PATH."/lib/class.protocolOut.php");
 
 /**
  * implement protocol functions
@@ -227,7 +227,7 @@ class protocolHelper
 		$pregFind = ['todo' => [], 'resolution' => [], 'fixme' => []];		// contains preg matches (todos, fixmes, resolutions)
 		
 		//only fill preview or output
-		if (!$nopreview) $p->preview = protocolDiff::generateHeader();
+		if (!$nopreview) $p->preview = protocolOut::generateHeader();
 		
 		// parser main loop - loop throught $protocol lines
 		// create internal <==> external diff
@@ -235,8 +235,8 @@ class protocolHelper
 			//detect protocol head to insert draft state + publishung user
 			if ($writeUserText == 3) {
 				if (!$nopreview){
-					if ($addDraftText) $p->preview .= protocolDiff::generateCopiedChangedLine('====== ENTWURF - PROTOKOLL ======');
-					$p->preview .= protocolDiff::generateCopiedChangedLine('====== GENERIERT mit '.BASE_TITLE.' von ('.$publising_user.') ======'."\n");
+					if ($addDraftText) $p->preview .= protocolOut::generateCopiedChangedLine('====== ENTWURF - PROTOKOLL ======');
+					$p->preview .= protocolOut::generateCopiedChangedLine('====== GENERIERT mit '.BASE_TITLE.' von ('.$publising_user.') ======'."\n");
 				} else {
 					if ($addDraftText) $p->external .= '====== ENTWURF - PROTOKOLL ======'."\n";
 					$p->external .= '====== GENERIERT mit '.BASE_TITLE.' von ('.$publising_user.') ======'."\n";
@@ -291,14 +291,14 @@ class protocolHelper
 						$this->isLineError = true;
 						$this->lineError = "Please use a new line to seperate internal and external parts.";
 						$p->parse_errors[] = $this->lineError;
-						if (!$nopreview) $p->preview .= protocolDiff::generateErrorLine($line);
+						if (!$nopreview) $p->preview .= protocolOut::generateErrorLine($line);
 						break;
 					}
 					if ($lastTagClosed == !$isInternal){
 						$this->isLineError = true;
 						$this->lineError = "Duplicate closing tag or closing before opening found.";
 						$p->parse_errors[] = $this->lineError;
-						if (!$nopreview) $p->preview .= protocolDiff::generateErrorLine($line);
+						if (!$nopreview) $p->preview .= protocolOut::generateErrorLine($line);
 						break;
 					} else {
 						$lastTagClosed = !$isInternal;
@@ -306,9 +306,9 @@ class protocolHelper
 				}
 			}
 			if ($isInternal || $changed){ // mark changes on preview
-				if (!$nopreview) $p->preview .= protocolDiff::generateRemovedLine($line);
+				if (!$nopreview) $p->preview .= protocolOut::generateRemovedLine($line);
 			} else { // only copy public lines
-				if (!$nopreview) $p->preview .= protocolDiff::generateCopiedLine($line);
+				if (!$nopreview) $p->preview .= protocolOut::generateCopiedLine($line);
 				else $p->external .= "$line\n";
 			}
 			//detect fixme, todo, resolutions
@@ -328,13 +328,13 @@ class protocolHelper
 			}
 		}
 		if ($this->isLineError == true){ // error handling: show error to user
-			if (!$nopreview) $p->preview .= protocolDiff::generateErrorLine($this->lineError);
-			else $p->external .= protocolDiff::generateErrorLine($this->lineError);
+			if (!$nopreview) $p->preview .= protocolOut::generateErrorLine($this->lineError);
+			else $p->external .= protocolOut::generateErrorLine($this->lineError);
 		}
 		
 		if (!$nopreview){
 			//print table footer
-			$p->preview .= protocolDiff::generateFooter();
+			$p->preview .= protocolOut::generateFooter();
 			//highlight keywords
 			$re = '/('.implode('|',self::$highlightKeywords ).')/i';
 			$subst = '<span class="highlight">$1</span>';
