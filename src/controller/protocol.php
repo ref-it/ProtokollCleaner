@@ -73,27 +73,38 @@ class ProtocolController extends MotherController {
 	 * echo protocol tag errors in html form
 	 * @param Protocol $p Protocol object
 	 */
-	private static function printProtoTagErrors($p){
-		$opened = false;
+	private static function createProtoTagErrors($p){
 		foreach($p->tags as $tag => $state){
 			if ($state == 0){
 				continue;
 			}
+			if ($tag == 'old'){
+				$p->parse_errors[] = 'Nicht-Öffentlicher Teil wurde nicht geschlossen.';
+			} else {
+				$e = "Der Tag '$tag' wurde häufiger ";
+				if ($state > 0){
+					$e.= 'geöffnet als geschlossen.';
+				} else {
+					$e.= 'geschlossen als geöffnet.';
+				}
+				$p->parse_errors[] = $e;
+			}
+		}
+	}
+	
+	/**
+	 * echo protocol (parse) errors in html form
+	 * @param Protocol $p Protocol object
+	 */
+	private static function printProtoParseErrors($p){
+		$opened = false;
+		foreach($p->parse_errors as $err){
 			if (!$opened){
-				echo '<div class="error tagerrors">';
+				echo '<div class="error parseerrors"><h3>Parsing Errors</h3>';
 				$opened = true;
 			}
-			echo '<div class="tagerror">';
-			if ($tag == 'old'){
-				echo 'Nicht-Öffentlicher Teil wurde nicht geschlossen.';
-			} else {
-				echo "Der Tag '$tag' wurde häufiger ";
-				if ($state > 0){
-					echo 'geöffnet als geschlossen.';
-				} else {
-					echo 'geschlossen als geöffnet.';
-				}
-			}
+			echo '<div class="perror alert alert-danger">';
+			echo $err;
 			echo '</div>';
 		}
 		if ($opened) {
@@ -121,6 +132,13 @@ class ProtocolController extends MotherController {
 			echo "<span>Nein: {$reso['Nein']}</span>";
 			echo "<span>Enthaltungen: {$reso['Enthaltungen']}</span>";
 			echo "<span>Beschluss: {$reso['Beschluss']}</span>";
+			if (isset($reso['p_tag'])){
+				if ($reso['p_tag']){
+					echo "<span>Protokoll: PARSE ERROR</span>";
+				} else {
+					echo "<span>Protokoll: {$reso['p_tag']}</span>";
+				}
+			}
 			echo "<span>Kategorie: {$reso['type_long']}</span>";
 			echo '</div></div>';
 		}
@@ -170,7 +188,7 @@ class ProtocolController extends MotherController {
 					echo '<div class="fixmelist"><h3>FIXMEs</h3>';
 					$opened = true;
 				}
-				echo '<div class="fixme">';
+				echo '<div class="fixme alert alert-warning">';
 				echo preg_replace('/(fixme)/i', '<span class="highlight">$1</span>', $fixme[0]);
 				echo '</div>';
 			}
@@ -347,7 +365,8 @@ class ProtocolController extends MotherController {
 			//insert protocol link + status
 			self::printProtoStatus($p);
 			//protocol errors
-			self::printProtoTagErrors($p);
+			self::createProtoTagErrors($p);
+			self::printProtoParseErrors($p);
 			//resolution list
 			self::printResolutions($p);
 			//show todo list

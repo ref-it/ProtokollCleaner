@@ -97,14 +97,15 @@ class protocolHelper
 	 * categorize and split raw resolution strings to array
 	 * 
 	 * @param array $resolutions array of raw resolution strings
+	 * @param Protocol $p
 	 * @param array $overwriteType overwrites Type ['short' => '', 'long' => '']
 	 * @return array of resolutions [[text, type_short, type_long, p_tag], ...]
 	 */
-	private static function parseResolutionArray($resolutions, $overwriteType = NULL){
+	private static function parseResolutionArray($resolutions, $p, $overwriteType = NULL){
 		$result = [];
 		//parse resolutions: categorize, and split to array
 		foreach ($resolutions as $rawres){
-			$result[] = self::parseResolution($rawres, $overwriteType);
+			$result[] = self::parseResolution($rawres, $p, $overwriteType);
 		}
 		return $result;
 	}
@@ -113,16 +114,17 @@ class protocolHelper
 	 * categorize and split raw resolution strings to array
 	 * 
 	 * @param string $resolution raw resolution text
+	 * @param Protocol $p
 	 * @return array parsed resolution [text|title, type_short, type_long, p_tag, raw]
 	 */
-	private static function parseResolution($resolution, $overwriteType = NULL){
+	private static function parseResolution($resolution, $p, $overwriteType = NULL){
 		$result = ['raw' => $resolution];
 		$parts = array_map('trim', explode('|', $resolution));
 		foreach ($parts as $pos => $text){
 			$text = str_replace('}}', '', $text);
 			foreach (self::$resolutionParts as $query => $key){
 				if (preg_match('/^'.$query.'/i', $text)){
-					$result[$key] = substr($text, strlen($query));				
+					$result[$key] = htmlspecialchars(substr($text, strlen($query)));				
 				}
 			}
 		}
@@ -166,6 +168,22 @@ class protocolHelper
 				}
 			}
 		}
+		if ($result['type_long'] == 'Protokoll'){
+			//parse protocoltag
+			$tmp = $result['Titel'];
+			$tmp = preg_replace('/[^\d.-]/', '', $tmp);
+			$tmp = str_replace('.', '-', $tmp);
+			if (strlen($tmp) > 8) $tmp = substr($tmp, 0, 8);
+			//try parse date
+			$date = date_create_from_format('d-m-y', $tmp);
+			if ($date) {
+				$result['p_tag'] = $p->committee.':'.$date->format('Y-m-d');
+			} else {
+				$result['p_tag'] = false;
+				$p->parse_errors[] = "<strong>Parse Error: Protokolldatum</strong> Dem folgenden Protokollbeschluss konnte kein Datum entnommen werden. Gesuchtes format: dd.mm.yy oder dd-mm-yy<br><i>{$result['Titel']}</i>";
+			}
+			
+		}
 		return $result;
 	}
 	
@@ -194,7 +212,7 @@ class protocolHelper
 		prof_flag('parseProto_start');
 		
 		$isInternal = false;	// dont copy internal parts to public part
-		$isLineError = false;	// found parsing error
+		$this->isLineError = false;	// found parsing error
 		$lastTagClosed = true; 	// prevent duplicate closing tags and closing internal part before opening
 		$writeUserText = 1;		// used to detect protocol head
 		
@@ -265,12 +283,14 @@ class protocolHelper
 					if ($tmp_line != ''){
 						$this->isLineError = true;
 						$this->lineError = "Please use a new line to seperate internal and external parts.";
+						$p->parse_errors[] = $this->lineError;
 						if (!$nopreview) $p->preview .= protocolDiff::generateErrorLine($line);
 						break;
 					}
 					if ($lastTagClosed == !$isInternal){
 						$this->isLineError = true;
 						$this->lineError = "Duplicate closing tag or closing before opening found.";
+						$p->parse_errors[] = $this->lineError;
 						if (!$nopreview) $p->preview .= protocolDiff::generateErrorLine($line);
 						break;
 					} else {
@@ -317,9 +337,9 @@ class protocolHelper
 		
 		//categorize pregmatches
 		if (isset($pregFind['resolution']['public']))
-			$p->resolutions = $p->resolutions +  self::parseResolutionArray($pregFind['resolution']['public']);
+			$p->resolutions = $p->resolutions +  self::parseResolutionArray($pregFind['resolution']['public'], $p);
 		if (isset($pregFind['resolution']['intern']))
-			$p->resolutions = $p->resolutions + self::parseResolutionArray($pregFind['resolution']['intern'], ['I', 'Intern']);
+			$p->resolutions = $p->resolutions + self::parseResolutionArray($pregFind['resolution']['intern'], $p, ['I', 'Intern']);
 		//create resolution tags
 		self::numberResolutionArray($p, $p->legislatur);
 		

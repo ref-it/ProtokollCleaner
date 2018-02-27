@@ -124,6 +124,12 @@ class Protocol
 	public $resolutions;
 	
 	/**
+	 * parse errors: array of strings
+	 * @var array
+	 */
+	public $parse_errors;
+	
+	/**
 	 * protocol text
 	 * @var string
 	 */
@@ -147,6 +153,7 @@ class Protocol
 		$this->external = '';
 		$this->preview = '';
 		$this->todos = [];
+		$this->parse_errors = [];
 		$this->resolutions = [];
 	}
 }

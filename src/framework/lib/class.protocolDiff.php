@@ -13,7 +13,7 @@ class protocolDiff
     //write table header to stdout
     public static function generateHeader()
     {
-    	return "<div class='difftable'>\n".
+    	return self::generateLegend(). "<div class='difftable'>\n".
      		"<div class='headline noselect'>\n".
      			"<span>Line</span>\n".
      			"<span>+</span>\n".
@@ -21,6 +21,17 @@ class protocolDiff
      			"<span>C</span>\n".
      			"<span>Content</span>\n".
      		"</div>\n";
+    }
+    //write table header to stdout
+    public static function generateLegend()
+    {
+    	return "<h3>Protokollvorschau</h3>\n".
+    		"<div class='protolegend'><div>\n".
+    		"<span>Legende</span>\n".
+    		'<div><span class="color border border-dark"></span><span class="symbol">+</span><span class="desc">Veröffentlichte Zeilen - Werden in generiertes Protokoll übernommen</span></div>'."\n".
+    		'<div><span class="color border border-dark"></span><span class="symbol">-</span><span class="desc">Nicht öffentliche Zeilen - Werden nicht in generiertes Protokoll übernommen</span></div>'."\n".
+    		'<div><span class="color border border-dark"></span><span class="symbol">C</span><span class="desc">Automatisch ergänzte Zeilen</span></div>'."\n".
+    		"</div></div>\n";
     }
     //write removed protocol line (red)
     public static function generateRemovedLine($line)
