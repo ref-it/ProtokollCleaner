@@ -15,7 +15,6 @@ html, body {
 .footer,
 .menu_toggle,
 .header img.logo_fav,
-#menu_toggle_check,
 .modalwrapper,
 .message_relative,
 .noprint,
@@ -135,10 +134,3 @@ header,
 	margin-left: 0 !important;
 }
 @page {margin: 0.9in 0.7in 0.7in 0.7in;}
-
-input#menu_toggle_check:checked + header + div.sidenav_wrapper{
-	display: none;
-}
-input#menu_toggle_check:checked + header + div.sidenav_wrapper + div.content{
-	margin-left: 0;
-}

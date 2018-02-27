@@ -74,7 +74,7 @@ button, input{
 	max-width: 275px;
 	min-width: 15%;
 	position: fixed;
-	z-index: 1000;
+	z-index: 300;
 }
 
 .profile-usertitle {
@@ -237,16 +237,10 @@ div.message_relative{
 	left: 2%;
 	right: 2%;
 }
-.force_mobile input#menu_toggle_check:checked + header + div + div.content_wrapper #silmph__message_container{
-	left: 96px;
-}
 @media screen and (max-width: 767px) {
 	#silmph__message_container{
 		left: 5px;
 		right: 5px;
-	}
-	input#menu_toggle_check:checked + header + div + div.content_wrapper #silmph__message_container{
-		left: 96px;
 	}
 }
 #silmph__message_container div{
@@ -341,6 +335,43 @@ div.silmph__message_success {
 	line-height: 48px;
 	font-size: 2.1em;
 }
+/* ---------- */
+.modalwrapper .modal-box {
+	position: fixed;
+	left: 0;
+	right: 0;
+	margin: 0 auto;
+	display: block;
+	z-index: 500;
+	width: 85%;
+	width: calc(84% - 20px);
+	margin-left: 15%;
+	margin-left: calc(15% + 20px);
+	min-width: 300px;
+	max-height: 80%;
+	overflow-y: auto;
+}
+.modalwrapper .modal-box .modal-footer {
+	padding: 5px;
+}
+.modalwrapper .modal-box .modal-footer button {
+	min-width: 125px;
+}
+@media screen and (max-width: 767px) {
+	.modalwrapper .modal-box {
+		position: fixed;
+		width: 98%;
+		left: 0;
+		right: 0;
+		margin: 0 auto;
+		display: block;
+		z-index: 500;
+		min-width: auto;
+	}
+}
+
+
+
 /* GENERAL HALF + FULL BOXES ==============================================  */
 .half_container, 
 .full_container,

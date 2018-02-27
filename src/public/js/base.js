@@ -220,7 +220,99 @@ function checkIsValidName(name){
 		return false;
 	}
 	return false;
-} 
+}
+/* ============== Modalwrapper =========================================================================*/
+//plugin to create modal message
+(function ($) {
+    $.extend({
+    	modaltools: function (options) {
+    		var settings = $.extend({
+                // These are the defaults.
+                target: ".modalwrapper",
+                buttons: {'abort': 'Abbrechen', 'ok':'Ok'},
+                single_callback: function(key, obj){console.log(key);},
+                callback: {
+                	'ok': function(obj){obj.close();},
+                	'abort': function(obj){obj.close();},
+                	'yes': function(obj){obj.close();},
+                	'no': function(obj){obj.close();}
+                },
+                text: 'Modaltext',
+                boxClass: '',
+                headerClass: 'bg-success',
+                footerClass: 'bg-light',
+                buttonClass: 'btn-outline-dark',
+                autoremove: false,//time in ms
+                html: '<div class="modal-content"><div class="modal-header [%HEADCLASS%]"><span class="close">&times;</span></div><div class="modal-body"><p>[%TEXT%]</p></div><div class="buttons modal-footer [%FOOTCLASS%]">[%BUTTONS%]</div></div>'
+            }, options );
+    		//return obj
+    		var $out = {};
+    		var to = null;
+    		//create buttons
+    		var buttons='';
+    		for (var key in settings.buttons) {
+				if (settings.buttons.hasOwnProperty(key)) {
+					buttons += '<button class="modal-button btn type-'+key+' '+settings.buttonClass+'" type="button">'+settings.buttons[key]+'</button>';
+				}
+    		}
+    		//create modal
+    		var $modal = $("<div/>", {
+    			'class': 'modal-box '+ settings.boxClass,
+    			css: {'position': 'fixed'},
+    			html: settings.html.replace('[%TEXT%]', settings.text).replace('[%BUTTONS%]', buttons).replace('[%HEADCLASS%]', settings.headerClass).replace('[%FOOTCLASS%]', settings.footerClass)
+    		});
+    		//add callbacks
+    		for (var key in settings.buttons) {
+				if (settings.buttons.hasOwnProperty(key)) {
+					$modal.find('button.type-'+key).on('click', function(){
+						settings.single_callback(key, $out);
+						if (settings.callback.hasOwnProperty(key))
+							settings.callback[key]($out);
+					});
+				}
+    		}
+    		//remove modal overlay
+    		var fadeRemove = function (){
+    			if (to != null){
+    				clearTimeout(to);
+    				to = null;
+    			}
+    			$modal.fadeOut(300, function(){
+    				var $t = $(settings.target);
+    				if ($t.hasClass('open')) $t.removeClass('open');
+    				$(this).remove();
+    			});
+    			return $out;
+    		};
+    		//add modal overlay
+    		var open_func = function(){
+    			var $t = $(settings.target);
+    			$t.append($modal);
+    			if (!$t.hasClass('open')) $t.addClass('open');
+    			return $out;
+    		};
+    		//autoremove
+    		if (isInt(settings.autoremove) && settings.autoremove > 0){
+    			to = setTimeout(function(){
+    				to = null;
+    				fadeRemove();
+    			}, settings.autoremove);
+    		}
+    		$modal.find('.modal-header > span').on('click', function(){
+    			fadeRemove();
+			});
+    		$out.open = open_func;
+    		$out.close = fadeRemove;
+    		$out.breakAutoremove = function(){
+    			if (to != null){
+    				clearTimeout(to);
+    				to = null;
+    			}
+    		}
+    		return $out;
+        }
+    });
+})(jQuery);
 /* ============================= MESSAGE SYSTEM ========================================================== */
 const MESSAGE_TYPE_NORMAL = 0; //blue
 const MESSAGE_TYPE_INFO = 1; //blue
@@ -277,35 +369,13 @@ var silmph__add_message = function (msg, type, hide_delay){
 			$e = $(e);
 			if ($e.hasClass('open')) $e.removeClass('open');
 		}));
+		$modalwrapper.find('.modal-box .close').click();
 	}
 
 	$(document).ready(function(){
 		$modalwrapper = $('.modalwrapper');
 		$('.modalwrapper .modal_close').click(modal_close);
 		$('.modalwrapper .close').click(modal_close);
-		
-		var $elem1 = $('#fullscreen_toggle');
-		$elem1.click(function(){
-			el = document.getElementById('body');
-			if (screenfull.enabled) {
-		        screenfull.toggle(el);
-		    }
-			var toggleText = '';
-			var $this = $(this);
-			if ($this.attr('data-toggletext')){
-				toggleText = $this.data('toggletext');
-				$this.data('toggletext', $this.html());
-				$this.html(toggleText)
-			}
-		});
-		
-		var $elem2 = $("#menu_toggle_check")
-		$('label.menu_toggle').bind('keydown', function(e) {
-		    if ( e.keyCode === 32 || e.keyCode === 13 ) { // spacebar key maps to keycode 32 // enter key maps to keycode 13
-		        // Execute code here.
-		    	$elem2.click();
-		    }
-		});
 	});
 	
 	$(document).keydown(function(e) {

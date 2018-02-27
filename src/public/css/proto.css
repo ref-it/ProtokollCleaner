@@ -262,6 +262,12 @@
 .deletemelist .highlight {
 	font-weight: bold;
 }
+.resolutionlist > .alert,
+.todolist > .alert,
+.fixmelist > .alert,
+.deletemelist > .alert {
+	margin: 6px 0;
+}
 /* -------------------- */
 .protolegend {
 	display: block;
@@ -327,6 +333,23 @@
 	font-weight: normal;
 	text-align: right;
 	font-style: italic;
+}
+@media screen and (max-width: 600px) {
+	.protolegend > div {
+		width: 100%;
+		float: none;
+		margin: 0;
+	}
+	.protolegend > div > div {
+		max-width: inherit;
+		width: 100%;
+	}
+	.protolegend > div > div > span.desc {
+	    display: inline-block;
+	    text-align: right;
+	    width: 80%;
+	    vertical-align: top;
+	}
 }
 /* -------------------- */
 .attachementlist {
