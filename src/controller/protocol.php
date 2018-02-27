@@ -184,7 +184,7 @@ class ProtocolController extends MotherController {
 		if (isset($p->todos['todo']['public']))
 			foreach($p->todos['todo']['public'] as $pos => $todo){
 				if (!$opened){
-					echo '<div class="todolist"><h3>TODOs</h3>';
+					echo '<div class="todolist"><h3>Todo</h3>';
 					$opened = true;
 				}
 				echo '<div class="todo alert alert-warning">';
@@ -204,6 +204,7 @@ class ProtocolController extends MotherController {
 			echo '</div>';
 		}
 	}
+	
 	/**
 	 * echo protocol fixmes in html form
 	 * @param Protocol $p Protocol object
@@ -213,7 +214,7 @@ class ProtocolController extends MotherController {
 		if (isset($p->todos['fixme']['public']))
 			foreach($p->todos['fixme']['public'] as $pos => $fixme){
 				if (!$opened){
-					echo '<div class="fixmelist"><h3>FIXMEs</h3>';
+					echo '<div class="fixmelist"><h3>FixMe</h3>';
 					$opened = true;
 				}
 				echo '<div class="fixme alert alert-warning">';
@@ -229,6 +230,36 @@ class ProtocolController extends MotherController {
 				echo '<strong>(Intern)</strong> ' . preg_replace('/(fixme)/i', '<span class="highlight">$1</span>', $fixme[0]);
 				echo '</div>';
 			}
+		if ($opened) {
+			echo '</div>';
+		}
+	}
+	
+	/**
+	 * echo protocol deleteme in html form
+	 * @param Protocol $p Protocol object
+	 */
+	private static function printDeletemes($p){
+		$opened = false;
+		if (isset($p->todos['deleteme']['public']))
+			foreach($p->todos['deleteme']['public'] as $pos => $deleteme){
+			if (!$opened){
+				echo '<div class="deletemelist"><h3>DeleteMe</h3>';
+				$opened = true;
+			}
+			echo '<div class="deleteme alert alert-warning">';
+			echo preg_replace('/(deleteme)/i', '<span class="highlight">$1</span>', $deleteme[0]);
+			echo '</div>';
+		}
+		if (isset($p->todos['deleteme']['intern']))
+			foreach($p->todos['deleteme']['intern'] as $pos => $deleteme){
+			if (!$opened){
+				echo '<div class="deleteme intern">';
+			}
+			echo '<div class="deleteme">';
+			echo '<strong>(Intern)</strong> ' . preg_replace('/(deleteme)/i', '<span class="highlight">$1</span>', $deleteme[0]);
+			echo '</div>';
+		}
 		if ($opened) {
 			echo '</div>';
 		}
@@ -406,6 +437,8 @@ class ProtocolController extends MotherController {
 			self::printTodos($p);
 			//show fixme list
 			self::printFixmes($p);
+			//show delete list
+			self::printDeletemes($p);
 			//list Attachements
 			self::printAttachements($p);
 			

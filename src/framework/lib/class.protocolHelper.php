@@ -35,8 +35,9 @@ class protocolHelper
 	
 	private static $regexFinder = [
 		'multimatch' => [
-			'todo' => '/todo/i',
-			'fixme' => '/fixme/i',
+			'todo' => '/(?<!alte )todo/i',
+			'fixme' => '/(?<!alte )fixme/i',
+			'deleteme' => '/(?<!alte )deleteme/i',
 		],
 		'no_multimatch' => [
 			'resolution' => '/^{{template>:vorlagen:stimmen.*(angenommen)(?!.*abgelehnt).*$/i',
@@ -84,7 +85,7 @@ class protocolHelper
 	];
 	
 	private static $highlightKeywords = [
-		'angestellte', 'todo', 'fixme'
+		'angestellte', 'todo', 'fixme', 'deleteme', 'rdb'
 	];
 	
 	private $isLineError = false;
@@ -352,6 +353,7 @@ class protocolHelper
 		// add todos and fixmes
 		$p->todos['fixme'] = $pregFind['fixme'];
 		$p->todos['todo'] = $pregFind['todo'];
+		$p->todos['deleteme'] = $pregFind['deleteme'];
 		
 		//add protocol numnber (sitzungnummer)
 		if (isset($pregFind['sitzung'])){

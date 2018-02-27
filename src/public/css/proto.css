@@ -258,7 +258,8 @@
 }
 /* -------------------- */
 .todolist .highlight,
-.fixmelist .highlight {
+.fixmelist .highlight,
+.deletemelist .highlight {
 	font-weight: bold;
 }
 /* -------------------- */
