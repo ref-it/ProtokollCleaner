@@ -28,13 +28,13 @@ class ProtocolController extends MotherController {
 	 */
 	private static function printProtoLinks($p){
 		echo '<div class="protolinks">';
-		echo '<a href="" class="btn reload">Reload</a>';
-		echo '<a href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][0]).'/'.$p->name.'?do=edit" class="btn" target="_blank">Edit Protocol</a>';
+		echo '<a class="btn btn-primary mr-1" href="" class="btn reload">Reload</a>';
+		echo '<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][0]).'/'.$p->name.'?do=edit" class="btn" target="_blank">Edit Protocol</a>';
 		if ($p->draft_url){
-			echo '<a href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][1]).'/'.$p->name.'" class="btn" target="_blank">View Draft</a>';
+			echo '<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][1]).'/'.$p->name.'" class="btn" target="_blank">View Draft</a>';
 		}
 		if ($p->public_url){
-			echo '<a href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][1]).'/'.$p->name.'" class="btn" target="_blank">View Public</a>';
+			echo '<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][1]).'/'.$p->name.'" class="btn" target="_blank">View Public</a>';
 		}
 		echo '</div>';
 	}
@@ -47,12 +47,24 @@ class ProtocolController extends MotherController {
 	private static function printProtoStatus($p, $includeUrls = true){
 		echo '<div class="protostatus">';
 		echo '<div class="general">';
-		echo '<span class="date">Gremium: '.$p->committee.'</span>';
-		echo '<span class="date">Protokoll vom: '.$p->date->format('d.m.Y').'</span>';
-		echo '<span class="state">Status: '.
+		echo '<span class="committee"><span>Gremium:</span><span>'.$p->committee.'</span></span>';
+		echo '<span class="date"><span>Protokoll vom:</span><span>'.$p->date->format('d.m.Y').'</span></span>';
+		echo '<span class="state"><span>Status:</span><span>'.
 			(($p->id == NULL)? 'Nicht öffentlich': 
 			(($p->draft_url!=NULL)?'Entwurf':
-			(($p->public_url!=NULL)?'Veröffentlicht':'Unbekannt'))).'</span>';
+			(($p->public_url!=NULL)?'Veröffentlicht':'Unbekannt'))).'</span></span>';
+		echo '<span class="legislatur"><span>Legislatur:</span><span>'.$p->legislatur.'</span></span>';
+		echo '<span class="sitzung"><span>Sitzung:</span><span>'.$p->protocol_number.'</span></span>';
+		echo '<span class="resolutions"><span>Angenommene Beschlüsse:</span><span>'.count($p->resolutions).'</span></span>';
+		
+		echo '<span class="sitzung"><span>TODOs:</span><span>'.(
+			((isset($p->todos['todo']['public']))? count($p->todos['todo']['public']): 0)
+			+((isset($p->todos['todo']['intern']))? count($p->todos['todo']['intern']): 0)
+		).'</span></span>';
+		echo '<span class="sitzung"><span>Fixme:</span><span>'.(
+			((isset($p->todos['fixme']['public']))? count($p->todos['fixme']['public']): 0)
+			+((isset($p->todos['fixme']['intern']))? count($p->todos['fixme']['intern']): 0)
+		).'</span></span>';
 		if ($includeUrls) self::printProtoLinks($p);
 		echo '</div></div>';
 	}
@@ -69,6 +81,7 @@ class ProtocolController extends MotherController {
 			}
 			if (!$opened){
 				echo '<div class="error tagerrors">';
+				$opened = true;
 			}
 			echo '<div class="tagerror">';
 			if ($tag == 'old'){
@@ -83,6 +96,93 @@ class ProtocolController extends MotherController {
 			}
 			echo '</div>';
 		}
+		if ($opened) {
+			echo '</div>';
+		}
+	}
+	
+	/**
+	 * echo protocol resolutions in html form
+	 * @param Protocol $p Protocol object
+	 */
+	private static function printResolutions($p){
+		$opened = false;
+		foreach($p->resolutions as $pos => $reso){
+			if (!$opened){
+				echo '<div class="resolutionlist"><h3>Beschlüsse</h3>';
+				$opened = true;
+			}
+			echo '<div class="resolution alert alert-info">';
+			echo "<strong>[{$reso['r_tag']}]</strong> {$reso['Titel']}";
+			echo '<input class="resotoggle" id="reso_toggle_'.$pos.'" type="checkbox" value="1">';
+			echo '<label tabindex="0" class="label resotoggle btn btn-outline-info" for="reso_toggle_'.$pos.'"></label>';
+			echo '<div class="togglebox" tabindex="-1">';
+			echo "<span>Ja: {$reso['Ja']}</span>"; //TODO
+			echo "<span>Nein: {$reso['Nein']}</span>";
+			echo "<span>Enthaltungen: {$reso['Enthaltungen']}</span>";
+			echo "<span>Beschluss: {$reso['Beschluss']}</span>";
+			echo "<span>Kategorie: {$reso['type_long']}</span>";
+			echo '</div></div>';
+		}
+		if ($opened) {
+			echo '</div>';
+		}
+	}
+	
+	/**
+	 * echo protocol fixmes in html form
+	 * @param Protocol $p Protocol object
+	 */
+	private static function printTodos($p){
+		$opened = false;
+		if (isset($p->todos['todo']['public']))
+			foreach($p->todos['todo']['public'] as $pos => $todo){
+				if (!$opened){
+					echo '<div class="todolist"><h3>TODOs</h3>';
+					$opened = true;
+				}
+				echo '<div class="todo alert alert-warning">';
+				echo preg_replace('/(todo)/i', '<span class="highlight">$1</span>', $todo[0]);
+				echo '</div>';
+			}
+		if (isset($p->todos['todo']['intern']))
+			foreach($p->todos['todo']['intern'] as $pos => $todo){
+			if (!$opened){
+				echo '<div class="todos intern">';
+			}
+			echo '<div class="todo">';
+			echo '<strong>(Intern)</strong> ' . preg_replace('/(todo)/i', '<span class="highlight">$1</span>', $todo[0]);
+			echo '</div>';
+		}
+		if ($opened) {
+			echo '</div>';
+		}
+	}
+	/**
+	 * echo protocol fixmes in html form
+	 * @param Protocol $p Protocol object
+	 */
+	private static function printFixmes($p){
+		$opened = false;
+		if (isset($p->todos['fixme']['public']))
+			foreach($p->todos['fixme']['public'] as $pos => $fixme){
+				if (!$opened){
+					echo '<div class="fixmelist"><h3>FIXMEs</h3>';
+					$opened = true;
+				}
+				echo '<div class="fixme">';
+				echo preg_replace('/(fixme)/i', '<span class="highlight">$1</span>', $fixme[0]);
+				echo '</div>';
+			}
+		if (isset($p->todos['fixme']['intern']))
+			foreach($p->todos['fixme']['intern'] as $pos => $fixme){
+				if (!$opened){
+					echo '<div class="fixme intern">';
+				}
+				echo '<div class="fixme">';
+				echo '<strong>(Intern)</strong> ' . preg_replace('/(fixme)/i', '<span class="highlight">$1</span>', $fixme[0]);
+				echo '</div>';
+			}
 		if ($opened) {
 			echo '</div>';
 		}
@@ -137,6 +237,9 @@ class ProtocolController extends MotherController {
 		if ($resolution != NULL && count($resolution) === 1){
 			$p->agreed_on = $resolution;
 		}
+		//TODO create legislatur map
+		$p->legislatur = intval($this->db->getSettings()['LEGISLATUR']);
+		
 		return $p;
 	}
 	
@@ -237,23 +340,30 @@ class ProtocolController extends MotherController {
 				return;
 			}
 			$this->t->printPageHeader();
-			//insert protocol link + status
-			self::printProtoStatus($p);
+			
 			//run protocol parser
 			$ph = new protocolHelper();
 			$ph->parseProto($p, $this->auth->getUserFullName(), true);
+			//insert protocol link + status
+			self::printProtoStatus($p);
+			//protocol errors
 			self::printProtoTagErrors($p);
+			//resolution list
+			self::printResolutions($p);
+			//show todo list
+			self::printTodos($p);
+			//show fixme list
+			self::printFixmes($p);
+			
+			//echo protocol diff
 			echo $p->preview;
 			
-			//TODO echo todos, fixme, ...
-			//TODO open and close tags
-		//TODO detect internal part
-		//TODO detect todos
-		//TODO detect resolutions
+			
+
 		//TODO cleanup array
 		//TODO check attachements
 		//TODO detect Legislatur
-		//TODO set changed by
+	
 			$this->t->printPageFooter();
 		}
 	

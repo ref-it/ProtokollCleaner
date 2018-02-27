@@ -134,3 +134,113 @@
 .difftable > .line:hover {
 	background-color: #ddd;
 }
+.difftable .highlight {
+	background-color: yellow;
+}
+/* -------------------- */
+.protostatus {
+	display: block;
+	width: 100%;
+	font-weight: bold;
+	text-align: right;
+}
+.protostatus::after{
+	content: "";
+	display: block;
+	clear: both;
+}
+.protostatus .general {
+	display: block;
+	width: 100%;
+	max-width: 350px;
+	border: 1px solid black;
+	padding: 5px;
+	float: right;
+	width: 100%;
+	position: relative;
+}
+.protostatus .general > span {
+	display: block;
+}
+.protostatus .general > span::after{
+	content: "";
+	display: block;
+	clear: both;
+}
+.protostatus .general > span > span:nth-child(1){
+	float: left;
+}
+.protostatus .general > span > span:nth-child(2){
+	float: right;
+}
+/* -------------------- */
+.resolutionlist .resolution {
+	position: relative;
+}
+.resolutionlist .resolution input.resotoggle{
+	display: none;
+}
+.resolutionlist .resolution label.resotoggle{
+	position: absolute;
+	right: 5px;
+	bottom: -3px;
+	padding: 5px;
+	transition: all 300ms ease-in-out;
+	box-sizing: border-box;
+	border: 1px solid transparent;
+	border-radius: 50%;
+	height: 30px;
+	width: 30px;
+	line-height: 18px;
+	text-align: center;
+	cursor: pointer;
+}
+.resolutionlist .resolution label.resotoggle:hover{
+	border: 1px solid #0ca8ae;
+}
+.resolutionlist .resolution label.resotoggle::before {
+	font-family: FontAwesome;
+	content: '\f078';
+	width: 30px;
+}
+.resolutionlist .resolution input.resotoggle:checked + label.resotoggle {
+	-moz-transform: rotate(180deg);
+	-webkit-transform: rotate(180deg);
+	-o-transform: rotate(180deg);
+	-ms-transform: rotate(180deg);
+	transform: rotate(180deg);
+} 
+.resolutionlist .resolution .togglebox{
+	display: block;
+	overflow-y: hidden;
+	max-height: 0px;
+	transition: max-height 300ms ease-in-out, margin 300ms ease-in-out;
+}
+.resolutionlist .resolution input.resotoggle:checked + label + .togglebox{
+	max-height: 400px;
+	border-top: 1px solid #0c5460;
+	margin-top: 10px;
+}
+.resolutionlist .resolution .togglebox span:nth-child(1),
+.resolutionlist .resolution .togglebox span:nth-child(2),
+.resolutionlist .resolution .togglebox span:nth-child(3){
+	display: inline-block;
+	width: 33%;
+	padding: 10px;
+}
+.resolutionlist .resolution .togglebox span:nth-child(4),
+.resolutionlist .resolution .togglebox span:nth-child(5){
+	font-weight: bold;
+	display: block;
+}
+.resolutionlist .resolution .togglebox span:nth-child(5){
+	font-weight: bold;
+	display: block;
+	text-align: right;
+	padding-right: 20px;
+}
+/* -------------------- */
+.todolist .highlight,
+.fixmelist .highlight {
+	font-weight: bold;
+}

@@ -77,6 +77,18 @@ class Protocol
 	public $draft_url;
 	
 	/**
+	 * current legislatur
+	 * @var int
+	 */
+	public $legislatur;
+	
+	/**
+	 * protocol numer in current legislatur
+	 * @var int
+	 */
+	public $protocol_number;
+	
+	/**
 	 * open and close tags
 	 * $tags = ['tagname' => [open, closed]];
 	 * array

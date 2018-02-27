@@ -39,28 +39,149 @@ class protocolHelper
 			'fixme' => '/fixme/i',
 		],
 		'no_multimatch' => [
-			'resolution' => '/^{{template>:vorlagen:stimmen.*(angenommen).*$/i',
+			'resolution' => '/^{{template>:vorlagen:stimmen.*(angenommen)(?!.*abgelehnt).*$/i',
+			'sitzung' => '/(=)+ (\d)+. StuRa-Sitzung (=)+/'
 		]		
+	];
+	
+	private static $resolutionParts = [
+		'titel=' => 'Titel', 
+		'j=' => 'Ja',
+		'n=' => 'Nein',
+		'e=' => 'Enthaltungen',
+		's=' => 'Beschluss',
+	];
+	
+	private static $resolutionType = [[
+			'match' => ['Protokoll', 'beschließt', 'Sitzung'], 
+			'long' => 'Protokoll',
+			'short' => 'P'
+		], [
+			'match' => ['Haushaltsverantwortliche', 'beschließt', 'Budget'], 
+			'long' => 'Finanzen',
+			'short' => 'H'
+		], [
+			'match' => ['beschließt', 'Budget'], 
+			'long' => 'Finanzen',
+			'short' => 'F'
+		], [
+			'match' => ['Ordnung'], 
+			'long' => 'Ordnung',
+			'short' => 'O'
+		], [
+			'match' => ['Gründung|Auflösung|Leiter|Mitglied|wählt|bestätigt'], 
+			'long' => 'Wahl',
+			'short' => 'W'
+		], [
+			'match' => ['beschließt|bestätigt', 'Amt'], 
+			'long' => 'Wahl',
+			'short' => 'W'
+		], [
+			'pattern' => '/.*/', 
+			'long' => 'Sonstiges',
+			'short' => 'S'
+		]
+	];
+	
+	private static $highlightKeywords = [
+		'angestellte', 'todo', 'fixme'
 	];
 	
 	private $isLineError = false;
 	private $lineError = '';
 	
-	private static $tagRegex = '/(({{tag>[a-zA-Z0-9]+(_[a-zA-Z0-9]+)*([ ]*[a-zA-Z0-9]+(_[a-zA-Z0-9]+)*)*( )*}}|===== geschlossener Teil =====|===== öffentlicher Teil =====)+)/';
-	private static $oldTags = ['===== geschlossener Teil =====', '===== öffentlicher Teil ====='];
+	private static $tagRegex = '/(({{tag>[a-zA-Z0-9]+(_[a-zA-Z0-9]+)*([ ]*[a-zA-Z0-9]+(_[a-zA-Z0-9]+)*)*( )*}}|(=)+ geschlossener Teil (=)+|(=)+ öffentlicher Teil (=)+)+)/';
+	private static $oldTags = ['/^(=)+ geschlossener Teil (=)+$/', '/^(=)+ öffentlicher Teil (=)+$/'];
 	
 	/**
 	 * categorize and split raw resolution strings to array
+	 * 
 	 * @param array $resolutions array of raw resolution strings
-	 * @return array of resolutions
+	 * @param array $overwriteType overwrites Type ['short' => '', 'long' => '']
+	 * @return array of resolutions [[text, type_short, type_long, p_tag], ...]
 	 */
-	private static function parseResolutions($resolutions){
+	private static function parseResolutionArray($resolutions, $overwriteType = NULL){
 		$result = [];
+		//parse resolutions: categorize, and split to array
 		foreach ($resolutions as $rawres){
-			$result[] = $rawres;
+			$result[] = self::parseResolution($rawres, $overwriteType);
 		}
-		//TODO parse resolutions: categorize, and split to array
 		return $result;
+	}
+	
+	/**
+	 * categorize and split raw resolution strings to array
+	 * 
+	 * @param string $resolution raw resolution text
+	 * @return array parsed resolution [text|title, type_short, type_long, p_tag, raw]
+	 */
+	private static function parseResolution($resolution, $overwriteType = NULL){
+		$result = ['raw' => $resolution];
+		$parts = array_map('trim', explode('|', $resolution));
+		foreach ($parts as $pos => $text){
+			$text = str_replace('}}', '', $text);
+			foreach (self::$resolutionParts as $query => $key){
+				if (preg_match('/^'.$query.'/i', $text)){
+					$result[$key] = substr($text, strlen($query));				
+				}
+			}
+		}
+		if ($overwriteType !== NULL){
+			$result['type_short'] = $overwriteType['short'];
+			$result['type_long'] = $overwriteType['long'];
+		} else {
+			//detect type by pregmatches
+			foreach (self::$resolutionType as $type){
+				$pattern = [];
+				//matches as string
+				if (isset($type['match'])){
+					if (is_array($type['match'])){
+						foreach ($type['match'] as $mat){
+							$pattern[] = '/.*('.$mat.').*/';
+						}
+					} else {
+						$pattern[] = '/.*('.$type['match'].').*/';
+					}
+				}
+				//regex pattern
+				if (isset($type['pattern'])){
+					if (is_array($type['pattern'])){
+						$pattern = $type['pattern'];
+					} else {
+						$pattern = [$type['pattern']];
+					}
+				}
+				//handle multiple and match pattern
+				$matches = true;
+				foreach ($pattern as $subpattern){
+					if (!preg_match($subpattern, $result['Titel'])){
+						$matches = false;
+						break;
+					}
+				}
+				if ($matches){
+					$result['type_short'] = $type['short'];
+					$result['type_long'] = $type['long'];
+					break;
+				}
+			}
+		}
+		return $result;
+	}
+	
+	/**
+	 * add resolution tag
+	 *
+	 * @param Protocol $p protocol
+	 * @param integer $legislatur
+	 */
+	private static function numberResolutionArray($p, $legislatur){
+		//parse resolutions: categorize, and split to array
+		$count = [];
+		foreach ($p->resolutions as $pos => $reso){
+			$count[$reso['type_short']] = (isset($reso['type_short'])? $reso['type_short']+1: 1);
+			$p->resolutions[$pos]['r_tag'] = "$legislatur/{$p->date->format('W')}-{$reso['type_short']}{$count[$reso['type_short']]}";
+		}
 	}
 	
 	/**
@@ -114,11 +235,11 @@ class protocolHelper
 			$matchcount = 0;
 			$changed = false; // don't allow other text on state changing lines + don' place internal external changing tags to external script
 			if ($match === 1 && $matches[0][1]>=0){
-				if ($matches[0][0] == self::$oldTags[0]){ // count opening and closing tags
+				if (preg_match(self::$oldTags[0], $matches[0][0])){ // count opening and closing tags
 					$p->tags['old'] = isset($p->tags['old'])? $p->tags['old'] + 1 : 1;
 					$isInternal = true;
 					$changed = true;
-				} else if ($matches[0][0] == self::$oldTags[1]) { // count opening and closing tags
+				} else if (preg_match(self::$oldTags[1], $matches[0][0])) { // count opening and closing tags
 					$p->tags['old'] = (isset($p->tags['old']) && $p->tags['old'] > 0)? $p->tags['old'] - 1 : 0;
 					$isInternal = false;
 					$changed = true;
@@ -144,13 +265,13 @@ class protocolHelper
 					if ($tmp_line != ''){
 						$this->isLineError = true;
 						$this->lineError = "Please use a new line to seperate internal and external parts.";
-						if (!$nopreview) $p->preview .= protocolDiff::generateErrorChangedLine($line);
+						if (!$nopreview) $p->preview .= protocolDiff::generateErrorLine($line);
 						break;
 					}
 					if ($lastTagClosed == !$isInternal){
 						$this->isLineError = true;
 						$this->lineError = "Duplicate closing tag or closing before opening found.";
-						if (!$nopreview) $p->preview .= protocolDiff::generateErrorChangedLine($line);
+						if (!$nopreview) $p->preview .= protocolDiff::generateErrorLine($line);
 						break;
 					} else {
 						$lastTagClosed = !$isInternal;
@@ -167,7 +288,7 @@ class protocolHelper
 			//maybe run this on whole text globally
 			foreach(self::$regexFinder['no_multimatch'] as $key => $pattern){
 				if (preg_match($pattern, $line)){
-					$pregFind[$key][] = $line;
+					$pregFind[$key][($isInternal)?'intern':'public'][] = $line;
 				}
 			}
 			//detect fixme, todo, resolutions
@@ -175,22 +296,43 @@ class protocolHelper
 			foreach(self::$regexFinder['multimatch'] as $key => $pattern){
 				$tmp_matches = preg_match_all($pattern, $line);
 				if ($tmp_matches){
-					$pregFind[$key][] = [$line, $tmp_matches];
+					$pregFind[$key][($isInternal)?'intern':'public'][] = [$line, $tmp_matches];
 				}
 			}
 		}
 		if ($this->isLineError == true){ // error handling: show error to user
 			if (!$nopreview) $p->preview .= protocolDiff::generateErrorLine($this->lineError);
-			else $p->external .= protocolDiff::generateErrorChangedLine($this->lineError);
+			else $p->external .= protocolDiff::generateErrorLine($this->lineError);
 		}
 		
-		$p->preview .= protocolDiff::generateFooter();
+		if (!$nopreview){
+			//print table footer
+			$p->preview .= protocolDiff::generateFooter();
+			//highlight keywords
+			$re = '/('.implode('|',self::$highlightKeywords ).')/i';
+			$subst = '<span class="highlight">$1</span>';
+			$p->preview = preg_replace($re, $subst, $p->preview);
+		}
 		prof_flag('parseProto_end');
 		
 		//categorize pregmatches
-		$p->resolutions = self::parseResolutions($pregFind['resolution']);
+		if (isset($pregFind['resolution']['public']))
+			$p->resolutions = $p->resolutions +  self::parseResolutionArray($pregFind['resolution']['public']);
+		if (isset($pregFind['resolution']['intern']))
+			$p->resolutions = $p->resolutions + self::parseResolutionArray($pregFind['resolution']['intern'], ['I', 'Intern']);
+		//create resolution tags
+		self::numberResolutionArray($p, $p->legislatur);
+		
+		// add todos and fixmes
 		$p->todos['fixme'] = $pregFind['fixme'];
 		$p->todos['todo'] = $pregFind['todo'];
+		
+		//add protocol numnber (sitzungnummer)
+		if (isset($pregFind['sitzung'])){
+			$p->protocol_number = intval(preg_replace('/[^\d]/', '', $pregFind['sitzung']['public'][0]));
+		} else {
+			$p->protocol_number = -1;
+		}
 		
 		// object
 		return $p;
