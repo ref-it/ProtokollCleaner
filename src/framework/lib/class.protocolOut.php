@@ -48,7 +48,7 @@ class protocolOut
      * @param string $line
      * @return string
      */
-    public static function generateRemovedLine($line)
+    public static function printDiffRemovedLine($line)
     {
         return "<div class='line removed'>\n".
         	'<span></span><span></span><span></span><span></span><span>'.htmlspecialchars($line)."</span>\n".
@@ -60,7 +60,7 @@ class protocolOut
      * @param string $line
      * @return string
      */
-    public static function generateCopiedLine($line)
+    public static function printDiffCopiedLine($line)
     {
     	return "<div class='line normal'>\n".
 	    	'<span></span><span></span><span></span><span></span><span>'.htmlspecialchars($line)."</span>\n".
@@ -72,7 +72,7 @@ class protocolOut
      * @param string $line
      * @return string
      */
-    public static function generateErrorLine($line)
+    public static function printDiffErrorLine($line)
     {
     	return "<div class='line error'>\n".
     		'<span></span><span></span><span></span><span></span><span>'.htmlspecialchars($line)."</span>\n".
@@ -84,7 +84,7 @@ class protocolOut
      * @param string $line
      * @return string
      */
-    public static function generateCopiedChangedLine($line)
+    public static function printDiffCopiedChangedLine($line)
     {
     	return "<div class='line changed'>\n".
 	    	'<span></span><span></span><span></span><span></span><span>'.htmlspecialchars($line)."</span>\n".
@@ -95,7 +95,7 @@ class protocolOut
      * return div protocol diff table footer
      * @return string
      */
-    public static function generateFooter()
+    public static function printDiffFooter()
     {
         return "</div>\n";
     }
