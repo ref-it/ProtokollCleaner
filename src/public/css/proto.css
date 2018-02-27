@@ -173,6 +173,19 @@
 .protostatus .general > span > span:nth-child(2){
 	float: right;
 }
+.protostatus .legislatur button {
+	display: inline-block;
+	width: 40px;
+	margin: 0;
+	height: 20px;
+	line-height: 8px;
+}
+.protostatus .legislatur button.add {
+	margin-left: 5px;
+}
+.protostatus .legislatur button.sub  {
+	margin-right: 5px;
+}
 /* -------------------- */
 .resolutionlist .resolution {
 	position: relative;

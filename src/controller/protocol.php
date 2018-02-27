@@ -53,7 +53,7 @@ class ProtocolController extends MotherController {
 			(($p->id == NULL)? 'Nicht öffentlich': 
 			(($p->draft_url!=NULL)?'Entwurf':
 			(($p->public_url!=NULL)?'Veröffentlicht':'Unbekannt'))).'</span></span>';
-		echo '<span class="legislatur"><span>Legislatur:</span><span>'.$p->legislatur.'</span></span>';
+		echo '<span class="legislatur"><span>Legislatur:</span><span><button type="button" class="btn btn-outline-primary sub">-</button>'.$p->legislatur.'<button type="button" class="add btn btn-outline-primary">+</button></span></span>';
 		echo '<span class="sitzung"><span>Sitzung:</span><span>'.$p->protocol_number.'</span></span>';
 		echo '<span class="resolutions"><span>Angenommene Beschlüsse:</span><span>'.count($p->resolutions).'</span></span>';
 		
