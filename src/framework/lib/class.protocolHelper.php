@@ -352,6 +352,7 @@ class protocolHelper
 			$p->protocol_number = intval(preg_replace('/[^\d]/', '', $pregFind['sitzung']['public'][0]));
 		} else {
 			$p->protocol_number = -1;
+			$p->parse_errors[] = "Sitzungsnummer konnte nicht erkannt werden.";
 		}
 		
 		// object

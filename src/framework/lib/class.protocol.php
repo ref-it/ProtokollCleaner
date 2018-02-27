@@ -83,10 +83,16 @@ class Protocol
 	public $legislatur;
 	
 	/**
-	 * protocol numer in current legislatur
+	 * protocol number in current legislatur
 	 * @var int
 	 */
 	public $protocol_number;
+	
+	/**
+	 * linked protocol attachements
+	 * @var array of strings
+	 */
+	public $attachements;
 	
 	/**
 	 * open and close tags

@@ -148,6 +148,32 @@ class ProtocolController extends MotherController {
 	}
 	
 	/**
+	 * echo protocol attachements in html form
+	 * @param Protocol $p Protocol object
+	 */
+	private static function printAttachements($p){
+		$opened = false;
+		if (is_array($p->attachements))
+			foreach($p->attachements as $pos => $attach){
+				if (!$opened){
+					echo '<div class="attachlist"><h3>Anhänge</h3>';
+					echo '<p><i>Alle hier angehakten Dateien werden automatisch mit veröffentlicht.</i></p>';
+					echo '<div class="attachementlist alert alert-info">';
+					$opened = true;
+				}
+				echo '<div class="line"><input type="checkbox" value="1" id="attach_check_'.$pos.'" checked>';
+				$split = explode(':', $attach);
+				echo '<label class="resolution noselect" for="attach_check_'.$pos.'"><span>'.end($split).'</span>';
+				echo '<a href="'.WIKI_URL.'/'.str_replace(':', '/', $attach).'" target="_blank">';
+				echo 'Öffnen';
+				echo '</a></label></div>';
+			}
+		if ($opened) {
+			echo '</div></div>';
+		}
+	}
+	
+	/**
 	 * echo protocol fixmes in html form
 	 * @param Protocol $p Protocol object
 	 */
@@ -223,7 +249,7 @@ class ProtocolController extends MotherController {
 	 * @param string $protocol_name
 	 * @return Protocol|NULL
 	 */
-	private function loadWikiProtoBase ($committee, $protocol_name){
+	private function loadWikiProtoBase ($committee, $protocol_name, $load_attachements = false){
 		$x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
 		prof_flag('get wiki page');
 		$a = $x->getPage(self::$protomap[$committee][0].':'.$protocol_name);
@@ -254,6 +280,9 @@ class ProtocolController extends MotherController {
 		$resolution = $this->db->getResolutionByPTag($committee, $protocol_name);
 		if ($resolution != NULL && count($resolution) === 1){
 			$p->agreed_on = $resolution;
+		}
+		if ($load_attachements){
+			$p->attachements = $x->listAttachements(self::$protomap[$p->committee][0].':'.$p->name );
 		}
 		//TODO create legislatur map
 		$p->legislatur = intval($this->db->getSettings()['LEGISLATUR']);
@@ -352,7 +381,7 @@ class ProtocolController extends MotherController {
 			//TODO remember on save dont allow intern == extern protocol path =>> parse view is ok, but no storing
 			//remove this else here
 		} else {
-			$p = $this->loadWikiProtoBase($vali->getFiltered()['committee'], $vali->getFiltered()['proto']);
+			$p = $this->loadWikiProtoBase($vali->getFiltered()['committee'], $vali->getFiltered()['proto'], true);
 			if ($p === NULL) {
 				$this->renderErrorPage(404, null);
 				return;
@@ -373,6 +402,8 @@ class ProtocolController extends MotherController {
 			self::printTodos($p);
 			//show fixme list
 			self::printFixmes($p);
+			//list Attachements
+			self::printAttachements($p);
 			
 			//echo protocol diff
 			echo $p->preview;

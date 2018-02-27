@@ -323,3 +323,42 @@
 	text-align: right;
 	font-style: italic;
 }
+/* -------------------- */
+.attachementlist {
+	padding-top: 17px;
+}
+.attachementlist > div.line {
+	display: block;
+	padding: 3px 3px 0px;
+}
+.attachementlist > div.line input{
+	display: none;
+}
+.attachementlist > div.line label {
+	margin-left: 35px;
+	position: relative;
+	cursor: pointer;
+}
+.attachementlist > div.line label::before {
+	content: "";
+	display: inline-block;
+	height: 25px;
+	width: 25px;
+	line-height: 25px;
+	text-align: center;
+	font-family: FontAwesome;
+	margin-right: 10px;
+	border: 1px solid #17a2b8;
+	position: absolute;
+	left: -35px;
+	border-radius: 2px;
+}
+.attachementlist > div.line input:checked + label::before{
+	content: "\f00c";
+}
+.attachementlist > div.line label > span{
+	display: inline-block;
+	padding-right: 10px;
+	word-wrap: break-word;
+	word-break: break-all;
+}

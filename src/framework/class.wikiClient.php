@@ -225,7 +225,7 @@ class wikiClient extends xrpcClient
 		$this->setParams($param);
 		if ($this->send()){
 			$this->parse_response();
-			return $this->parsed_result['paths'];
+			return (isset($this->parsed_result['paths']))? $this->parsed_result['paths'] : false;
 		} else {
 			return '';
 		}
@@ -247,7 +247,7 @@ class wikiClient extends xrpcClient
 		$this->setParams($param);
 		if ($this->send()){
 			$this->parse_response();
-			return (isset($this->parsed_result[0]))?$this->parsed_result[0] : false;
+			return (isset($this->parsed_result[0]))?$this->parsed_result[0] : '';
 		} else {
 			return '';
 		}
@@ -326,7 +326,7 @@ class wikiClient extends xrpcClient
 		$this->setParams($param);
 		if ($this->send()){
 			$this->parse_response();
-			return $this->parsed_result['paths'];
+			return (isset($this->parsed_result['paths']))? $this->parsed_result['paths'] : '';
 		} else {
 			return '';
 		}
