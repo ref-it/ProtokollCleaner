@@ -128,7 +128,7 @@ class protocolOut
 			(($p->id == NULL)? 'Nicht öffentlich': 
 			(($p->draft_url!=NULL)?'Entwurf':
 			(($p->public_url!=NULL)?'Veröffentlicht':'Unbekannt'))).'</span></span>';
-		echo '<span class="legislatur"><span>Legislatur:</span><span><button type="button" class="btn btn-outline-primary sub">-</button>'.$p->legislatur.'<button type="button" class="add btn btn-outline-primary">+</button></span></span>';
+		echo '<span class="legislatur"><span>Legislatur:</span><span><button type="button" class="btn btn-outline-primary sub">-</button><span>'.$p->legislatur.'</span><button type="button" class="add btn btn-outline-primary">+</button></span></span>';
 		echo '<span class="sitzung"><span>Sitzung:</span><span>'.$p->protocol_number.'</span></span>';
 		echo '<span class="resolutions"><span>Angenommene Beschlüsse:</span><span>'.count($p->resolutions).'</span></span>';
 		
@@ -158,11 +158,10 @@ class protocolOut
     	if ($p->public_url){
     		echo '<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][1]).'/'.$p->name.'" target="_blank">View Public</a>';
     	} else {
-    		echo '<button class="btn btn-danger mr-1" type="button">'.(($p->agreed_on === NULL)?'Entwurf ': '' ).'Veröffentlichen</button>';
+    		echo '<button class="btn btn-danger mr-1 commit" type="button">'.(($p->agreed_on === NULL)?'Entwurf ': '' ).'Veröffentlichen</button>';
     	}
     	echo '</div>';
     }
-    
     
     /**
      * echo protocol tag errors in html form
