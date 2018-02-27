@@ -205,7 +205,7 @@ class protocolHelper extends protocolOut
 		$count = [];
 		foreach ($p->resolutions as $pos => $reso){
 			$count[$reso['type_short']] = (isset($count[$reso['type_short']])? $count[$reso['type_short']]+1: 1);
-			$p->resolutions[$pos]['r_tag'] = "$legislatur/{$p->date->format('W')}-{$reso['type_short']}{$count[$reso['type_short']]}";
+			$p->resolutions[$pos]['r_tag'] = "$legislatur/{$p->date->format('W')}-{$reso['type_short']}".str_pad($count[$reso['type_short']], 2, '0', STR_PAD_LEFT);
 		}
 	}
 	
@@ -224,7 +224,7 @@ class protocolHelper extends protocolOut
 		$writeUserText = 1;		// used to detect protocol head
 		
 		//init preg_match results
-		$pregFind = ['todo' => [], 'resolution' => [], 'fixme' => []];		// contains preg matches (todos, fixmes, resolutions)
+		$pregFind = ['todo' => [], 'resolution' => [], 'fixme' => [], 'deleteme' => []];	// contains preg matches (todos, fixmes, resolutions)
 		
 		//only fill preview or output
 		if (!$nopreview) $p->preview = self::generateDiffHeader();
