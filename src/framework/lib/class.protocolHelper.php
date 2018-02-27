@@ -203,7 +203,7 @@ class protocolHelper
 		//parse resolutions: categorize, and split to array
 		$count = [];
 		foreach ($p->resolutions as $pos => $reso){
-			$count[$reso['type_short']] = (isset($reso['type_short'])? $reso['type_short']+1: 1);
+			$count[$reso['type_short']] = (isset($count[$reso['type_short']])? $count[$reso['type_short']]+1: 1);
 			$p->resolutions[$pos]['r_tag'] = "$legislatur/{$p->date->format('W')}-{$reso['type_short']}{$count[$reso['type_short']]}";
 		}
 	}
