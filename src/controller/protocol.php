@@ -59,7 +59,7 @@ class ProtocolController extends MotherController {
 		$p->name = $protocol_name;
 		$p->url = self::$protomap[$p->committee][0].':'.$p->name;
 		$p->date = date_create_from_format('Y-m-d', substr($p->name, 0,10));
-			
+		
 		$dbprotocols = $this->db->getProtocols($committee);
 		if (array_key_exists($p->name, $dbprotocols)){
 			$p->id = $dbprotocols[$p->name]['id'];
@@ -166,13 +166,9 @@ class ProtocolController extends MotherController {
 			} else {
 				http_response_code ($vali->getLastErrorCode());
 				$this->t->printPageHeader();
-				
 				echo '<h3>'.$vali->getLastErrorMsg().'</h3>';
 				$this->t->printPageFooter();
 			}
-		} else if (false) {
-			//TODO remember on save dont allow intern == extern protocol path =>> parse view is ok, but no storing
-			//remove this else here
 		} else {
 			$p = $this->loadWikiProtoBase($vali->getFiltered()['committee'], $vali->getFiltered()['proto'], true);
 			if ($p === NULL) {
@@ -216,11 +212,80 @@ class ProtocolController extends MotherController {
 	 * (stura) publish protocol
 	 */
 	public function p_publish(){
+		//calculate accessmap
+		$validator_map = [
+			'committee' => ['regex',
+				'pattern' => '/'.implode('|', array_keys(PROTOMAP)).'/',
+				'maxlength' => 10,
+				'error' => 'Du hast nicht die benötigten Berechtigungen, um dieses Protokoll zu bearbeiten.'
+			],
+			'proto' => ['regex', 
+				'pattern' => '/^([2-9]\d\d\d)-(0[1-9]|1[0-2])-([0-3]\d)((-|_)([a-zA-Z0-9]){1,30}((-|_)?([a-zA-Z0-9]){1,2}){0,30})?$/'
+			],
+			'period' => ['integer',
+				'min' => '1',
+				'max' => '99',
+				'error' => 'Ungültige Ligislatur.'
+			],
+			'attach' => ['array',
+				'empty',
+				'error' => 'Ungültige Protokollanhänge.',
+				'validator' => ['regex',
+					'pattern' => '/^(([a-zA-Z0-9\-_äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß])+((\.)([a-zA-Z0-9\-_äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß])+)*)$/'
+				]
+			]
+		];
 		$vali = new Validator();
-		//TODO
-		
-		
-		$this->json_access_denied();
+		$vali->validateMap($_POST, $validator_map, true);
+		if ($vali->getIsError() || !$this->auth->requireGroup($vali->getFiltered()['committee'])){
+			if($vali->getLastErrorCode() == 403){
+				$this->json_access_denied();
+			} else if($vali->getLastErrorCode() == 404){
+				$this->json_not_found();
+			} else {
+				http_response_code ($vali->getLastErrorCode());
+				$this->json_result = ['success' => false, 'eMsg' => $vali->getLastErrorMsg()];
+				$this->print_json_result();
+			}
+		} else if (self::$protomap[$vali->getFiltered()['committee']][0] == self::$protomap[$vali->getFiltered()['committee']][1]) {
+			// on save dont allow intern == extern protocol path =>> parse view is ok, but no storing
+			//may allow partial save like Todos, Fixmes, resolutions...
+			http_response_code (403);
+			$this->json_result = ['success' => false, 'eMsg' => 'Your not allowed to store this protocol.'];
+			$this->print_json_result();
+		} else {
+			$p = $this->loadWikiProtoBase($vali->getFiltered()['committee'], $vali->getFiltered()['proto'], true);
+			if ($p === NULL) {
+				$this->json_not_found();
+				return;
+			}
+			//run protocol parser
+			$ph = new protocolHelper();
+			$ph->parseProto($p, $this->auth->getUserFullName(), $p->agreed_on === NULL );
+			
+			//TODO check and store
+			//insert protocol link + status
+			//protocolOut::printProtoStatus($p);
+			//protocol errors
+			//protocolOut::createProtoTagErrors($p);
+			//protocolOut::printProtoParseErrors($p);
+			//list Attachements
+			//protocolOut::printAttachements($p);
+			//resolution list
+			//protocolOut::printResolutions($p);
+			//show todo list
+			//protocolOut::printTodos($p);
+			//show fixme list
+			//protocolOut::printFixmes($p);
+			//show delete list
+			//protocolOut::printDeletemes($p);
+			
+			
+			
+			http_response_code (200);
+			$this->json_result = ['success' => true, 'msg' => 'Protokoll erfolgreich erstellt'];
+			$this->print_json_result();
+		}
 	}
 	
 	
