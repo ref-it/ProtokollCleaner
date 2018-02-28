@@ -193,6 +193,10 @@
 .resolutionlist .resolution {
 	position: relative;
 }
+.resolutionlist .resolution strong.fixedwidth {
+	min-width: 92px;
+	display: inline-block;
+}
 .resolutionlist .resolution input.resotoggle{
 	display: none;
 }

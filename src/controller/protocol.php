@@ -126,7 +126,7 @@ class ProtocolController extends MotherController {
 				(isset($drafts[$p])? 
 					'draft' : 
 					'privat');
-			echo '<div class="proto '.$state.'">'.
+			echo '<div id="proto-'.$p.'" class="proto '.$state.'">'.
 					"<span>$p</span>".
 					"<div>".
 					(($state!='private')?'<button class="btn" type="button">Bearbeiten</button>':'').
@@ -229,6 +229,7 @@ class ProtocolController extends MotherController {
 			],
 			'attach' => ['array',
 				'empty',
+				'false',
 				'error' => 'Ungültige Protokollanhänge.',
 				'validator' => ['regex',
 					'pattern' => '/^(([a-zA-Z0-9\-_äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß])+((\.)([a-zA-Z0-9\-_äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß])+)*)$/'

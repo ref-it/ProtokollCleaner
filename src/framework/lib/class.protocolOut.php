@@ -222,7 +222,7 @@ class protocolOut
     			$opened = true;
     		}
     		echo '<div class="resolution alert alert-info">';
-    		echo "<strong>[{$reso['r_tag']}]</strong> {$reso['Titel']}";
+    		echo "<strong class='fixedwidth'>[{$reso['r_tag']}]</strong> {$reso['Titel']}";
     		echo '<input class="resotoggle" id="reso_toggle_'.$pos.'" type="checkbox" value="1">';
     		echo '<label tabindex="0" class="label resotoggle btn btn-outline-info" for="reso_toggle_'.$pos.'"></label>';
     		echo '<div class="togglebox" tabindex="-1">';

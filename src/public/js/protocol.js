@@ -1,4 +1,21 @@
 (function(){
+	//highlight id tag -------------------------------
+	$(window).on('load',function(){
+		setTimeout(function(){
+			console.log(window.location.href);
+			//highlight id tag if it belongs to gallery
+			if(window.location.hash && window.location.href.indexOf("/protolist#proto-2") > -1) {
+				// Fragment exists
+				if(window.location.hash.lastIndexOf('#proto-', 0) === 0){
+					$(window.location.hash).addClass("bg-warning");
+					$('html, body').animate({
+						scrollTop: $(window.location.hash).offset().top-100
+					}, 50);
+				}
+			} 
+		}, 200);
+	});
+	
 	$(document).ready(function(){
 		$('.protolist .proto button').click(function(e){
 			$e = $(this);
@@ -49,7 +66,7 @@
 				return;
 			} else if(state == 2){
 				// test if is no draft -> show warning if there are open fixme, todo, and deleteme
-				if ($e.text().indexOf('Entwurf') !== -1){
+				if ($e.text().indexOf('Entwurf') === -1){
 					var todo = parseInt($('.protostatus .todo span').eq(1).text());
 					var fix = parseInt($('.protostatus .fixme span').eq(1).text());
 					var del = parseInt($('.protostatus .deleteme span').eq(1).text());
@@ -78,6 +95,7 @@
 				$('.attachlist .attachementlist .line input:checked + label span').each(function(i, e){
 					attachements.push(e.innerText);
 				});
+				if (attachements.length == 0) attachements = 0;
 				// get variables
 				var dataset = {
 					period: $('.protostatus .legislatur > span > span').text(),
@@ -112,7 +130,7 @@
 						if(pdata.success == true){
 							silmph__add_message(pdata.msg, MESSAGE_TYPE_SUCCESS, 3000);
 							setTimeout(function(){
-								window.location.href = '/protolist';
+								window.location.href = '/protolist#proto-'+dataset.proto;
 							}, 3000);
 						} else {
 							silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);

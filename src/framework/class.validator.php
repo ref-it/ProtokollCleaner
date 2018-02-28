@@ -629,7 +629,8 @@ class Validator {
 	 * $param
 	 *  minlengh	2	maximum string length
 	 *  maxlengh	2	maximum string length
-	 *  empty		1	allow empty value
+	 *  empty		1	allow empty array
+	 *  false		1	allow false -> reset to empty array
 	 *  validator	2	run this validator on each array element
 	 *  error		2	overwrite error message
 	 *
@@ -639,8 +640,12 @@ class Validator {
 	 */
 	public function V_array($a, $params){
 		if (!is_array($a)){
-			$msg = (isset($params['error']))? $params['error'] : 'Value is no array';
-			return !$this->setError(true, 200, $msg, 'array validator failed');
+			if ($a === '0' && in_array('false', $params)){
+				$a = [];
+			} else {
+				$msg = (isset($params['error']))? $params['error'] : 'Value is no array';
+				return !$this->setError(true, 200, $msg, 'array validator failed');
+			}
 		}
 		if ((!in_array('empty', $params) || count($a) > 0) && isset($params['minlength']) && count($a) < $params['minlength']){
 			$msg = (isset($params['error']))? $params['error'] : 'Array to short: require minimal length of "'.$params['minlength'].'" elements';
