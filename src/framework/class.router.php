@@ -161,12 +161,13 @@ class Router {
 				} else if ($method == 'POST') {
 					// validate POST CHALLENGE
 					if(!isset($_SESSION['SILMPH']['FORM_CHALLENGE_NAME'])
-						|| $_SESSION['SILMPH']['FORM_CHALLENGE_NAME'] == ''
+						|| trim($_SESSION['SILMPH']['FORM_CHALLENGE_NAME']) == ''
 						|| !isset($_SESSION['SILMPH']['FORM_CHALLENGE_VALUE'])
-						|| $_SESSION['SILMPH']['FORM_CHALLENGE_VALUE'] == ''
+						|| trim($_SESSION['SILMPH']['FORM_CHALLENGE_VALUE']) == ''
 						|| !isset($_POST[$_SESSION['SILMPH']['FORM_CHALLENGE_NAME']])
 						|| $_POST[$_SESSION['SILMPH']['FORM_CHALLENGE_NAME']] 
-							!= $_SESSION['SILMPH']['FORM_CHALLENGE_VALUE']){
+							!= $_SESSION['SILMPH']['FORM_CHALLENGE_VALUE'] 
+						|| isset($_POST['antichallenge'])){ //dont commit this value
 						require_once (SYSBASE.'/framework/MotherController.php');
 						$c = new MotherController($this->db, $this->auth, NULL);
 						$c->renderErrorPage(403, $this->navigation);

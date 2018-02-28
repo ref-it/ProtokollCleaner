@@ -166,6 +166,7 @@ class ProtocolController extends MotherController {
 			} else {
 				http_response_code ($vali->getLastErrorCode());
 				$this->t->printPageHeader();
+				
 				echo '<h3>'.$vali->getLastErrorMsg().'</h3>';
 				$this->t->printPageFooter();
 			}
@@ -180,6 +181,7 @@ class ProtocolController extends MotherController {
 			}
 			$this->t->appendJsLink('protocol.js');
 			$this->t->printPageHeader();
+			echo $this->getChallenge(); // get post challenge
 			
 			//run protocol parser
 			$ph = new protocolHelper();

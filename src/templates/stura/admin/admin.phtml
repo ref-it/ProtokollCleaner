@@ -1,4 +1,4 @@
-<?= (isset($_SESSION['SILMPH']) && isset($_SESSION['SILMPH']['FORM_CHALLENGE_NAME']))? '<input type="hidden" id="fchal" name="'.$_SESSION['SILMPH']['FORM_CHALLENGE_NAME'].'" value="'.$_SESSION['SILMPH']['FORM_CHALLENGE_VALUE'].'">': ''?>
+<?= $this->getChallenge() ?>
 
 <div class="half_container mail_settings admin"><h3 class="noprint">E-Maileinstellungen</h3><h3 class="printonly">E-Maileinstellungen</h3>
 	<?php $settings = $this->db->getSettings(); ?>

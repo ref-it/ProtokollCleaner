@@ -57,7 +57,7 @@ class AdminController extends MotherController {
 			'error' => 'Der SMTP Port muss eine ganze Zahl zwischen 1 und 65535 sein.']],
 		'MAIL_FROM' 	=> ['value' => ['mail', 'empty']],
 		'MAIL_FROM_ALIAS' => ['value' => ['regex', 
-			'pattern' => "/^[a-zA-Z0-9äöüÄÖÜß]+[a-zA-Z0-9\-_&#\/ .äöüÄÖÜß]*[a-zA-Z0-9äöüÄÖÜß]+$/",
+			'pattern' => "/^([a-zA-Z0-9äöüÄÖÜß]+[a-zA-Z0-9\-_&#\/ .äöüÄÖÜß]*[a-zA-Z0-9äöüÄÖÜß]+)$/",
 			'maxlength' => 64,
 			'error' => 'Der Aliasname für den Mailabsender enthält ungültige Zeichen.']],
 	];

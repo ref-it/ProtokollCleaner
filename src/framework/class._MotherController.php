@@ -89,4 +89,22 @@ class MotherController extends JsonController {
 		die();
 	}
 	
+	/**
+	 * generate Post challenge
+	 * @param boolean $nohtml dont return html, return array
+	 * @return string|array
+	 */
+	public function getChallenge($nohtml = false){
+		if (!$nohtml){			
+			return ((isset($_SESSION['SILMPH']) && isset($_SESSION['SILMPH']['FORM_CHALLENGE_NAME']))? '<input type="hidden" id="fchal" name="'.$_SESSION['SILMPH']['FORM_CHALLENGE_NAME'].'" value="'.$_SESSION['SILMPH']['FORM_CHALLENGE_VALUE'].'">': '').
+			'<input type="hidden" id="fchal2" name="antichallenge" value="'.mt_rand().'">'; // dont commit this value to server
+		} else{
+			$out = [];
+			if (isset($_SESSION['SILMPH']) && isset($_SESSION['SILMPH']['FORM_CHALLENGE_NAME'])) $out[$_SESSION['SILMPH']['FORM_CHALLENGE_NAME']] = $_SESSION['SILMPH']['FORM_CHALLENGE_VALUE'];
+			$out['antichallenge'] = mt_rand();
+			return $out;
+		}
+	
+	}
+	
 }
