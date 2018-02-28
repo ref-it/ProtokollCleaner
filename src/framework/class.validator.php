@@ -190,7 +190,7 @@ class Validator {
 			$this->setError(true, 403, 'Access Denied', "POST request don't match $groupKey.");
 			return !$this->isError;
 		} else {
-			$ret = $this->validatePost($_POST, $map[$_POST[$groupKey]], $required);
+			$ret = $this->validateMap($_POST, $map[$_POST[$groupKey]], $required);
 			if ($ret) $this->filtered = [$_POST[$groupKey].'' => $this->filtered];
 			return $ret;
 		}

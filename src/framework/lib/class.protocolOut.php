@@ -132,13 +132,17 @@ class protocolOut
 		echo '<span class="sitzung"><span>Sitzung:</span><span>'.$p->protocol_number.'</span></span>';
 		echo '<span class="resolutions"><span>Angenommene Beschlüsse:</span><span>'.count($p->resolutions).'</span></span>';
 		
-		echo '<span class="sitzung"><span>TODOs:</span><span>'.(
+		echo '<span class="todo"><span>Todo:</span><span>'.(
 			((isset($p->todos['todo']['public']))? count($p->todos['todo']['public']): 0)
 			+((isset($p->todos['todo']['intern']))? count($p->todos['todo']['intern']): 0)
 		).'</span></span>';
-		echo '<span class="sitzung"><span>Fixme:</span><span>'.(
+		echo '<span class="fixme"><span>FixMe:</span><span>'.(
 			((isset($p->todos['fixme']['public']))? count($p->todos['fixme']['public']): 0)
 			+((isset($p->todos['fixme']['intern']))? count($p->todos['fixme']['intern']): 0)
+		).'</span></span>';
+		echo '<span class="deleteme"><span>DeleteMe:</span><span>'.(
+			((isset($p->todos['deleteme']['public']))? count($p->todos['deleteme']['public']): 0)
+			+((isset($p->todos['deleteme']['intern']))? count($p->todos['deleteme']['intern']): 0)
 		).'</span></span>';
 		if ($includeUrls) self::printProtoLinks($p);
 		echo '</div></div>';
