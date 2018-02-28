@@ -622,6 +622,53 @@ class Validator {
 	}
 	
 	/**
+	 * array validator
+	 * test if element is array
+	 *
+	 *
+	 * $param
+	 *  minlengh	2	maximum string length
+	 *  maxlengh	2	maximum string length
+	 *  empty		1	allow empty value
+	 *  validator	2	run this validator on each array element
+	 *  error		2	overwrite error message
+	 *
+	 * @param array $a
+	 * @param array $params
+	 * @return boolean
+	 */
+	public function V_array($a, $params){
+		if (!is_array($a)){
+			$msg = (isset($params['error']))? $params['error'] : 'Value is no array';
+			return !$this->setError(true, 200, $msg, 'array validator failed');
+		}
+		if ((!in_array('empty', $params) || count($a) > 0) && isset($params['minlength']) && count($a) < $params['minlength']){
+			$msg = (isset($params['error']))? $params['error'] : 'Array to short: require minimal length of "'.$params['minlength'].'" elements';
+			return !$this->setError(true, 200, $msg, 'array validator failed: array to short');
+		}
+		if (isset($params['maxlength']) && count($a) > $params['maxlength']){
+			$msg = (isset($params['error']))? $params['error'] : 'Array to long: maximal array length "'.$params['maxlength'].'"';
+			return !$this->setError(true, 200, $msg, 'array validator failed: array to long');
+		}
+		if (!in_array('empty', $params) && count($a) == 0){
+			$msg = (isset($params['error']))? $params['error'] : 'Array to short: empty array is not permitted.';
+			return !$this->setError(true, 200, $msg, 'array validator failed: array is empty');
+		}
+		if (!isset($params['validator'])){
+			$this->filtered=$a;
+			return !$this->setError(false);
+		}
+		$out = [];
+		foreach($a as $entry){
+			$this->validate($entry, $params['validator']);
+			if ($this->isError) break;
+			$out[] = $this->filtered;
+		}
+		$this->filtered = $out;
+		return !$this->isError;
+	}
+	
+	/**
 	 * date validator
 	 *
 	 * @param $value
