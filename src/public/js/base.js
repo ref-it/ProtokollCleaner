@@ -264,11 +264,13 @@ function checkIsValidName(name){
     		//add callbacks
     		for (var key in settings.buttons) {
 				if (settings.buttons.hasOwnProperty(key)) {
-					$modal.find('button.type-'+key).on('click', function(){
-						settings.single_callback(key, $out);
-						if (settings.callback.hasOwnProperty(key))
-							settings.callback[key]($out);
-					});
+					(function(k){
+						$modal.find('button.type-'+k).on('click', function(){
+							settings.single_callback(k, $out);
+							if (settings.callback.hasOwnProperty(k))
+								settings.callback[k]($out);
+						});
+					})(key);
 				}
     		}
     		//remove modal overlay

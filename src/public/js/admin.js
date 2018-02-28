@@ -23,7 +23,7 @@
 								};
 				fchal = document.getElementById('fchal');
 				dataset[fchal.getAttribute("name")] = fchal.value;
-				console.log(dataset);
+
 				$.ajax({
 					type: "POST",
 					url: 'admin/savemail',
