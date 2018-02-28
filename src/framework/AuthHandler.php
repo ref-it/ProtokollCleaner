@@ -19,7 +19,7 @@ class  AuthHandler{
     }
     
     public static function getInstance(){
-        if (!isset($instance)){
+        if (!isset(self::$instance)){
             global $SIMPLESAML, $SIMPLESAMLAUTHSOURCE;
             self::$instance = new AuthHandler($SIMPLESAML, $SIMPLESAMLAUTHSOURCE);
         }

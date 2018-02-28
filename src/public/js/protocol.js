@@ -2,7 +2,6 @@
 	//highlight id tag -------------------------------
 	$(window).on('load',function(){
 		setTimeout(function(){
-			console.log(window.location.href);
 			//highlight id tag if it belongs to gallery
 			if(window.location.hash && window.location.href.indexOf("/protolist#proto-2") > -1) {
 				// Fragment exists
@@ -117,7 +116,6 @@
 					data: dataset,
 					success: function(data){
 						modal.close();
-						console.log(data);
 						pdata = {};
 						try {
 							pdata = JSON.parse(data);
@@ -128,7 +126,7 @@
 							auto_page_reload(5000);
 						}
 						if(pdata.success == true){
-							silmph__add_message(pdata.msg, MESSAGE_TYPE_SUCCESS, 3000);
+							silmph__add_message(pdata.msg + ((typeof(pdata.timing) == 'number')? ' (In '+pdata.timing.toFixed(2)+' Sekunden)' : ''), MESSAGE_TYPE_SUCCESS, 3000);
 							setTimeout(function(){
 								window.location.href = '/protolist#proto-'+dataset.proto;
 							}, 3000);

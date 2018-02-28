@@ -147,12 +147,13 @@ class Router {
 		$method = strtoupper($_SERVER['REQUEST_METHOD']);
 		$path = (isset($parsed_url['path']))? trim($parsed_url['path'],'/'):'';
 		if ($path == '') $path = '/';
-
+		
 		//handle templated routes
 		if (isset($this->routes[$method]) 
 			&& isset($this->routes[$method][$path])){
+			
 			// check permission
-			if ($this->auth->hasGroup($this->routes[$method][$path][0], ',')){
+			if ($this->auth->hasGroup(self::$permission_map[$this->routes[$method][$path][0]], ',')){
 				$route_access = true;
 				if ($method == 'GET') {
 					$this->callController(
@@ -181,10 +182,13 @@ class Router {
 						array_slice($this->routes[$method][$path], 1 ), $method, $path
 					);
 				}
+			} else {
+				$c = new MotherController($this->db, $this->auth, NULL);
+				$c->renderErrorPage(403, $this->navigation);
 			}
 		} else if (isset($this->rawRoutes[$method]) 
 			&& isset($this->rawRoutes[$method][$path])){
-			if ($this->auth->hasGroup($this->rawRoutes[$method][$path][0], ',')){
+			if ($this->auth->hasGroup(self::$permission_map[$this->rawRoutes[$method][$path][0]], ',')){
 				$route_access = true;
 				$this->callController(
 					array_slice($this->rawRoutes[$method][$path], 1 ), $method, $path

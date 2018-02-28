@@ -157,8 +157,7 @@ class ProtocolController extends MotherController {
 		];
 		$vali = new Validator();
 		$vali->validateMap($_GET, $validator_map, true);
-		
-		if ($vali->getIsError() || !$this->auth->requireGroup($vali->getFiltered()['committee'])){
+		if ($vali->getIsError()){
 			if($vali->getLastErrorCode() == 403){
 				$this->renderErrorPage(403, null);
 			} else if($vali->getLastErrorCode() == 404){
@@ -169,6 +168,8 @@ class ProtocolController extends MotherController {
 				echo '<h3>'.$vali->getLastErrorMsg().'</h3>';
 				$this->t->printPageFooter();
 			}
+		} else if (!checkUserPermission($vali->getFiltered()['committee'])) {
+			$this->renderErrorPage(403, null);
 		} else {
 			$p = $this->loadWikiProtoBase($vali->getFiltered()['committee'], $vali->getFiltered()['proto'], true);
 			if ($p === NULL) {
@@ -178,7 +179,7 @@ class ProtocolController extends MotherController {
 			$this->t->appendJsLink('protocol.js');
 			$this->t->printPageHeader();
 			echo $this->getChallenge(); // get post challenge
-			
+
 			//run protocol parser
 			$ph = new protocolHelper();
 			$ph->parseProto($p, $this->auth->getUserFullName(), $p->agreed_on === NULL );
@@ -200,7 +201,6 @@ class ProtocolController extends MotherController {
 			
 			//echo protocol diff
 			echo $p->preview;
-			
 			//TODO detect Legislatur
 	
 			$this->t->printPageFooter();
@@ -238,7 +238,7 @@ class ProtocolController extends MotherController {
 		];
 		$vali = new Validator();
 		$vali->validateMap($_POST, $validator_map, true);
-		if ($vali->getIsError() || !$this->auth->requireGroup($vali->getFiltered()['committee'])){
+		if ($vali->getIsError()){
 			if($vali->getLastErrorCode() == 403){
 				$this->json_access_denied();
 			} else if($vali->getLastErrorCode() == 404){
@@ -248,6 +248,8 @@ class ProtocolController extends MotherController {
 				$this->json_result = ['success' => false, 'eMsg' => $vali->getLastErrorMsg()];
 				$this->print_json_result();
 			}
+		} else if (!checkUserPermission($vali->getFiltered()['committee'])) {
+			$this->json_access_denied();
 		} else if (self::$protomap[$vali->getFiltered()['committee']][0] == self::$protomap[$vali->getFiltered()['committee']][1]) {
 			// on save dont allow intern == extern protocol path =>> parse view is ok, but no storing
 			//may allow partial save like Todos, Fixmes, resolutions...
@@ -263,29 +265,44 @@ class ProtocolController extends MotherController {
 			//run protocol parser
 			$ph = new protocolHelper();
 			$ph->parseProto($p, $this->auth->getUserFullName(), $p->agreed_on === NULL );
+			protocolOut::createProtoTagErrors($p);
 			
-			//TODO check and store
-			//insert protocol link + status
-			//protocolOut::printProtoStatus($p);
-			//protocol errors
-			//protocolOut::createProtoTagErrors($p);
-			//protocolOut::printProtoParseErrors($p);
-			//list Attachements
-			//protocolOut::printAttachements($p);
-			//resolution list
-			//protocolOut::printResolutions($p);
-			//show todo list
-			//protocolOut::printTodos($p);
-			//show fixme list
-			//protocolOut::printFixmes($p);
-			//show delete list
-			//protocolOut::printDeletemes($p);
-			
-			
-			
-			http_response_code (200);
-			$this->json_result = ['success' => true, 'msg' => 'Protokoll erfolgreich erstellt'];
-			$this->print_json_result();
+			// check and store
+			// check for fatal errors -> abort
+			if (isset($p->parse_errors['f']) && count($p->parse_errors['f']) > 0){
+				$this->json_result = [
+					'success' => false,
+					'eMsg' => 'Protokoll entkält kritische Fehler:<strong><br>* '.implode('<br>* ', $p->parse_errors['f'] ).'</strong>'
+				];
+				$this->print_json_result();
+				return;
+			} else {
+				
+				//insert protocol link + status
+				//protocolOut::printProtoStatus($p);
+				//protocol errors
+				
+				//protocolOut::printProtoParseErrors($p);
+				//list Attachements
+				//protocolOut::printAttachements($p);
+				//resolution list
+				//protocolOut::printResolutions($p);
+				//show todo list
+				//protocolOut::printTodos($p);
+				//show fixme list
+				//protocolOut::printFixmes($p);
+				//show delete list
+				//protocolOut::printDeletemes($p);
+				
+				
+				http_response_code (200);
+				$this->json_result = [
+					'success' => true,
+					'msg' => 'Protokoll erfolgreich erstellt',
+					'timing' => prof_print(false)['sum']
+				];
+				$this->print_json_result();
+			}
 		}
 	}
 	

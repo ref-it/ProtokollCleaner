@@ -30,6 +30,10 @@ if (!function_exists('checkUserPermission')){
 }
 
 /* timing functions ----------------------------- */
+$prof_timing = [];
+$prof_names = [];
+$prof_last_count = -1;
+$prof_last_data = [];
 /**
  * @param $str Name des Profiling Flags
  */
@@ -41,21 +45,28 @@ function prof_flag($str){
 /**
  * Print all Profiling Flags from prof_flag()
  */
-function prof_print(){
-	global $prof_timing, $prof_names;
+function prof_print($echo = true){
+	global $prof_timing, $prof_names, $prof_last_count, $prof_last_data;
 	$sum = 0;
 	$size = count($prof_timing);
-	$out = "";
-	for ($i = 0; $i < $size - 1; $i++){
-		$out .= "<b>{$prof_names[$i]}</b><br>";
-		$sum += $prof_timing[$i + 1] - $prof_timing[$i];
-		$out .= sprintf("&nbsp;&nbsp;&nbsp;%f<br>", $prof_timing[$i + 1] - $prof_timing[$i]);
+	if ($size != $prof_last_count){
+		$out = '';
+		for ($i = 0; $i < $size - 1; $i++){
+			$out .= "<b>{$prof_names[$i]}</b><br>";
+			$sum += $prof_timing[$i + 1] - $prof_timing[$i];
+			$out .= sprintf("&nbsp;&nbsp;&nbsp;%f<br>", $prof_timing[$i + 1] - $prof_timing[$i]);
+		}
+		$out .= "<b>{$prof_names[$size-1]}</b><br>";
+		$out = '<div class="profiling-output noprint"><h3><i class="fa fw fa-angle-toggle"></i> Ladezeit: ' . sprintf("%f", $sum) . '</h3>' . $out;
+		$out .= "</div>";
+		
+		$prof_last_data = ['sum'=>$sum,'size'=>$size,'html'=>$out,'raw'=>['timing'=>$prof_timing,'names'=>$prof_names] ];
+		$prof_last_count = $size;
 	}
-	$out .= "<b>{$prof_names[$size-1]}</b><br>";
-	$out = '<div class="profiling-output noprint"><h3><i class="fa fw fa-angle-toggle"></i> Ladezeit: ' . sprintf("%f", $sum) . '</h3>' . $out;
-	$out .= "</div>";
-	echo $out;
+	if ($echo) echo $prof_last_data['html'];
+	return $prof_last_data;
 }
+
 
 /* SECURE KEY FUNCTIONS ---------------------------------------------------------------------- */
 if (!function_exists('generateRandomString')){

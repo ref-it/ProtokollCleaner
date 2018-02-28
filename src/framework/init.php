@@ -55,9 +55,7 @@ date_default_timezone_set(TIMEZONE);
  */
 require_once (dirname(__FILE__)."/functions.php"); //load helper function set
 
-if (DEBUG>=1){
-	prof_flag('app_start');
-}
+prof_flag('app_start');
 
 /**
  * generate app secret key
@@ -135,8 +133,7 @@ require_once (FRAMEWORK_PATH."/lib/class.protocolHelper.php");
  */
 require_once (dirname(__FILE__)."/session.php");
 
-if (DEBUG>=1){
-	prof_flag('app_end');
-}
+prof_flag('app_end');
+
 
 // end of file -------------

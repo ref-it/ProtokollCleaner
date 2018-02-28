@@ -268,9 +268,7 @@ class Template
 	 * print template footer
 	 */
 	public function printPageFooter(){
-		if (DEBUG >= 1){
-			prof_flag('template_footer');
-		}
+		prof_flag('template_footer');
 		include (dirname(__FILE__, 2)."/templates/".TEMPLATE."/footer.phtml");
 	}
 
@@ -293,7 +291,7 @@ class Template
 		$out = [];
 		if ($this->auth !== NULL){
 			foreach ($this->nav as $route => $data){
-				if ($this->auth->hasGroup($data[0])){
+				if (isset(Router::getPermissionMap()[$data[0]]) && $this->auth->hasGroup(Router::getPermissionMap()[$data[0]])){
 					$key = $route;
 					if ($key != '/' && substr($key, 0, 4) != 'http') $key = '/'.$key;
 					$out[$key] = array_slice($data, 1);

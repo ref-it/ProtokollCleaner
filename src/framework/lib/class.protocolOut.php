@@ -177,7 +177,7 @@ class protocolOut
     			continue;
     		}
     		if ($tag == 'old'){
-    			$p->parse_errors['n'][] = 'Nicht-Öffentlicher Teil wurde nicht geschlossen.';
+    			$p->parse_errors['f'][] = 'Nicht-Öffentlicher Teil wurde nicht geschlossen.';
     		} else {
     			$e = "Der Tag '$tag' wurde häufiger ";
     			if ($state > 0){

@@ -9,17 +9,17 @@
  * @var array
  */
 $routes = [
-	//		URL_ROUTE		PERMISSION		CONTROLLER	ACTION
+	//		URL_ROUTE		PERMISSION GROUP		CONTROLLER	ACTION
 	'GET' => [
-		'/'					=> ['stura',	'base' , 	'home'],
-		'admin'				=> ['ref-it',	'admin', 	'admin'],
-		'protolist'			=> ['stura',	'protocol', 	'plist'],
-		'protoedit'			=> ['stura',	'protocol', 	'pedit_view'],
+		'/'					=> ['baseaccess',	'base' , 	'home'],
+		'admin'				=> ['admin',	'admin', 	'admin'],
+		'protolist'			=> ['protolist',	'protocol', 	'plist'],
+		'protoedit'			=> ['protoedit',	'protocol', 	'pedit_view'],
 	],
 	'POST' => [
-		'admin/savemail'	=> ['ref-it',	'admin', 	'mail_update_setting'],
-		'admin/testmail'	=> ['ref-it',	'admin', 	'mail_testmessage'],
-		'protocol/publish'	=> ['ref-it',	'protocol', 	'p_publish'],
+		'admin/savemail'	=> ['admin',	'admin', 	'mail_update_setting'],
+		'admin/testmail'	=> ['admin',	'admin', 	'mail_testmessage'],
+		'protocol/publish'	=> ['protopublish',	'protocol', 	'p_publish'],
 	]
 ];
 
@@ -39,40 +39,51 @@ $rawRoutes = [
  * @var array
  */
 $navigation = [
-	'/' 	=> ['stura', 	'Home', 	'&#xf015;',	''],
-	'admin' => ['ref-it', 	'Admin', 	'&#xf085;',	'gearLogo.png'],
-	'protolist' => ['ref-it', 	'Protokolle', 	'&#xf266;',	'log.png'],
-	'https://stura.tu-ilmenau.de/impressum' => ['stura', 'Impressum', '&#xf129;', ''],
-	'https://www.tu-ilmenau.de/impressum/datenschutz/' => ['stura', 'Datenschutz', '&#xf1c0;', ''],
+	'/' 	=> ['baseaccess', 	'Home', 	'&#xf015;',	''],
+	'admin' => ['admin', 	'Admin', 	'&#xf085;',	'gearLogo.png'],
+	'protolist' => ['protolist', 	'Protokolle', 	'&#xf266;',	'log.png'],
+	'https://stura.tu-ilmenau.de/impressum' => ['baseaccess', 'Impressum', '&#xf129;', ''],
+	'https://www.tu-ilmenau.de/impressum/datenschutz/' => ['baseaccess', 'Datenschutz', '&#xf1c0;', ''],
 ];
+
+
+
 if (DEBUG >= 1) {
-	$routes['GET']['dev'] = ['ref-it', 'dev',  'link'];
-	$navigation['dev'] = ['ref-it', 'Dev', '&#xf20e;', ''];
+	$routes['GET']['dev'] = ['dev', 'dev',  'link'];
+	$navigation['dev'] = ['dev', 'Dev', '&#xf20e;', ''];
 
-	$routes['GET']['devWiki'] = ['ref-it', 'dev', 'link2'];
-	$navigation['devWiki'] = ['ref-it', 'devWiki', '&#xf20e;', ''];
+	$routes['GET']['devWiki'] = ['dev', 'dev', 'link2'];
+	$navigation['devWiki'] = ['dev', 'devWiki', '&#xf20e;', ''];
 	
-	$routes['GET']['wiki'] = ['ref-it', 'dev',  'wiki'];
-	$navigation['wiki'] = ['ref-it', 'WikiTest', '&#xf266;', ''];
+	$routes['GET']['wiki'] = ['dev', 'dev',  'wiki'];
+	$navigation['wiki'] = ['dev', 'WikiTest', '&#xf266;', ''];
 
-    $routes['GET']['wikiPut'] = ['ref-it', 'dev', 'putwiki'];
-    $navigation['wikiPut'] = ['ref-it', 'WikiTestPut', '&#xf266;', ''];
+    $routes['GET']['wikiPut'] = ['dev', 'dev', 'putwiki'];
+    $navigation['wikiPut'] = ['dev', 'WikiTestPut', '&#xf266;', ''];
 
-    $routes['GET']['data'] = ['ref-it', 'dev', 'Data'];
-    $navigation['data'] = ['ref-it', 'WriteFiles', '&#xf0c5;', ''];
+    $routes['GET']['data'] = ['dev', 'dev', 'Data'];
+    $navigation['data'] = ['dev', 'WriteFiles', '&#xf0c5;', ''];
 
-    $routes['GET']['del'] = ['ref-it', 'dev', 'DeleteFiles'];
-    $navigation['del'] = ['ref-it', 'Delete Files', '&#xf1f8;', ''];
+    $routes['GET']['del'] = ['dev', 'dev', 'DeleteFiles'];
+    $navigation['del'] = ['dev', 'Delete Files', '&#xf1f8;', ''];
 }
 
 /**
  * provide granular permissions + grouping
- * ['permission']
+ * ['permission_group' => 'sgis group']
+ * 		sgis_group: one must match to acces this route
  * @var array
  */
 $permission_map = [
-	'stura' => 'stura',
-	'ref-it' => 'ref-it'
+	'baseaccess' 	=> SIMPLESAML_ACCESS_GROUP,
+	'admin' 		=> 'konsul,admin',
+	'dev' 			=> 'ref-it,konsul,admin',
+	'protolist' 	=> 'ref-it,stura,konsul,admin',
+	'protoedit' 	=> 'ref-it,stura,konsul,admin',
+	'protopublish' 	=> 'ref-it,stura,konsul,admin',
+	'stura' 		=> 'stura',
+	'ref-it' 		=> 'ref-it',
+	'legislatur_all' => 'ref-it,konsul,admin'
 ];
 
 ?>
