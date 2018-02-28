@@ -177,7 +177,7 @@ class protocolOut
     			continue;
     		}
     		if ($tag == 'old'){
-    			$p->parse_errors[] = 'Nicht-Öffentlicher Teil wurde nicht geschlossen.';
+    			$p->parse_errors['n'][] = 'Nicht-Öffentlicher Teil wurde nicht geschlossen.';
     		} else {
     			$e = "Der Tag '$tag' wurde häufiger ";
     			if ($state > 0){
@@ -185,7 +185,7 @@ class protocolOut
     			} else {
     				$e.= 'geschlossen als geöffnet.';
     			}
-    			$p->parse_errors[] = $e;
+    			$p->parse_errors['n'][] = $e;
     		}
     	}
     }
@@ -196,9 +196,18 @@ class protocolOut
      */
     public static function printProtoParseErrors($p){
     	$opened = false;
-    	foreach($p->parse_errors as $err){
+    	if (isset($p->parse_errors['f'])) foreach($p->parse_errors['f'] as $err){ //fatal errors
     		if (!$opened){
-    			echo '<div class="error parseerrors"><h3>Parsing Errors</h3>';
+    			echo '<div class="error parseerrors"><h3>Fehler</h3>';
+    			$opened = true;
+    		}
+    		echo '<div class="perror fatal alert alert-danger border-danger">';
+    		echo $err;
+    		echo '</div>';
+    	}
+    	if (isset($p->parse_errors['n'])) foreach($p->parse_errors['n'] as $err){ //all other errors (n)ormal
+    		if (!$opened){
+    			echo '<div class="error parseerrors"><h3>Fehler</h3>';
     			$opened = true;
     		}
     		echo '<div class="perror alert alert-danger">';
@@ -272,33 +281,40 @@ class protocolOut
     }
 
     /**
-     * echo protocol fixmes in html form
-     * @param Protocol $p Protocol object
+     * echos elements from $protocol->todos 
+     * @param Protocol $p
+     * @param string $groupkey key in $p->todos
+     * @param string $headline
      */
-    public static function printTodos($p){
+    private static function printTODOElements($p, $groupkey = 'todo', $headline = 'Todo'){
     	$opened = false;
-    	if (isset($p->todos['todo']['public']))
-    		foreach($p->todos['todo']['public'] as $pos => $todo){
-    		if (!$opened){
-    			echo '<div class="todolist"><h3>Todo</h3>';
-    			$opened = true;
-    		}
-    		echo '<div class="todo alert alert-warning">';
-    		echo preg_replace('/(todo)/i', '<span class="highlight">$1</span>', $todo[0]);
+    	if (isset($p->todos[$groupkey]['public']) || isset($p->todos[$groupkey]['intern'])){
+			echo '<div class="'.$groupkey.'list"><h3>'.$headline.'</h3>';
+    		$opened = true;
+    	}
+    	if (isset($p->todos[$groupkey]['public']))
+    		foreach($p->todos[$groupkey]['public'] as $pos => $todo){
+    		echo '<div class="line '.$groupkey.' alert alert-warning">';
+    		echo preg_replace('/('.$groupkey.')/i', '<span class="highlight">$1</span>', $todo[0]);
     		echo '</div>';
     	}
-    	if (isset($p->todos['todo']['intern']))
-    		foreach($p->todos['todo']['intern'] as $pos => $todo){
-    		if (!$opened){
-    			echo '<div class="todos intern">';
-    		}
-    		echo '<div class="todo">';
-    		echo '<strong>(Intern)</strong> ' . preg_replace('/(todo)/i', '<span class="highlight">$1</span>', $todo[0]);
+    	if (isset($p->todos[$groupkey]['intern']))
+    		foreach($p->todos[$groupkey]['intern'] as $pos => $todo){
+    		echo '<div class="line '.$groupkey.' intern alert alert-warning">';
+    		echo '<strong>[Intern]</strong> '.preg_replace('/('.$groupkey.')/i', '<span class="highlight">$1</span>', $todo[0]);
     		echo '</div>';
     	}
     	if ($opened) {
     		echo '</div>';
     	}
+    }
+    
+    /**
+     * echo protocol fixmes in html form
+     * @param Protocol $p Protocol object
+     */
+    public static function printTodos($p){
+    	self::printTODOElements($p, 'todo', 'Todo');
     }
     
     /**
@@ -306,29 +322,7 @@ class protocolOut
      * @param Protocol $p Protocol object
      */
     public static function printFixmes($p){
-    	$opened = false;
-    	if (isset($p->todos['fixme']['public']))
-    		foreach($p->todos['fixme']['public'] as $pos => $fixme){
-    		if (!$opened){
-    			echo '<div class="fixmelist"><h3>FixMe</h3>';
-    			$opened = true;
-    		}
-    		echo '<div class="fixme alert alert-warning">';
-    		echo preg_replace('/(fixme)/i', '<span class="highlight">$1</span>', $fixme[0]);
-    		echo '</div>';
-    	}
-    	if (isset($p->todos['fixme']['intern']))
-    		foreach($p->todos['fixme']['intern'] as $pos => $fixme){
-    		if (!$opened){
-    			echo '<div class="fixme intern">';
-    		}
-    		echo '<div class="fixme">';
-    		echo '<strong>(Intern)</strong> ' . preg_replace('/(fixme)/i', '<span class="highlight">$1</span>', $fixme[0]);
-    		echo '</div>';
-    	}
-    	if ($opened) {
-    		echo '</div>';
-    	}
+    	self::printTODOElements($p, 'fixme', 'FixMe');
     }
     
     /**
@@ -336,28 +330,6 @@ class protocolOut
      * @param Protocol $p Protocol object
      */
     public static function printDeletemes($p){
-    	$opened = false;
-    	if (isset($p->todos['deleteme']['public']))
-    		foreach($p->todos['deleteme']['public'] as $pos => $deleteme){
-    		if (!$opened){
-    			echo '<div class="deletemelist"><h3>DeleteMe</h3>';
-    			$opened = true;
-    		}
-    		echo '<div class="deleteme alert alert-warning">';
-    		echo preg_replace('/(deleteme)/i', '<span class="highlight">$1</span>', $deleteme[0]);
-    		echo '</div>';
-    	}
-    	if (isset($p->todos['deleteme']['intern']))
-    		foreach($p->todos['deleteme']['intern'] as $pos => $deleteme){
-    		if (!$opened){
-    			echo '<div class="deleteme intern">';
-    		}
-    		echo '<div class="deleteme">';
-    		echo '<strong>(Intern)</strong> ' . preg_replace('/(deleteme)/i', '<span class="highlight">$1</span>', $deleteme[0]);
-    		echo '</div>';
-    	}
-    	if ($opened) {
-    		echo '</div>';
-    	}
+    	self::printTODOElements($p, 'deleteme', 'DeleteMe');
     }
 }

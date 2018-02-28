@@ -41,9 +41,9 @@
 		var handleCommit = function ($e, state){
 			if (state == 0){
 				// show warning if there are any errors
-				if ($('.difftable .line.error').length > 0){
+				if ($('.difftable .line.error').length > 0 || $('.parseerrors .perror.fatal').length > 0){
 					$.modaltools({
-						headerClass: 'bg-warning',
+						headerClass: 'bg-danger',
 						text: 'Es sind noch <strong>kritische Fehler</strong> vorhanden. Bitte bearbeiten Sie das Protokoll und entfernen Sie die Fehler um fortfahren zu können.', 
 						buttons: {'ok':'Verstanden'}}).open();
 				} else {

@@ -93,6 +93,7 @@ class protocolHelper extends protocolOut
 	
 	private static $tagRegex = '/(({{tag>[a-zA-Z0-9]+(_[a-zA-Z0-9]+)*([ ]*[a-zA-Z0-9]+(_[a-zA-Z0-9]+)*)*( )*}}|(=)+ geschlossener Teil (=)+|(=)+ (ö|Ö)ffentlicher Teil (=)+)+)/i';
 	private static $oldTags = ['/^(=)+ geschlossener Teil (=)+$/i', '/^(=)+ (ö|Ö)ffentlicher Teil (=)+$/i'];
+	private static $ignoreTags = [];
 	
 	/**
 	 * categorize and split raw resolution strings to array
@@ -187,7 +188,7 @@ class protocolHelper extends protocolOut
 				$result['p_tag'] = $p->committee.':'.$date->format('Y-m-d');
 			} else {
 				$result['p_tag'] = false;
-				$p->parse_errors[] = "<strong>Parse Error: Protokolldatum</strong> Dem folgenden Protokollbeschluss konnte kein Datum entnommen werden. Gesuchtes format: dd.mm.yy oder dd-mm-yy<br><i>{$result['Titel']}</i>";
+				$p->parse_errors['f'][] = "<strong>Parse Error: Protokolldatum</strong> Dem folgenden Protokollbeschluss konnte kein Datum entnommen werden. Gesuchtes format: dd.mm.yy, dd-mm-yy, dd.mm.yyyy oder dd-mm-yyyy<br><i>{$result['Titel']}</i>";
 			}
 			
 		}
@@ -274,14 +275,22 @@ class protocolHelper extends protocolOut
 					$m = trim(str_replace(['{{tag>', '  ', '}}'], ['',' ',''], $m));
 					$m = explode(' ', $m);
 					foreach ($m as $single_tag) { //handle multiple tags inside tag area
+						if (in_array($single_tag, self::$ignoreTags)){
+							$p->tags[$single_tag] = 0; // mark tag used
+							continue; //but skip counting
+						}	
 						if (strlen($single_tag)>2 && substr($single_tag,0, 2) != 'no') {
 							$p->tags[$single_tag] = isset($p->tags[$single_tag])? $p->tags[$single_tag] + 1 : 1;
-							if ($single_tag.PROTO_INTERNAL_TAG) $isInternal = true;
-							$changed = true;
+							if ($single_tag == PROTO_INTERNAL_TAG){
+								$isInternal = true;
+								$changed = true;
+							}
 						} else {
 							$p->tags[$single_tag] = (isset($p->tags[$single_tag]) && $p->tags[$single_tag] > 0)? $p->tags[$single_tag] - 1 : 0;
-							if($single_tag == 'no'.PROTO_INTERNAL_TAG) $isInternal = false;
-							$changed = true;
+							if($single_tag == 'no'.PROTO_INTERNAL_TAG){
+								$isInternal = false;
+								$changed = true;
+							}
 						}
 					}
 				}
@@ -290,14 +299,14 @@ class protocolHelper extends protocolOut
 					if ($tmp_line != ''){
 						$this->isLineError = true;
 						$this->lineError = "Please use a new line to seperate internal and external parts.";
-						$p->parse_errors[] = $this->lineError;
+						$p->parse_errors['f'][] = $this->lineError;
 						if (!$nopreview) $p->preview .= self::generateDiffErrorLine($line);
 						break;
 					}
-					if ($lastTagClosed == !$isInternal){
+					if ($lastTagClosed == !$isInternal){ //test for duplicates
 						$this->isLineError = true;
 						$this->lineError = "Duplicate closing tag or closing before opening found.";
-						$p->parse_errors[] = $this->lineError;
+						$p->parse_errors['f'][] = $this->lineError;
 						if (!$nopreview) $p->preview .= self::generateDiffErrorLine($line);
 						break;
 					} else {
@@ -315,7 +324,7 @@ class protocolHelper extends protocolOut
 			//maybe run this on whole text globally
 			foreach(self::$regexFinder['no_multimatch'] as $key => $pattern){
 				if (preg_match($pattern, $line)){
-					$pregFind[$key][($isInternal)?'intern':'public'][] = $line;
+					$pregFind[$key][($isInternal)?'intern':'public'][] = trim(trim(trim($line), '*'));
 				}
 			}
 			//detect fixme, todo, resolutions
@@ -323,7 +332,7 @@ class protocolHelper extends protocolOut
 			foreach(self::$regexFinder['multimatch'] as $key => $pattern){
 				$tmp_matches = preg_match_all($pattern, $line);
 				if ($tmp_matches){
-					$pregFind[$key][($isInternal)?'intern':'public'][] = [$line, $tmp_matches];
+					$pregFind[$key][($isInternal)?'intern':'public'][] = [trim(trim(trim($line), '*')), $tmp_matches];
 				}
 			}
 		}
@@ -360,7 +369,7 @@ class protocolHelper extends protocolOut
 			$p->protocol_number = intval(preg_replace('/[^\d]/', '', $pregFind['sitzung']['public'][0]));
 		} else {
 			$p->protocol_number = -1;
-			$p->parse_errors[] = "Sitzungsnummer konnte nicht erkannt werden.";
+			$p->parse_errors['f'][] = "Sitzungsnummer konnte nicht erkannt werden.";
 		}
 		
 		// object
