@@ -130,7 +130,7 @@ class Router {
 		if (isset($_GET['page_error'])){
 			if (is_numeric($_GET['page_error'])){
 				$val = intval($_GET['page_error']);
-				require_once (SYSBASE.'/framework/MotherController.php');
+				require_once (SYSBASE.'/framework/class._MotherController.php');
 				$c = new MotherController($this->db, $this->auth, NULL);
 				if ($val > 0){
 					$c->renderErrorPage($val, $this->navigation);
@@ -168,7 +168,7 @@ class Router {
 						|| $_POST[$_SESSION['SILMPH']['FORM_CHALLENGE_NAME']] 
 							!= $_SESSION['SILMPH']['FORM_CHALLENGE_VALUE'] 
 						|| isset($_POST['antichallenge'])){ //dont commit this value
-						require_once (SYSBASE.'/framework/MotherController.php');
+						require_once (SYSBASE.'/framework/class._MotherController.php');
 						$c = new MotherController($this->db, $this->auth, NULL);
 						$c->renderErrorPage(403, $this->navigation);
 					} else {
@@ -192,14 +192,14 @@ class Router {
 			}
 		} else {
 			//route not found --> 404 Not Found
-			require_once (SYSBASE.'/framework/MotherController.php');
+			require_once (SYSBASE.'/framework/class._MotherController.php');
 			$c = new MotherController($this->db, $this->auth, NULL);
 			$c->renderErrorPage(404, $this->navigation);
 		}
 		
 		if (!$route_access){
 			//route no access --> 403 Access Denied
-			require_once (SYSBASE.'/framework/MotherController.php');
+			require_once (SYSBASE.'/framework/class._MotherController.php');
 			$c = new MotherController($this->db, $this->auth, NULL);
 			$c->renderErrorPage(403, $this->navigation);
 		}
@@ -227,7 +227,7 @@ class Router {
 			}
 		} else {
 			error_log("Router: Controller '{$routedata[0]}' could not be found.");
-			require_once (SYSBASE.'/framework/MotherController.php');
+			require_once (SYSBASE.'/framework/class._MotherController.php');
 			$c = new MotherController($this->db, $this->auth, NULL);
 			$c->renderErrorPage(404, $this->navigation);
 		}
