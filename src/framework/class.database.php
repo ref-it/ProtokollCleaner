@@ -369,7 +369,7 @@ class Database
 		$a = ($draftOnly)? 'AND P.draft_url IS NULL' : '';
 		$a = ($publicOnly)? 'AND P.public_url IS NULL' : '';
 		//TODO optional join and count todos and resolutions
-		$sql = "SELECT * FROM `".TABLE_PREFIX."protocol` P, `".TABLE_PREFIX."_gremium` G WHERE P.gremium = G.id AND G.name = '?' $a;";
+		$sql = "SELECT * FROM `".TABLE_PREFIX."protocol` P, `".TABLE_PREFIX."gremium` G WHERE P.gremium = G.id AND G.name = ? $a;";
 		$result = $this->getResultSet($sql, 's', $committee);
 		
 		$r = [];
@@ -378,7 +378,6 @@ class Database
 		}
 		return $r;
 	}
-	
 	
 	/**
 	 * return protocol resolutions by gremium and protocol name
@@ -394,7 +393,7 @@ class Database
 			return NULL;
 		}
 		$tag = $committee.':'.$protocolName;
-		$sql = "SELECT * FROM `".TABLE_PREFIX."resolution` R WHERE R.p_tag = '?';";
+		$sql = "SELECT * FROM `".TABLE_PREFIX."resolution` R WHERE R.p_tag = ?;";
 		$result = $this->getResultSet($sql, 's', $tag);
 		$r = [];
 		foreach ($result as $res){
