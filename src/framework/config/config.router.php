@@ -19,6 +19,7 @@ $routes = [
 	'POST' => [
 		'admin/savemail'	=> ['ref-it',	'admin', 	'mail_update_setting'],
 		'admin/testmail'	=> ['ref-it',	'admin', 	'mail_testmessage'],
+		'protocol/publish'	=> ['ref-it',	'protocol', 	'p_publish'],
 	]
 ];
 
@@ -65,7 +66,7 @@ if (DEBUG >= 1) {
 }
 
 /**
- * provide granular permissions
+ * provide granular permissions + grouping
  * ['permission']
  * @var array
  */

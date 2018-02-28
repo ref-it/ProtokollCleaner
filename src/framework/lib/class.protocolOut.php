@@ -123,7 +123,7 @@ class protocolOut
 		echo '<div class="protostatus">';
 		echo '<div class="general">';
 		echo '<span class="committee"><span>Gremium:</span><span>'.$p->committee.'</span></span>';
-		echo '<span class="date"><span>Protokoll vom:</span><span>'.$p->date->format('d.m.Y').'</span></span>';
+		echo '<span class="date"><span>Protokoll vom:</span><span data-name="'.$p->name.'">'.$p->date->format('d.m.Y').'</span></span>';
 		echo '<span class="state"><span>Status:</span><span>'.
 			(($p->id == NULL)? 'Nicht öffentlich': 
 			(($p->draft_url!=NULL)?'Entwurf':

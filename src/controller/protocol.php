@@ -209,7 +209,19 @@ class ProtocolController extends MotherController {
 	
 			$this->t->printPageFooter();
 		}
-	
 	}
+	
+	/**
+	 * ACTION p_publish
+	 * (stura) publish protocol
+	 */
+	public function p_publish(){
+		$vali = new Validator();
+		//TODO
+		
+		
+		$this->json_access_denied();
+	}
+	
 	
 }

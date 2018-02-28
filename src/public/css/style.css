@@ -296,13 +296,20 @@ div.silmph__message_success {
 	height: 0;
 	z-index: 400;
 	opacity: 0;
+	overflow: hidden;
 	transition: opacity 0.5s;
+}
+.modalwrapper > * {
+	display: none;
 }
 .modalwrapper.open{
 	height: auto;
 	opacity: 1;
 }
-.modalwrapper .modal_bg{
+.modalwrapper.open > * {
+	display: inherit;
+}
+.modalwrapper.open .modal_bg{
 	position: fixed;
 	top: 0;
 	bottom: 0;
@@ -746,4 +753,75 @@ div.radiogroup.radiotoggle2 input:checked + label + input + label + div{
 }
 div.radiogroup.radiotoggle2 input + label + input:checked + label + div{
 	left: 50%;
+}
+/* --------- SPINNING FONT AWESOME----------*/
+.multifa {
+  font-size: 14px;
+  position:relative;
+  width: 56px;
+  height: 56px;
+}
+.multifa.center {
+	margin: 0 auto;
+	left: 0;
+	right:0;
+}
+.multifa > span.fa {
+  font-size: 56px;
+  display: block;
+  width: 56px;
+  height: 56px;
+  line-height: 56px;
+  text-align: center;
+}
+.multifa > span.fa:last-child {
+  position:absolute;
+  top: 25px;
+  left: 37px;
+}
+.sym-spin {
+  -webkit-animation: spin 5s infinite linear;
+  -moz-animation: spin 5s infinite linear;
+  -o-animation: spin 5s infinite linear;
+  animation: spin 5s infinite linear;
+}
+.sym-spin-reverse {
+  -webkit-animation: spin 5s infinite linear reverse;
+  -moz-animation: spin 5s infinite linear reverse;
+  -o-animation: spin 5s infinite linear reverse;
+  animation: spin 5s infinite linear reverse;
+}
+@-moz-keyframes spin {
+  0% {
+    -moz-transform: rotate(0deg);
+  }
+  100% {
+    -moz-transform: rotate(359deg);
+  }
+}
+@-webkit-keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+  }
+}
+@-o-keyframes spin {
+  0% {
+    -o-transform: rotate(0deg);
+  }
+  100% {
+    -o-transform: rotate(359deg);
+  }
+}
+@keyframes spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
 }
