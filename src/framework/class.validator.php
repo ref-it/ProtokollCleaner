@@ -108,9 +108,12 @@ class Validator {
 	 * Post validators will create sanitized array
 	 * @return the $filtered
 	 */
-	public function getFiltered()
+	public function getFiltered($key = NULL)
 	{
-		return $this->filtered;
+		if ($key === NULL)
+			return $this->filtered;
+		else 
+			return $this->filtered[$key];
 	}
 
 	// ==========================================
@@ -231,7 +234,7 @@ class Validator {
 		if (!filter_var($value, FILTER_VALIDATE_INT)){
 			return !$this->setError(true, 200, 'No Integer', 'No Integer');
 		} else {
-			$v = intval($value);
+			$v = filter_var($value, FILTER_VALIDATE_INT);
 			$this->filtered = $v;
 			if (in_array('even', $params) && $v%2 != 0){
 				$msg = (isset($params['error']))? $params['error'] : 'Integer have to be even' ; 
