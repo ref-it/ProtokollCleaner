@@ -45,6 +45,8 @@ class protocolHelper extends protocolOut
 		]		
 	];
 	
+	private static $personFinder = '/(\[\[person:(\s)*([a-zA-Z0-9äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]+( [a-zA-Z0-9äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]+)*)(\s)*\]\])/i';
+	
 	private static $resolutionParts = [
 		'titel=' => 'Titel', 
 		'j=' => 'Ja',
@@ -117,10 +119,10 @@ class protocolHelper extends protocolOut
 	 * 
 	 * @param string $resolution raw resolution text
 	 * @param Protocol $p
-	 * @return array parsed resolution [text|title, type_short, type_long, p_tag, raw]
+	 * @return array parsed resolution [title, type_short, type_long, p_tag, text|raw]
 	 */
 	private static function parseResolution($resolution, $p, $overwriteType = NULL){
-		$result = ['raw' => $resolution];
+		$result = ['text' => $resolution];
 		$parts = array_map('trim', explode('|', $resolution));
 		foreach ($parts as $pos => $text){
 			$text = str_replace('}}', '', $text);
@@ -187,11 +189,15 @@ class protocolHelper extends protocolOut
 			if ($date) {
 				$result['p_tag'] = $p->committee.':'.$date->format('Y-m-d');
 			} else {
-				$result['p_tag'] = false;
+				$result['p_tag'] = 0;
 				$p->parse_errors['f'][] = "<strong>Parse Error: Protokolldatum</strong> Dem folgenden Protokollbeschluss konnte kein Datum entnommen werden. Gesuchtes format: dd.mm.yy, dd-mm-yy, dd.mm.yyyy oder dd-mm-yyyy<br><i>{$result['Titel']}</i>";
 			}
-			
+		} else {
+			$result['p_tag'] = NULL;
 		}
+		//check intern flag
+		$result['id'] = NULL;
+		$result['intern'] = ($result['type_long'] == 'Intern')? 1 : 0;
 		return $result;
 	}
 	
@@ -242,14 +248,14 @@ class protocolHelper extends protocolOut
 						$p->preview .= self::generateDiffCopiedChangedLine('====== ENTWURF - PROTOKOLL ======');
 						$alc++;
 					}
-					$p->preview .= self::generateDiffCopiedChangedLine('====== GENERIERT mit '.BASE_TITLE.' von ('.$publising_user.') ======'."\n");
+					$p->preview .= self::generateDiffCopiedChangedLine('==== GENERIERT mit '.BASE_TITLE.' von ('.$publising_user.') ===='."\n");
 					$alc++;
 				} else {
 					if ($addDraftText){
 						$p->external .= '====== ENTWURF - PROTOKOLL ======'."\n";
 						$alc++;
 					}			
-					$p->external .= '====== GENERIERT mit '.BASE_TITLE.' von ('.$publising_user.') ======'."\n";
+					$p->external .= '==== GENERIERT mit '.BASE_TITLE.' von ('.$publising_user.') ===='."\n";
 					$alc++;
 				}
 				$addDraftText = false;
@@ -374,9 +380,12 @@ class protocolHelper extends protocolOut
 		self::numberResolutionArray($p, $p->legislatur);
 		
 		// add todos and fixmes
-		$p->todos['fixme'] = $pregFind['fixme'];
-		$p->todos['todo'] = $pregFind['todo'];
-		$p->todos['deleteme'] = $pregFind['deleteme'];
+		$tmp_todo = [
+			'deleteme' => $pregFind['deleteme'],
+			'fixme' => $pregFind['fixme'],
+			'todo' => $pregFind['todo']
+		];
+		$p->todos = self::todo2linearArray($tmp_todo, $p->id);
 		
 		//add protocol numnber (sitzungnummer)
 		if (isset($pregFind['sitzung'])){
@@ -389,6 +398,34 @@ class protocolHelper extends protocolOut
 		// object
 		return $p;
 		//TODO detect Legislatur
+	}
+	
+	/**
+	 * recreate todo array to linear array
+	 * @param array $todos
+	 * @return array linear todo array
+	 */
+	public static function todo2linearArray ($todos, $pid) {
+		$result = [];
+		foreach ($todos as $type => $todos2){
+			foreach ($todos2 as $intern_indicator => $todos3){
+				foreach ($todos3 as $lines => $todo){
+					$lineInfo = explode(':', $lines);
+					$result[] = [
+						'id' => null,
+						'on_protocol' => $pid,
+						'user' => (preg_match(self::$personFinder, $todo[0], $matches))? $matches[3] : NULL,
+						'done' => false,
+						'text' => $todo[0],
+						'type' => $type,
+						'line' => $lineInfo[0],
+						'hash' => md5($todo[0].$lineInfo[0].$type),
+						'intern' => (($intern_indicator == 'intern')? 1:0)
+					];
+				}
+			}
+		}
+		return $result;
 	}
 }
 

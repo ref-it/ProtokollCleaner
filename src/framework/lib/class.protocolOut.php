@@ -126,7 +126,7 @@ class protocolOut
 		echo '<span class="date"><span>Protokoll vom:</span><span data-name="'.$p->name.'">'.$p->date->format('d.m.Y').'</span></span>';
 		echo '<span class="state"><span>Status:</span><span>'.
 			(($p->id == NULL)? 'Nicht öffentlich': 
-			(($p->draft_url!=NULL)?'Entwurf':
+			(($p->draft_url!=NULL)?'Entwurf öffentlicht':
 			(($p->public_url!=NULL)?'Veröffentlicht':'Unbekannt'))).'</span></span>';
 		echo '<span class="legislatur"><span>Legislatur:</span><span>'.
 			 '<div class="fa fa-info css-tooltip mr-1 btn btn-outline-primary" tabindex="0"><span class="tooltiptext">Sollte dieser Wert nicht stimmen, informiert bitte den Konsul, oder Referat-IT um diesen dauerhaft zu aktualisieren.</span></div>'
@@ -157,7 +157,11 @@ class protocolOut
     public static function printProtoLinks($p){
     	echo '<div class="protolinks">';
     	echo '<a class="btn btn-primary mr-1 reload" href="">Reload</a>';
-    	echo '<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][0]).'/'.$p->name.'?do=edit" target="_blank">Edit Protocol</a>';
+    	if (!$p->public_url){
+    		echo '<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][0]).'/'.$p->name.'?do=edit" target="_blank">Edit Protocol</a>';
+    	} else {
+    		echo '<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][0]).'/'.$p->name.'" target="_blank">View Intern</a>';
+    	}
     	if ($p->draft_url){
     		echo '<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][1]).'/'.$p->name.'" target="_blank">View Draft</a>';
     	}
@@ -283,55 +287,24 @@ class protocolOut
     }
 
     /**
-     * echos elements from $protocol->todos 
+     * echos todo entries
      * @param Protocol $p
-     * @param string $groupkey key in $p->todos
-     * @param string $headline
+     * @param array $headlineMap maps todo['type'] to an headline
+     * @param array $print only print todos of types in this array
      */
-    private static function printTODOElements($p, $groupkey = 'todo', $headline = 'Todo'){
-    	$opened = false;
-    	if (isset($p->todos[$groupkey]['public']) || isset($p->todos[$groupkey]['intern'])){
-			echo '<div class="'.$groupkey.'list"><h3>'.$headline.'</h3>';
-    		$opened = true;
+    public static function printTodoElements($p, $headlineMap = ['todo' => 'Todo', 'fixme' => 'FixMe', 'deleteme' => 'DeleteMe'], $print = ['todo', 'fixme', 'deleteme']){
+    	$out = [];
+    	foreach ($p->todos as $todo) {
+    		$out[$todo['type']][] = '<div class="line '.$todo['type'].(($todo['intern'])?' intern':'').' alert alert-warning">'.
+     			(($todo['intern'])?'<strong>[Intern]</strong> ':'').
+     			preg_replace('/('.$todo['type'].')/i', '<span class="highlight">$1</span>', $todo['text']).
+    			'</div>';
     	}
-    	if (isset($p->todos[$groupkey]['public']))
-    		foreach($p->todos[$groupkey]['public'] as $pos => $todo){
-    		echo '<div class="line '.$groupkey.' alert alert-warning">';
-    		echo preg_replace('/('.$groupkey.')/i', '<span class="highlight">$1</span>', $todo[0]);
+    	foreach($out as $type => $texts){
+    		if (!in_array($type, $print)) continue;
+    		echo '<div class="'.$type.'list"><h3>'.$headlineMap[$type].'</h3>';
+    		foreach ($texts as $html) echo $html;
     		echo '</div>';
     	}
-    	if (isset($p->todos[$groupkey]['intern']))
-    		foreach($p->todos[$groupkey]['intern'] as $pos => $todo){
-    		echo '<div class="line '.$groupkey.' intern alert alert-warning">';
-    		echo '<strong>[Intern]</strong> '.preg_replace('/('.$groupkey.')/i', '<span class="highlight">$1</span>', $todo[0]);
-    		echo '</div>';
-    	}
-    	if ($opened) {
-    		echo '</div>';
-    	}
-    }
-    
-    /**
-     * echo protocol fixmes in html form
-     * @param Protocol $p Protocol object
-     */
-    public static function printTodos($p){
-    	self::printTODOElements($p, 'todo', 'Todo');
-    }
-    
-    /**
-     * echo protocol fixmes in html form
-     * @param Protocol $p Protocol object
-     */
-    public static function printFixmes($p){
-    	self::printTODOElements($p, 'fixme', 'FixMe');
-    }
-    
-    /**
-     * echo protocol deleteme in html form
-     * @param Protocol $p Protocol object
-     */
-    public static function printDeletemes($p){
-    	self::printTODOElements($p, 'deleteme', 'DeleteMe');
     }
 }

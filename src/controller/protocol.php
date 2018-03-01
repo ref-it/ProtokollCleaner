@@ -55,7 +55,7 @@ class ProtocolController extends MotherController {
 		}
 		$p = new Protocol($a);
 		$p->committee = $committee;
-		$p->committee_id = NULL;
+		$p->committee_id = $this->db->getCreateCommitteeByName($committee)['id'];
 		$p->name = $protocol_name;
 		$p->url = self::$protomap[$p->committee][0].':'.$p->name;
 		$p->date = date_create_from_format('Y-m-d', substr($p->name, 0,10));
@@ -63,17 +63,17 @@ class ProtocolController extends MotherController {
 		$dbprotocols = $this->db->getProtocols($committee);
 		if (array_key_exists($p->name, $dbprotocols)){
 			$p->id = $dbprotocols[$p->name]['id'];
-			$p->committee_id = $dbprotocols[$p->name]['gremium'];
 			$p->draft_url = $dbprotocols[$p->name]['draft_url'];
-			$p->public_url = $dbprotocols[$p->name]['public_irl'];
+			$p->public_url = $dbprotocols[$p->name]['public_url'];
 		}
-		$resolution = $this->db->getResolutionByPTag($committee, $protocol_name);
-		if ($resolution != NULL && count($resolution) === 1){
-			$p->agreed_on = $resolution;
+		$dbresolution = $this->db->getResolutionByPTag($committee, $protocol_name);
+		if ($dbresolution != NULL && count($dbresolution) >= 1){
+			$p->agreed_on = $dbresolution[0]['id'];
 		}
 		if ($load_attachements){
 			prof_flag('get wiki attachement list');
 			$p->attachements = $x->listAttachements(self::$protomap[$p->committee][0].':'.$p->name );
+			if ($p->attachements == false) $p->attachements = [];
 			prof_flag('got wiki attachement list');
 		}
 		//TODO create legislatur map
@@ -114,25 +114,25 @@ class ProtocolController extends MotherController {
 		$esc_PROTO_IN = str_replace(':', '/', self::$protomap[$perm][0]);
 		$esc_PROTO_OUT = str_replace(':', '/', self::$protomap[$perm][1]);
 		
-		echo '<pre>DD: '; var_dump($drafts); echo '</pre>';
 		echo "<h3>Stura - Protokolle</h3>";
+		echo "<p><strong>(Gefunden: ".count($intern)." - Veröffentlicht: ".count($extern).((count($drafts)>0)?' - Entwurf: '.count($drafts):'').")</strong></p>";
 		
 		echo '<div class="protolist">';
 		foreach ($intern as $i){
 			$p = substr($i, strrpos($i, ':') + 1);
 			if (substr($p,0, 2)!='20') continue;
-			$state = (in_array(self::$protomap[$perm][0].":$p", $extern))? 
-				'public' : 
+			$state = (!in_array(self::$protomap[$perm][1].":$p", $extern))? 
+				'private' : 
 				(isset($drafts[$p])? 
 					'draft' : 
-					'privat');
+					'public');
 			echo '<div id="proto-'.$p.'" class="proto '.$state.'">'.
 					"<span>$p</span>".
-					"<div>".
-					(($state!='private')?'<button class="btn" type="button">Bearbeiten</button>':'').
-					'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_IN.'/'.$p.'" target="_blank">Intern</a></span>'.
-					(($state != 'privat')?
-					'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_OUT.'/'.$p.'" target="_blank">Extern</a></span>':'').
+					"<div>". //button container
+						(($state != 'public')?'<button class="btn" type="button">Veröffentlichen</button>':'<button class="btn compare" type="button">Untersuchen</button>').
+						'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_IN.'/'.$p.'" target="_blank">Intern</a></span>'.
+						(($state == 'draft')?'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_OUT.'/'.$p.'" target="_blank">Entwurf</a></span>':'').
+						(($state == 'public')?'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_OUT.'/'.$p.'" target="_blank">Öffentlich</a></span>':'').
 			'</div></div>';
 		}
 		echo '<!div>';
@@ -192,12 +192,8 @@ class ProtocolController extends MotherController {
 			protocolOut::printAttachements($p);
 			//resolution list
 			protocolOut::printResolutions($p);
-			//show todo list
-			protocolOut::printTodos($p);
-			//show fixme list
-			protocolOut::printFixmes($p);
-			//show delete list
-			protocolOut::printDeletemes($p);
+			//show todo-/fixme-/deleteme list
+			protocolOut::printTodoElements($p);
 			
 			//echo protocol diff
 			echo $p->preview;
@@ -264,9 +260,9 @@ class ProtocolController extends MotherController {
 			}
 			//run protocol parser
 			$ph = new protocolHelper();
-			$ph->parseProto($p, $this->auth->getUserFullName(), $p->agreed_on === NULL );
+			$ph->parseProto($p, $this->auth->getUserFullName(), $p->agreed_on === NULL, true);
 			protocolOut::createProtoTagErrors($p);
-			
+			//---------------------------------
 			// check and store
 			// check for fatal errors -> abort
 			if (isset($p->parse_errors['f']) && count($p->parse_errors['f']) > 0){
@@ -276,35 +272,172 @@ class ProtocolController extends MotherController {
 				];
 				$this->print_json_result();
 				return;
-			} else {
-				
-				//insert protocol link + status
-				//protocolOut::printProtoStatus($p);
-				//protocol errors
-				
-				//protocolOut::printProtoParseErrors($p);
-				//list Attachements
-				//protocolOut::printAttachements($p);
-				//resolution list
-				//protocolOut::printResolutions($p);
-				//show todo list
-				//protocolOut::printTodos($p);
-				//show fixme list
-				//protocolOut::printFixmes($p);
-				//show delete list
-				//protocolOut::printDeletemes($p);
-				
-				
-				http_response_code (200);
+			}
+			//---------------------------------
+			//check attachements
+			$copy_attachements = []; //this attachements will be copied
+			$tmp_attach = $vali->getFiltered('attach');
+			foreach($p->attachements as $attach){
+				$tmp = explode(':', $attach);
+				$name = end($tmp);
+				$key = array_search($name, $tmp_attach);
+				if ($key !== false){
+					$copy_attachements[]=$attach;
+					unset($tmp_attach[$key]);
+				}
+			}
+			unset($tmp);
+			//now tmp_attach should be empty
+			if (count($tmp_attach) > 0){
 				$this->json_result = [
-					'success' => true,
-					'msg' => 'Protokoll erfolgreich erstellt',
-					'timing' => prof_print(false)['sum']
+					'success' => false,
+					'eMsg' => 'Unbekannte Dateianhänge:<strong><br>* '.implode('<br>* ', $tmp_attach ).'</strong>'
 				];
 				$this->print_json_result();
+				return;
 			}
+			//---------------------------------
+			//check legislatur
+			if ($p->legislatur !== $vali->getFiltered('period') && abs($p->legislatur - $vali->getFiltered('period')) > 1 && checkUserPermission('legislatur_all')){
+				$this->json_result = [
+					'success' => false,
+					'eMsg' => 'Du bist nicht berechtigt, die Legislaturnummer um mehr als 1 zu ändern.'
+				];
+				$this->print_json_result();
+				return;
+			}
+			$p->legislatur = $vali->getFiltered('period');
+			
+			//---------------------------------
+			//create protocol in wiki
+			$x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
+			prof_flag('write wiki page');
+			$put_res = $x->putPage(self::$protomap[$vali->getFiltered()['committee']][1].':'.$p->name, $p->external);
+			prof_flag('wiki page written');
+			if ($put_res == false){
+				$this->json_result = [
+					'success' => false,
+					'eMsg' => 'Fehler beim Veröffentlichen. (Code: '.$x->getStatusCode().')'
+				];
+				error_log('Proto Publish: Could not publish. Wiki respond: '.$x->getStatusCode().' - '.(($x->isError())?$x->getError():''));
+				$this->print_json_result();
+				return;
+			}
+			$is_draft = true;
+			if ($p->agreed_on === NULL){
+				$p->public_url = NULL;
+				$p->draft_url = self::$protomap[$vali->getFiltered()['committee']][1].':'.$p->name;
+			} else {
+				$is_draft = false;
+				$p->public_url = self::$protomap[$vali->getFiltered()['committee']][1].':'.$p->name;
+				$p->draft_url = NULL;
+			}
+			
+			//---------------------------------
+			//create/update protocol in db
+			$this->db->createUpdateProtocol($p);
+			
+			//---------------------------------
+			//create/update resolutions
+			$db_resolutions = $this->db->getResolutionByOnProtocol($p->id, true);
+			//insert new resolutons, modify existing, delete old
+			foreach ($p->resolutions as $reso){
+				$reso['on_protocol'] = $p->id;
+				//update existing resolutions...
+				if (isset($db_resolutions[$reso['r_tag']])){
+					$reso['id'] = $db_resolutions[$reso['r_tag']]['id'];
+					//error if resolution protocol tag was changed
+					if ($db_resolutions[$reso['r_tag']]['p_tag'] !== $reso['p_tag']){
+						$this->json_result = [
+							'success' => false,
+							'eMsg' => 'Protokollbeschlüsse müssen in der Reihenfolge bleiben, in der diese initial erstellt wurden.'
+						];
+						error_log('Proto Publish: User "'.$this->auth->getUsername()." tied to change protocol resolition {$reso['r_tag']}");
+						$this->print_json_result();
+						return;
+					} else {
+						//update resolution
+						$this->db->updateResolution($reso);
+					}
+					unset($db_resolutions[$reso['r_tag']]);
+				} else { //create resolution
+					$this->db->createResolution($reso);
+				}
+			}
+			//delete others
+			foreach ($db_resolutions as $reso){
+				if ($reso['p_tag'] !== NULL && $reso['accepts_pid'] != null){
+					$this->json_result = [
+						'success' => false,
+						'eMsg' => 'Verlinkende Protokollbeschlüsse können nicht gelöscht werden.'
+					];
+					error_log('Proto Publish: User "'.$this->auth->getUsername()." tied to delete protocol resolition {$reso['r_tag']}");
+					$this->print_json_result();
+					return;
+				} else {
+					$this->db->deleteResolutionById($reso['id']);
+				}
+			}
+			//---------------------------------
+			//create/update/delete todo|fixme|deleteme
+			$db_todo = $this->db->getTodosByProtocol($p->id, true);
+			foreach($p->todos as $proto_todo)
+			{
+				$proto_todo['on_protocol'] = $p->id;
+				//create missing todo
+				if (!isset($db_todo[$proto_todo['hash']])){
+					$this->db->createTodo($proto_todo);
+				} else {
+					//ignore existing
+					unset($db_todo[$proto_todo['hash']]);
+				}
+			}
+			//delete only not 'done' todos
+			$del_ids = [];
+			foreach($db_todo as $todo)
+			{
+				if ($todo['done'] == 0){
+					$del_ids[] = $todo['id'];
+				}
+			}
+			if (count($del_ids) > 0){
+				$this->db->deleteTodoById($del_ids);
+			}
+			//---------------------------------
+			//test if attachements need to be removed
+			$put_url = ($is_draft == true)?$p->draft_url : $p->public_url;
+			//check existing attachements
+			$current_attachements = $x->listAttachements($put_url);
+			if ($current_attachements == false) $current_attachements = [];
+			//copy missing attachements
+			foreach($copy_attachements as $att){
+				$tmp = explode(':', $att);
+				$name = end($tmp);
+				$exists = array_search($put_url.':'.$name, $current_attachements);
+				if ($exists !== false){
+					unset($current_attachements[$exists]);
+					continue;
+				}
+				$data = $x->getAttachement($att);
+				if ($data) {
+					$x->putAttachement($put_url.':'.$name, $data, ['ow' => true]);
+				} else {
+					error_log("Couldn't fetch attachement: $att");
+				}
+			}
+			unset($tmp);
+			//remove not needed attachements
+			foreach($current_attachements as $del_att){
+				$x->deleteAttachement($del_att);
+			}
+			
+			http_response_code (200);
+			$this->json_result = [
+				'success' => true,
+				'msg' => 'Protokoll erfolgreich erstellt',
+				'timing' => prof_print(false)['sum']
+			];
+			$this->print_json_result();
 		}
 	}
-	
-	
 }
