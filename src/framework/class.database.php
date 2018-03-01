@@ -367,10 +367,10 @@ class Database
 	 * @return array protocol list by protocol name
 	 */
 	public function getProtocols( $committee , $draftOnly = false , $publicOnly = false ){
-		$a = ($draftOnly)? 'AND P.draft_url IS NULL' : '';
-		$a = ($publicOnly)? 'AND P.public_url IS NULL' : '';
+		$a = ($draftOnly)? ' AND P.draft_url IS NOT NULL' : '';
+		$a .= ($publicOnly)? ' AND P.public_url IS NOT NULL' : '';
 		//TODO optional join and count todos and resolutions
-		$sql = "SELECT P.*, G.id as gid, G.name as gname FROM `".TABLE_PREFIX."protocol` P, `".TABLE_PREFIX."gremium` G WHERE P.gremium = G.id AND G.name = ? $a;";
+		$sql = "SELECT P.*, G.id as gid, G.name as gname FROM `".TABLE_PREFIX."protocol` P, `".TABLE_PREFIX."gremium` G WHERE P.gremium = G.id AND G.name = ?$a;";
 		$result = $this->getResultSet($sql, 's', $committee);
 		
 		$r = [];
