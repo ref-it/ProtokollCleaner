@@ -331,7 +331,7 @@ class Database
 	 * returns all settings stored in settings table
 	 * @return array settingsarray format: [settingskey] => value 
 	 */
-	function getSettings(){
+	public function getSettings(){
 		$sql = "SELECT * FROM `".TABLE_PREFIX."settings`;";
 		$result = $this->getResultSet($sql);
 		$return = array();
@@ -347,7 +347,7 @@ class Database
 	 * @param string|number $value for empty value set '' -> null will be ignored
 	 * @return affected rows
 	 */
-	function setSettings( $key, $value ){
+	public function setSettings( $key, $value ){
 		if ($value === null || !is_string($key) || trim($key) == '' ) {
 			return 0;
 		}
@@ -361,15 +361,16 @@ class Database
 	// --------- GET FUCNTIONS --------------------------------------
 	/**
 	 * return protocol list
-	 * @param $draftOnly only get protocols with draft status
-	 * @param $publicOnly only get protocols with public status (overwrites $draftOnly)
+	 * @param string $committee get protocols of choosen committee
+	 * @param boolean $draftOnly only get protocols with draft status
+	 * @param boolean $publicOnly only get protocols with public status (overwrites $draftOnly)
 	 * @return array protocol list by protocol name
 	 */
-	function getProtocols( $committee , $draftOnly = false , $publicOnly = false ){
+	public function getProtocols( $committee , $draftOnly = false , $publicOnly = false ){
 		$a = ($draftOnly)? 'AND P.draft_url IS NULL' : '';
 		$a = ($publicOnly)? 'AND P.public_url IS NULL' : '';
 		//TODO optional join and count todos and resolutions
-		$sql = "SELECT * FROM `".TABLE_PREFIX."protocol` P, `".TABLE_PREFIX."gremium` G WHERE P.gremium = G.id AND G.name = ? $a;";
+		$sql = "SELECT P.*, G.id as gid, G.name as gname FROM `".TABLE_PREFIX."protocol` P, `".TABLE_PREFIX."gremium` G WHERE P.gremium = G.id AND G.name = ? $a;";
 		$result = $this->getResultSet($sql, 's', $committee);
 		
 		$r = [];
@@ -385,11 +386,15 @@ class Database
 	 * @param string $committee
 	 * @param string $protocolName
 	 * @return NULL|array
+	 * @throws Exception
 	 */
-	function getResolutionByPTag( $committee, $protocolName ){
+	public function getResolutionByPTag( $committee, $protocolName ){
 		if (!is_string($committee) || $committee === ''
 			|| !is_string($protocolName) || $protocolName === '' ) {
-			throw new Exception('Wrong parameter in Database function. Require two nonempty strings.');
+			$emsg = 'Wrong parameter in Database function ('.__FUNCTION__.'). ';
+			$emsg.= 'Require two nonempty strings.';
+			error_log( $emsg );
+			throw new Exception($emsg);
 			return NULL;
 		}
 		$tag = $committee.':'.$protocolName;
@@ -402,10 +407,325 @@ class Database
 		return $r;
 	}
 	
+	/**
+	 * return protocol resolutions by protocol id
+	 * used to check if protocol was accepted
+	 * @param integer $pid protocol id
+	 * @param boolean $link_acccepting_protocols
+	 * @return array
+	 * @throws Exception
+	 */
+	public function getResolutionByOnProtocol( $pid , $link_acccepting_protocols = false){
+		if (intval($pid).'' !== ''.$pid || $pid < 1) {
+			$emsg = 'Wrong parameter in Database function ('.__FUNCTION__.'). ';
+			$emsg.= 'Require int value.';
+			error_log( $emsg );
+			throw new Exception($emsg);
+			return NULL;
+		}
+		$sql = "SELECT R.*, P.id as 'accepts_pid' FROM `".TABLE_PREFIX."resolution` R".
+		(($link_acccepting_protocols)? ' LEFT JOIN `'.TABLE_PREFIX.'protocol` P ON P.agreed = R.id':'')
+		." WHERE R.on_protocol = ?;";
+		$result = $this->getResultSet($sql, 'i', $pid);
+		$r = [];
+		foreach ($result as $res){
+			$r[$res['r_tag']] = $res;
+		}
+		return $r;
+	}
+	
+	/**
+	 * return commitee array if exists
+	 * @param string $committeeName committee (gremium) name
+	 * @return array commitee element
+	 */
+	public function getCommitteebyName( $committeeName ){
+		$sql = "SELECT * FROM `".TABLE_PREFIX."gremium` G WHERE G.name = ?;";
+		$result = $this->getResultSet($sql, 's', $committeeName);
+		
+		$g = false;
+		foreach ($result as $grm){
+			$g = $grm;
+		}
+		return $g;
+	}
+	
+	/**
+	 * return commitee array
+	 * if committee does not exist create it
+	 * @param string $committeeName committee (gremium) name
+	 * @return array|false commitee element
+	 */
+	public function getCreateCommitteebyName( $committeeName ){
+		$g = $this->getCommitteebyName($committeeName);
+		if ($g) {
+			return $g;
+		} else {
+			return $this->createCommitteebyName($committeeName);
+		}
+	}
+	
+	/**
+	 * return todo array
+	 * @param int $pid protocol id
+	 * @param boolean $hash_as_key use todohash as hey in return array
+	 * @return array todo elements
+	 */
+	public function getTodosByProtocol( $pid , $hash_as_key = false ){
+		$sql = "SELECT * FROM `".TABLE_PREFIX."todos` T WHERE T.on_protocol = ? ORDER BY T.line;";
+		$result = $this->getResultSet($sql, 'i', $pid);
+		if ($this->isError()) return false;
+		$r = [];
+		if ($hash_as_key){
+			foreach ($result as $res){
+				$r[$res['hash']] = $res;
+			}
+		} else {
+			foreach ($result as $res){
+				$r[] = $res;
+			}
+		}
+		return $r;
+	}
+	
+	// --------- DELETE FUCNTIONS -----------------------------------------
+	
+	/**
+	 * delete resolution by id
+	 * @param integer $id
+	 * @return integer affected rows
+	 */
+	function deleteResolutionById($id){
+		$sql = "DELETE FROM `".TABLE_PREFIX."resolution` WHERE `id` = ?;";
+		$this->protectedInsert($sql, 'i', [$id]);
+		$result = $this->affectedRows();
+		return ($result > 0)? $result : 0;
+	}
+	
+	/**
+	 * delete resolution by id
+	 * @param integer|array $id delete one or multiple Todo
+	 * @return integer affected rows
+	 * @throws Exception
+	 */
+	function deleteTodoById($ids){
+		if (is_integer($ids)){
+			$ids = [$ids];
+		} else if (!is_array($ids)){
+			$emsg = 'Wrong parameter in Database function ('.__FUNCTION__.'). ';
+			$emsg.= 'Require integer or array of integer.';
+			error_log( $emsg );
+			throw new Exception($emsg);
+			return NULL;
+		} else {
+			$ids = array_values($ids);
+		}
+		$error = false;
+		$where = '';
+		$pattern = '';
+		$data = [];
+		foreach ($ids as $pos => $id){
+			if (!is_integer($id)){
+				$error = true;
+				break;
+			}
+			if ($pos != 0) $where.= ' OR `id` = ?';
+			else $where.= '`id` = ?';
+			$pattern.= 'i';
+		}		
+		if ($error || count($ids) == 0){
+			$emsg = 'Wrong parameter in Database function ('.__FUNCTION__.'). ';
+			$emsg.= 'Require integer or array of integer.';
+			error_log( $emsg );
+			throw new Exception($emsg);
+			return NULL;
+		}
+		$sql = "DELETE FROM `".TABLE_PREFIX."todos` WHERE $where;";
+		$this->protectedInsert($sql, $pattern, $ids);
+		$result = $this->affectedRows();
+		return ($result > 0)? $result : 0;
+	}
+	
 	// --------- CREATE FUCNTIONS -----------------------------------------
 	
+	/**
+	 * return create committe in database and return commitee array
+	 * @param string $committeeName committee (gremium) name
+	 * @return array|false commitee element
+	 */
+	public function createCommitteeByName( $committeeName ){
+		$sql = "INSERT INTO `".TABLE_PREFIX."gremium` (`name`) VALUES (?);";
+		$this->protectedInsert($sql, 's', $committeeName);
+		if ($this->isError()){
+			return false;
+		} else {
+			return [
+				'name' => $committeeName,
+				'id' => $this->lastInsertId()
+			];
+		}
+	}
+	
+	/**
+	 * update or create protocol data
+	 * @param Protocol $p changes object (set id, update urls)
+	 * @return boolean
+	 */
+	public function createUpdateProtocol($p){
+		$sql = ''; 
+		$pattern = 'sssiiiss';
+		$data = [
+			$p->url,
+			$p->name,
+			$p->date->format('Y-m-d'),
+			$p->agreed_on,
+			$p->committee_id,
+			$p->legislatur,
+			$p->draft_url,
+			$p->public_url,
+		];
+		if ($p->id != NULL){
+			$pattern.='i';
+			$data[] = $p->id;
+			$sql = "UPDATE `".TABLE_PREFIX."protocol` 
+				SET `url` = ?,
+					`name` = ?,
+					`date` = ?,
+					`agreed` = ?,
+					`gremium` = ?, 
+					`legislatur` = ?, 
+					`draft_url` = ?, 
+					`public_url` = ?
+				WHERE `id` = ?;";
+		} else {
+			$sql = "INSERT INTO `".TABLE_PREFIX."protocol`
+			(	`url`, 
+				`name`, 
+				`date`, 
+				`agreed`, 
+				`gremium`, 
+				`legislatur`, 
+				`draft_url`, 
+				`public_url`)
+			VALUES(?,?,?,?,?,?,?,?) ";
+		}
+		$this->protectedInsert($sql, $pattern, $data);
+		$result = $this->affectedRows();
+		if ($this->affectedRows() > 0){
+			if ($p->id == NULL){
+				$p->id = $this->lastInsertId();
+			}
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * create resolution
+	 * @param array $r resolution element array
+	 * @return boolean|new id
+	 */
+	public function createResolution($r){
+		$pattern = 'isssssi';
+		$data = [
+			$r['on_protocol'],
+			$r['type_short'],
+			$r['type_long'],
+			$r['text'],
+			$r['p_tag'],
+			$r['r_tag'],
+			$r['intern']
+		];
+		$sql = "INSERT INTO `".TABLE_PREFIX."resolution`
+			(	`on_protocol`, 
+				`type_short`, 
+				`type_long`, 
+				`text`, 
+				`p_tag`, 
+				`r_tag`, 
+				`intern`)
+			VALUES(?,?,?,?,?,?,?) ";
+		$this->protectedInsert($sql, $pattern, $data);
+		$result = $this->affectedRows();
+		if ($this->affectedRows() > 0){
+			return $this->lastInsertId();
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * create todo entry
+	 * @param array $t todo element array
+	 * @return boolean|new id
+	 */
+	public function createTodo($t){
+		$pattern = 'isissisi';
+		$data = [
+			$t['on_protocol'],
+			$t['user'],
+			$t['done'],
+			$t['text'],
+			$t['type'],
+			$t['line'],
+			$t['hash'],
+			$t['intern']
+		];
+		$sql = "INSERT INTO `".TABLE_PREFIX."todos`
+			(	`on_protocol`,
+				`user`,
+				`done`,
+				`text`,
+				`type`,
+				`line`,
+				`hash`,
+				`intern`)
+			VALUES(?,?,?,?,?,?,?,?) ";
+		$this->protectedInsert($sql, $pattern, $data);
+		$result = $this->affectedRows();
+		if ($this->affectedRows() > 0){
+			return $this->lastInsertId();
+		} else {
+			return false;
+		}
+	}
 	
 	// --------- update FUCNTIONS ------------------
+	/**
+	 * update resolution
+	 * @param array $r resolution element array
+	 * @return boolean
+	 */
+	public function updateResolution($r){
+		$pattern = 'isssssii';
+		$data = [
+			$r['on_protocol'],
+			$r['type_short'],
+			$r['type_long'],
+			$r['text'],
+			$r['p_tag'],
+			$r['r_tag'],
+			$r['intern'],
+			$r['id']
+		];
+		$sql = "UPDATE `".TABLE_PREFIX."resolution`
+			SET `on_protocol` = ?,
+				`type_short` = ?,
+				`type_long` = ?,
+				`text` = ?,
+				`p_tag` = ?,
+				`r_tag` = ?,
+				`intern` = ?
+			WHERE `id` = ?;";
+		$this->protectedInsert($sql, $pattern, $data);
+		$result = $this->affectedRows();
+		if ($this->affectedRows() > 0){
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 }
 ?>
