@@ -154,6 +154,7 @@ class Protocol
 		$this->text = $text;
 		$this->text_a = $output = preg_split( "/(\r\n|\n|\r)/", $text );
 		
+		$this->id = NULL;
 		$this->agreed_on = NULL;
 		$this->tags = [];
 		$this->external = '';

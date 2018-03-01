@@ -223,6 +223,8 @@ class protocolHelper extends protocolOut
 		$this->isLineError = false;	// found parsing error
 		$lastTagClosed = true; 	// prevent duplicate closing tags and closing internal part before opening
 		$writeUserText = 1;		// used to detect protocol head
+		$alc = 0;			//additional line counter remember if script adds
+		$rlc = 0;			//removed line counter
 		
 		//init preg_match results
 		$pregFind = ['todo' => [], 'resolution' => [], 'fixme' => [], 'deleteme' => []];	// contains preg matches (todos, fixmes, resolutions)
@@ -236,11 +238,19 @@ class protocolHelper extends protocolOut
 			//detect protocol head to insert draft state + publishung user
 			if ($writeUserText == 3) {
 				if (!$nopreview){
-					if ($addDraftText) $p->preview .= self::generateDiffCopiedChangedLine('====== ENTWURF - PROTOKOLL ======');
+					if ($addDraftText){
+						$p->preview .= self::generateDiffCopiedChangedLine('====== ENTWURF - PROTOKOLL ======');
+						$alc++;
+					}
 					$p->preview .= self::generateDiffCopiedChangedLine('====== GENERIERT mit '.BASE_TITLE.' von ('.$publising_user.') ======'."\n");
+					$alc++;
 				} else {
-					if ($addDraftText) $p->external .= '====== ENTWURF - PROTOKOLL ======'."\n";
+					if ($addDraftText){
+						$p->external .= '====== ENTWURF - PROTOKOLL ======'."\n";
+						$alc++;
+					}			
 					$p->external .= '====== GENERIERT mit '.BASE_TITLE.' von ('.$publising_user.') ======'."\n";
+					$alc++;
 				}
 				$addDraftText = false;
 				$writeUserText = 0;
@@ -316,15 +326,19 @@ class protocolHelper extends protocolOut
 			}
 			if ($isInternal || $changed){ // mark changes on preview
 				if (!$nopreview) $p->preview .= self::generateDiffRemovedLine($line);
+				$rlc++;
 			} else { // only copy public lines
 				if (!$nopreview) $p->preview .= self::generateDiffCopiedLine($line);
 				else $p->external .= "$line\n";
 			}
+			//remember line number: original protocol; preview; export
+			//used in next two for loops
+			$linekey = $linenumber.':'.($linenumber + $alc +1).':'.($linenumber + $alc +1 -$rlc).':';
 			//detect fixme, todo, resolutions
 			//maybe run this on whole text globally
 			foreach(self::$regexFinder['no_multimatch'] as $key => $pattern){
 				if (preg_match($pattern, $line)){
-					$pregFind[$key][($isInternal)?'intern':'public'][] = trim(trim(trim($line), '*'));
+					$pregFind[$key][($isInternal)?'intern':'public'][$linekey.'0'] = trim(trim(trim($line), '*'));
 				}
 			}
 			//detect fixme, todo, resolutions
@@ -332,7 +346,7 @@ class protocolHelper extends protocolOut
 			foreach(self::$regexFinder['multimatch'] as $key => $pattern){
 				$tmp_matches = preg_match_all($pattern, $line);
 				if ($tmp_matches){
-					$pregFind[$key][($isInternal)?'intern':'public'][] = [trim(trim(trim($line), '*')), $tmp_matches];
+					$pregFind[$key][($isInternal)?'intern':'public'][$linekey.'1'] = [trim(trim(trim($line), '*')), $tmp_matches];
 				}
 			}
 		}
@@ -366,7 +380,7 @@ class protocolHelper extends protocolOut
 		
 		//add protocol numnber (sitzungnummer)
 		if (isset($pregFind['sitzung'])){
-			$p->protocol_number = intval(preg_replace('/[^\d]/', '', $pregFind['sitzung']['public'][0]));
+			$p->protocol_number = intval(preg_replace('/[^\d]/', '', array_values($pregFind['sitzung']['public'])[0]));
 		} else {
 			$p->protocol_number = -1;
 			$p->parse_errors['f'][] = "Sitzungsnummer konnte nicht erkannt werden.";

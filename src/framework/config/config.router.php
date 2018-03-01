@@ -83,7 +83,7 @@ $permission_map = [
 	'protopublish' 	=> 'ref-it,stura,konsul,admin',
 	'stura' 		=> 'stura',
 	'ref-it' 		=> 'ref-it',
-	'legislatur_all' => 'ref-it,konsul,admin'
+	'legislatur_all' => 'ref-it,konsul,admin'	//allow all legislatur numbers on protocols (not oly current +-1)
 ];
 
 ?>

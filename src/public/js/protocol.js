@@ -16,13 +16,33 @@
 	});
 	
 	$(document).ready(function(){
-		$('.protolist .proto button').click(function(e){
+		//protocol list: Edit button
+		$('.protolist .proto button').on('click',function(e){
 			$e = $(this);
 			var proto = $e.parent().prev().text();
 			var perm = 'stura';
 			window.location.href = '/protoedit?committee='+perm+'&proto='+proto;
 		});
-		
+		//protocol list: Edit button: middle mouse button -> new tab
+		$('.protolist .proto button').on('mousedown', function(ev){
+			switch(ev.which)
+		    {
+		    	case 1: break; //left
+		        case 2: //middle
+		        	$e = $(this);
+					var proto = $e.parent().prev().text();
+					var perm = 'stura';
+					//open in new tab
+		        	var win = window.open('/protoedit?committee='+perm+'&proto='+proto, '_blank');
+					win.focus();
+		        	return true;// to allow the browser to know that we handled it.
+		        break;
+		        case 3: break; //right
+		        break;
+		    }
+		    return false;
+		});
+		//protocol 
 		$('.protostatus .legislatur button.add').click(function(e){
 			$e = $(this);
 			var proto_nr = parseInt($e.prev().text());
