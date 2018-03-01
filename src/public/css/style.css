@@ -825,3 +825,51 @@ div.radiogroup.radiotoggle2 input + label + input:checked + label + div{
     transform: rotate(359deg);
   }
 }
+/* ===== CSS TOOLTIP ===== */
+.css-tooltip {
+	position: relative;
+	border-width: 1px;
+	border-style: solid;
+	border-radius: 50%;
+}
+.css-tooltip:focus,
+.css-tooltip:active {
+	color: white;
+	background-color: #007bff;
+}
+.css-tooltip .tooltiptext {
+    visibility: hidden;
+	display: none;
+    background-color: #000;
+    color: #fff;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+	width: 250px;
+	top: 1.5em;
+	right: -50px;
+	word-wrap: break-word;
+	height: auto;
+	text-align: left;
+	white-space: initial;
+	padding: 5px;
+}
+.css-tooltip .tooltiptext::before{
+	content: '';
+	display: block;
+	position: absolute;
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 0 12px 10px 12px;
+	border-color: transparent transparent #000 transparent;
+	top: -0.5em;
+	right: 47px;
+}
+.css-tooltip:active .tooltiptext,
+.css-tooltip:focus .tooltiptext,
+.css-tooltip:hover .tooltiptext{
+    visibility: visible;
+	display: block;
+}

@@ -128,7 +128,9 @@ class protocolOut
 			(($p->id == NULL)? 'Nicht öffentlich': 
 			(($p->draft_url!=NULL)?'Entwurf':
 			(($p->public_url!=NULL)?'Veröffentlicht':'Unbekannt'))).'</span></span>';
-		echo '<span class="legislatur"><span>Legislatur:</span><span><button type="button" class="btn btn-outline-primary sub">-</button><span>'.$p->legislatur.'</span><button type="button" class="add btn btn-outline-primary">+</button></span></span>';
+		echo '<span class="legislatur"><span>Legislatur:</span><span>'.
+			 '<div class="fa fa-info css-tooltip mr-1 btn btn-outline-primary" tabindex="0"><span class="tooltiptext">Sollte dieser Wert nicht stimmen, informiert bitte den Konsul, oder Referat-IT um diesen dauerhaft zu aktualisieren.</span></div>'
+			.'<button type="button" class="btn btn-outline-primary sub">-</button><span>'.$p->legislatur.'</span><button type="button" class="add btn btn-outline-primary">+</button></span></span>';
 		echo '<span class="sitzung"><span>Sitzung:</span><span>'.$p->protocol_number.'</span></span>';
 		echo '<span class="resolutions"><span>Angenommene Beschlüsse:</span><span>'.count($p->resolutions).'</span></span>';
 		
@@ -262,19 +264,19 @@ class protocolOut
     	$opened = false;
     	if (is_array($p->attachements))
     		foreach($p->attachements as $pos => $attach){
-    		if (!$opened){
-    			echo '<div class="attachlist"><h3>Anhänge</h3>';
-    			echo '<p><i>Alle hier angehakten Dateien werden automatisch mit veröffentlicht.</i></p>';
-    			echo '<div class="attachementlist alert alert-info">';
-    			$opened = true;
-    		}
-    		echo '<div class="line"><input type="checkbox" value="1" id="attach_check_'.$pos.'" checked>';
-    		$split = explode(':', $attach);
-    		echo '<label class="resolution noselect" for="attach_check_'.$pos.'"><span>'.end($split).'</span>';
-    		echo '<a href="'.WIKI_URL.'/'.str_replace(':', '/', $attach).'" target="_blank">';
-    		echo 'Öffnen';
-    		echo '</a></label></div>';
-    	}
+	    		if (!$opened){
+	    			echo '<div class="attachlist"><h3>Anhänge</h3>';
+	    			echo '<p><i>Alle hier angehakten Dateien werden automatisch mit veröffentlicht.</i></p>';
+	    			echo '<div class="attachementlist alert alert-info">';
+	    			$opened = true;
+	    		}
+	    		echo '<div class="line"><input type="checkbox" value="1" id="attach_check_'.$pos.'" checked>';
+	    		$split = explode(':', $attach);
+	    		echo '<label class="resolution noselect" for="attach_check_'.$pos.'"><span>'.end($split).'</span>';
+	    		echo '<a href="'.WIKI_URL.'/'.str_replace(':', '/', $attach).'" target="_blank">';
+	    		echo 'Öffnen';
+	    		echo '</a></label></div>';
+	    	}
     	if ($opened) {
     		echo '</div></div>';
     	}

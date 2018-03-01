@@ -180,6 +180,16 @@
 .protostatus .general > span > span:nth-child(2){
 	float: right;
 }
+.protostatus .legislatur div.css-tooltip {
+	display: inline-block;
+	border-radius: 50%;
+	width: 20px;
+	margin: 0 5px 0 0;
+	height: 20px;
+	line-height: 18px;
+	padding: 0;
+	position: relative;
+}
 .protostatus .legislatur button {
 	display: inline-block;
 	width: 40px;
