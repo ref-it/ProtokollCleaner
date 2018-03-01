@@ -2,7 +2,7 @@
 	display: block;
 	padding: 0 5px 0 15px;
 	width: 100%; 
-	max-width: 500px;
+	max-width: 650px;
 	position: relative;
 	line-height: 2.8em;
 	box-sizing: border-box;
@@ -17,7 +17,7 @@
 	display: inline-block;
 	position: relative;
 	float: right;
-	width: 272px;
+	width: 360px;
 	right: 0;
 	background-color: white;
 	padding-left: 5px;
@@ -38,8 +38,11 @@
 }
 .protolist .proto > div > span {
 	display: inline-block;
-	width: 72px;
+	min-width: 72px;
 	text-align: center;
+}
+.protolist .proto > div > button{
+	min-width: 132px;
 }
 .protolist .proto > div > span > a {
 	display: inline-block;

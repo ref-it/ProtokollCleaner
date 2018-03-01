@@ -255,13 +255,13 @@ class wikiClient extends xrpcClient
 	
 	/**
 	 * get dokuWiki putAttachements
-	 * @return string
-	 */
-	/**
+	 * attr
+	 * 	['key' => 'value']
 	 * 
 	 * @param string $id file id
 	 * @param string $base64 file data base64 encoded
 	 * @param string $attr
+	 * @return string
 	 */
 	public function putAttachement($id, $base64, $attr = NULL){
 		$this->setMethod('wiki.putAttachment');
@@ -336,12 +336,14 @@ class wikiClient extends xrpcClient
 	// protocol helper Functions
 	//==================================================================================
 
+	private static $protomap = PROTOMAP;
+	
 	/**
 	 * get docuWiki Version
 	 * @return array
 	 */
 	public function getSturaProtokolls(){
-		return $this->getPagelist('protokoll:stura', ['depth' => 3]);
+		return $this->getPagelist(self::$protomap['stura'][1], ['depth' => substr_count(self::$protomap['stura'][1], ':') + 2]);
 	}
 	
 	/**
@@ -349,7 +351,7 @@ class wikiClient extends xrpcClient
 	 * @return array
 	 */
 	public function getSturaInternProtokolls(){
-		return $this->getPagelist('protokoll:stura:intern:', ['depth' => 4]);
+		return $this->getPagelist(self::$protomap['stura'][0], ['depth' => substr_count(self::$protomap['stura'][0], ':') + 2]);
 	}
 }
 

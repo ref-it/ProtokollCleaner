@@ -60,12 +60,13 @@ class DevController extends MotherController
 		); 
 		echo '</pre>';
 		echo '<pre>'; var_dump(
-		
 			$x->listAttachements('spielwiese:test:utf8test')
-		
-		
-		
 		); echo '</pre>';
+		
+		echo '<pre>'; var_dump(
+			$x->listAttachements('spielwiese:test:utf8testdsd')
+		); echo '</pre>';
+		
 		
 		$this->t->printPageFooter();
 	}

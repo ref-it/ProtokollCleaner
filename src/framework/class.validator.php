@@ -112,7 +112,7 @@ class Validator {
 	{
 		if ($key === NULL)
 			return $this->filtered;
-		else 
+		else
 			return $this->filtered[$key];
 	}
 

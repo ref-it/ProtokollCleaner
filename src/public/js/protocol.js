@@ -34,7 +34,6 @@
 					var perm = 'stura';
 					//open in new tab
 		        	var win = window.open('/protoedit?committee='+perm+'&proto='+proto, '_blank');
-					win.focus();
 		        	return true;// to allow the browser to know that we handled it.
 		        break;
 		        case 3: break; //right

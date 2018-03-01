@@ -302,7 +302,7 @@ class xrpcClient extends hServerClient
 			//self::setError('Error on Dav Folder Info');
 		}
 		$content = $this->response->getBody()->getContents();
-		
+
 		if (DEBUG >= 3){
 			echo '<pre>'; var_dump(htmlspecialchars($content)); echo '</pre>';
 		}
