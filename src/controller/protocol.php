@@ -106,34 +106,73 @@ class ProtocolController extends MotherController {
 		$perm = 'stura';
 		
 		$x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
+		prof_flag('wiki request');
 		$intern = $x->getSturaInternProtokolls();
-		arsort($intern);
-		$extern = $x->getSturaProtokolls();
+		prof_flag('wiki request end');
 		$drafts = $this->db->getProtocols($perm, true);
+		prof_flag('wiki request');
+		$extern = $x->getSturaProtokolls();
+		prof_flag('wiki request end');
 		
+		//filter protocols that are published but dont exist intern anymore
+		$intern_and_extern = [];
+		$intern_names = [];
+		$extern_names = [];
+		$name = '';
+		$i_path_lng = strlen(self::$protomap[$perm][0]) + 1;
+		$e_path_lng = strlen(self::$protomap[$perm][1]) + 1;
+		foreach ($intern as $k => $v){
+			$name = substr($v, $i_path_lng);
+			$intern_names[$name] = $k;
+			$intern_and_extern[$name] = $k;
+		}
+		foreach ($extern as $k => $v){
+			$name = substr($v, $e_path_lng);
+			$extern_names[$name] = $k;
+			$intern_and_extern[$name] = $k;
+		}
+		krsort($intern_and_extern);
+		$no_internal = array_diff_key($intern_and_extern, $intern_names);
+
 		$esc_PROTO_IN = str_replace(':', '/', self::$protomap[$perm][0]);
 		$esc_PROTO_OUT = str_replace(':', '/', self::$protomap[$perm][1]);
 		
 		echo "<h3>Stura - Protokolle</h3>";
-		echo "<p><strong>(Gefunden: ".count($intern)." - Veröffentlicht: ".count($extern).((count($drafts)>0)?' - Entwurf: '.count($drafts):'').")</strong></p>";
+		echo "<p><strong>(Gefunden: ".count($intern_and_extern)." - Veröffentlicht: ".count($extern).((count($drafts)>0)?' - Entwurf: '.count($drafts):'').")</strong></p>";
 		
 		echo '<div class="protolist">';
-		foreach ($intern as $i){
-			$p = substr($i, strrpos($i, ':') + 1);
+		
+		$lastYearLine = '';
+		
+		foreach ($intern_and_extern as $p => $v){
 			if (substr($p,0, 2)!='20') continue;
-			$state = (!in_array(self::$protomap[$perm][1].":$p", $extern))? 
-				'private' : 
-				(isset($drafts[$p])? 
-					'draft' : 
-					'public');
-			echo '<div id="proto-'.$p.'" class="proto '.$state.'">'.
-					"<span>$p</span>".
-					"<div>". //button container
-						(($state != 'public')?'<button class="btn" type="button">Veröffentlichen</button>':'<button class="btn compare" type="button">Untersuchen</button>').
-						'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_IN.'/'.$p.'" target="_blank">Intern</a></span>'.
-						(($state == 'draft')?'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_OUT.'/'.$p.'" target="_blank">Entwurf</a></span>':'').
-						(($state == 'public')?'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_OUT.'/'.$p.'" target="_blank">Öffentlich</a></span>':'').
-			'</div></div>';
+			$year = substr($p, 0, 4);
+			
+			if ($lastYearLine != $year){
+				$lastYearLine = $year;
+				echo '<div class="yearline">'.$year.'</div>';
+			}
+			if (!isset($no_internal[$p])){
+				$state = (!in_array(self::$protomap[$perm][1].":$p", $extern))? 
+					'private' : 
+					(isset($drafts[$p])? 
+						'draft' : 
+						'public');
+				echo '<div id="proto-'.$p.'" class="proto '.$state.'">'.
+						"<span>$p</span>".
+						"<div  class='pbc'>". //proto button container
+							(($state != 'public')?'<button class="btn compare" type="button">Veröffentlichen</button>':'<button class="btn compare" type="button">Untersuchen</button>').
+							'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_IN.'/'.$p.'" target="_blank">Intern</a></span>'.
+							(($state == 'draft')?'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_OUT.'/'.$p.'" target="_blank">Entwurf</a></span>':'').
+							(($state == 'public')?'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_OUT.'/'.$p.'" target="_blank">Öffentlich</a></span>':'').
+				'</div></div>';
+			} else {
+				echo '<div id="proto-'.$p.'" class="proto public">'.
+						"<span>$p</span><div class='pbc'>".
+							'<div class="btn placeholder" type="button"></div>'.
+							'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_OUT.'/'.$p.'" target="_blank">Öffentlich</a></span>'.
+				'</div></div>';
+			}
 		}
 		echo '<!div>';
 		$this->t->printPageFooter();

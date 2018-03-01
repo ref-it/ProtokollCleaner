@@ -93,8 +93,8 @@ class protocolHelper extends protocolOut
 	private $isLineError = false;
 	private $lineError = '';
 	
-	private static $tagRegex = '/(({{tag>[a-zA-Z0-9]+(_[a-zA-Z0-9]+)*([ ]*[a-zA-Z0-9]+(_[a-zA-Z0-9]+)*)*( )*}}|(=)+ geschlossener Teil (=)+|(=)+ (ö|Ö)ffentlicher Teil (=)+)+)/i';
-	private static $oldTags = ['/^(=)+ geschlossener Teil (=)+$/i', '/^(=)+ (ö|Ö)ffentlicher Teil (=)+$/i'];
+	private static $tagRegex = '/(({{tag>[a-zA-Z0-9]+(_[a-zA-Z0-9]+)*([ ]*[a-zA-Z0-9]+(_[a-zA-Z0-9]+)*)*( )*}}|=(=)+( )*geschlossener Teil( )*=(=)+|=(=)+( )*(ö|Ö)ffentlicher Teil( )*=(=)+)+)/i';
+	private static $oldTags = ['/^=(=)+( )*geschlossener Teil( )*=(=)+$/i', '/^=(=)+( )*(ö|Ö)ffentlicher Teil( )*=(=)+$/i'];
 	private static $ignoreTags = [];
 	
 	/**

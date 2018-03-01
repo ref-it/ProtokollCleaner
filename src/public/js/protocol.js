@@ -17,14 +17,14 @@
 	
 	$(document).ready(function(){
 		//protocol list: Edit button
-		$('.protolist .proto button').on('click',function(e){
+		$('.protolist .proto button.compare').on('click',function(e){
 			$e = $(this);
 			var proto = $e.parent().prev().text();
 			var perm = 'stura';
 			window.location.href = '/protoedit?committee='+perm+'&proto='+proto;
 		});
 		//protocol list: Edit button: middle mouse button -> new tab
-		$('.protolist .proto button').on('mousedown', function(ev){
+		$('.protolist .proto button.compare').on('mousedown', function(ev){
 			switch(ev.which)
 		    {
 		    	case 1: break; //left

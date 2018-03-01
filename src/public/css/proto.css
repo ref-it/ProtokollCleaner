@@ -1,3 +1,10 @@
+.protolist .yearline {
+	font-size: 1.2em;
+	padding-top: 20px;
+	padding-bottom: 5px;
+	border-bottom: 1px solid gray;
+	max-width: 680px;
+}
 .protolist .proto {
 	display: block;
 	padding: 0 5px 0 15px;
@@ -15,12 +22,17 @@
 }
 .protolist .proto > div {
 	display: inline-block;
-	position: relative;
+	position: absolute;
 	float: right;
 	width: 360px;
 	right: 0;
 	background-color: white;
 	padding-left: 5px;
+}
+@media screen and (max-width: 650px) {
+	.protolist .proto > div {
+		position: relative;
+	}
 }
 .protolist .proto.privat {
 	color: #7e0000;
@@ -43,6 +55,11 @@
 }
 .protolist .proto > div > button{
 	min-width: 132px;
+}
+.protolist .proto > div > div.placeholder{
+	min-width: 136px;
+	display:inline-block;
+	height: 38px;
 }
 .protolist .proto > div > span > a {
 	display: inline-block;
