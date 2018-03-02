@@ -42,7 +42,7 @@ class protocolHelper extends protocolOut
 		'no_multimatch' => [
 			'resolution' => '/^{{template>:vorlagen:stimmen.*(angenommen)(?!.*abgelehnt).*$/i',
 			'sitzung' => '/=(=)+( )*(\d+).?( )*StuRa-Sitzung.*=(=)+/i'
-		]		
+		]
 	];
 	
 	private static $personFinder = '/(\[\[person:(\s)*([a-zA-Z0-9äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]+( [a-zA-Z0-9äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]+)*)(\s)*\]\])/i';
@@ -51,6 +51,7 @@ class protocolHelper extends protocolOut
 		'titel=' => 'Titel', 
 		'j=' => 'Ja',
 		'n=' => 'Nein',
+		'L=' => 'Link',
 		'e=' => 'Enthaltungen',
 		's=' => 'Beschluss',
 	];

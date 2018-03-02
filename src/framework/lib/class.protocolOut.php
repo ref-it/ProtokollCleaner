@@ -246,6 +246,7 @@ class protocolOut
     		if (isset($reso['Nein'])) echo "<span class='no'>Nein: {$reso['Nein']}</span>";
     		if (isset($reso['Enthaltungen'])) echo "<span class='abstention'>Enthaltungen: {$reso['Enthaltungen']}</span>";
     		echo "<span class='result'>Beschluss: {$reso['Beschluss']}</span>";
+    		if (isset($reso['Link'])) echo "<span class='link'>Link: <a href=\"{$reso['Link']}\" target=\"_blank\">{$reso['Link']}</a></span>";
     		if (isset($reso['p_tag'])){
     			if ($reso['p_tag']){
     				echo "<span class='ptag'>Protokoll: {$reso['p_tag']}</span>";
