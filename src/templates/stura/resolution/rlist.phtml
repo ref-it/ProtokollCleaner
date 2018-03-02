@@ -48,9 +48,9 @@ $this->t->appendFloatingLink(WIKI_URL."/".str_replace(':', '/', self::$protomap[
 			}
 			echo '<tr id="reso-'.str_replace('/', '_', $reso['r_tag']).'" class="resolution resotype-'.$reso['type_short'].' resotype-'.$reso['type_long'].'"><th style="width: 90px" scope="row">'.$reso['r_tag'].'</th>';
 			echo "<td>{$reso['type_long']}</td><td>{$reso['Titel']}";
+			echo "<div class=\"d-none\">{$reso['date']} Woche $last_week</div>";
 			echo '<input class="resotoggle" id="reso_toggle_'.$pos.'" type="checkbox" value="1">';
 			echo '<label tabindex="0" class="label resotoggle btn btn-outline-info" for="reso_toggle_'.$pos.'"></label>';
-			echo "<div class=\"d-none\">{$reso['date']} Woche $last_week</div>";
 			echo '<div class="togglebox" tabindex="-1">';
 			if (isset($reso['Ja'])) echo "<span class='yes'>Ja: {$reso['Ja']}</span>";
 			if (isset($reso['Nein'])) echo "<span class='no'>Nein: {$reso['Nein']}</span>";

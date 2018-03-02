@@ -682,6 +682,7 @@ class Validator {
 	 * $param
 	 *  format		2	datetime-format
 	 *  error		2	overwrite error message
+	 *  parse		2	parse date to format after validation
 	 *  
 	 * @param $value
 	 * @param $params
@@ -692,7 +693,7 @@ class Validator {
 		$fmt = (isset($params['format']))? $params['format'] : 'Y-m-d';
 		$d = DateTime::createFromFormat($fmt, $date);
 		if($d && $d->format($fmt) == $date){
-			$this->filtered = $d->format($fmt);
+			$this->filtered = $d->format((isset($params['parse']))?$params['parse']:$fmt);
 		} else {
 			$msg = (isset($params['error']))? $params['error'] : 'date validation failed, format: "'.$fmt.'"';
 			return !$this->setError(true, 200, $msg, 'date validation failed, format: "'.$fmt.'"');

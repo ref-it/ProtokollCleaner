@@ -52,7 +52,7 @@ class ProtocolController extends MotherController {
 		$p->committee_id = $this->db->getCreateCommitteeByName($committee)['id'];
 		$p->name = $protocol_name;
 		$p->url = parent::$protomap[$p->committee][0].':'.$p->name;
-		$p->date = date_create_from_format('Y-m-d', substr($p->name, 0,10));
+		$p->date = date_create_from_format('Y-m-d His', substr($p->name, 0,10).' 000000');
 		
 		$dbprotocols = $this->db->getProtocols($committee);
 		if (array_key_exists($p->name, $dbprotocols)){
@@ -75,7 +75,7 @@ class ProtocolController extends MotherController {
 		if (count($tmp_l) == 0) $tmp_l = $this->db->getCurrentLegislatur();
 		$p->legislatur = intval($tmp_l['number']);
 		
-		$date_legi = date_create_from_format('Y-m-d', $tmp_l['start']);
+		$date_legi = date_create_from_format('Y-m-d His', $tmp_l['start']. ' 000000');
 		$p->legislatur_week = intval(floor($p->date->diff($date_legi)->days/7))+1;
 		
 		return $p;

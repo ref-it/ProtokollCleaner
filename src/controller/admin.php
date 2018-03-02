@@ -31,6 +31,8 @@ class AdminController extends MotherController {
 	 */
 	public function admin(){
 		$this->t->setTitlePrefix('Admin');
+		$this->t->appendCSSLink('admin.css');
+		$this->t->appendJsLink('libs/jquery-dateFormat.min.js');
 		$this->t->appendJsLink('admin.js');
 		$this->t->printPageHeader();
 		$this->includeTemplate(__FUNCTION__);
@@ -138,5 +140,99 @@ class AdminController extends MotherController {
 			}
 		}
 		$this->print_json_result();
+	}
+	
+	
+	public function legislatur(){
+		//calculate accessmap
+		$validator_map = [
+			'create' => [
+				'number' 	=>	[ 'integer', 'min' => 1 		],
+				'start' 	=> [ 'date', 'format' => 'Y/m/d', 'parse' => 'Y-m-d'	],
+				'end' 		=> [ 'date', 'format' => 'Y/m/d', 'parse' => 'Y-m-d'	]
+			], 
+			'remove' => [
+				'pk' => [ 'integer', 'min' => 1	]
+			],
+			'update' => [
+				'pk' 		=> [ 'integer', 'min' => 1			],
+				'value' 	=> [ 'date', 'format' => 'Y/m/d', 'parse' => 'Y-m-d'	],
+				'modify' 	=> [ 'regex',
+					'pattern' => '/^(start|end)$/',
+					'error' => 'Access Denied',
+					'lower'
+				],
+			]
+		];
+		$vali = new Validator();
+		$vali->validatePostGroup($validator_map, 'mfunction', true);
+		if ($vali->getIsError()){
+			if($vali->getLastErrorCode() == 403){
+				$this->json_access_denied();
+			} else if($vali->getLastErrorCode() == 404){
+				$this->json_not_found();
+			} else {
+				http_response_code ($vali->getLastErrorCode());
+				$this->json_result = array('success' => false, 'eMsg' => $vali->getLastErrorMsg());
+				$this->print_json_result();
+			}
+			return;
+		}
+		$mode = array_keys($vali->getFiltered())[0];
+		switch ($mode){
+			case 'remove': {
+				if ($this->db->deleteLegislaturById($vali->getFiltered($mode)['pk'])){
+					$this->json_result = array('success' => true, 'msg' => 'Legislatur erfolgreich gelöscht');
+				} else {
+					$this->json_result = array('success' => false, 'eMsg' => 'Legislatur konnte nicht gelöscht werden.');
+				}
+				$this->print_json_result();
+				return;
+				break;
+			}
+			case 'create': {
+				$tmp = $this->db->getLegislaturByNumber($vali->getFiltered($mode)['number']);
+				if (count($tmp) > 0){
+					$this->json_result = array('success' => false, 'eMsg' => 'Legislatur bereits vorhanden und wurde nicht erstellt.');
+				} else {
+					$f = $vali->getFiltered($mode);
+					$r = $this->db->createLegislatur(['number' => $f['number'], 'start' => $f['start'], 'end' => $f['end']]);
+					if ($r){
+						$this->json_result = array('success' => true, 'msg' => 'Legislatur erfolgreich erstellt');
+					} else {
+						$this->json_result = array('success' => false, 'eMsg' => 'Legislatur konnte nicht erstellt werden.');
+					}
+				}
+				$this->print_json_result();
+				return;
+				break;
+			}
+			case 'update': {
+				$tmp = $this->db->getLegislaturById($vali->getFiltered()[$mode]['pk']);
+				if (count($tmp) == 0){
+					$this->json_result = array('success' => false, 'eMsg' => 'Legislatur existiert nicht.');
+				} else {
+					$f = $vali->getFiltered($mode);
+					if ($tmp[$f['modify']] == $f['value']){
+						$this->json_result = array('success' => true, 'msg' => 'Legislaturdaten haben sich nicht verändert.');
+					} else {
+						$tmp[$f['modify']] = $f['value'];
+						$a = $this->db->updateLegislatur($tmp);
+						if ($a){
+							$this->json_result = array('success' => true, 'msg' => 'Legislatur erfolgreich aktualisiert');
+						} else {
+							$this->json_result = array('success' => false, 'eMsg' => 'Legislatur konnte nicht geändert werden.');
+						}
+					}
+				}
+				$this->print_json_result();
+				return;
+				break;
+			}
+			default: {
+				error_log('Admin Controller: Legislatur: unhandled "mfunction": '.$mode);
+				$this->json_access_denied();
+			}
+		}
 	}
 }

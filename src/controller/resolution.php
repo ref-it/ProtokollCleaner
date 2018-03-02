@@ -65,7 +65,7 @@ class ResolutionController extends MotherController
 		foreach ($resos as $pos => $rawres){
 			$tmp = protocolHelper::parseResolution($rawres['text'], NULL, NULL, $perm);
 			$resos[$pos] = array_merge( $tmp, $resos[$pos]);
-			$resos[$pos]['date_obj'] = date_create_from_format('Y-m-d', $rawres['date'] );
+			$resos[$pos]['date_obj'] = date_create_from_format('Y-m-d His', $rawres['date'].' 000000' );
 		}
 		$this->t->setTitlePrefix('Beschlussliste - '.ucwords( $perm, " \t\r\n\f\v-"));
 		$this->t->appendCssLink('reso.css', 'screen,projection');

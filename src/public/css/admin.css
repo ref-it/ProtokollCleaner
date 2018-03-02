@@ -4,7 +4,7 @@
 	border-radius: 0;
 }
 .admin.mail_settings button,
-.admin.legis_settings button {
+.admin.legis_settings .footerline button {
 	display: inline-block;
 	background-color: #314885;
 	color: #fff;
@@ -20,9 +20,9 @@
 .admin.mail_settings button:hover,
 .admin.mail_settings button:active,
 .admin.mail_settings button:focus,
-.admin.legis_settings button:hover,
-.admin.legis_settings button:active,
-.admin.legis_settings button:focus {
+.admin.legis_settings .footerline button:hover,
+.admin.legis_settings .footerline button:active,
+.admin.legis_settings .footerline button:focus {
 	cursor: pointer;
 	border: 1px solid #314885;
 	background-color: #E5891A;
@@ -37,7 +37,8 @@
 	padding-left: 5px;
 	width: 80%;
 }
-.admin.legis_settings input, .admin.legis_settings textarea {
+.admin.legis_settings .footerline input,
+.admin.legis_settings textarea {
 	width: 28%;
 }
 /* ----------- */
@@ -77,6 +78,21 @@
 	width: 100%;
 	width: calc(100% - 15px);
 	max-width: 250px;
+}
+/* ======================== */
+.admin.legis_settings tr td button.legremove {
+    height: 25px;
+    line-height: 25px;
+    padding: 0 13px;
+    margin-left: 20px;
+	opacity: 0;
+	transition: color .15s ease-in-out,opacity .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+.admin.legis_settings tr td:hover button.legremove,
+.admin.legis_settings tr td button.legremove:hover,
+.admin.legis_settings tr td button.legremove:active,
+.admin.legis_settings tr td button.legremove:focus {
+	opacity: 1;
 }
 /* RADIO TOGGLES ================================================*/
 div.radiogroup {

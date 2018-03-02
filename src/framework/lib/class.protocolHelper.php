@@ -183,10 +183,10 @@ class protocolHelper extends protocolOut
 			//try to parse date
 			if (strlen($tmp) >= 10){
 				$tmp = substr($tmp, 0, 10);
-				$date = date_create_from_format('d-m-Y', $tmp);
+				$date = date_create_from_format('d-m-Y His', $tmp.' 000000');
 			} else if (strlen($tmp) >= 8){
 				$tmp = substr($tmp, 0, 8);
-				$date = date_create_from_format('d-m-y', $tmp);
+				$date = date_create_from_format('d-m-y His', $tmp.' 000000');
 			}			
 			if ($date) {
 				$result['p_tag'] = (isset($p)? $p->committee : $committee).':'.$date->format('Y-m-d');
@@ -216,7 +216,7 @@ class protocolHelper extends protocolOut
 		$count = [];
 		foreach ($p->resolutions as $pos => $reso){
 			$count[$reso['type_short']] = (isset($count[$reso['type_short']])? $count[$reso['type_short']]+1: 1);
-			$p->resolutions[$pos]['r_tag'] = "$legislatur/{$p->date->format('W')}-{$reso['type_short']}".str_pad($count[$reso['type_short']], 2, '0', STR_PAD_LEFT);
+			$p->resolutions[$pos]['r_tag'] = "$legislatur/{$p->legislatur_week}-{$reso['type_short']}".str_pad($count[$reso['type_short']], 2, '0', STR_PAD_LEFT);
 		}
 	}
 	

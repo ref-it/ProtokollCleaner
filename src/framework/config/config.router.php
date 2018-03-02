@@ -22,6 +22,7 @@ $routes = [
 	'POST' => [
 		'admin/savemail'	=> ['admin',		'admin', 		'mail_update_setting'],
 		'admin/testmail'	=> ['admin',		'admin', 		'mail_testmessage'],
+		'admin/legislatur'	=> ['admin',		'admin', 		'legislatur'],
 		'protocol/publish'	=> ['protopublish',	'protocol', 	'p_publish'],
 	]
 ];

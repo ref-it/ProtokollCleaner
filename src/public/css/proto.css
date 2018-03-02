@@ -87,10 +87,14 @@
 	padding-left: 5px;
 }
 .protolist .proto > div > span > a::before {
-	content:'\f06e';
+	content:'\f070';
 	display: inline-block;
 	font-family: FontAwesome;
 	padding-right: 3px;
+}
+.protolist .proto > div > span > a.public::before,
+.protolist .proto > div > span > a.draft::before {
+	content:'\f0ac';
 }
 /* -- diff table -- */
 .difftable {

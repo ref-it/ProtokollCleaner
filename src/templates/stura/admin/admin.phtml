@@ -41,4 +41,27 @@
 		<button type="button" class="submit" title="Einstellungen testen. Dabei wird eine E-Mail versendet.">Einstellungen testen</button>
 	</div>
 </div>
+<div class="full_container legis_settings admin"><h3>Legislaturperioden</h3>
+	<table class="striped">
+		<tr>
+			<th>#</th>
+			<th>Start</th>
+			<th>Endet</th>
+		</tr>
+		<?php 
+			$legis = $this->db->getLegislaturen();
+			foreach ($legis as $key => $line) {
+				echo "<tr data-id=\"{$line['id']}\">".
+						"<td><span class=\"legnumber\">".$line['number']."</span><button class=\"btn btn-outline-danger legremove fa fa-times\"></button></td>".
+						"<td><div class=\"editable legis\" tabindex=\"0\" data-value=\"START\">".date_create_from_format('Y-m-d', $line['start'])->format('d.m.Y')."</div></td>".
+						"<td><div class=\"editable legis\" tabindex=\"0\" data-value=\"END\">".date_create_from_format('Y-m-d', $line['end'])->format('d.m.Y')."</div></td>".
+					'</tr>';
+			}
+		?>
+	</table>
+	<div class="addfooterspace"></div>
+	<div class="footerline">
+		<input type="number" min="1" step="1" max ="1000" name="legislatur_number" placeholder="Legislatur"><input type="date" name="legislatur_start" placeholder="Ab"><input type="date" name="legislatur_end" placeholder="Bis"><button type="button" class="add" id="add_legislatur">+</button>
+	</div>
+</div>
 <div class="clear"></div>

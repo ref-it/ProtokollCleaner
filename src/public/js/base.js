@@ -83,7 +83,7 @@ $.fn.extend({
 				var tempVal = $el.html();
 				if (param.hasOwnProperty('filterBeforeShow')){
 					tempVal = param.filterBeforeShow(tempVal, $el, $edittextbox);
-	          	}
+				}
 				$edittextbox.val(tempVal).insertBefore(elem);
 				var shift_pressed = false;
 				$edittextbox.bind('keyup', function (e) {

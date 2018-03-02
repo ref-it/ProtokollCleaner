@@ -567,8 +567,63 @@ class Database
 		return $return;
 	}
 	
+	/**
+	 * returns current legislatur
+	 * @param int $number
+	 * @return array
+	 */
+	public function getLegislaturByNumber($number){
+		$sql = "SELECT * FROM `".TABLE_PREFIX."legislatur` L WHERE L.number = ?";
+		$result = $this->getResultSet($sql, 'i', [$number]);
+		$return = [];
+		foreach ($result as $line){
+			$return = $line;
+		}
+		return $return;
+	}
+	
+	/**
+	 * returns current legislatur
+	 * @param int $number
+	 * @return array
+	 */
+	public function getLegislaturById($id){
+		$sql = "SELECT * FROM `".TABLE_PREFIX."legislatur` L WHERE L.id = ?";
+		$result = $this->getResultSet($sql, 'i', [$id]);
+		$return = [];
+		foreach ($result as $line){
+			$return = $line;
+		}
+		return $return;
+	}
+	
+	/**
+	 * returns legislaturen
+	 * @return array
+	 */
+	public function getLegislaturen(){
+		$sql = "SELECT * FROM `".TABLE_PREFIX."legislatur` L ORDER BY L.number ASC";
+		$result = $this->getResultSet($sql);
+		$return = [];
+		foreach ($result as $line){
+			$return[] = $line;
+		}
+		return $return;
+	}
 	
 	// --------- DELETE FUCNTIONS -----------------------------------------
+	
+	/**
+	 * delete legislatur by id
+	 * @param integer $id
+	 * @return integer affected rows
+	 */
+	function deleteLegislaturById($id){
+		$sql = "DELETE FROM `".TABLE_PREFIX."legislatur` WHERE `id` = ?;";
+		$this->protectedInsert($sql, 'i', [$id]);
+		$result = $this->affectedRows();
+		return ($result > 0)? $result : 0;
+	}
 	
 	/**
 	 * delete resolution by id
@@ -833,5 +888,31 @@ class Database
 		}
 	}
 	
+	/**
+	 * update legislatur
+	 * @param array $l legislatur element array
+	 * @return boolean
+	 */
+	public function updateLegislatur($l){
+		$pattern = 'issi';
+		$data = [
+			$l['number'],
+			$l['start'],
+			$l['end'],
+			$l['id']
+		];
+		$sql = "UPDATE `".TABLE_PREFIX."legislatur`
+			SET `number` = ?,
+				`start` = ?,
+				`end` = ?
+			WHERE `id` = ?;";
+		$this->protectedInsert($sql, $pattern, $data);
+		$result = $this->affectedRows();
+		if ($this->affectedRows() > 0){
+			return true;
+		} else {
+			return false;
+		}
+	}
 }
 ?>
