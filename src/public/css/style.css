@@ -873,3 +873,99 @@ div.radiogroup.radiotoggle2 input + label + input:checked + label + div{
     visibility: visible;
 	display: block;
 }
+/* -------------------- */
+.floating-links {
+	top: 150px;
+	left: 100%;
+	box-sizing: border-box;
+	color: rgb(51, 51, 51);
+	font-size: 14px;
+	line-height: 20px;
+	width: 275px;
+	position: fixed;
+	z-index: 300;
+	font-size: 14px;
+	line-height: 20px;
+	background-color: #fff;
+	margin: 0;
+	transition: left 0.3s ease;
+}
+.floating-links:hover,
+.floating-links:focus,
+.floating-links:active {
+	left: calc(100% - 250px);
+}
+.floating-links .head-toggle {
+	position: relative;
+	padding: 8px 8px 8px 30px;
+	color: #777;
+	font-weight: bold;
+	font-size: 1.2em;
+	border-bottom: 1px solid #777;
+}
+.floating-links .head-toggle span.toggler {
+	z-index: -1;
+	display: block;
+	padding: 8px 0 70px;
+	position: absolute;
+	text-align: center;
+	width: 50px;
+	top: 0;
+	left: -46px;
+	font-size: 30px;
+	color: #bbb;
+}
+.floating-links .head-toggle span.toggler i.fa {
+	transition: transform 0.3s ease;
+	-moz-transform: rotate(30deg);
+	-webkit-transform: rotate(30deg);
+	-o-transform: rotate(30deg);
+	-ms-transform: rotate(30deg);
+	transform: rotate(30deg);
+}
+.floating-links:hover .head-toggle span.toggler i.fa,
+.floating-links:focus .head-toggle span.toggler i.fa,
+.floating-links:active .head-toggle span.toggler i.fa{
+	-moz-transform: rotate(0);
+	-webkit-transform: rotate(0);
+	-o-transform: rotate(0);
+	-ms-transform: rotate(0);
+	transform: rotate(0);
+}
+.floating-links .link-line {
+	border-bottom-color: rgb(240, 244, 247);
+	border-bottom-style: solid;
+	border-bottom-width: 1px;
+	box-sizing: border-box;
+	display: block;
+	line-height: 20px;
+	position: relative;
+}
+.floating-links .link-line:last-child {
+	border: 0px solid transparent;
+}
+.floating-links .link-line a {
+	background-color: rgba(0, 0, 0, 0);
+	box-sizing: border-box;
+	color: rgb(147, 163, 181);
+	display: block;
+	font-weight: 500;
+	list-style-image: none;
+	list-style-position: outside;
+	list-style-type: none;
+	padding: 10px 15px;
+	position: relative;
+	text-decoration: none;
+	text-decoration-color: rgb(147, 163, 181);
+	text-decoration-line: none;
+	text-decoration-style: solid;
+}
+.floating-links .link-line a:hover,
+.floating-links .link-line a:focus {
+	background-color: #fafcfd;
+	color: #5b9bd1;
+}
+.floating-links .link-line a span.fa {
+    margin-right: 8px;
+    font-size: 14px;
+}

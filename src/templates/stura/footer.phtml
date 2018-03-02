@@ -13,6 +13,19 @@ if (DEBUG>=1){
 	prof_print();
 } ?>
 		</div>
-	</div> 
+	</div>
+	<?php if (count($this->getFloatingLinks())>0) { ?>
+		<div class="floating-links noselect" tabindex="1">
+			<div class="head-toggle"><span class="toggler"><i class="fa fa-anchor fa-fw"></i></span>Links</div>
+		<?php 
+		$l = $this->getFloatingLinks();
+		foreach ($l as $link){
+			echo '<div class="link-line noselect">';
+			echo '<a class="noselect" href="'.$link['link'].'"><span class="fa fa-fw">'.((isset($link['symb']))?$link['symb']:'').'</span><span>'.$link['text'].'</span></a>';
+			echo '</div>';
+		}
+		?>
+		</div>
+	<?php } ?>
 </body>
 </html> 

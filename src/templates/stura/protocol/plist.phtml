@@ -1,21 +1,22 @@
+<h3><?= ucwords( $param['committee'], " \t\r\n\f\v-"); ?> - Protokolle</h3>
+<p><strong>(Gefunden: <?= count($param['int_ext']) ?> - Veröffentlicht: <?= count($param['ext']) .((count($param['drafts'])>0)?' - Entwurf: '.count($param['drafts']):''); ?>)</strong></p>
+
+<div class="protolist">
 <?php
+
 $esc_PROTO_IN = str_replace(':', '/', self::$protomap[$param['committee']][0]);
 $esc_PROTO_OUT = str_replace(':', '/', self::$protomap[$param['committee']][1]);
-
-echo "<h3>Stura - Protokolle</h3>";
-echo "<p><strong>(Gefunden: ".count($param['int_ext'])." - Veröffentlicht: ".count($param['ext']).((count($param['drafts'])>0)?' - Entwurf: '.count($param['drafts']):'').")</strong></p>";
-
-echo '<div class="protolist">';
-
 $lastYearLine = '';
-
+$this->t->appendFloatingLink(WIKI_URL."/$esc_PROTO_IN", "Wiki Intern", '&#xf266;');
+$this->t->appendFloatingLink(WIKI_URL."/$esc_PROTO_OUT", "Wiki Öffentlich", '&#xf266;');
 foreach ($param['int_ext'] as $p => $v){
 	if (substr($p,0, 2)!='20') continue;
 	$year = substr($p, 0, 4);
 		
 	if ($lastYearLine != $year){
 		$lastYearLine = $year;
-		echo '<div class="yearline">'.$year.'</div>';
+		echo '<div class="yearline"><div class="yearline-link" id="year-'.$year.'"></div>'.$year.'</div>';
+		$this->t->appendFloatingLink('#year-'.$year, $year, '&#xf0c1;');
 	}
 	if (!isset($param['no_int'][$p])){
 		$state = (!isset($param['ext'][$p]))?

@@ -4,6 +4,14 @@
 	padding-bottom: 5px;
 	border-bottom: 1px solid gray;
 	max-width: 680px;
+	position: relative;
+}
+.protolist .yearline-link {
+	height: 0;
+	width: 0;
+	visibility: hidden;
+	position: absolute;
+	top: -130px;
 }
 .protolist .proto {
 	display: block;
@@ -32,6 +40,15 @@
 @media screen and (max-width: 650px) {
 	.protolist .proto > div {
 		position: relative;
+	}
+}
+@media screen and (max-width: 450px) {
+	.protolist .proto > div {
+		float:none;
+		width: 98%;
+		margin: 0 auto;
+		lefo:0;
+		right: 0;
 	}
 }
 .protolist .proto.privat {

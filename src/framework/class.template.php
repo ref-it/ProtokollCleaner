@@ -30,12 +30,28 @@ class Template
 	/**
 	 * 
 	 * @var array $scripts
-	 * @var array $css
-	 * @var array $modals
 	 */
 	private $scripts;
+	
+	/**
+	 * 
+	 * @var array $css
+	 */
 	private $css;
+	
+	/**
+	 * 
+	 * @var array $modals
+	 */
 	private $modals;
+	
+	/**
+	 * array of link arrays
+	 * link array
+	 * 	['link' => 'target', 'text' => 'linktext', 'symb' => '(optional) fa - symbol: &#xf0cb;']
+	 * @var array $floating_links
+	 */
+	private $floating_links;
 	
 	/**
 	 * AuthHandler
@@ -94,9 +110,10 @@ class Template
 		$this->auth = $auth;
 		$this->nav = $navigation;
 		$this->path = $path;
-		$this->scripts = array();
-		$this->css = array();
-		$this->modals = array();
+		$this->scripts = [];
+		$this->css = [];
+		$this->modals = [];
+		$this->floating_links = [];
 		$this->title_prefix = '';
 		$this->header_printed = false;
 		$this->logged_in_user = false;
@@ -167,7 +184,7 @@ class Template
 	}
 	
 	/**
-	 * prepend ccs style file
+	 * prepend css style file
 	 * @param string $stylename css style filename in js directory
 	 * @param string $media html media tag if necessary
 	 */
@@ -190,7 +207,27 @@ class Template
 	public function appendModal( $html ){
 		$this->modals[] = $html;
 	}
-
+	
+	/**
+	 * append link to floating box
+	 * @param string $target link target
+	 * @param string $text link text
+	 * @param string|NULL fontAwesome symbol
+	 */
+	public function appendFloatingLink( $target, $text, $symbol = NULL ){
+		$this->floating_links[] = ['link' => $target, 'text' => $text, 'symb' => $symbol];
+	}
+	
+	/**
+	 * prepend link to floating box
+	 * @param string $target link target
+	 * @param string $text link text
+	 * @param string|NULL fontAwesome symbol
+	 */
+	public function prependFloatingLink( $stylename, $media = NULL ){
+		array_unshift ( $this->floating_links, ['link' => $target, 'text' => $text, 'symb' => $symbol]);
+	}
+	
 	/**
 	 * return js scripts html code
 	 * @param boolean $echo if echo == true the function echo the result
@@ -228,6 +265,15 @@ class Template
 		}
 		if ($echo) echo $result;
 		return $result;
+	}
+	
+	/**
+	 * return floatingLink array
+	 * need to be handled in template
+	 * @param boolean $echo if echo == true the function echo the result
+	 */
+	public function getFloatingLinks(){
+		return $this->floating_links;
 	}
 
 	/**
