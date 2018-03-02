@@ -9,17 +9,19 @@
  * @var array
  */
 $routes = [
-	//		URL_ROUTE		PERMISSION GROUP		CONTROLLER	ACTION
+	//		URL_ROUTE		PERMISSION GROUP	CONTROLLER		ACTION
 	'GET' => [
-		'/'					=> ['baseaccess',	'base' , 	'home'],
-		'admin'				=> ['admin',	'admin', 	'admin'],
+		'/'					=> ['baseaccess',	'base' , 		'home'],
+		'admin'				=> ['admin',		'admin', 		'admin'],
 		'protolist'			=> ['protolist',	'protocol', 	'plist'],
-		'resolist'			=> ['resolist',	'resolution', 	'rlist'],
+		'resolist'			=> ['resolist',		'resolution', 	'rlist'],
+		'crawl'				=> ['crawler',		'crawler', 		'home'],
+		'crawl/legislatur'	=> ['crawler',		'crawler', 		'crawlLegislatur'],
 		'protoedit'			=> ['protoedit',	'protocol', 	'pedit_view'],
 	],
 	'POST' => [
-		'admin/savemail'	=> ['admin',	'admin', 	'mail_update_setting'],
-		'admin/testmail'	=> ['admin',	'admin', 	'mail_testmessage'],
+		'admin/savemail'	=> ['admin',		'admin', 		'mail_update_setting'],
+		'admin/testmail'	=> ['admin',		'admin', 		'mail_testmessage'],
 		'protocol/publish'	=> ['protopublish',	'protocol', 	'p_publish'],
 	]
 ];
@@ -44,6 +46,7 @@ $navigation = [
 	'admin' => ['admin', 	'Admin', 	'&#xf085;',	'gearLogo.png'],
 	'protolist' => ['protolist', 	'Protokolle', 	'&#xf266;',	'log.png'],
 	'resolist' => ['resolist', 	'Beschlussliste', 	'&#xf0cb;',	'log.png'],
+	'crawl'	 => ['crawler', 	'Crawler', 	'&#xf0e7;',	''],
 	'https://stura.tu-ilmenau.de/impressum' => ['baseaccess', 'Impressum', '&#xf129;', ''],
 	'https://www.tu-ilmenau.de/impressum/datenschutz/' => ['baseaccess', 'Datenschutz', '&#xf1c0;', ''],
 ];
@@ -80,6 +83,7 @@ $permission_map = [
 	'baseaccess' 	=> SIMPLESAML_ACCESS_GROUP,
 	'admin' 		=> 'konsul,admin',
 	'dev' 			=> 'ref-it,konsul,admin',
+	'crawler' 		=> 'ref-it,konsul,admin',
 	'protolist' 	=> 'ref-it,stura,konsul,admin',
 	'resolist' 		=> 'ref-it,stura,konsul,admin',
 	'protoedit' 	=> 'ref-it,stura,konsul,admin',

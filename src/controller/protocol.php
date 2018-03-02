@@ -70,8 +70,10 @@ class ProtocolController extends MotherController {
 			if ($p->attachements == false) $p->attachements = [];
 			prof_flag('got wiki attachement list');
 		}
-		//TODO create legislatur map
-		$p->legislatur = intval($this->db->getSettings()['LEGISLATUR']);
+		// use legislatur map
+		$tmp_l = $this->db->getLegislaturByDate($p->date->format('Y-m-d'));
+		if (count($tmp_l) == 0) $tmp_l = $this->db->getCurrentLegislatur();
+		$p->legislatur = intval($tmp_l['number']);
 		
 		return $p;
 	}

@@ -538,6 +538,36 @@ class Database
 		return $r;
 	}
 	
+	/**
+	 * returns current legislatur
+	 * @return array
+	 */
+	public function getCurrentLegislatur(){
+		$sql = "SELECT * FROM `".TABLE_PREFIX."legislatur` L ORDER BY L.number DESC LIMIT BY 1;";
+		$result = $this->getResultSet($sql);
+		$return = [];
+		foreach ($result as $line){
+			$return = $line;
+		}
+		return $return;
+	}
+	
+	/**
+	 * returns current legislatur
+	 * @param date $date format Y-m-d
+	 * @return array
+	 */
+	public function getLegislaturByDate($date){
+		$sql = "SELECT * FROM `".TABLE_PREFIX."legislatur` L WHERE L.end >= ? AND L.start <= ?";
+		$result = $this->getResultSet($sql, 'ss', [$date, $date]);
+		$return = [];
+		foreach ($result as $line){
+			$return = $line;
+		}
+		return $return;
+	}
+	
+	
 	// --------- DELETE FUCNTIONS -----------------------------------------
 	
 	/**
@@ -732,6 +762,32 @@ class Database
 				`hash`,
 				`intern`)
 			VALUES(?,?,?,?,?,?,?,?) ";
+		$this->protectedInsert($sql, $pattern, $data);
+		$result = $this->affectedRows();
+		if ($this->affectedRows() > 0){
+			return $this->lastInsertId();
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * create legislatur
+	 * @param array $l legislatur element array
+	 * @return boolean|new id
+	 */
+	public function createLegislatur($l){
+		$pattern = 'iss';
+		$data = [
+			$l['number'],
+			$l['start'],
+			$l['end']
+		];
+		$sql = "INSERT INTO `".TABLE_PREFIX."legislatur`
+			(	`number`,
+				`start`,
+				`end`)
+			VALUES(?,?,?) ";
 		$this->protectedInsert($sql, $pattern, $data);
 		$result = $this->affectedRows();
 		if ($this->affectedRows() > 0){

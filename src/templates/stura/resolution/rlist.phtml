@@ -4,7 +4,7 @@
 <?php
 //TODO filter
 
-$this->t->appendFloatingLink(WIKI_URL."/".self::$protomap[$param['committee']][2], "Wiki Beschlussliste", '&#xf266;');
+$this->t->appendFloatingLink(WIKI_URL."/".str_replace(':', '/', self::$protomap[$param['committee']][2]), "Wiki Beschlussliste", '&#xf266;');
 
 ?>
 <p>Zum Filtern hier Suchwort eingeben.</p>  

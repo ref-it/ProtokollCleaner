@@ -65,9 +65,9 @@ class ResolutionController extends MotherController
 		foreach ($resos as $pos => $rawres){
 			$tmp = protocolHelper::parseResolution($rawres['text'], NULL, NULL, $perm);
 			$resos[$pos] = array_merge( $tmp, $resos[$pos]);
-			$resos[$pos]['date_obj'] = DateTime::createFromFormat('y-m-d', $rawres['date'] );
+			$resos[$pos]['date_obj'] = date_create_from_format('Y-m-d', $rawres['date'] );
 		}
-
+		
 		$this->t->appendCssLink('reso.css', 'screen,projection');
 		$this->t->appendJsLink('reso.js');
 		$this->t->printPageHeader();

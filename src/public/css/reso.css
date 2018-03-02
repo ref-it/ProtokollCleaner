@@ -2,6 +2,10 @@
 	padding-right: 40px;
 	position:relative;
 }
+.resolist-table .table-sm th,
+.resolist-table .table-sm td{
+	padding: .2rem;
+}
 /* -------------------- */
 .resolist-table .resolution input.resotoggle{
 	display: none;
