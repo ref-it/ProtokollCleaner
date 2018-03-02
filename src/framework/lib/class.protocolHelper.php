@@ -121,7 +121,7 @@ class protocolHelper extends protocolOut
 	 * @param Protocol $p
 	 * @return array parsed resolution [title, type_short, type_long, p_tag, text|raw]
 	 */
-	private static function parseResolution($resolution, $p, $overwriteType = NULL){
+	public static function parseResolution($resolution, $p, $overwriteType = NULL, $committee = NULL){
 		$result = ['text' => $resolution];
 		$parts = array_map('trim', explode('|', $resolution));
 		foreach ($parts as $pos => $text){
@@ -187,10 +187,12 @@ class protocolHelper extends protocolOut
 				$date = date_create_from_format('d-m-y', $tmp);
 			}			
 			if ($date) {
-				$result['p_tag'] = $p->committee.':'.$date->format('Y-m-d');
+				$result['p_tag'] = (isset($p)? $p->committee : $committee).':'.$date->format('Y-m-d');
 			} else {
 				$result['p_tag'] = 0;
-				$p->parse_errors['f'][] = "<strong>Parse Error: Protokolldatum</strong> Dem folgenden Protokollbeschluss konnte kein Datum entnommen werden. Gesuchtes format: dd.mm.yy, dd-mm-yy, dd.mm.yyyy oder dd-mm-yyyy<br><i>{$result['Titel']}</i>";
+				if (isset($p)){
+					$p->parse_errors['f'][] = "<strong>Parse Error: Protokolldatum</strong> Dem folgenden Protokollbeschluss konnte kein Datum entnommen werden. Gesuchtes format: dd.mm.yy, dd-mm-yy, dd.mm.yyyy oder dd-mm-yyyy<br><i>{$result['Titel']}</i>";
+				}
 			}
 		} else {
 			$result['p_tag'] = NULL;

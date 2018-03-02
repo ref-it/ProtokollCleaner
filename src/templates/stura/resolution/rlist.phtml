@@ -1,0 +1,76 @@
+<h3><?php $committee = ucwords( $param['committee'], " \t\r\n\f\v-"); echo $committee; ?> - Beschlussliste</h3>
+<p><strong>(Gesammt: <?= count($param['reso']) ?>)</strong></p>
+
+<?php
+//TODO filter
+
+$this->t->appendFloatingLink(WIKI_URL."/".self::$protomap[$param['committee']][2], "Wiki Beschlussliste", '&#xf266;');
+
+?>
+<p>Zum Filtern hier Suchwort eingeben.</p>  
+<input class="form-control" id="resofilter" type="text" placeholder="Suche..">
+<br>
+
+<div id="resotable" class="resolist-table">
+	<table class="table table-striped table-hover table-sm">
+		<thead>
+			<tr>
+				<th scope="col">#</th>
+				<th scope="col">Typ</th>
+				<th scope="col">Beschluss</th>
+			</tr>
+		</thead>
+		<tbody>
+		<?php
+		$last_legislatur = 0;
+		$last_week = 0;
+		$last_proto_id = 0;
+		$week_reso_reset = false;
+		foreach ($param['reso'] as $pos => $reso){
+			$legislatur = substr($reso['r_tag'], 0, strpos($reso['r_tag'], '/'));
+			$week = substr($reso['r_tag'], strpos($reso['r_tag'], '/') + 1);
+			$week = substr($week, 0, strpos($week, '-'));
+			if ($last_legislatur != $legislatur){ //legislatur headline
+				$last_legislatur = $legislatur;
+				echo '<tr class="newlegislatur"><th colspan="3" class="newlegislatur  table-dark" scope="row">'."$legislatur. $committee-Legislatur</th></tr>";
+			}
+			if ($last_week != $week){ // week headline
+				$last_week = $week;
+				$week_reso_reset = true;
+				echo '<tr class="newweek table-success"><th colspan="3" class="newweek" scope="row">'."Woche $week. - Protokoll vom <a href=\"".WIKI_URL.'/'.self::$protomap[$param['committee']][1].':'.$reso['pname']."\" target=\"_blank\">{$reso['date']}</a></th></tr>";
+			}
+			if ($last_proto_id != $reso['pid'] && !$week_reso_reset){ //second meeting in same week
+				$last_proto_id = $reso['pid'];
+				echo '<tr class="newprotoinweek table-warning"><th colspan="3" class="newprotoinweek" scope="row">'."Woche $week. - Protokoll vom {$reso['date']}</th></tr>";
+			} else {
+				$last_proto_id = $reso['pid'];
+				$week_reso_reset = true;
+			}
+			echo '<tr id="reso-'.str_replace('/', '_', $reso['r_tag']).'" class="resolution resotype-'.$reso['type_short'].' resotype-'.$reso['type_long'].'"><th style="width: 90px" scope="row">'.$reso['r_tag'].'</th>';
+			echo "<td>{$reso['type_long']}</td><td>{$reso['Titel']}";
+			echo '<input class="resotoggle" id="reso_toggle_'.$pos.'" type="checkbox" value="1">';
+			echo '<label tabindex="0" class="label resotoggle btn btn-outline-info" for="reso_toggle_'.$pos.'"></label>';
+			echo '<div class="togglebox" tabindex="-1">';
+			if (isset($reso['Ja'])) echo "<span class='yes'>Ja: {$reso['Ja']}</span>";
+			if (isset($reso['Nein'])) echo "<span class='no'>Nein: {$reso['Nein']}</span>";
+			if (isset($reso['Enthaltungen'])) echo "<span class='abstention'>Enthaltungen: {$reso['Enthaltungen']}</span>";
+			echo "<span class='result'>Beschluss: {$reso['Beschluss']}</span>";
+			if (isset($reso['p_tag'])){
+				if ($reso['p_tag']) echo "<span class='ptag'>Protokoll: {$reso['p_tag']}</span>";
+				else echo "<span class='ptag'>Protokoll: PARSE ERROR</span>";
+			}
+			echo "<span class='category'>Kategorie: {$reso['type_long']}</span></div></td></tr>\n";
+		}
+		
+		?>
+		</tbody>
+	</table>
+</div>
+
+
+
+<?php
+
+foreach ($param['reso'] as $reso){
+	//echo '<pre>'; var_export($reso); echo '</pre>';
+}

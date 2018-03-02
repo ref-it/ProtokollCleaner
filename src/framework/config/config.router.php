@@ -14,6 +14,7 @@ $routes = [
 		'/'					=> ['baseaccess',	'base' , 	'home'],
 		'admin'				=> ['admin',	'admin', 	'admin'],
 		'protolist'			=> ['protolist',	'protocol', 	'plist'],
+		'resolist'			=> ['resolist',	'resolution', 	'rlist'],
 		'protoedit'			=> ['protoedit',	'protocol', 	'pedit_view'],
 	],
 	'POST' => [
@@ -42,6 +43,7 @@ $navigation = [
 	'/' 	=> ['baseaccess', 	'Home', 	'&#xf015;',	''],
 	'admin' => ['admin', 	'Admin', 	'&#xf085;',	'gearLogo.png'],
 	'protolist' => ['protolist', 	'Protokolle', 	'&#xf266;',	'log.png'],
+	'resolist' => ['resolist', 	'Beschlussliste', 	'&#xf0cb;',	'log.png'],
 	'https://stura.tu-ilmenau.de/impressum' => ['baseaccess', 'Impressum', '&#xf129;', ''],
 	'https://www.tu-ilmenau.de/impressum/datenschutz/' => ['baseaccess', 'Datenschutz', '&#xf1c0;', ''],
 ];
@@ -79,6 +81,7 @@ $permission_map = [
 	'admin' 		=> 'konsul,admin',
 	'dev' 			=> 'ref-it,konsul,admin',
 	'protolist' 	=> 'ref-it,stura,konsul,admin',
+	'resolist' 		=> 'ref-it,stura,konsul,admin',
 	'protoedit' 	=> 'ref-it,stura,konsul,admin',
 	'protopublish' 	=> 'ref-it,stura,konsul,admin',
 	'stura' 		=> 'stura',
