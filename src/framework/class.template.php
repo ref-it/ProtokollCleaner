@@ -116,7 +116,6 @@ class Template
 			$this->appendCssLink('bootstrap.min.css', 'screen,projection');
 			$this->appendCssLink('font-awesome.css');
 			$this->appendCssLink('style.css', 'screen,projection');
-			$this->appendCssLink('proto.css', 'screen,projection');
 			$this->appendCssLink('print.css', 'print');
 		}
 		if ($appendMessages){

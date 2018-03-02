@@ -1,0 +1,42 @@
+<?php
+$esc_PROTO_IN = str_replace(':', '/', self::$protomap[$param['committee']][0]);
+$esc_PROTO_OUT = str_replace(':', '/', self::$protomap[$param['committee']][1]);
+
+echo "<h3>Stura - Protokolle</h3>";
+echo "<p><strong>(Gefunden: ".count($param['int_ext'])." - Veröffentlicht: ".count($param['ext']).((count($param['drafts'])>0)?' - Entwurf: '.count($param['drafts']):'').")</strong></p>";
+
+echo '<div class="protolist">';
+
+$lastYearLine = '';
+
+foreach ($param['int_ext'] as $p => $v){
+	if (substr($p,0, 2)!='20') continue;
+	$year = substr($p, 0, 4);
+		
+	if ($lastYearLine != $year){
+		$lastYearLine = $year;
+		echo '<div class="yearline">'.$year.'</div>';
+	}
+	if (!isset($param['no_int'][$p])){
+		$state = (!isset($param['ext'][$p]))?
+		'private' :
+		(isset($param['drafts'][$p])?
+			'draft' :
+			'public');
+		echo '<div id="proto-'.$p.'" class="proto '.$state.'">'.
+			"<span>$p</span>".
+			"<div  class='pbc'>". //proto button container
+			(($state != 'public')?'<button class="btn compare" type="button">Veröffentlichen</button>':'<button class="btn compare" type="button">Untersuchen</button>').
+			'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_IN.'/'.$p.'" target="_blank">Intern</a></span>'.
+			(($state == 'draft')?'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_OUT.'/'.$p.'" target="_blank">Entwurf</a></span>':'').
+			(($state == 'public')?'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_OUT.'/'.$p.'" target="_blank">Öffentlich</a></span>':'').
+			'</div></div>';
+	} else {
+		echo '<div id="proto-'.$p.'" class="proto public">'.
+			"<span>$p</span><div class='pbc'>".
+			'<div class="btn placeholder" type="button"></div>'.
+			'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_OUT.'/'.$p.'" target="_blank">Öffentlich</a></span>'.
+			'</div></div>';
+	}
+}
+echo '</div>';

@@ -17,6 +17,12 @@ require_once (SYSBASE . '/framework/class.validator.php');
 
 class MotherController extends JsonController {
 	/**
+	 * contains constant PROTOMAP
+	 * @var array
+	 */
+	protected static $protomap = PROTOMAP;
+	
+	/**
 	 * contains the database connection
 	 * Database
 	 */
@@ -58,7 +64,7 @@ class MotherController extends JsonController {
 	 * includes Template File
 	 * @param string $action
 	 */
-	function includeTemplate($action){
+	function includeTemplate($action, $param = NULL){
 		include (SYSBASE.'/templates/'.TEMPLATE.'/'.$this->getControllerName().'/'.$action.'.phtml');
 	}
 	

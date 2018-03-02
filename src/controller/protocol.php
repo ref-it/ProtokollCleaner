@@ -17,12 +17,6 @@ require_once (SYSBASE.'/framework/class.wikiClient.php');
 
 class ProtocolController extends MotherController {
 	/**
-	 * contains constant PROTOMAP
-	 * @var array
-	 */
-	private static $protomap = PROTOMAP;
-	
-	/**
 	 * request protocol from wiki and load basic information from database
 	 * 
 	 * basic information:
@@ -42,7 +36,7 @@ class ProtocolController extends MotherController {
 	private function loadWikiProtoBase ($committee, $protocol_name, $load_attachements = false){
 		$x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
 		prof_flag('get wiki page');
-		$a = $x->getPage(self::$protomap[$committee][0].':'.$protocol_name);
+		$a = $x->getPage(parent::$protomap[$committee][0].':'.$protocol_name);
 		prof_flag('got wiki page');
 		if ($a == false //dont accept non existing wiki pages
 			|| $a == ''
@@ -57,7 +51,7 @@ class ProtocolController extends MotherController {
 		$p->committee = $committee;
 		$p->committee_id = $this->db->getCreateCommitteeByName($committee)['id'];
 		$p->name = $protocol_name;
-		$p->url = self::$protomap[$p->committee][0].':'.$p->name;
+		$p->url = parent::$protomap[$p->committee][0].':'.$p->name;
 		$p->date = date_create_from_format('Y-m-d', substr($p->name, 0,10));
 		
 		$dbprotocols = $this->db->getProtocols($committee);
@@ -72,7 +66,7 @@ class ProtocolController extends MotherController {
 		}
 		if ($load_attachements){
 			prof_flag('get wiki attachement list');
-			$p->attachements = $x->listAttachements(self::$protomap[$p->committee][0].':'.$p->name );
+			$p->attachements = $x->listAttachements(parent::$protomap[$p->committee][0].':'.$p->name );
 			if ($p->attachements == false) $p->attachements = [];
 			prof_flag('got wiki attachement list');
 		}
@@ -83,7 +77,7 @@ class ProtocolController extends MotherController {
 	}
 	
 	/**
-	 * 
+	 * class constructor
 	 * @param Database $db
 	 * @param AuthHandler $auth
 	 * @param Template $template
@@ -99,28 +93,28 @@ class ProtocolController extends MotherController {
 	 * displays 
 	 */
 	public function plist(){
-		$this->t->appendJsLink('protocol.js');
-		$this->t->printPageHeader();
-		
 		//permission - edit this to add add other committee
 		$perm = 'stura';
 		
 		$x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
 		prof_flag('wiki request');
-		$intern = $x->getSturaInternProtokolls();
+		$intern = $x->getPagelistAutoDepth(parent::$protomap[$perm][0]);
 		prof_flag('wiki request end');
 		$drafts = $this->db->getProtocols($perm, true);
-		prof_flag('wiki request');
-		$extern = $x->getSturaProtokolls();
-		prof_flag('wiki request end');
+		$extern = [];
+		if (parent::$protomap[$perm][0] != parent::$protomap[$perm][1]){
+			prof_flag('wiki request');
+			$extern = $x->getPagelistAutoDepth(parent::$protomap[$perm][1]);
+			prof_flag('wiki request end');
+		}
 		
 		//filter protocols that are published but dont exist intern anymore
 		$intern_and_extern = [];
 		$intern_names = [];
 		$extern_names = [];
 		$name = '';
-		$i_path_lng = strlen(self::$protomap[$perm][0]) + 1;
-		$e_path_lng = strlen(self::$protomap[$perm][1]) + 1;
+		$i_path_lng = strlen(parent::$protomap[$perm][0]) + 1;
+		$e_path_lng = strlen(parent::$protomap[$perm][1]) + 1;
 		foreach ($intern as $k => $v){
 			$name = substr($v, $i_path_lng);
 			$intern_names[$name] = $k;
@@ -133,48 +127,19 @@ class ProtocolController extends MotherController {
 		}
 		krsort($intern_and_extern);
 		$no_internal = array_diff_key($intern_and_extern, $intern_names);
-
-		$esc_PROTO_IN = str_replace(':', '/', self::$protomap[$perm][0]);
-		$esc_PROTO_OUT = str_replace(':', '/', self::$protomap[$perm][1]);
 		
-		echo "<h3>Stura - Protokolle</h3>";
-		echo "<p><strong>(Gefunden: ".count($intern_and_extern)." - Veröffentlicht: ".count($extern).((count($drafts)>0)?' - Entwurf: '.count($drafts):'').")</strong></p>";
-		
-		echo '<div class="protolist">';
-		
-		$lastYearLine = '';
-		
-		foreach ($intern_and_extern as $p => $v){
-			if (substr($p,0, 2)!='20') continue;
-			$year = substr($p, 0, 4);
-			
-			if ($lastYearLine != $year){
-				$lastYearLine = $year;
-				echo '<div class="yearline">'.$year.'</div>';
-			}
-			if (!isset($no_internal[$p])){
-				$state = (!in_array(self::$protomap[$perm][1].":$p", $extern))? 
-					'private' : 
-					(isset($drafts[$p])? 
-						'draft' : 
-						'public');
-				echo '<div id="proto-'.$p.'" class="proto '.$state.'">'.
-						"<span>$p</span>".
-						"<div  class='pbc'>". //proto button container
-							(($state != 'public')?'<button class="btn compare" type="button">Veröffentlichen</button>':'<button class="btn compare" type="button">Untersuchen</button>').
-							'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_IN.'/'.$p.'" target="_blank">Intern</a></span>'.
-							(($state == 'draft')?'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_OUT.'/'.$p.'" target="_blank">Entwurf</a></span>':'').
-							(($state == 'public')?'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_OUT.'/'.$p.'" target="_blank">Öffentlich</a></span>':'').
-				'</div></div>';
-			} else {
-				echo '<div id="proto-'.$p.'" class="proto public">'.
-						"<span>$p</span><div class='pbc'>".
-							'<div class="btn placeholder" type="button"></div>'.
-							'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_OUT.'/'.$p.'" target="_blank">Öffentlich</a></span>'.
-				'</div></div>';
-			}
-		}
-		echo '<!div>';
+		//load template
+		$this->t->appendCssLink('proto.css', 'screen,projection');
+		$this->t->appendJsLink('protocol.js');
+		$this->t->printPageHeader();
+		$this->includeTemplate(__FUNCTION__, [ //pass arrays by reference
+			'int_ext' 	=> &$intern_and_extern, 
+			'int' 		=> &$intern_names,
+			'ext' 		=> &$extern_names,
+			'committee' => &$perm,
+			'drafts'	=> &$drafts,
+			'no_int' 	=> &$no_internal,
+		]);
 		$this->t->printPageFooter();
 	}
 	
@@ -215,6 +180,7 @@ class ProtocolController extends MotherController {
 				$this->renderErrorPage(404, null);
 				return;
 			}
+			$this->t->appendCssLink('proto.css', 'screen,projection');
 			$this->t->appendJsLink('protocol.js');
 			$this->t->printPageHeader();
 			echo $this->getChallenge(); // get post challenge
@@ -285,7 +251,7 @@ class ProtocolController extends MotherController {
 			}
 		} else if (!checkUserPermission($vali->getFiltered()['committee'])) {
 			$this->json_access_denied();
-		} else if (self::$protomap[$vali->getFiltered()['committee']][0] == self::$protomap[$vali->getFiltered()['committee']][1]) {
+		} else if (parent::$protomap[$vali->getFiltered()['committee']][0] == parent::$protomap[$vali->getFiltered()['committee']][1]) {
 			// on save dont allow intern == extern protocol path =>> parse view is ok, but no storing
 			//may allow partial save like Todos, Fixmes, resolutions...
 			http_response_code (403);
@@ -351,7 +317,7 @@ class ProtocolController extends MotherController {
 			//create protocol in wiki
 			$x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
 			prof_flag('write wiki page');
-			$put_res = $x->putPage(self::$protomap[$vali->getFiltered()['committee']][1].':'.$p->name, $p->external);
+			$put_res = $x->putPage(parent::$protomap[$vali->getFiltered()['committee']][1].':'.$p->name, $p->external);
 			prof_flag('wiki page written');
 			if ($put_res == false){
 				$this->json_result = [
@@ -365,10 +331,10 @@ class ProtocolController extends MotherController {
 			$is_draft = true;
 			if ($p->agreed_on === NULL){
 				$p->public_url = NULL;
-				$p->draft_url = self::$protomap[$vali->getFiltered()['committee']][1].':'.$p->name;
+				$p->draft_url = parent::$protomap[$vali->getFiltered()['committee']][1].':'.$p->name;
 			} else {
 				$is_draft = false;
-				$p->public_url = self::$protomap[$vali->getFiltered()['committee']][1].':'.$p->name;
+				$p->public_url = parent::$protomap[$vali->getFiltered()['committee']][1].':'.$p->name;
 				$p->draft_url = NULL;
 			}
 			

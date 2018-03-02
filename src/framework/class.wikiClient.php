@@ -332,6 +332,18 @@ class wikiClient extends xrpcClient
 		}
 	}
 	
+	/**
+	 * get dokuWiki Pagelist - automatically set depth attribute
+	 * this function will only return the next page layer - without recursive subpages
+	 * @param string $namespace
+	 * @param array $attr
+	 * @return array|string
+	 */
+	public function getPagelistAutoDepth($namespace = ''){
+		$attr = ['depth' => substr_count($namespace, ':') + 2];
+		return $this->getPagelist($namespace, $attr);
+	}
+	
 	//==================================================================================
 	// protocol helper Functions
 	//==================================================================================
@@ -343,7 +355,7 @@ class wikiClient extends xrpcClient
 	 * @return array
 	 */
 	public function getSturaProtokolls(){
-		return $this->getPagelist(self::$protomap['stura'][1], ['depth' => substr_count(self::$protomap['stura'][1], ':') + 2]);
+		return $this->getPagelistAutoDepth(self::$protomap['stura'][1]);
 	}
 	
 	/**
@@ -351,7 +363,7 @@ class wikiClient extends xrpcClient
 	 * @return array
 	 */
 	public function getSturaInternProtokolls(){
-		return $this->getPagelist(self::$protomap['stura'][0], ['depth' => substr_count(self::$protomap['stura'][0], ':') + 2]);
+		return $this->getPagelistAutoDepth(self::$protomap['stura'][0]);
 	}
 }
 
