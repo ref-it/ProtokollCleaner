@@ -32,6 +32,7 @@ class CrawlerController extends MotherController
 	 * ACTION home
 	 */
 	public function home(){
+		$this->t->setTitlePrefix('Crawler');
 		$this->t->appendCssLink('logging.css', 'screen,projection');
 		$this->t->printPageHeader();
 		$this->includeTemplate(__FUNCTION__);
@@ -48,6 +49,7 @@ class CrawlerController extends MotherController
 	public function crawlLegislatur(){
 		//permission - edit this to add add other committee
 		$perm = 'stura';
+		$this->t->setTitlePrefix('Legislatur Crawler');
 		$this->t->appendCssLink('logging.css', 'screen,projection');
 		$this->t->printPageHeader();
 		echo '<h3>Crawler - Legislatur</h3>';

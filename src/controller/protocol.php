@@ -136,6 +136,7 @@ class ProtocolController extends MotherController {
 		$no_internal = array_diff_key($intern_and_extern, $intern_names);
 		
 		//load template
+		$this->t->setTitlePrefix('Protokolle - '.ucwords( $perm, " \t\r\n\f\v-"));
 		$this->t->appendCssLink('proto.css', 'screen,projection');
 		$this->t->appendJsLink('protocol.js');
 		$this->t->printPageHeader();
@@ -188,6 +189,7 @@ class ProtocolController extends MotherController {
 				$this->renderErrorPage(404, null);
 				return;
 			}
+			$this->t->setTitlePrefix('Protokollkontrolle');
 			$this->t->appendCssLink('proto.css', 'screen,projection');
 			$this->t->appendJsLink('protocol.js');
 			$this->t->printPageHeader();
