@@ -41,7 +41,7 @@ class protocolHelper extends protocolOut
 		],
 		'no_multimatch' => [
 			'resolution' => '/^{{template>:vorlagen:stimmen.*(angenommen)(?!.*abgelehnt).*$/i',
-			'sitzung' => '/(=)+ (\d)+. StuRa-Sitzung (=)+/'
+			'sitzung' => '/=(=)+( )*(\d+).?( )*StuRa-Sitzung.*=(=)+/i'
 		]		
 	];
 	
@@ -390,8 +390,8 @@ class protocolHelper extends protocolOut
 		$p->todos = self::todo2linearArray($tmp_todo, $p->id);
 		
 		//add protocol numnber (sitzungnummer)
-		if (isset($pregFind['sitzung'])){
-			$p->protocol_number = intval(preg_replace('/[^\d]/', '', array_values($pregFind['sitzung']['public'])[0]));
+		if (isset($pregFind['sitzung']) && preg_match(self::$regexFinder['no_multimatch']['sitzung'], array_values($pregFind['sitzung']['public'])[0], $tmp_sitzung_matches) == 1){
+			$p->protocol_number = $tmp_sitzung_matches[3]; 
 		} else {
 			$p->protocol_number = -1;
 			$p->parse_errors['f'][] = "Sitzungsnummer konnte nicht erkannt werden.";

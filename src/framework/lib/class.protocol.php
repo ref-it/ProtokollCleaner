@@ -83,6 +83,12 @@ class Protocol
 	public $legislatur;
 	
 	/**
+	 * weeks since current legislatur started
+	 * @var int
+	 */
+	public $legislatur_week;
+	
+	/**
 	 * protocol number in current legislatur
 	 * @var int
 	 */

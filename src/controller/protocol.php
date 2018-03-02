@@ -75,6 +75,9 @@ class ProtocolController extends MotherController {
 		if (count($tmp_l) == 0) $tmp_l = $this->db->getCurrentLegislatur();
 		$p->legislatur = intval($tmp_l['number']);
 		
+		$date_legi = date_create_from_format('Y-m-d', $tmp_l['start']);
+		$p->legislatur_week = intval(floor($p->date->diff($date_legi)->days/7))+1;
+		
 		return $p;
 	}
 	

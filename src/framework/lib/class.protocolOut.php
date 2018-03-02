@@ -131,6 +131,7 @@ class protocolOut
 		echo '<span class="legislatur"><span>Legislatur:</span><span>'.
 			 '<div class="fa fa-info css-tooltip mr-1 btn btn-outline-primary" tabindex="0"><span class="tooltiptext">Sollte dieser Wert nicht stimmen, informiert bitte den Konsul, oder Referat-IT um diesen dauerhaft zu aktualisieren.</span></div>'
 			.'<button type="button" class="btn btn-outline-primary sub">-</button><span>'.$p->legislatur.'</span><button type="button" class="add btn btn-outline-primary">+</button></span></span>';
+		echo '<span class="sitzung"><span>Legislatur-Woche:</span><span>'.$p->legislatur_week.'</span></span>';
 		echo '<span class="sitzung"><span>Sitzung:</span><span>'.$p->protocol_number.'</span></span>';
 		echo '<span class="resolutions"><span>Angenommene Beschlüsse:</span><span>'.count($p->resolutions).'</span></span>';
 		
