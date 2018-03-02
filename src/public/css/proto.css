@@ -37,6 +37,10 @@
 	background-color: white;
 	padding-left: 5px;
 }
+.protolist .proto .resolink:not(:hover),
+.protolist .proto .pbc .compare:not(:hover) {
+	background-color: #f1f1f1;
+}
 @media screen and (max-width: 650px) {
 	.protolist .proto > div {
 		position: relative;

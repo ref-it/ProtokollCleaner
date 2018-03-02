@@ -101,6 +101,8 @@ class ProtocolController extends MotherController {
 		$intern = $x->getPagelistAutoDepth(parent::$protomap[$perm][0]);
 		prof_flag('wiki request end');
 		$drafts = $this->db->getProtocols($perm, true);
+		$name_to_id = $this->db->getProtocolNameIdMap($perm);
+		
 		$extern = [];
 		if (parent::$protomap[$perm][0] != parent::$protomap[$perm][1]){
 			prof_flag('wiki request');
@@ -139,6 +141,7 @@ class ProtocolController extends MotherController {
 			'committee' => &$perm,
 			'drafts'	=> &$drafts,
 			'no_int' 	=> &$no_internal,
+			'name_id'	=> &$name_to_id
 		]);
 		$this->t->printPageFooter();
 	}
@@ -371,7 +374,7 @@ class ProtocolController extends MotherController {
 			}
 			//delete others
 			foreach ($db_resolutions as $reso){
-				if ($reso['p_tag'] !== NULL && $reso['accepts_pid'] != null){
+				if ($reso['p_tag'] !== NULL && $reso['pid'] != null){
 					$this->json_result = [
 						'success' => false,
 						'eMsg' => 'Verlinkende Protokollbeschlüsse können nicht gelöscht werden.'

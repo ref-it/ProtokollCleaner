@@ -27,7 +27,8 @@ foreach ($param['int_ext'] as $p => $v){
 		echo '<div id="proto-'.$p.'" class="proto '.$state.'">'.
 			"<span>$p</span>".
 			"<div  class='pbc'>". //proto button container
-			(($state != 'public')?'<button class="btn compare" type="button">Veröffentlichen</button>':'<button class="btn compare" type="button">Untersuchen</button>').
+			(($state != 'public')?'<button class="btn btn-outline-dark compare" type="button">Veröffentlichen</button>':'<button class="btn btn-outline-dark compare" type="button">Untersuchen</button>').
+			(isset($param['name_id'][$p])?'<a href="/resolist?pid='.$param['name_id'][$p].'" class="btn resolink btn-outline-danger ml-1"><i class="fa fa-fw fa-list-ol"></i>Beschlüsse</a>':'').
 			'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_IN.'/'.$p.'" target="_blank">Intern</a></span>'.
 			(($state == 'draft')?'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_OUT.'/'.$p.'" target="_blank">Entwurf</a></span>':'').
 			(($state == 'public')?'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_OUT.'/'.$p.'" target="_blank">Öffentlich</a></span>':'').
@@ -36,6 +37,7 @@ foreach ($param['int_ext'] as $p => $v){
 		echo '<div id="proto-'.$p.'" class="proto public">'.
 			"<span>$p</span><div class='pbc'>".
 			'<div class="btn placeholder" type="button"></div>'.
+			(isset($param['name_id'][$p])?'<a href="/resolist?pid='.$param['name_id'][$p].'" class="btn resolink btn-outline-danger ml-1"><i class="fa fa-fw fa-list-ol"></i>Beschlüsse</a>':'').
 			'<span><a href="'.WIKI_URL.'/'.$esc_PROTO_OUT.'/'.$p.'" target="_blank">Öffentlich</a></span>'.
 			'</div></div>';
 	}

@@ -679,17 +679,23 @@ class Validator {
 	/**
 	 * date validator
 	 *
+	 * $param
+	 *  format		2	datetime-format
+	 *  error		2	overwrite error message
+	 *  
 	 * @param $value
 	 * @param $params
 	 * @return boolean
 	 */
 	public function V_date($value, $params = NULL) {
 		$date = trim(strip_tags(''.$value));
-		$d = DateTime::createFromFormat('Y-m-d', $date);
-		if($d && $d->format('Y-m-d') == $date){
-			$this->filtered = $d->format('Y-m-d');
+		$fmt = (isset($params['format']))? $params['format'] : 'Y-m-d';
+		$d = DateTime::createFromFormat($fmt, $date);
+		if($d && $d->format($fmt) == $date){
+			$this->filtered = $d->format($fmt);
 		} else {
-			return !$this->setError(true, 200, "date validation failed", 'date validation failed');
+			$msg = (isset($params['error']))? $params['error'] : 'date validation failed, format: "'.$fmt.'"';
+			return !$this->setError(true, 200, $msg, 'date validation failed, format: "'.$fmt.'"');
 		}
 		return !$this->setError(false);
 	}

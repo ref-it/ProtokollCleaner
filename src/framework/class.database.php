@@ -381,6 +381,22 @@ class Database
 	}
 	
 	/**
+	 * return name => protocol id map
+	 * used on protocol list -> for resolution linking
+	 * @param string $committee get protocols of choosen committee
+	 * @return array protocol list by protocol name
+	 */
+	public function getProtocolNameIdMap( $committee ){
+		$sql = "SELECT P.name, P.id FROM `".TABLE_PREFIX."protocol` P, `".TABLE_PREFIX."gremium` G WHERE P.gremium = G.id AND G.name = ?;";
+		$result = $this->getResultSet($sql, 's', $committee);
+		$r = [];
+		foreach ($result as $pro){
+			$r[$pro['name']] = $pro['id'];
+		}
+		return $r;
+	}
+	
+	/**
 	 * return protocol resolutions by gremium and protocol name
 	 * used to check if protocol was accepted
 	 * @param string $committee
@@ -408,6 +424,39 @@ class Database
 	}
 	
 	/**
+	 * return resolutions by gremium/committee
+	 * used to check if protocol was accepted
+	 * @param string $committee
+	 * @param string $protocolName
+	 * @param integer $pid protocol id - if set this matches only given protocol id
+	 * @return NULL|array
+	 * @throws Exception
+	 */
+	public function getResolutionByCommittee( $committee , $pid = NULL){
+		if (!is_string($committee) || $committee === '') {
+				$emsg = 'Wrong parameter in Database function ('.__FUNCTION__.'). ';
+				$emsg.= 'Require nonempty string';
+				error_log( $emsg );
+				throw new Exception($emsg);
+				return NULL;
+			}
+			$sql = "SELECT R.*, P.date, P.id as pid, P.name as pname FROM `".TABLE_PREFIX."resolution` R, `".TABLE_PREFIX."protocol` P, `".TABLE_PREFIX."gremium` G
+				WHERE R.on_protocol = P.id
+					AND P.gremium = G.id
+					AND G.name = ?"
+					.((isset($pid) && is_int($pid))?' AND R.on_protocol = ?':'').
+				" ORDER BY P.date ASC;";
+			$data = [$committee];
+			if (isset($pid) && is_int($pid)) $data[] = $pid;
+			$result = $this->getResultSet($sql, ((isset($pid) && is_int($pid))?'si':'s'), $data );
+			$r = [];
+			foreach ($result as $res){
+				$r[] = $res;
+			}
+			return $r;
+	}
+	
+	/**
 	 * return protocol resolutions by protocol id
 	 * used to check if protocol was accepted
 	 * @param integer $pid protocol id
@@ -415,7 +464,7 @@ class Database
 	 * @return array
 	 * @throws Exception
 	 */
-	public function getResolutionByOnProtocol( $pid , $link_acccepting_protocols = false){
+	public function getResolutionByOnProtocol( $pid , $link_acccepting_protocols = false, $link_proto = false){
 		if (intval($pid).'' !== ''.$pid || $pid < 1) {
 			$emsg = 'Wrong parameter in Database function ('.__FUNCTION__.'). ';
 			$emsg.= 'Require int value.';
@@ -423,9 +472,10 @@ class Database
 			throw new Exception($emsg);
 			return NULL;
 		}
-		$sql = "SELECT R.*, P.id as 'accepts_pid' FROM `".TABLE_PREFIX."resolution` R".
+		$sql = "SELECT R.*".(($link_acccepting_protocols || $link_proto)? ", P.date, P.id as pid, P.name as pname":'').
+			  " FROM `".TABLE_PREFIX."resolution` R". (($link_proto)?', `'.TABLE_PREFIX.'protocol` P':'').
 		(($link_acccepting_protocols)? ' LEFT JOIN `'.TABLE_PREFIX.'protocol` P ON P.agreed = R.id':'')
-		." WHERE R.on_protocol = ?;";
+		." WHERE R.on_protocol = ?".(($link_proto)?' AND R.on_protocol = P.id ORDER BY P.date ASC':'').";";
 		$result = $this->getResultSet($sql, 'i', $pid);
 		$r = [];
 		foreach ($result as $res){
