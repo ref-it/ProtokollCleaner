@@ -447,7 +447,7 @@ class Database
 					AND P.gremium = G.id
 					AND G.name = ?"
 					.((isset($pid) && is_int($pid))?' AND R.on_protocol = ?':'').
-				" ORDER BY P.date ASC;";
+				" ORDER BY P.date DESC;";
 			$data = [$committee];
 			if (isset($pid) && is_int($pid)) $data[] = $pid;
 			$result = $this->getResultSet($sql, ((isset($pid) && is_int($pid))?'si':'s'), $data );

@@ -67,7 +67,8 @@ class ResolutionController extends MotherController
 				$tmp = protocolHelper::parseResolution($rawres['text'], NULL, NULL, $perm);
 				$resos[$pos] = array_merge( $tmp, $resos[$pos]);
 			} else {
-				$resos[$pos]['Title'] = $rawres['text'];
+				$resos[$pos]['Titel'] = $rawres['text'];
+				$resos[$pos]['Beschluss'] = 'angenommen';
 			}
 			$resos[$pos]['date_obj'] = date_create_from_format('Y-m-d His', $rawres['date'].' 000000' );
 		}

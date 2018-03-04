@@ -279,7 +279,7 @@ class protocolOut
 	    		echo '<div class="line"><input type="checkbox" value="1" id="attach_check_'.$pos.'" checked>';
 	    		$split = explode(':', $attach);
 	    		echo '<label class="resolution noselect" for="attach_check_'.$pos.'"><span>'.end($split).'</span>';
-	    		echo '<a href="'.WIKI_URL.'/'.str_replace(':', '/', $attach).'" target="_blank">';
+	    		echo '<a href="'.WIKI_URL.'/_media/'.str_replace(':', '/', $attach).'" target="_blank">';
 	    		echo 'Öffnen';
 	    		echo '</a></label></div>';
 	    	}
@@ -297,7 +297,7 @@ class protocolOut
     public static function printTodoElements($p, $headlineMap = ['todo' => 'Todo', 'fixme' => 'FixMe', 'deleteme' => 'DeleteMe'], $print = ['todo', 'fixme', 'deleteme']){
     	$out = [];
     	foreach ($p->todos as $todo) {
-    		$out[$todo['type']][] = '<div class="line '.$todo['type'].(($todo['intern'])?' intern':'').' alert alert-warning">'.
+    		$out[$todo['type']][] = '<div class="line '.$todo['type'].(($todo['intern'])?' intern':'').' alert '.(($todo['type'] == 'fixme'|| $todo['type'] == 'deleteme')?'alert-danger':'alert-warning').'">'.
      			(($todo['intern'])?'<strong>[Intern]</strong> ':'').
      			preg_replace('/('.$todo['type'].')/i', '<span class="highlight">$1</span>', $todo['text']).
     			'</div>';

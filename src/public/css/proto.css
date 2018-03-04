@@ -55,8 +55,8 @@
 		right: 0;
 	}
 }
-.protolist .proto.privat {
-	color: #7e0000;
+.protolist .proto.agreed {
+	color: #00590f;
 }
 .protolist .proto.draft {
 	color: #e06700;
@@ -123,6 +123,7 @@
 .difftable > .line > span:last-child {
 	text-align: left;
 	word-break: break-all;
+	white-space: pre-wrap;
 }
 .difftable > .line > span:nth-child(1) {
 	width: 30px;

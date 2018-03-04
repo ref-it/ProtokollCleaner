@@ -60,6 +60,10 @@ class protocolHelper extends protocolOut
 			'match' => ['Protokoll', 'beschließt', 'Sitzung', '\d+'], 
 			'long' => 'Protokoll',
 			'short' => 'P'
+		], [ //old resolutions on resolist
+			'match' => ['Protokoll', 'vom', 'bestätigt', '\d\d\d\d'], 
+			'long' => 'Protokoll',
+			'short' => 'P'
 		], [
 			'match' => ['Haushaltsverantwortliche', 'beschließt', 'Budget'], 
 			'long' => 'Finanzen',
@@ -97,6 +101,22 @@ class protocolHelper extends protocolOut
 	private static $tagRegex = '/(({{tag>[a-zA-Z0-9]+(_[a-zA-Z0-9]+)*([ ]*[a-zA-Z0-9]+(_[a-zA-Z0-9]+)*)*( )*}}|=(=)+( )*geschlossener Teil( )*=(=)+|=(=)+( )*(ö|Ö)ffentlicher Teil( )*=(=)+)+)/i';
 	private static $oldTags = ['/^=(=)+( )*geschlossener Teil( )*=(=)+$/i', '/^=(=)+( )*(ö|Ö)ffentlicher Teil( )*=(=)+$/i'];
 	private static $ignoreTags = [];
+	
+	private static $monthReplaceMap = [
+		'Januar' 	=> '01',
+		'Februar' 	=> '02',
+		'März' 		=> '03',
+		'April' 	=> '04',
+		'Mai' 		=> '05',
+		'Juni' 		=> '06',
+		'Juli' 		=> '07',
+		'August' 	=> '08',
+		'September' => '09',
+		'Oktober' 	=> '10',
+		'November' 	=> '11',
+		'Dezember' 	=> '12'
+	];
+	private static $date1Reg = '/(\d{1,2}(\.| )*(Januar|Februar|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember)(\D){0,3}(\d{2,4}))/i';
 	
 	/**
 	 * categorize and split raw resolution strings to array
@@ -170,10 +190,15 @@ class protocolHelper extends protocolOut
 		$return = [];
 		
 		//parse protocoltag
+		$date = [];
+		if (preg_match(self::$date1Reg, $text, $matches3) == 1){
+			$tmp_match = str_replace( array_keys(self::$monthReplaceMap), array_values(self::$monthReplaceMap), $matches3[1]);
+			$tmp_match = str_replace(['.', ' '], ['', '-'], $tmp_match);
+			$date[] = date_create_from_format('d-m-Y', $tmp_match);
+		}
 		$tmp = trim(str_replace('  ',' ',preg_replace('/[^\d. -]/', '', str_replace('|',' ', $text))), " \t\n\r\0\x0B-.");
 		$tmp = str_replace('.', '-', $tmp);
 		$tmpdateList = explode(' ',$tmp);
-		$date = [];
 		foreach($tmpdateList as $dateElem){
 			$pdate = false;
 			if (strlen($tmp) >= 10){
@@ -254,8 +279,8 @@ class protocolHelper extends protocolOut
 			$result['type_long'] = $overwriteType['long'];
 		} else {
 			$tmpType = self::parseResolutionType($result['Titel']);
-			$result['type_short'] = $tmpType['short'];
-			$result['type_long'] = $tmpType['long'];
+			$result['type_short'] = $tmpType['type_short'];
+			$result['type_long'] = $tmpType['type_long'];
 		}
 		if ($result['type_long'] == 'Protokoll'){
 			$tmpPtag = self::parseResolutionProtocolTag($result['Titel'], isset($p)? $p->committee : $committee);
