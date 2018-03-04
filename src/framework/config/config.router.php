@@ -17,6 +17,7 @@ $routes = [
 		'resolist'			=> ['resolist',		'resolution', 	'rlist'],
 		'crawl'				=> ['crawler',		'crawler', 		'home'],
 		'crawl/legislatur'	=> ['crawler',		'crawler', 		'crawlLegislatur'],
+		'crawl/resoproto'	=> ['crawler',		'crawler', 		'crawlResoProto'],
 		'protoedit'			=> ['protoedit',	'protocol', 	'pedit_view'],
 	],
 	'POST' => [
