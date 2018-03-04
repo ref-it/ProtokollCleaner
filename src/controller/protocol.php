@@ -105,35 +105,42 @@ class ProtocolController extends MotherController {
 		prof_flag('wiki request');
 		$intern = $x->getPagelistAutoDepth(parent::$protomap[$perm][0]);
 		prof_flag('wiki request end');
-		$drafts = $this->db->getProtocols($perm, true);
-		$name_to_id = $this->db->getProtocolNameIdMap($perm);
-		
 		$extern = [];
 		if (parent::$protomap[$perm][0] != parent::$protomap[$perm][1]){
 			prof_flag('wiki request');
 			$extern = $x->getPagelistAutoDepth(parent::$protomap[$perm][1]);
 			prof_flag('wiki request end');
 		}
-		
-		//filter protocols that are published but dont exist intern anymore
-		$intern_and_extern = [];
-		$intern_names = [];
-		$extern_names = [];
-		$name = '';
+		$dbprotocols = $this->db->getProtocols($perm);
+		$dbhasreso = $this->db->getProtocolHasResoByCommittee($perm);
 		$i_path_lng = strlen(parent::$protomap[$perm][0]) + 1;
 		$e_path_lng = strlen(parent::$protomap[$perm][1]) + 1;
+		$counter = ['intern' => count($intern), 'published' => count($extern), 'draft' => 0];
+		// ------------------------
+		// mark protocols that are published but dont exist intern anymore
+		$intern_and_extern = [];
 		foreach ($intern as $k => $v){
 			$name = substr($v, $i_path_lng);
-			$intern_names[$name] = $k;
-			$intern_and_extern[$name] = $k;
+			$intern_and_extern[$name]['intern'] = true;
 		}
 		foreach ($extern as $k => $v){
 			$name = substr($v, $e_path_lng);
-			$extern_names[$name] = $k;
-			$intern_and_extern[$name] = $k;
+			$intern_and_extern[$name]['extern'] = true;
+		}
+		foreach ($dbprotocols as $name => $p){
+			if (isset($p['draft_url'])){
+				$intern_and_extern[$name]['draft'] = true;
+				$counter['draft']++;
+			}
+			if (isset($dbhasreso[$name])){
+				$intern_and_extern[$name]['reso'] = true;
+			}
+			if (isset($p['agreed']) && $p['agreed'] > 0){
+				$intern_and_extern[$name]['agreed'] = true;
+			}
+			$intern_and_extern[$name]['id'] = $p['id'];
 		}
 		krsort($intern_and_extern);
-		$no_internal = array_diff_key($intern_and_extern, $intern_names);
 		
 		//load template
 		$this->t->setTitlePrefix('Protokolle - '.ucwords( $perm, " \t\r\n\f\v-"));
@@ -142,12 +149,8 @@ class ProtocolController extends MotherController {
 		$this->t->printPageHeader();
 		$this->includeTemplate(__FUNCTION__, [ //pass arrays by reference
 			'int_ext' 	=> &$intern_and_extern, 
-			'int' 		=> &$intern_names,
-			'ext' 		=> &$extern_names,
-			'committee' => &$perm,
-			'drafts'	=> &$drafts,
-			'no_int' 	=> &$no_internal,
-			'name_id'	=> &$name_to_id
+			'committee' => $perm,
+			'counter' 	=> &$counter
 		]);
 		$this->t->printPageFooter();
 	}

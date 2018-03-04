@@ -430,7 +430,6 @@ class Database
 	 * return resolutions by gremium/committee
 	 * used to check if protocol was accepted
 	 * @param string $committee
-	 * @param string $protocolName
 	 * @param integer $pid protocol id - if set this matches only given protocol id
 	 * @return NULL|array
 	 * @throws Exception
@@ -457,6 +456,35 @@ class Database
 				$r[] = $res;
 			}
 			return $r;
+	}
+	
+	/**
+	 * return protocols by gremium/committee
+	 * list of protocolls names which has resolution
+	 * @param string $committee
+	 * @return NULL|array
+	 * @throws Exception
+	 */
+	public function getProtocolHasResoByCommittee( $committee ){
+		if (!is_string($committee) || $committee === '') {
+			$emsg = 'Wrong parameter in Database function ('.__FUNCTION__.'). ';
+			$emsg.= 'Require nonempty string';
+			error_log( $emsg );
+			throw new Exception($emsg);
+			return NULL;
+		}
+		$sql = "SELECT DISTINCT P.name
+				FROM `".TABLE_PREFIX."resolution` R, `".TABLE_PREFIX."protocol` P, `".TABLE_PREFIX."gremium` G
+				WHERE R.on_protocol = P.id
+					AND P.gremium = G.id
+					AND G.name = ?
+				ORDER BY P.date ASC;";
+		$result = $this->getResultSet($sql, 's', $committee );
+		$r = [];
+		foreach ($result as $res){
+			$r[$res['name']] = true;
+		}
+		return $r;
 	}
 	
 	/**
