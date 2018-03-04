@@ -14,12 +14,18 @@
 			} 
 		}, 200);
 		//filter table
+		var last_val_length = 0;
 		$("#resofilter").on("keyup", function() {
 			var value = $(this).val().toLowerCase();
+			var l = (value.length >= last_val_length)? false: true; 
+			last_val_length = value.length;
 			$("#resotable .resolution").filter(function() {
 				//remove text from togglebox, then search text
 				$(this).toggle($(this).clone().find('.togglebox').remove().end().text().toLowerCase().indexOf(value) > -1)
 			});
+			if (l) $('#resotable .resolution:visible').prevUntil('tr.newweek:visible', '.newweek').show();
+			$('#resotable tr.newweek:visible').prevUntil('tr.resolution:visible', '.newweek').hide()
+			
 		});
 	});
 	
