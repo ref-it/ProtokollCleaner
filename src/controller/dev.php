@@ -67,7 +67,6 @@ class DevController extends MotherController
 			$x->listAttachements('spielwiese:test:utf8testdsd')
 		); echo '</pre>';
 		
-		
 		$this->t->printPageFooter();
 	}
 	

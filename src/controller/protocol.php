@@ -60,7 +60,7 @@ class ProtocolController extends MotherController {
 			$p->draft_url = $dbprotocols[$p->name]['draft_url'];
 			$p->public_url = $dbprotocols[$p->name]['public_url'];
 		}
-		$dbresolution = $this->db->getResolutionByPTag($committee, $protocol_name);
+		$dbresolution = $this->db->getResolutionByPTag($committee, $protocol_name, true);
 		if ($dbresolution != NULL && count($dbresolution) >= 1){
 			$p->agreed_on = $dbresolution[0]['id'];
 		}

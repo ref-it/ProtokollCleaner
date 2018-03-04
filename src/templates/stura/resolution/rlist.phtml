@@ -2,7 +2,6 @@
 <p><strong>(Gesammt: <?= count($param['reso']) ?>)</strong></p>
 
 <?php
-//TODO filter
 
 $this->t->appendFloatingLink(WIKI_URL."/".str_replace(':', '/', self::$protomap[$param['committee']][2]), "Wiki Beschlussliste", '&#xf266;');
 
@@ -37,7 +36,7 @@ $this->t->appendFloatingLink(WIKI_URL."/".str_replace(':', '/', self::$protomap[
 			if ($last_week != $week){ // week headline
 				$last_week = $week;
 				$week_reso_reset = true;
-				echo '<tr class="newweek table-success"><th colspan="3" class="newweek" scope="row">'."Woche $week. - Protokoll vom <a href=\"".WIKI_URL.'/'.self::$protomap[$param['committee']][1].':'.$reso['pname']."\" target=\"_blank\">{$reso['date']}</a></th></tr>";
+				echo '<tr class="newweek table-success"><th colspan="3" class="newweek" scope="row">'."Woche $week. - ".(($reso['on_protocol'])?"Protokoll vom <a href=\"".WIKI_URL.'/'.self::$protomap[$param['committee']][1].':'.$reso['pname']."\" target=\"_blank\">{$reso['date']}</a>":'Protokoll vom '.$reso['pname'])."</th></tr>";
 			}
 			if ($last_proto_id != $reso['pid'] && !$week_reso_reset){ //second meeting in same week
 				$last_proto_id = $reso['pid'];

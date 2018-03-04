@@ -56,8 +56,8 @@ class protocolHelper extends protocolOut
 		's=' => 'Beschluss',
 	];
 	
-	private static $resolutionType = [[
-			'match' => ['Protokoll', 'beschließt', 'Sitzung'], 
+	public static $resolutionType = [[
+			'match' => ['Protokoll', 'beschließt', 'Sitzung', '\d+'], 
 			'long' => 'Protokoll',
 			'short' => 'P'
 		], [
@@ -116,6 +116,121 @@ class protocolHelper extends protocolOut
 	}
 	
 	/**
+	 * parse resolution Type
+	 * @param $text resolution text
+	 * @return array ['type_short' => , 'type_long' => ]
+	 */
+	public static function parseResolutionType ($text){
+		$return = [];
+		//detect type by pregmatches
+		foreach (protocolHelper::$resolutionType as $type){
+			$pattern = [];
+			//matches as string
+			if (isset($type['match'])){
+				if (is_array($type['match'])){
+					foreach ($type['match'] as $mat){	$pattern[] = '/.*('.$mat.').*/';	}
+				} else {
+					$pattern[] = '/.*('.$type['match'].').*/';
+				}
+			}
+			//regex pattern
+			if (isset($type['pattern'])){
+				if (is_array($type['pattern'])){
+					$pattern = $type['pattern'];	
+				}
+				else {
+					$pattern = [$type['pattern']]; 	
+				}
+			}
+			//handle multiple and match pattern
+			$matches = true;
+			foreach ($pattern as $subpattern){
+				if (!preg_match($subpattern, $text)){
+					$matches = false;
+					break;
+				}
+			}
+			if ($matches){
+				$return['type_short'] = $type['short'];
+				$return['type_long'] = $type['long'];
+				break;
+			}
+		}
+		return $return;
+	}
+	
+	/**
+	 * parse protocol resolution to p_tag
+	 * @param string $text
+	 * @param string $committee
+	 * @return array ['p_link_date' => , 'p_tag' => ]
+	 */
+	public static function parseResolutionProtocolTag($text, $committee){
+		//parse date on protocols resolutions
+		$return = [];
+		
+		//parse protocoltag
+		$tmp = trim(str_replace('  ',' ',preg_replace('/[^\d. -]/', '', str_replace('|',' ', $text))), " \t\n\r\0\x0B-.");
+		$tmp = str_replace('.', '-', $tmp);
+		$tmpdateList = explode(' ',$tmp);
+		$date = [];
+		foreach($tmpdateList as $dateElem){
+			$pdate = false;
+			if (strlen($tmp) >= 10){
+				$tmp2 = substr($dateElem, 0, 10);
+				$pdate = date_create_from_format('d-m-Y His', $tmp2.' 000000');
+				if ($pdate){
+					$date[] = $pdate;
+					continue;
+				}
+			}
+			if (strlen($tmp) >= 10){
+				$tmp2 = substr($dateElem, 0, 10);
+				$pdate = date_create_from_format('Y-m-d His', $tmp2.' 000000');
+				if ($pdate){
+					$date[] = $pdate;
+					continue;
+				}
+			}
+			if (strlen($tmp) >= 8){
+				$tmp2 = substr($dateElem, 0, 8);
+				$pdate = date_create_from_format('d-m-y His', $tmp2.' 000000');
+				if ($pdate){
+					$date[] = $pdate;
+					continue;
+				}
+			}
+			if (strlen($tmp) >= 6){
+				$tmp2 = substr($dateElem, 0, 8);
+				$pdate = date_create_from_format('j-n-y His', $tmp2.' 000000');
+				if ($pdate){
+					$date[] = $pdate;
+					continue;
+				}
+			}
+		}
+		
+		if(count($date) == 0){
+			$return['p_link_date'] = false;
+			$return['p_tag'] = 0;
+		} else if(count($date) == 1){
+			$return['p_link_date'] = [$date[0]->format('Y-m-d')];
+			$return['p_tag'] = $committee.':'.$return['p_link_date'][0];
+		} else if(count($date) == 2 && $date[0]->format('Y-m-d') == $date[1]->format('Y-m-d')) {
+			$return['p_link_date'] = [$date[0]->format('Y-m-d')];
+			$return['p_tag'] = $committee.':'.$return['p_link_date'][0];
+		} else {
+			$return['p_tag'] = '';
+			foreach ($date as $pos => $d){
+				$return['p_link_date'][] = $date[$pos]->format('Y-m-d');
+				$return['p_tag'].= (($pos != 0)?'|':'').$committee.':'.$date[$pos]->format('Y-m-d');
+			}
+			$return['multiple'] = true;
+		}
+		return $return;
+	}
+	
+	/**
 	 * categorize and split raw resolution strings to array
 	 * 
 	 * @param string $resolution raw resolution text
@@ -138,63 +253,18 @@ class protocolHelper extends protocolOut
 			$result['type_short'] = $overwriteType['short'];
 			$result['type_long'] = $overwriteType['long'];
 		} else {
-			//detect type by pregmatches
-			foreach (self::$resolutionType as $type){
-				$pattern = [];
-				//matches as string
-				if (isset($type['match'])){
-					if (is_array($type['match'])){
-						foreach ($type['match'] as $mat){
-							$pattern[] = '/.*('.$mat.').*/';
-						}
-					} else {
-						$pattern[] = '/.*('.$type['match'].').*/';
-					}
-				}
-				//regex pattern
-				if (isset($type['pattern'])){
-					if (is_array($type['pattern'])){
-						$pattern = $type['pattern'];
-					} else {
-						$pattern = [$type['pattern']];
-					}
-				}
-				//handle multiple and match pattern
-				$matches = true;
-				foreach ($pattern as $subpattern){
-					if (!preg_match($subpattern, $result['Titel'])){
-						$matches = false;
-						break;
-					}
-				}
-				if ($matches){
-					$result['type_short'] = $type['short'];
-					$result['type_long'] = $type['long'];
-					break;
-				}
-			}
+			$tmpType = self::parseResolutionType($result['Titel']);
+			$result['type_short'] = $tmpType['short'];
+			$result['type_long'] = $tmpType['long'];
 		}
 		if ($result['type_long'] == 'Protokoll'){
-			//parse protocoltag
-			$tmp = $result['Titel'];
-			$tmp = preg_replace('/[^\d.-]/', '', $tmp);
-			$tmp = str_replace('.', '-', $tmp);
-			$date = false;
-			//try to parse date
-			if (strlen($tmp) >= 10){
-				$tmp = substr($tmp, 0, 10);
-				$date = date_create_from_format('d-m-Y His', $tmp.' 000000');
-			} else if (strlen($tmp) >= 8){
-				$tmp = substr($tmp, 0, 8);
-				$date = date_create_from_format('d-m-y His', $tmp.' 000000');
-			}			
-			if ($date) {
-				$result['p_tag'] = (isset($p)? $p->committee : $committee).':'.$date->format('Y-m-d');
+			$tmpPtag = self::parseResolutionProtocolTag($result['Titel'], isset($p)? $p->committee : $committee);
+			if (!$tmpPtag['p_link_date']){
+				$p->parse_errors['f'][] = "<strong>Parse Error: Protokolldatum</strong> Dem folgenden Protokollbeschluss konnte kein Datum entnommen werden. Gesuchtes format: dd.mm.yy, dd-mm-yy, dd.mm.yyyy oder dd-mm-yyyy<br><i>{$result['Titel']}</i>";
+			} else if(isset($tmpPtag['multiple'])) {
+				$p->parse_errors['f'][] = "<strong>Parse Error: Protokolldatum</strong> Bitte nur einen Beschluss pro Protokoll.<br><i>{$result['Titel']}</i>";
 			} else {
-				$result['p_tag'] = 0;
-				if (isset($p)){
-					$p->parse_errors['f'][] = "<strong>Parse Error: Protokolldatum</strong> Dem folgenden Protokollbeschluss konnte kein Datum entnommen werden. Gesuchtes format: dd.mm.yy, dd-mm-yy, dd.mm.yyyy oder dd-mm-yyyy<br><i>{$result['Titel']}</i>";
-				}
+				$result['p_tag'] = $tmpPtag['p_tag'];
 			}
 		} else {
 			$result['p_tag'] = NULL;
@@ -348,7 +418,7 @@ class protocolHelper extends protocolOut
 			//maybe run this on whole text globally
 			foreach(self::$regexFinder['no_multimatch'] as $key => $pattern){
 				if (preg_match($pattern, $line)){
-					$pregFind[$key][($isInternal)?'intern':'public'][$linekey.'0'] = trim(trim(trim($line), '*'));
+					$pregFind[$key][($isInternal)?'intern':'public'][$linekey.'0'] = trim($line, " \t\n\r\0\x0B*");
 				}
 			}
 			//detect fixme, todo, resolutions
@@ -356,7 +426,7 @@ class protocolHelper extends protocolOut
 			foreach(self::$regexFinder['multimatch'] as $key => $pattern){
 				$tmp_matches = preg_match_all($pattern, $line);
 				if ($tmp_matches){
-					$pregFind[$key][($isInternal)?'intern':'public'][$linekey.'1'] = [trim(trim(trim($line), '*')), $tmp_matches];
+					$pregFind[$key][($isInternal)?'intern':'public'][$linekey.'1'] = [trim($line, " \t\n\r\0\x0B*"), $tmp_matches];
 				}
 			}
 		}

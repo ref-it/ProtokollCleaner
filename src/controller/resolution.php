@@ -63,8 +63,12 @@ class ResolutionController extends MotherController
 		$resos2 = array();
 		//parse resolutions: categorize, and split to array
 		foreach ($resos as $pos => $rawres){
-			$tmp = protocolHelper::parseResolution($rawres['text'], NULL, NULL, $perm);
-			$resos[$pos] = array_merge( $tmp, $resos[$pos]);
+			if ($rawres['noraw'] == 0){
+				$tmp = protocolHelper::parseResolution($rawres['text'], NULL, NULL, $perm);
+				$resos[$pos] = array_merge( $tmp, $resos[$pos]);
+			} else {
+				$resos[$pos]['Title'] = $rawres['text'];
+			}
 			$resos[$pos]['date_obj'] = date_create_from_format('Y-m-d His', $rawres['date'].' 000000' );
 		}
 		$this->t->setTitlePrefix('Beschlussliste - '.ucwords( $perm, " \t\r\n\f\v-"));

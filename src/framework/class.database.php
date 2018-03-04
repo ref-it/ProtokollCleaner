@@ -401,10 +401,11 @@ class Database
 	 * used to check if protocol was accepted
 	 * @param string $committee
 	 * @param string $protocolName
+	 * @param boolean $useLike
 	 * @return NULL|array
 	 * @throws Exception
 	 */
-	public function getResolutionByPTag( $committee, $protocolName ){
+	public function getResolutionByPTag( $committee, $protocolName, $useLike = false ){
 		if (!is_string($committee) || $committee === ''
 			|| !is_string($protocolName) || $protocolName === '' ) {
 			$emsg = 'Wrong parameter in Database function ('.__FUNCTION__.'). ';
@@ -414,8 +415,10 @@ class Database
 			return NULL;
 		}
 		$tag = $committee.':'.$protocolName;
-		$sql = "SELECT * FROM `".TABLE_PREFIX."resolution` R WHERE R.p_tag = ?;";
-		$result = $this->getResultSet($sql, 's', $tag);
+		$sql = (!$useLike)? 
+			"SELECT * FROM `".TABLE_PREFIX."resolution` R WHERE R.p_tag = ? ORDER BY R.id DESC;" :
+			"SELECT * FROM `".TABLE_PREFIX."resolution` R WHERE R.p_tag LIKE ?  ORDER BY R.id DESC;";
+		$result = $this->getResultSet($sql, 's', ($useLike)?"%$tag%":$tag);
 		$r = [];
 		foreach ($result as $res){
 			$r[] = $res;
@@ -757,12 +760,48 @@ class Database
 	}
 	
 	/**
+	 * update or create protocol data
+	 * @param array $p
+	 * @return boolean
+	 */
+	public function createProtocol($p){
+		$sql = '';
+		$pattern = 'sssiiiss';
+		$data = [
+			$p['url'],
+			$p['name'],
+			$p['date'],
+			$p['agreed'],
+			$p['gremium'],
+			$p['legislatur'],
+			$p['draft_url'],
+			$p['public_url'],
+		];
+		$sql = "INSERT INTO `".TABLE_PREFIX."protocol`
+			(	`url`,
+				`name`,
+				`date`,
+				`agreed`,
+				`gremium`,
+				`legislatur`,
+				`draft_url`,
+				`public_url`)
+			VALUES(?,?,?,?,?,?,?,?) ";
+		$this->protectedInsert($sql, $pattern, $data);
+		if ($this->affectedRows() > 0){
+			return $this->lastInsertId();
+		} else {
+			return false;
+		}
+	}
+	
+	/**
 	 * create resolution
 	 * @param array $r resolution element array
 	 * @return boolean|new id
 	 */
 	public function createResolution($r){
-		$pattern = 'isssssi';
+		$pattern = 'isssssii';
 		$data = [
 			$r['on_protocol'],
 			$r['type_short'],
@@ -770,7 +809,8 @@ class Database
 			$r['text'],
 			$r['p_tag'],
 			$r['r_tag'],
-			$r['intern']
+			$r['intern'],
+			(isset($r['noraw'])? $r['noraw'] : 0)
 		];
 		$sql = "INSERT INTO `".TABLE_PREFIX."resolution`
 			(	`on_protocol`, 
@@ -779,8 +819,9 @@ class Database
 				`text`, 
 				`p_tag`, 
 				`r_tag`, 
-				`intern`)
-			VALUES(?,?,?,?,?,?,?) ";
+				`intern`,
+				`noraw`)
+			VALUES(?,?,?,?,?,?,?,?) ";
 		$this->protectedInsert($sql, $pattern, $data);
 		$result = $this->affectedRows();
 		if ($this->affectedRows() > 0){
@@ -859,7 +900,7 @@ class Database
 	 * @return boolean
 	 */
 	public function updateResolution($r){
-		$pattern = 'isssssii';
+		$pattern = 'isssssiii';
 		$data = [
 			$r['on_protocol'],
 			$r['type_short'],
@@ -868,6 +909,7 @@ class Database
 			$r['p_tag'],
 			$r['r_tag'],
 			$r['intern'],
+			(isset($r['noraw'])? $r['noraw'] : 0),
 			$r['id']
 		];
 		$sql = "UPDATE `".TABLE_PREFIX."resolution`
@@ -877,7 +919,8 @@ class Database
 				`text` = ?,
 				`p_tag` = ?,
 				`r_tag` = ?,
-				`intern` = ?
+				`intern` = ?,
+				`noraw` = ?
 			WHERE `id` = ?;";
 		$this->protectedInsert($sql, $pattern, $data);
 		$result = $this->affectedRows();

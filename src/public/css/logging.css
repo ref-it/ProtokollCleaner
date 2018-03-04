@@ -31,3 +31,7 @@
 	background-color: #ccc;
 	min-width: 42px;
 }
+.logging .tab {
+	display: inline-block;
+	width: 30px;
+}
