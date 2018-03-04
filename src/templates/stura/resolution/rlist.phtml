@@ -6,8 +6,8 @@
 $this->t->appendFloatingLink(WIKI_URL."/".str_replace(':', '/', self::$protomap[$param['committee']][2]), "Wiki Beschlussliste", '&#xf266;');
 
 ?>
-<p>Zum Filtern hier Suchwort eingeben.</p>  
-<input class="form-control" id="resofilter" type="text" placeholder="Suche..">
+<p class="noprint">Zum Filtern hier Suchwort eingeben.</p>  
+<input class="form-control noprint" id="resofilter" type="text" placeholder="Suche..">
 <br>
 
 <div id="resotable" class="resolist-table">
@@ -15,7 +15,7 @@ $this->t->appendFloatingLink(WIKI_URL."/".str_replace(':', '/', self::$protomap[
 		<thead>
 			<tr>
 				<th scope="col">#</th>
-				<th scope="col">Typ</th>
+				<th style="max-width: 130px" scope="col">Typ</th>
 				<th scope="col">Beschluss</th>
 			</tr>
 		</thead>
@@ -46,7 +46,7 @@ $this->t->appendFloatingLink(WIKI_URL."/".str_replace(':', '/', self::$protomap[
 				$week_reso_reset = true;
 			}
 			echo '<tr id="reso-'.str_replace('/', '_', $reso['r_tag']).'" class="resolution resotype-'.$reso['type_short'].' resotype-'.$reso['type_long'].'"><th style="width: 90px" scope="row">'.$reso['r_tag'].'</th>';
-			echo "<td>{$reso['type_long']}</td><td>{$reso['Titel']}";
+			echo "<td style=\"max-width: 130px\" class=\"reso-short-{$reso['type_short']}\">{$reso['type_long']}</td><td>{$reso['Titel']}";
 			echo "<div class=\"d-none\">{$reso['date']} Woche $last_week</div>";
 			echo '<input class="resotoggle" id="reso_toggle_'.$pos.'" type="checkbox" value="1">';
 			echo '<label tabindex="0" class="label resotoggle btn btn-outline-info" for="reso_toggle_'.$pos.'"></label>';
