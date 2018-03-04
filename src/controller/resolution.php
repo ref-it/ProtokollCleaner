@@ -52,13 +52,14 @@ class ResolutionController extends MotherController
 			return;
 		}
 		//permission - edit this to add add other committee
+		prof_flag('db read');
 		$perm = 'stura';
 		if (isset($vali->getFiltered()['pid'])){
 			$resos = $this->db->getResolutionByCommittee($perm, $vali->getFiltered()['pid']);
 		} else {
 			$resos = $this->db->getResolutionByCommittee($perm);
 		}
-		
+		prof_flag('db read done');
 		$resos2 = NULL;
 		$resos2 = array();
 		//parse resolutions: categorize, and split to array
@@ -68,7 +69,11 @@ class ResolutionController extends MotherController
 				$resos[$pos] = array_merge( $tmp, $resos[$pos]);
 			} else {
 				$resos[$pos]['Titel'] = $rawres['text'];
-				$resos[$pos]['Beschluss'] = 'angenommen';
+				if (1 == preg_match('/(explizit( *)abgelehnt|ist( *)abgelehnt|>( *)abgelehnt)/i', $rawres['text'])){
+					$resos[$pos]['Beschluss'] = 'abgelehnt';
+				} else {
+					$resos[$pos]['Beschluss'] = 'angenommen';
+				}
 			}
 			$resos[$pos]['date_obj'] = date_create_from_format('Y-m-d His', $rawres['date'].' 000000' );
 		}

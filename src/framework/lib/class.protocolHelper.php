@@ -65,6 +65,10 @@ class protocolHelper extends protocolOut
 			'long' => 'Protokoll',
 			'short' => 'P'
 		], [
+			'match' => ['Tagesordnung'], 
+			'long' => 'Tagesordnung',
+			'short' => 'T'
+		], [
 			'match' => ['Haushaltsverantwortliche', 'beschließt', 'Budget'], 
 			'long' => 'Finanzen',
 			'short' => 'H'
@@ -321,7 +325,7 @@ class protocolHelper extends protocolOut
 	 * @param string $addDraftText
 	 * @param string $nopreview
 	 */
-	public function parseProto($p, $publising_user, $addDraftText = false, $nopreview = false){
+	public function parseProto($p, $addDraftText = false, $nopreview = false){
 		prof_flag('parseProto_start');
 		
 		$isInternal = false;	// dont copy internal parts to public part
@@ -347,15 +351,11 @@ class protocolHelper extends protocolOut
 						$p->preview .= self::generateDiffCopiedChangedLine('====== ENTWURF - PROTOKOLL ======');
 						$alc++;
 					}
-					$p->preview .= self::generateDiffCopiedChangedLine('==== GENERIERT mit '.BASE_TITLE.' von ('.$publising_user.') ===='."\n");
-					$alc++;
 				} else {
 					if ($addDraftText){
 						$p->external .= '====== ENTWURF - PROTOKOLL ======'."\n";
 						$alc++;
 					}			
-					$p->external .= '==== GENERIERT mit '.BASE_TITLE.' von ('.$publising_user.') ===='."\n";
-					$alc++;
 				}
 				$addDraftText = false;
 				$writeUserText = 0;

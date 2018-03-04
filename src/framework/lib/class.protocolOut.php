@@ -157,19 +157,19 @@ class protocolOut
      */
     public static function printProtoLinks($p){
     	echo '<div class="protolinks">';
-    	echo '<a class="btn btn-primary mr-1 reload" href="">Reload</a>';
+    	echo '<a class="btn btn-primary mr-1 reload" href=""><i class="fa fa-refresh fa-fw"></i>Reload</a>';
     	if (!$p->public_url){
-    		echo '<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][0]).'/'.$p->name.'?do=edit" target="_blank">Edit Protocol</a>';
+    		echo '<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][0]).'/'.$p->name.'?do=edit" target="_blank"><i class="fa fa-pencil fa-fw"></i>Edit Protocol</a>';
     	} else {
-    		echo '<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][0]).'/'.$p->name.'" target="_blank">View Intern</a>';
+    		echo '<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][0]).'/'.$p->name.'" target="_blank"><i class="fa fa-eye fa-fw"></i>View Intern</a>';
     	}
     	if ($p->draft_url){
-    		echo '<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][1]).'/'.$p->name.'" target="_blank">View Draft</a>';
+    		echo '<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][1]).'/'.$p->name.'" target="_blank"><i class="fa fa-eye fa-fw"></i>View Draft</a>';
     	}
     	if ($p->public_url){
-    		echo '<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][1]).'/'.$p->name.'" target="_blank">View Public</a>';
+    		echo '<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][1]).'/'.$p->name.'" target="_blank"><i class="fa fa-eye fa-fw"></i>View Public</a>';
     	} else {
-    		echo '<button class="btn btn-danger mr-1 commit" type="button">'.(($p->agreed_on === NULL)?'Entwurf ': '' ).'Veröffentlichen</button>';
+    		echo '<button class="btn btn-success mr-1 commit" type="button">'.(($p->agreed_on === NULL)?'Entwurf ': '' ).'Veröffentlichen</button>';
     	}
     	echo '</div>';
     }

@@ -200,7 +200,7 @@ class ProtocolController extends MotherController {
 
 			//run protocol parser
 			$ph = new protocolHelper();
-			$ph->parseProto($p, $this->auth->getUserFullName(), $p->agreed_on === NULL );
+			$ph->parseProto($p, $p->agreed_on === NULL );
 			//insert protocol link + status
 			protocolOut::printProtoStatus($p);
 			//protocol errors
@@ -278,7 +278,7 @@ class ProtocolController extends MotherController {
 			}
 			//run protocol parser
 			$ph = new protocolHelper();
-			$ph->parseProto($p, $this->auth->getUserFullName(), $p->agreed_on === NULL, true);
+			$ph->parseProto($p, $p->agreed_on === NULL, true);
 			protocolOut::createProtoTagErrors($p);
 			//---------------------------------
 			// check and store
@@ -330,7 +330,7 @@ class ProtocolController extends MotherController {
 			//create protocol in wiki
 			$x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
 			prof_flag('write wiki page');
-			$put_res = $x->putPage(parent::$protomap[$vali->getFiltered()['committee']][1].':'.$p->name, $p->external);
+			$put_res = $x->putPage(parent::$protomap[$vali->getFiltered()['committee']][1].':'.$p->name, $p->external, ['sum' => 'GENERIERT mit '.BASE_TITLE.' von ('. $this->auth->getUserFullName().')']);
 			prof_flag('wiki page written');
 			if ($put_res == false){
 				$this->json_result = [
