@@ -196,7 +196,7 @@ class ProtocolController extends MotherController {
 			$this->t->appendCssLink('proto.css', 'screen,projection');
 			$this->t->appendJsLink('protocol.js');
 			$this->t->printPageHeader();
-			echo $this->getChallenge(); // get post challenge
+			echo $this->getChallenge(); // get/echo post challenge
 
 			//run protocol parser
 			$ph = new protocolHelper();

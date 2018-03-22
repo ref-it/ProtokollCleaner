@@ -120,6 +120,11 @@ class protocolOut
      * @param boolean $includeUrls call printProtoLinks automatically
      */
 	public static function printProtoStatus($p, $includeUrls = true){
+		$todos = [];
+		foreach ($p->todos as $t){
+			$todos[$t['type']][($t['intern']==0)?'p':'i'][]=true;
+		}
+		
 		echo '<div class="protostatus">';
 		echo '<div class="general">';
 		echo '<span class="committee"><span>Gremium:</span><span>'.$p->committee.'</span></span>';
@@ -134,18 +139,17 @@ class protocolOut
 		echo '<span class="sitzung"><span>Legislatur-Woche:</span><span>'.$p->legislatur_week.'</span></span>';
 		echo '<span class="sitzung"><span>Sitzung:</span><span>'.$p->protocol_number.'</span></span>';
 		echo '<span class="resolutions"><span>Angenommene Beschlüsse:</span><span>'.count($p->resolutions).'</span></span>';
-		
 		echo '<span class="todo"><span>Todo:</span><span>'.(
-			((isset($p->todos['todo']['public']))? count($p->todos['todo']['public']): 0)
-			+((isset($p->todos['todo']['intern']))? count($p->todos['todo']['intern']): 0)
+			((isset($todos['todo']['p']))? count($todos['todo']['p']): 0)
+			+((isset($todos['todo']['i']))? count($todos['todo']['i']): 0)
 		).'</span></span>';
 		echo '<span class="fixme"><span>FixMe:</span><span>'.(
-			((isset($p->todos['fixme']['public']))? count($p->todos['fixme']['public']): 0)
-			+((isset($p->todos['fixme']['intern']))? count($p->todos['fixme']['intern']): 0)
+			((isset($todos['fixme']['p']))? count($todos['fixme']['p']): 0)
+			+((isset($todos['fixme']['i']))? count($todos['fixme']['i']): 0)
 		).'</span></span>';
 		echo '<span class="deleteme"><span>DeleteMe:</span><span>'.(
-			((isset($p->todos['deleteme']['public']))? count($p->todos['deleteme']['public']): 0)
-			+((isset($p->todos['deleteme']['intern']))? count($p->todos['deleteme']['intern']): 0)
+			((isset($todos['deleteme']['p']))? count($todos['deleteme']['p']): 0)
+			+((isset($todos['deleteme']['i']))? count($todos['deleteme']['i']): 0)
 		).'</span></span>';
 		if ($includeUrls) self::printProtoLinks($p);
 		echo '</div></div>';
