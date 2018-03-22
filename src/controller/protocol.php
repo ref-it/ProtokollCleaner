@@ -358,6 +358,8 @@ class ProtocolController extends MotherController {
 			//---------------------------------
 			//create/update resolutions
 			$db_resolutions = $this->db->getResolutionByOnProtocol($p->id, true);
+			//remember protocol resolution
+			$proto_reso_new = [];
 			//insert new resolutons, modify existing, delete old
 			foreach ($p->resolutions as $reso){
 				$reso['on_protocol'] = $p->id;
@@ -365,36 +367,55 @@ class ProtocolController extends MotherController {
 				if (isset($db_resolutions[$reso['r_tag']])){
 					$reso['id'] = $db_resolutions[$reso['r_tag']]['id'];
 					//error if resolution protocol tag was changed
-					if ($db_resolutions[$reso['r_tag']]['p_tag'] !== $reso['p_tag']){
+					if ($db_resolutions[$reso['r_tag']]['type_long'] == 'Protokoll'
+						&& $db_resolutions[$reso['r_tag']]['p_tag'] !== $reso['p_tag']){
 						$this->json_result = [
 							'success' => false,
 							'eMsg' => 'Protokollbeschlüsse müssen in der Reihenfolge bleiben, in der diese initial erstellt wurden.'
 						];
-						error_log('Proto Publish: User "'.$this->auth->getUsername()." tied to change protocol resolition {$reso['r_tag']}");
-						$this->print_json_result();
-						return;
+						error_log('Proto Publish: User "'.$this->auth->getUsername()." tried to change protocol resolition order. r_tag: {$reso['r_tag']} -- old_p_tag: {$db_resolutions[$reso['r_tag']]['p_tag']} -- new_p_tag: {$reso['p_tag']} ");
 					} else {
 						//update resolution
 						$this->db->updateResolution($reso);
 					}
 					unset($db_resolutions[$reso['r_tag']]);
 				} else { //create resolution
-					$this->db->createResolution($reso);
+					if ($reso['type_long'] == 'Protokoll'){
+						$proto_reso_new[] = $reso;
+					} else {
+						$this->db->createResolution($reso);
+					}
 				}
 			}
 			//delete others
 			foreach ($db_resolutions as $reso){
+				//if old protocol exist with same text, dont create new and keep old
+				$skip_delete = false;
+				if ($reso['type_long'] == 'Protokoll'){
+					foreach ($proto_reso_new as $key => $new_p_reso){
+						if ($reso['noraw'] == 1 && $reso['text'] == $new_p_reso['Titel']	  // resolution crawled with resolution list
+							|| $reso['noraw'] == 0 && $reso['text'] == $new_p_reso['text'] ){// crawled on protocol with this tool
+							$skip_delete = true;
+							unset($proto_reso_new[$key]);
+						}
+						if ($skip_delete) break;
+					}
+				}
+				if ($skip_delete) continue;
+				//keep linked protocol resolutions
 				if ($reso['p_tag'] !== NULL && $reso['pid'] != null){
 					$this->json_result = [
 						'success' => false,
-						'eMsg' => 'Verlinkende Protokollbeschlüsse können nicht gelöscht werden.'
+						'eMsg' => 'Protokollbeschlüsse, welche mit einem veröffentlichten Protokoll verlinkt sind, können nicht gelöscht werden.'
 					];
-					error_log('Proto Publish: User "'.$this->auth->getUsername()." tied to delete protocol resolition {$reso['r_tag']}");
-					$this->print_json_result();
-					return;
+					error_log('Proto Publish: User "'.$this->auth->getUsername()." tried to delete linked protocol resolition {$reso['r_tag']} --- p_tag: {$reso['p_tag']}");
 				} else {
 					$this->db->deleteResolutionById($reso['id']);
 				}
+			}
+			//create new protocoll resolutions now
+			foreach ($proto_reso_new as $reso){
+				$this->db->createResolution($reso);
 			}
 			//---------------------------------
 			//create/update/delete todo|fixme|deleteme

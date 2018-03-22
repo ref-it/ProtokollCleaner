@@ -18,8 +18,7 @@ foreach ($param['int_ext'] as $pname => $v){
 		echo '<div class="yearline"><div class="yearline-link" id="year-'.$year.'"></div>'.$year.'</div>';
 		$this->t->appendFloatingLink('#year-'.$year, $year, '&#xf0c1;');
 	}
-	$state = (!isset($v['extern']))? (isset($v['draft'])?'draft':'public') : (isset($v['intern'])? 'private' : 'none');
-		
+	$state = (isset($v['extern']))? (isset($v['draft'])?'draft':'public') : (isset($v['intern'])? 'private' : 'none');
 	echo '<div id="proto-'.$pname.'" class="proto '.$state.(isset($v['agreed'])?' agreed':'').'">'.
 			"<span>$pname</span>". //protocol name
 			'<div class="pbc">'. //proto button container
