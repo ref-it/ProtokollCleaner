@@ -169,6 +169,7 @@ button, input{
     top: calc(100% - 35px);
     left: 10px;
     z-index: 10;
+	padding: 4px;
 }
 .profiling-output h3 {
 	font-size: 18px;
@@ -180,6 +181,8 @@ button, input{
     top: inherit;
     max-height: 35%;
     overflow-y: auto;
+	z-index:300;
+	border: 1px solid #ddd;
 }
 .fa-angle-toggle::before {
     content: "\f106";
@@ -215,7 +218,6 @@ button, input{
 	width: 100%;
 	min-width: 300px;
 	max-width: 1450px;
-	border-right: 1px solid #ddd;
 }
 .content img {
 	max-width: 780px;
@@ -767,6 +769,12 @@ div.silmph__message_success {
 	background-color: #fff;
 	margin: 0;
 	transition: left 0.3s ease;
+	height: 400px;
+	height: calc(100% - 160px);
+}
+.floating-links .link-box {
+	max-height: calc(100% - 44px);
+	overflow-y: auto;
 }
 .floating-links:hover,
 .floating-links:focus,
@@ -784,7 +792,7 @@ div.silmph__message_success {
 .floating-links .head-toggle span.toggler {
 	z-index: -1;
 	display: block;
-	padding: 8px 0 70px;
+	padding: 8px 0 50px;
 	position: absolute;
 	text-align: center;
 	width: 50px;
@@ -846,4 +854,35 @@ div.silmph__message_success {
 .floating-links .link-line a span.fa {
     margin-right: 8px;
     font-size: 14px;
+}
+.reftag {
+	height: 0;
+	width: 0;
+	visibility: hidden;
+	position: absolute;
+	top: 0;
+}
+.reftag.top-100 {
+	top: -100px;
+}
+.reftag.top100 {
+	top: 100px;
+}
+.reftag.top-50 {
+	top: -50px;
+}
+.reftag.top50 {
+	top: 50px;
+}
+.reftag.top-130 {
+	top: -130px;
+}
+.reftag.top130 {
+	top: 130px;
+}
+.reftag.top-150 {
+	top: -150px;
+}
+.reftag.top150 {
+	top: 150px;
 }

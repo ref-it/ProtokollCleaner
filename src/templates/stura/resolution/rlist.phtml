@@ -31,7 +31,8 @@ $this->t->appendFloatingLink(WIKI_URL."/".str_replace(':', '/', self::$protomap[
 			$week = substr($week, 0, strpos($week, '-'));
 			if ($last_legislatur != $legislatur){ //legislatur headline
 				$last_legislatur = $legislatur;
-				echo '<tr class="newlegislatur"><th colspan="3" class="newlegislatur  table-dark" scope="row">'."$legislatur. $committee-Legislatur</th></tr>";
+				echo '<tr class="newlegislatur"><th colspan="3" class="newlegislatur  table-dark" scope="row"><div class="position-relative"><div id="legis-'.$legislatur.'" class="reftag top-130"></div></div>'."$legislatur. $committee-Legislatur</th></tr>";
+				$this->t->appendFloatingLink( '#legis-'.$legislatur, 'Legislatur '.$legislatur , '&#xf0c1;');
 			}
 			if ($last_week != $week){ // week headline
 				$last_week = $week;
