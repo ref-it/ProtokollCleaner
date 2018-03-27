@@ -142,13 +142,13 @@
 	background-color: transparent;
 }
 .difftable > .line.normal > span:nth-child(2)::before{
-	content: '+';
+	content: ' ';
 	display:inline-block;
 }
 .difftable > .line.removed {
 	background-color: lightcoral;
 }
-.difftable > .line.removed > span:nth-child(3)::before{
+.difftable > .line.removed > span:nth-child(2)::before{
 	content: '-';
 	display:inline-block;
 }
@@ -159,23 +159,11 @@
 	content: '+';
 	display:inline-block;
 }
-.difftable > .line.changed > span:nth-child(4)::before{
-	content: 'C';
-	display:inline-block;
-}
 .difftable > .line.error {
 	background-color: orange;
 	font-weight: bolder;
 }
 .difftable > .line.error > span:nth-child(2)::before{
-	content: 'E';
-	display:inline-block;
-}
-.difftable > .line.error > span:nth-child(3)::before{
-	content: 'E';
-	display:inline-block;
-}
-.difftable > .line.error > span:nth-child(4)::before{
 	content: 'E';
 	display:inline-block;
 }
@@ -199,6 +187,23 @@
 	font-weight: bold;
 	text-align: right;
 }
+.protostatus .protolinks {
+	width: 48%;
+	text-align: center;
+	float: right;
+	max-width: 500px;
+}
+.protostatus .protolinks .btn {
+	width: 48%;
+	min-width: 210px;
+}
+.protostatus .protolinks .btn:last-child {
+	width: 96%;
+	width: calc(96% + 0.25rem);
+}
+.protostatus .protolinks .btn:nth-child(even) {
+	width: 48%;
+}
 .protostatus::after{
 	content: "";
 	display: block;
@@ -206,8 +211,8 @@
 }
 .protostatus .general {
 	display: block;
-	width: 100%;
-	max-width: 350px;
+	width: 48%;
+	max-width: 400px;
 	border: 1px solid black;
 	padding: 5px;
 	float: right;
@@ -215,6 +220,7 @@
 }
 .protostatus .general > span {
 	display: block;
+	max-width: 500px;
 }
 .protostatus .general > span::after{
 	content: "";
@@ -226,6 +232,20 @@
 }
 .protostatus .general > span > span:nth-child(2){
 	float: right;
+}
+@media screen and (max-width: 600px) {
+	.protostatus .general,
+	.protostatus .protolinks {
+		float: none;
+		width: 100%;
+		max-width: initial;
+	}
+	.protostatus .protolinks .btn:nth-child(even),
+	.protostatus .protolinks .btn {
+		width: 96%;
+		width: calc(96% + 0.25rem);
+		max-width: initial;
+	}
 }
 .protostatus .legislatur div.css-tooltip {
 	display: inline-block;

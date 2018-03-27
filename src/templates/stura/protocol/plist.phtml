@@ -23,7 +23,7 @@ foreach ($param['int_ext'] as $pname => $v){
 			"<span>$pname</span>". //protocol name
 			'<div class="pbc">'. //proto button container
 			(isset($v['intern'])?
-				'<button class="btn btn-outline-dark compare" type="button">'.(isset($v['agreed'])?'Untersuchen':'Veröffentlichen').'</button>':
+				'<button class="btn btn-outline-dark compare" type="button">'.(isset($v['extern'])?'Untersuchen':'Veröffentlichen').'</button>':
 				'<div class="btn placeholder"></div>').
 			(isset($v['reso'])?
 				'<a href="/resolist?pid='.$v['id'].'" title="Beschlüsse" class="btn resolink btn-outline-danger ml-1"><i class="fa fa-fw fa-list-ol"></i></a>':'').

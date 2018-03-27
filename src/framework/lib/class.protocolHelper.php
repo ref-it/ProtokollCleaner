@@ -518,7 +518,7 @@ class protocolHelper extends protocolOut
 						'text' => $todo[0],
 						'type' => $type,
 						'line' => $lineInfo[0],
-						'hash' => md5($todo[0].$lineInfo[0].$type),
+						'hash' => md5($todo[0].$lineInfo[0].$type), // Text + line number + type
 						'intern' => (($intern_indicator == 'intern')? 1:0)
 					];
 				}
