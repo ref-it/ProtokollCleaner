@@ -40,6 +40,12 @@ class Template
 	private $css;
 	
 	/**
+	 * meta head tags and other tags inserted to head
+	 * @var array $meta_other
+	 */
+	private $meta_other;
+	
+	/**
 	 * 
 	 * @var array $modals
 	 */
@@ -112,6 +118,7 @@ class Template
 		$this->path = $path;
 		$this->scripts = [];
 		$this->css = [];
+		$this->meta_other = ['<link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon" />'];
 		$this->modals = [];
 		$this->floating_links = [];
 		$this->title_prefix = '';
@@ -159,11 +166,12 @@ class Template
 	}
 
 	/**
-	 * add javascrip
-	 * @param string $scriptname scriptname in scriptfolder
+	 * add javascript
+	 * @param string $scriptname scriptname relative to scriptfolder
+	 * @param boolean $js_relative
 	 */
-	public function appendJsLink( $scriptname ){
-		$this->scripts[] = "<script src=\"/js/$scriptname\" type=\"text/javascript\"></script>";
+	public function appendJsLink( $scriptname, $js_relative = true ){
+		$this->scripts[] = "<script src=\"".(($js_relative)?'/js/':'')."$scriptname\" type=\"text/javascript\"></script>";
 	}
 
 	/**
@@ -201,6 +209,40 @@ class Template
 	}
 	
 	/**
+	 * add meta string
+	 * meta tag will be opened automatically
+	 * meta has to be string with all attributes
+	 * @param string $meta meta content
+	 */
+	public function appendMetaString( $meta ){
+		$this->meta_other[] = "<meta $meta >";
+	}
+	
+	/**
+	 * add meta string between head meta tag
+	 * 
+	 * all attributes have to be added as single string
+	 * @param array $meta named array: tagname => $content
+	 */
+	public function appendMeta( $meta ){
+		if (!is_array($meta) 
+			||  count(array_filter(array_keys($meta), 'is_string')) != count($meta)) throw new Exception('Template: $meta has to be associative array');
+		$m = '';
+		foreach($meta as $k => $v){
+			$m .= (($m != '')?' ':'')."$k=\"$v\"";
+		}
+		$this->meta_other[] = "<meta $m >";
+	}
+	
+	/**
+	 * append to meta_other to page head
+	 * @param string $tag
+	 */
+	public function appendOtherHeadTag($tag) {
+		$this->meta_other[] = $tag;
+	}
+	
+	/**
 	 * append html in modal section of template
 	 * @param string $html
 	 */
@@ -235,7 +277,7 @@ class Template
 	public function printScript($echo = false){
 		$result = '';
 		foreach ($this->scripts as $value) {
-			$result .= "\t\t\t$value\n";
+			$result .= "\t\t$value\n";
 		}
 		if ($echo) echo $result;
 		return $result;
@@ -248,12 +290,32 @@ class Template
 	public function printCss($echo = false){
 		$result = '';
 		foreach ($this->css as $value) {
-			$result .= "\t\t\t$value\n";
+			$result .= "\t\t$value\n";
 		}
 		if ($echo) echo $result;
 		return $result;
 	}
 
+	/**
+	 * clear meta_other array
+	 */
+	public function clearMetaOther(){
+		$this->meta_other = [];
+	}
+	
+	/**
+	 * return meta html text
+	 * @param boolean $echo if echo == true the function echo the result
+	 */
+	public function printMetaOther($echo = false){
+		$result = '';
+		foreach ($this->meta_other as $value) {
+			$result .= "\t\t$value\n";
+		}
+		if ($echo) echo $result;
+		return $result;
+	}
+	
 	/**
 	 * return modal html text
 	 * @param boolean $echo if echo == true the function echo the result
@@ -261,7 +323,7 @@ class Template
 	public function printModal($echo = false){
 		$result = '';
 		foreach ($this->modals as $value) {
-			$result .= "\t\t\t$value\n";
+			$result .= "\t\t$value\n";
 		}
 		if ($echo) echo $result;
 		return $result;
