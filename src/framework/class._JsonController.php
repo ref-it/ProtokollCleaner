@@ -48,10 +48,11 @@ class JsonController {
 	
 	/**
 	 * returns 404 not found in html format
+	 * @param false|string $message (optional) error message
 	 */
-	function json_not_found(){
+	function json_not_found($message = false){
 		http_response_code (404);
-		$this->json_result = array('success' => false, 'eMsg' => $this->translate('Page not Found.'));
+		$this->json_result = array('success' => false, 'eMsg' => $this->translate( ($message)? $message : 'Page not Found.'));
 		$this->print_json_result();
 	}
 	
