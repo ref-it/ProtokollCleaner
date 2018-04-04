@@ -754,6 +754,12 @@ div.silmph__message_success {
 	display: block;
 }
 /* -------------------- */
+@media screen and (max-width: 423px) {
+	.navbar-brand .hide_on_small {
+		display: none;
+	}
+}
+/* -------------------- */
 .floating-links {
 	top: 150px;
 	left: 100%;
