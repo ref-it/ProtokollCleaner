@@ -231,8 +231,9 @@ class Validator {
 	 * @return boolean
 	 */
 	public function V_integer($value, $params = []){
-		if (!filter_var($value, FILTER_VALIDATE_INT)){
-			return !$this->setError(true, 200, 'No Integer', 'No Integer');
+		if (filter_var($value, FILTER_VALIDATE_INT) === false){
+			$msg = (isset($params['error']))? $params['error'] : 'No Integer' ;
+			return !$this->setError(true, 200, $msg, 'No Integer');
 		} else {
 			$v = filter_var($value, FILTER_VALIDATE_INT);
 			$this->filtered = $v;
@@ -314,7 +315,7 @@ class Validator {
 			return !$this->setError(false);
 		}
 		$re = '/^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})$/';
-		if ($email !== '' && (!filter_var($email, FILTER_VALIDATE_EMAIL) || !preg_match($re, $email) )){
+		if ($email !== '' && (filter_var($email, FILTER_VALIDATE_EMAIL) === false || !preg_match($re, $email) )){
 			return !$this->setError(true, 200, "mail validation failed", 'mail validation failed');
 		} else {
 			$this->filtered = $email;
@@ -458,14 +459,14 @@ class Validator {
 			$this->filtered = $host;
 			return !$this->setError(false);
 		} else if ( preg_match("/^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/", $host) &&
-			( (version_compare(PHP_VERSION, '7.0.0') >= 0) && filter_var($host, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME) ||
+			( (version_compare(PHP_VERSION, '7.0.0') >= 0) && filter_var($host, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)!==false  ||
 				(version_compare(PHP_VERSION, '7.0.0') < 0) ) ) {
 			$this->filtered = $host;
 			return !$this->setError(false);
 		} else {
 			$value_idn = idn_to_ascii($host);
 			if ( preg_match("/^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])$/", $value_idn) &&
-				( (version_compare(PHP_VERSION, '7.0.0') >= 0) && filter_var($value_idn, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)  ||
+				( (version_compare(PHP_VERSION, '7.0.0') >= 0) && filter_var($value_idn, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)!==false  ||
 				(version_compare(PHP_VERSION, '7.0.0') < 0) ) ) {
 				$this->filtered = $value_idn;
 				return !$this->setError(false);
@@ -480,7 +481,6 @@ class Validator {
 	 * 
 	 * $param
 	 *  regex	 2	match pattern
-	 *  maxlengh 2	maximum string length
 	 *  errorkey 2  replace 'regex' with errorkey on error case
 	 *  error	 2  replace whole error message on error case
 	 *  upper	 1  string to uppercase
