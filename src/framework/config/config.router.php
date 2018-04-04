@@ -15,6 +15,7 @@ $routes = [
 		'admin'				=> ['admin',		'admin', 		'admin'],
 		'protolist'			=> ['protolist',	'protocol', 	'plist'],
 		'resolist'			=> ['resolist',		'resolution', 	'rlist'],
+		'todo/list'			=> ['todolist',		'todo', 		'tlist'],
 		'crawl'				=> ['crawler',		'crawler', 		'home'],
 		'crawl/legislatur'	=> ['crawler',		'crawler', 		'crawlLegislatur'],
 		'crawl/resoproto'	=> ['crawler',		'crawler', 		'crawlResoProto'],
@@ -25,6 +26,7 @@ $routes = [
 		'admin/testmail'	=> ['admin',		'admin', 		'mail_testmessage'],
 		'admin/legislatur'	=> ['admin',		'admin', 		'legislatur'],
 		'protocol/publish'	=> ['protopublish',	'protocol', 	'p_publish'],
+		'todo/update'		=> ['todoupdate',	'todo', 		'tupdate'],
 	]
 ];
 
@@ -48,6 +50,7 @@ $navigation = [
 	'admin' => ['admin', 	'Admin', 	'&#xf085;',	'gearLogo.png'],
 	'protolist' => ['protolist', 	'Protokolle', 	'&#xf266;',	'log.png'],
 	'resolist' => ['resolist', 	'Beschlussliste', 	'&#xf0cb;',	'log.png'],
+	'todo/list' => ['todolist', 	'Todos', 	'&#xf046;',	'log.png'],
 	'crawl'	 => ['crawler', 	'Crawler', 	'&#xf0e7;',	''],
 	'https://stura.tu-ilmenau.de/impressum' => ['baseaccess', 'Impressum', '&#xf129;', ''],
 	'https://www.tu-ilmenau.de/impressum/datenschutz/' => ['baseaccess', 'Datenschutz', '&#xf1c0;', ''],
@@ -88,6 +91,8 @@ $permission_map = [
 	'crawler' 		=> 'ref-it,konsul,admin',
 	'protolist' 	=> 'ref-it,stura,konsul,admin',
 	'resolist' 		=> 'ref-it,stura,konsul,admin',
+	'todolist' 		=> 'stura,ref-it,stura,konsul,admin',
+	'todoupdate' 	=> 'stura,ref-it,stura,konsul,admin',
 	'protoedit' 	=> 'ref-it,stura,konsul,admin',
 	'protopublish' 	=> 'ref-it,stura,konsul,admin',
 	'stura' 		=> 'stura',

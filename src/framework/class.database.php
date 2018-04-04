@@ -570,6 +570,84 @@ class Database
 	}
 	
 	/**
+	 * return todo array
+	 * @param int $pid protocol id
+	 * @param string $hash todo hash value
+	 * @param string $gremium
+	 * @return NULL|array todo element
+	 */
+	public function getTodosByHashPidGrem( $pid , $hash, $gremium ){
+		$sql = "SELECT T.* FROM `".TABLE_PREFIX."todos` T, `".TABLE_PREFIX."protocol` P, `".TABLE_PREFIX."gremium` G WHERE "."T.on_protocol = P.id AND P.gremium = G.id AND G.name = ? AND T.hash = ? AND P.id = ?;";
+		$result = $this->getResultSet($sql, 'ssi', [$gremium, $hash, $pid]);
+		if ($this->isError()) return false;
+		if(count($result) == 1){
+			return $result[0];
+		} else {
+			return NULL;
+		}
+	}
+	
+	/**
+	 * create todo entry
+	 * @param array $t todo element array
+	 * @return boolean|new id
+	 */
+	public function updateTodo($t){
+		$pattern = 'isissisii';
+		$data = [
+			$t['on_protocol'],
+			$t['user'],
+			$t['done'],
+			$t['text'],
+			$t['type'],
+			$t['line'],
+			$t['hash'],
+			$t['intern'],
+			$t['id']
+		];
+		$sql = "UPDATE `".TABLE_PREFIX."todos` SET
+				`on_protocol` = ?,
+				`user` = ?,
+				`done` = ?,
+				`text` = ?,
+				`type` = ?,
+				`line` = ?,
+				`hash` = ?,
+				`intern` = ?
+				WHERE `id` = ?";
+		
+		$this->protectedInsert($sql, $pattern, $data);
+		$result = $this->affectedRows();
+		if ($this->affectedRows() > 0){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * return todo array
+	 * @param string $gremium protocol id
+	 * @param boolean $limit_todo only show todos of type 'todo'
+	 * @param false|string $limit_date only show todos newer than $date
+	 * @return array todo elements
+	 */
+	public function getTodosByGremium( $gremium , $limit_todo = false, $limit_date = false ){		
+		$sql = "SELECT * FROM `".TABLE_PREFIX."todos` T, `".TABLE_PREFIX."protocol` P, `".TABLE_PREFIX."gremium` G WHERE ".(($limit_todo)?"T.type = 'todo' AND ":'')."T.on_protocol = P.id AND P.gremium = G.id AND G.name = ? ".(($limit_date)? "AND P.date >= ? ":'')."ORDER BY T.type, T.done, P.date, P.id, T.line;";
+		$data = [$gremium];
+		if ($limit_date) {
+			$data[] = $limit_date;
+		}
+		$result = $this->getResultSet($sql, 's'.(($limit_date)?'s':''), $data);
+		if ($this->isError()) return false;
+		$r = [];
+		foreach ($result as $res){
+			$r[] = $res;
+		}
+		return $r;
+	}
+	
+	/**
 	 * returns current legislatur
 	 * @return array
 	 */
