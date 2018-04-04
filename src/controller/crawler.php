@@ -380,7 +380,7 @@ class CrawlerController extends MotherController
 		foreach ($intern_and_extern as $key => $value){
 			//create protocols
 			$proto = [
-				'url' => (isset($value['intern']))? WIKI_URL.'/'.$esc_PROTO_IN.'/'.$value['intern'] : '',
+				'url' => (isset($value['intern']))? self::$protomap[$perm][0].':'.$value['intern'] : '',
 				'name' => (isset($value['intern'])? $value['intern'] : (isset($value['extern'])? $value['extern'] : $value['noproto'])),
 				'date' => $key,
 				'agreed' => (isset($accepted[$key])? $accepted[$key] : ((isset($value['extern']))? 0 : NULL)),

@@ -17,7 +17,7 @@ require_once (SYSBASE.'/framework/class.wikiClient.php');
 
 class ProtocolController extends MotherController {
 	/**
-	 * request protocol from wiki and load basic information from database
+	 * request protocol from intern wiki and load basic information from database
 	 * 
 	 * basic information:
 	 * 		name
@@ -31,6 +31,7 @@ class ProtocolController extends MotherController {
 	 * 
 	 * @param string $committee
 	 * @param string $protocol_name
+	 * @param boolean $load_attachements
 	 * @return Protocol|NULL
 	 */
 	private function loadWikiProtoBase ($committee, $protocol_name, $load_attachements = false){
@@ -42,9 +43,6 @@ class ProtocolController extends MotherController {
 			|| $a == ''
 			|| strlen($protocol_name) < 10 //protocol start with date tag -> min length 10
 			|| !preg_match("/^[0-9]{4}-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$/", substr($protocol_name, 0,10))) { //date format yyyy-mm-dd
-			echo 'kekse lskdhjfa öjjklf ksaj fsaf 
-				sad f
-				sd f';
 			return NULL;
 		}
 		$p = new Protocol($a);
