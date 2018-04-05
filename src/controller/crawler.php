@@ -178,7 +178,7 @@ class CrawlerController extends MotherController
 		echo '<h3>Crawler - Protokolle und Beschlüsse</h3>';
 		echo '<div class="logging">';
 		$x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
-		// ------------------------------------
+		// fetch protocols ------------------------------------
 		self::htmlLogLine("Load protocols..."); // -------------------------
 		prof_flag('wiki request - intern');
 		$intern = $x->getPagelistAutoDepth(parent::$protomap[$perm][0]);
@@ -265,7 +265,9 @@ class CrawlerController extends MotherController
 					self::htmlLogLine("Unhandled line ($linenumber): $line", 0, 1);
 				} else {
 					foreach ($resoExp as $k => $v){
-						$resoExp[$k] = trim($v);
+						//remove '<del>' tags from type keys, only accept them on text line
+						$t = ($k != 2)? strip_tags($v) : $v;
+						$resoExp[$k] = trim($t, " |\t\n\r\0\x0B");
 					}
 					self::htmlLogLine("Beschluss {$resoExp[0]}");
 					// $resoExp[0] => Beschlussnummer
