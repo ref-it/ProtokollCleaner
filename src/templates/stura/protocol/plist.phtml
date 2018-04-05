@@ -26,7 +26,7 @@ foreach ($param['int_ext'] as $pname => $v){
 				'<button class="btn btn-outline-dark compare" type="button">'.(isset($v['extern'])?'Untersuchen':'Veröffentlichen').'</button>':
 				'<div class="btn placeholder"></div>').
 			(isset($v['reso'])?
-				'<a href="/resolist?pid='.$v['id'].'" title="Beschlüsse" class="btn resolink btn-outline-danger ml-1"><i class="fa fa-fw fa-list-ol"></i></a>':'').
+				'<a href="/reso/list?pid='.$v['id'].'" title="Beschlüsse" class="btn resolink btn-outline-danger ml-1"><i class="fa fa-fw fa-list-ol"></i></a>':'').
 			(isset($v['intern'])?
 				'<span><a class="intern" href="'.WIKI_URL.'/'.$esc_PROTO_IN.'/'.$pname.'" target="_blank">Intern</a></span>':'').
 			(isset($v['extern'])?(($state == 'draft')?

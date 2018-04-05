@@ -29,6 +29,79 @@ class ResolutionController extends MotherController
 	}
 	
 	/**
+	 * load and parse resolutions from database into array
+	 * @param string $gremium
+	 * @param false|integer $pid protocol id
+	 */
+	private function loadDBReso($gremium, $pid = false, $order = 'DESC'){
+		//permission - edit this to add add other committee
+		prof_flag('db read');
+		if ($pid !== false){
+			$resos = $this->db->getResolutionByCommittee($gremium, $pid, $order);
+		} else {
+			$resos = $this->db->getResolutionByCommittee($gremium, NULL, $order);
+		}
+		prof_flag('db read done');
+		//parse resolutions: categorize, and split to array
+		foreach ($resos as $pos => $rawres){
+			if ($rawres['noraw'] == 0){
+				$tmp = protocolHelper::parseResolution($rawres['text'], NULL, NULL, $gremium);
+				$resos[$pos] = array_merge( $tmp, $resos[$pos]);
+			} else {
+				$resos[$pos]['Titel'] = $rawres['text'];
+				if (1 == preg_match('/(explizit( *)abgelehnt|ist( *)abgelehnt|>( *)abgelehnt)/i', $rawres['text'])){
+					$resos[$pos]['Beschluss'] = 'abgelehnt';
+				} else {
+					$resos[$pos]['Beschluss'] = 'angenommen';
+				}
+			}
+			$resos[$pos]['date_obj'] = date_create_from_format('Y-m-d His', $rawres['date'].' 000000' );
+		}
+		return $resos;
+	}
+	
+	/**
+	 * load protocol list from db
+	 * @param string $gremium
+	 */
+	private function loadDBProtos($gremium){
+		$x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
+		prof_flag('wiki request');
+		$intern = $x->getPagelistAutoDepth(parent::$protomap[$gremium][0]);
+		prof_flag('wiki request end');
+		$extern = [];
+		if (parent::$protomap[$gremium][0] != parent::$protomap[$gremium][1]){
+			prof_flag('wiki request');
+			$extern = $x->getPagelistAutoDepth(parent::$protomap[$gremium][1]);
+			prof_flag('wiki request end');
+		}
+		$dbprotocols = $this->db->getProtocols($gremium);
+		$i_path_lng = strlen(parent::$protomap[$gremium][0]) + 1;
+		$e_path_lng = strlen(parent::$protomap[$gremium][1]) + 1;
+		// ------------------------
+		// mark protocols that are published but dont exist intern anymore
+		$intern_and_extern = [];
+		foreach ($intern as $k => $v){
+			$name = substr($v, $i_path_lng);
+			$intern_and_extern[$name]['intern'] = true;
+		}
+		foreach ($extern as $k => $v){
+			$name = substr($v, $e_path_lng);
+			$intern_and_extern[$name]['extern'] = true;
+		}
+		foreach ($dbprotocols as $name => $p){
+			if (isset($p['draft_url'])){
+				$intern_and_extern[$name]['draft'] = true;
+			}
+			if (isset($p['agreed']) && $p['agreed'] > 0){
+				$intern_and_extern[$name]['agreed'] = true;
+			}
+			$intern_and_extern[$name]['id'] = $p['id'];
+		}
+		return $intern_and_extern;
+	}
+	
+	/**
 	 * ACTION list resolutions
 	 * draw resolution list
 	 */
@@ -51,32 +124,15 @@ class ResolutionController extends MotherController
 			}
 			return;
 		}
+
 		//permission - edit this to add add other committee
-		prof_flag('db read');
 		$perm = 'stura';
-		if (isset($vali->getFiltered()['pid'])){
-			$resos = $this->db->getResolutionByCommittee($perm, $vali->getFiltered()['pid']);
-		} else {
-			$resos = $this->db->getResolutionByCommittee($perm);
-		}
-		prof_flag('db read done');
-		$resos2 = NULL;
-		$resos2 = array();
-		//parse resolutions: categorize, and split to array
-		foreach ($resos as $pos => $rawres){
-			if ($rawres['noraw'] == 0){
-				$tmp = protocolHelper::parseResolution($rawres['text'], NULL, NULL, $perm);
-				$resos[$pos] = array_merge( $tmp, $resos[$pos]);
-			} else {
-				$resos[$pos]['Titel'] = $rawres['text'];
-				if (1 == preg_match('/(explizit( *)abgelehnt|ist( *)abgelehnt|>( *)abgelehnt)/i', $rawres['text'])){
-					$resos[$pos]['Beschluss'] = 'abgelehnt';
-				} else {
-					$resos[$pos]['Beschluss'] = 'angenommen';
-				}
-			}
-			$resos[$pos]['date_obj'] = date_create_from_format('Y-m-d His', $rawres['date'].' 000000' );
-		}
+		$resos = $this->loadDBReso(
+			$perm, 
+			(isset($vali->getFiltered()['pid']))? 
+				$vali->getFiltered('pid'): 
+				false);
+		
 		$this->t->setTitlePrefix('Beschlussliste - '.ucwords( $perm, " \t\r\n\f\v-"));
 		$this->t->appendCssLink('reso.css', 'screen,projection');
 		$this->t->appendJsLink('reso.js');
@@ -87,6 +143,51 @@ class ResolutionController extends MotherController
 			'pid' => (isset($vali->getFiltered()['pid']))? $vali->getFiltered()['pid'] : NULL,
 		]);
 		$this->t->printPageFooter();
+	}
+	
+	public function resoToWiki() {
+		prof_flag('Reso To Wiki');
+		$perm = 'stura';
+		
+		//access permission
+		if (!checkUserPermission($perm)) {
+			$this->json_access_denied();
+		}
+		
+		// load resolutions
+		$resos = $this->loadDBReso($perm, false, 'ASC');
+		//load protocols
+		$dbprotocols = $this->loadDBProtos($perm);
+		
+		// create wiki text
+		prof_flag('create WikiText');
+		ob_start();
+		$this->includeTemplate('wikiresolist', [
+			'reso' => &$resos,
+			'proto' => &$dbprotocols,
+			'committee' => $perm,
+		]);
+		$wikiText = ob_get_clean();
+		
+		// write to wiki
+		prof_flag('Write Resolist To Wiki');
+		$x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
+		
+		$x->putPage( 
+			parent::$protomap[$perm][2], 
+			$wikiText, 
+			['sum' => 'GENERIERT mit '.BASE_TITLE.' von ('. $this->auth->getUserFullName().')']);
+		
+		// Return result and timing
+		prof_flag('Done');
+		
+		http_response_code (200);
+		$this->json_result = [
+			'success' => true,
+			'msg' => 'Beschlussliste erfolgreich aktualisiert.',
+			'timing' => prof_print(false)['sum']
+		];
+		$this->print_json_result();
 	}
 }
 

@@ -14,7 +14,8 @@ $routes = [
 		'/'					=> ['baseaccess',	'base' , 		'home'],
 		'admin'				=> ['admin',		'admin', 		'admin'],
 		'protolist'			=> ['protolist',	'protocol', 	'plist'],
-		'resolist'			=> ['resolist',		'resolution', 	'rlist'],
+		'reso/list'			=> ['resolist',		'resolution', 	'rlist'],
+		'reso/towiki'		=> ['resotowiki',	'resolution', 	'resoToWiki'],
 		'todo/list'			=> ['todolist',		'todo', 		'tlist'],
 		'crawl'				=> ['crawler',		'crawler', 		'home'],
 		'crawl/legislatur'	=> ['crawler',		'crawler', 		'crawlLegislatur'],
@@ -46,12 +47,13 @@ $rawRoutes = [
  * @var array
  */
 $navigation = [
-	'/' 	=> ['baseaccess', 	'Home', 	'&#xf015;',	''],
-	'admin' => ['admin', 	'Admin', 	'&#xf085;',	'gearLogo.png'],
-	'protolist' => ['protolist', 	'Protokolle', 	'&#xf266;',	'log.png'],
-	'resolist' => ['resolist', 	'Beschlussliste', 	'&#xf0cb;',	'log.png'],
-	'todo/list' => ['todolist', 	'Todos', 	'&#xf046;',	'log.png'],
-	'crawl'	 => ['crawler', 	'Crawler', 	'&#xf0e7;',	''],
+	'/' 		=> ['baseaccess', 	'Home', 			'&#xf015;',		''],
+	'admin' 	=> ['admin', 		'Admin', 			'&#xf085;',		'gearLogo.png'],
+	'crawl'	 	=> ['crawler', 		'Crawler', 			'&#xf0e7;',		''],
+	'protolist' => ['protolist', 	'Protokolle', 		'&#xf266;',		'log.png'],
+	'reso/list' => ['resolist', 	'Beschlussliste', 	'&#xf0cb;',		'log.png'],
+	'reso/towiki' => ['resotowiki', 'Beschluss zu Wiki', '&#xf0cb;',	'log.png'],
+	'todo/list' => ['todolist', 	'Todos', 			'&#xf046;',		'log.png'],
 	'https://stura.tu-ilmenau.de/impressum' => ['baseaccess', 'Impressum', '&#xf129;', ''],
 	'https://www.tu-ilmenau.de/impressum/datenschutz/' => ['baseaccess', 'Datenschutz', '&#xf1c0;', ''],
 ];
@@ -91,6 +93,7 @@ $permission_map = [
 	'crawler' 		=> 'ref-it,konsul,admin',
 	'protolist' 	=> 'ref-it,stura,konsul,admin',
 	'resolist' 		=> 'ref-it,stura,konsul,admin',
+	'resotowiki' 	=> 'ref-it,stura,konsul,admin',
 	'todolist' 		=> 'stura,ref-it,stura,konsul,admin',
 	'todoupdate' 	=> 'stura,ref-it,stura,konsul,admin',
 	'protoedit' 	=> 'ref-it,stura,konsul,admin',

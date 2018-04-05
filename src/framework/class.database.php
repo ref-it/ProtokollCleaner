@@ -431,10 +431,11 @@ class Database
 	 * used to check if protocol was accepted
 	 * @param string $committee
 	 * @param integer $pid protocol id - if set this matches only given protocol id
+	 * @param string $order ASC|DESC
 	 * @return NULL|array
 	 * @throws Exception
 	 */
-	public function getResolutionByCommittee( $committee , $pid = NULL){
+	public function getResolutionByCommittee( $committee , $pid = NULL, $order = 'DESC'){
 		if (!is_string($committee) || $committee === '') {
 				$emsg = 'Wrong parameter in Database function ('.__FUNCTION__.'). ';
 				$emsg.= 'Require nonempty string';
@@ -447,7 +448,7 @@ class Database
 					AND P.gremium = G.id
 					AND G.name = ?"
 					.((isset($pid) && is_int($pid))?' AND R.on_protocol = ?':'').
-				" ORDER BY P.date DESC;";
+				" ORDER BY P.date $order;";
 			$data = [$committee];
 			if (isset($pid) && is_int($pid)) $data[] = $pid;
 			$result = $this->getResultSet($sql, ((isset($pid) && is_int($pid))?'si':'s'), $data );

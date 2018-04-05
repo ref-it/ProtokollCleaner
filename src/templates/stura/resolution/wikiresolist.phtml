@@ -1,0 +1,100 @@
+====== Beschlussliste StuRa-Beschlüsse ======
+
+  * Nr = XX/WW-BB
+  * XX = Legislatur Nr
+  * WW = Woche der Legislatur (Nr 1 = erste Sitzung der Legislatur)
+  * BB = Beschluss der Sitzung (H=Haushaltsverantwortlicher, U=Umlaufabstimmung, F=Finanzen, falls nicht schon H)
+
+z.B. 21/23-06 bedeutet, dass der Beschluss in der 21. Legislatur verabschiedet wurde. Seit beginn der Legislatur sind 23 Wochen Vergangen und es war der 6. Beschluss innerhalb der Woche (meistens Woche=Sitzung, da normalerweise eine Sitzung pro Woche)
+
+  * Derzeit Verantwortlicher für die Pflege dieser Liste ist [[:person:Jonas Brill]]. (der Konsul)
+  * zur Hilfe gibt es hier einen Abstimmungs-[[:leitfaden:stura-abstimmungen|Leitfaden]]
+  * eine kurze Liste an noch immer gültigen/wichtigen Beschlüssen findet sich [[stura:intern:wichtige_beschluesse|hier]]. Speziell für Finanzer lohnt es sich wahrscheinlich mal über diese Liste drüber zu lesen.
+
+===== To Do =====
+  * Umlaufabstimmungen ergänzen
+  * Umlaufabstimmungen ausfindig machen
+  * Beschlüsse aus geschlossenen Teilen vor der Legislatur 21 ergänzen
+  * Legislatur 19, 18, nach lust und laune, ... ergänzen 
+
+
+===== Typen =====
+
+  * Finanzen - Betrifft Förderungen und andere Finanzielle Belange
+  * Ordnungen - Betrifft hauptsächlich Ordnungen/Satzungen des StuRa
+  * Intern - Betrifft hauptsächlich StuRa interne angelegenheiten
+  * Zusammenarbeit - Betrifft Zusammenarbeit mit anderen vereinen, Institutionen, ...
+  * Veträge - betrifft Ausfertigung und Unterzeichnung von Verträgen
+  * Wahl - Betrifft Wahlen für Referatsleitungen/Delegationen/...
+  * Protokolle - Betrifft Verabschiedung/Änderung von Protokollen
+
+===== Legislaturen =====
+
+==== Legislatur 18 (2007/2008) ====
+
+noch keine Zusammenfassung vorhanden
+
+==== Legislatur 19 (2008/2009) ====
+
+noch keine Zusammenfassung vorhanden
+<?php 
+$param = $param;
+$protomap = PROTOMAP;
+$last_legislatur = 0;
+$last_week = 0;
+$last_proto_id = 0;
+$week_reso_reset = false;
+
+foreach ($param['reso'] as $pos => $reso){
+	$legislatur = substr($reso['r_tag'], 0, strpos($reso['r_tag'], '/'));
+	$week = substr($reso['r_tag'], strpos($reso['r_tag'], '/') + 1);
+	$week = substr($week, 0, strpos($week, '-'));
+	if ($last_legislatur != $legislatur){ //legislatur headline
+		$last_legislatur = $legislatur;
+		// legislatur headline
+		echo "\n==== Legislatur $legislatur (".(1989+intval($legislatur)).'/'.(1990+intval($legislatur)).") ====\n\n";
+		// tablehead
+		echo "^ Nr ^ Typ ^ Beschluss ^\n";
+	}
+	if ($last_week != $week){ // week headline
+		$last_week = $week;
+		$week_reso_reset = true;
+		//week head -------------
+		//protolink or name
+		$link = '';
+		if (isset($param['proto'][$reso['pname']])
+			&& isset ($param['proto'][$reso['pname']]['extern']) ){
+			$link = '[[:'.$protomap[$param['committee']][1].':'.$reso['pname'].']]';
+		} else {
+			$link = $reso['pname'];
+		}
+		if (isset($param['proto'][$reso['pname']])
+			&& isset ($param['proto'][$reso['pname']]['intern']) ){
+			$link .= ' ([[:'.$protomap[$param['committee']][0].':'.$reso['pname'].'|Intern]])';
+		}
+		echo '^ Woche '.str_pad($week,2,"0",STR_PAD_LEFT).' vom '.$link.' ^^^'."\n";
+	}
+	if ($last_proto_id != $reso['pid'] && !$week_reso_reset){ //second meeting in same week
+		$last_proto_id = $reso['pid'];
+		$link = '';
+		if (isset($param['proto'][$reso['pname']])
+			&& isset ($param['proto'][$reso['pname']]['extern']) ){
+			$link = '[[:'.$protomap[$param['committee']][1].':'.$reso['pname'].']]';
+		} else {
+			$link = $reso['pname'];
+		}
+		if (isset($param['proto'][$reso['pname']])
+			&& isset ($param['proto'][$reso['pname']]['intern']) ){
+			$link .= ' ([[:'.$protomap[$param['committee']][0].':'.$reso['pname'].'|Intern]])';
+		}
+		
+		echo '^ Woche '.str_pad($week,2,"0",STR_PAD_LEFT).' vom '.$link.' ^^^'."\n";
+	} else {
+		$last_proto_id = $reso['pid'];
+		$week_reso_reset = true;
+	}
+	
+	echo '| '.str_pad($reso['r_tag'], 12, ' ').' | '.str_pad($reso['type_long'], 24, ' ')." | {$reso['Titel']} |\n";
+}
+
+?>
