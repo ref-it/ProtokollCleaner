@@ -31,6 +31,7 @@ class InvitationController extends MotherController {
 	 */
 	public function base(){
 		$this->t->appendCSSLink('invite.css');
+		$this->t->appendJsLink('wiki2html.js');
 		$this->t->appendJsLink('invite.js');
 		
 		$this->t->printPageHeader();
