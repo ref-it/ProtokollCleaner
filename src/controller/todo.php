@@ -46,7 +46,6 @@ class TodoController extends MotherController {
 		$this->t->appendOtherHeadTag('<link rel="apple-touch-icon" href="/images/todo.ico">');
 		
 		$this->t->appendCSSLink('todo.css');
-		//$this->t->appendJsLink('libs/jquery-dateFormat.min.js');
 		$this->t->appendJsLink('todo.js');
 		$this->t->printPageHeader();
 		

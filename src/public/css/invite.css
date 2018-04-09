@@ -1,0 +1,102 @@
+.silmph_top {
+	margin-top: 10px;
+}
+.silmph_top_counter_reset {
+	counter-reset: topcount;
+}
+.top_counter{
+	counter-increment: topcount;
+	margin-right: 20px;
+}
+.top_counter::after{
+	content: counter(topcount) ":";
+	display:inline-block;
+	min-width: 25px;
+	margin-left: 4px;
+	text-align: right;
+}
+.silmph_top {
+	position: relative;
+}
+.silmph_top .headline{
+	font-weight: bold;
+}
+.silmph_top .topinfo {
+	color: #999;
+	font-weight: bold;
+}
+.silmph_top .topinfo > span{
+	margin-right: 30px;
+	margin-left: 10px;
+	display: inline-block;
+}
+.silmph_top .topinfo > span:last-child{
+	margin-right: 0;
+}
+@media screen and (max-width: 460px) {
+	.silmph_top .topinfo > span{
+		margin-right: 10px;
+		margin-left: 10px;
+		display: block;
+	}
+}
+.silmph_top span.added {
+	text-align: right;
+	float:right;
+	margin-right: 10px;
+}
+.silmph_top .text,
+.silmph_top .text_rendered {
+	white-space: pre-wrap;
+	white-space: -moz-pre-wrap;
+	white-space: -pre-wrap;
+	white-space: -o-pre-wrap;
+	word-wrap: break-word;
+}
+/* ------- buttons ------- */
+.silmph_top .buttons > div{
+	width: 1.28571429em;
+	text-align: center;
+	font: normal normal normal 14px/1 FontAwesome;
+	cursor: pointer;
+	position: absolute;
+}
+.silmph_top .buttons .edit{
+	right: 15px;
+	bottom: 15px;
+	width: 45px;
+	height: 45px;
+	line-height: 30px;
+	border-radius: 50%;
+}
+.silmph_top .buttons .edit::before {
+	content: "\f040";
+}
+.silmph_top .buttons .remove {
+	right: 15px;
+	top: 7px;
+	width: 35px;
+	height: 35px;
+	line-height: 20px;
+	border-radius: 50%;
+	border-color: transparent;
+	padding-left: 11px;
+}
+.silmph_top .buttons .remove::before {
+	content: "\f00d";
+}
+
+
+
+
+@media screen and (max-width: 460px) {
+	.silmph_top .buttons >.btn {
+		float: none;
+		width: 100%;
+		min-width: initial;
+		margin-top: 5px;
+	}
+	.silmph_top .buttons >.btn:first-child {
+	margin-top: 0;
+	}
+}
