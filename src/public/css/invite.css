@@ -22,7 +22,6 @@
 	font-weight: bold;
 }
 .silmph_top .topinfo {
-	color: #999;
 	font-weight: bold;
 }
 .silmph_top .topinfo > span{
@@ -54,6 +53,9 @@
 }
 .silmph_top .text_rendered {
 	word-wrap: break-word;
+	border-radius: 3px;
+	border: 2px solid #ddd;
+	padding: 5px;
 }
 /* ------- buttons ------- */
 .silmph_top .buttons > div{
@@ -64,18 +66,22 @@
 	position: absolute;
 }
 .silmph_top .buttons .edit{
-	right: 15px;
-	bottom: 15px;
+	right: 13px;
+	bottom: 13px;
 	width: 45px;
 	height: 45px;
 	line-height: 30px;
 	border-radius: 50%;
+	background-color: #fff;
+}
+.silmph_top .buttons .edit:hover{
+	background-color: #6c757d;
 }
 .silmph_top .buttons .edit::before {
 	content: "\f040";
 }
 .silmph_top .buttons .remove {
-	right: 15px;
+	right: 13px;
 	top: 7px;
 	width: 35px;
 	height: 35px;
@@ -86,4 +92,33 @@
 }
 .silmph_top .buttons .remove::before {
 	content: "\f00d";
+}
+.silmph_top .text_rendered {
+	font-size: 0.8em;
+}
+.silmph_top .text_rendered h1,
+.silmph_top .text_rendered h2,
+.silmph_top .text_rendered h3,
+.silmph_top .text_rendered h4,
+.silmph_top .text_rendered h5,
+.silmph_top .text_rendered h6 {
+	font-weight: bolder;
+}
+.silmph_top .text_rendered h1 {
+	font-size: 1.8rem;
+}
+.silmph_top .text_rendered h2 {
+	font-size: 1.5rem;
+}
+.silmph_top .text_rendered h3 {
+	font-size: 1.25rem;
+}
+.silmph_top .text_rendered h4 {
+	font-size: 1.1rem;
+}
+.silmph_top .text_rendered h5 {
+	font-size: 1.0rem;
+}
+.silmph_top .text_rendered h6 {
+	font-size: 0.9rem;
 }

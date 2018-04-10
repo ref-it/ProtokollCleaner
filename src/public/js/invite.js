@@ -23,14 +23,19 @@
 	}
 	
 	$(document).ready(function(){
-		
+		// ------------------------------------------------
 		$('.silmph_top').each(function(i,e){
 			var $e = $(e);
 			var c = $e.children('.card-body');
 			var t = c.children('.text');
-			var text = ''+t.text();
+			var text = ''+t.html();
 			c.children('.text_rendered').html(text.wiki2html());
 			t.hide();
+		});
+		// ------------------------------------------------
+		$('.silmph_top .remove').on('click', function(){
+			var $e = $(this);
+			console.log($e.closest('.silmph_top')[0].dataset.tid);
 		});
 	});
 })();

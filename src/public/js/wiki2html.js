@@ -16,19 +16,18 @@
 	    	var s = this;		// input string
 	    	var newline = true; //add new line on lines without extra html
     	
-	    	//replace headlines
+	    	// headlines ====================================================
 	    	var _headline = function(line){
-	    		for (var i = 1; i<=6; i++){
+	    		for (var i = 2; i<=6; i++){
 	    			var re = new RegExp("^(={"+i+"})[\s]*([^=\n\r\s]+[^=\n\r]*)(={"+i+"})");
 	    			if ((m = re.exec(line)) !== null && m.length == 4 && (m[2].trim()) != '') {
-	    				line = line.replace(re, '<h'+i+'>'+(m[2].trim())+'</h'+i+'>');
+	    				line = line.replace(re, '<h'+(7-i)+'>'+(m[2].trim())+'</h'+(7-i)+'>');
 	    				newline = false;
 	    			}
 	    		}
 	    		return line;
 	    	};
-	    	
-	    	// listings ==========================
+	    	// listings =====================================================
 	    	var openedLists = [];
 	    	var listEopen = false;
 	    	// close list
@@ -108,16 +107,54 @@
 	    			return _closeList(0)+line;
 	    		}
 	    	}
+	    	// underline ====================================================
+	    	var _underline = function (line){
+	    		return line.replace(/(__)([^_]+)(__)/mg, '<u>$2</u>');
+	    	}
+	    	// italic ====================================================
+	    	var _italic = function (line){
+	    		return line.replace(/(\/\/)([^\/]+)(\/\/)/mg, '<i>$2</i>');
+	    	}
+	    	// bold ====================================================
+	    	var _strong = function (line){
+	    		return line.replace(/(\*\*)([^\*]+)(\*\*)/mg, '<strong>$2</strong>');
+	    	}
+	    	// code ====================================================
+	    	var _code = function (line){
+	    		return line.replace(/('')([^']+)('')/mg, '<code>$2</code>');
+	    	}
+	    	// external link ====================================================
+	    	var _extLink = function (line){
+	    		var tmp = line.replace(/(\[\[)((http(s)?:\/\/)?(([a-zA-Z0-9\.\-\/_])+))((\|)([^\]\|]*)\]\])/mg, '<a href="$2">$9</a>');
+	    		return tmp.replace(/(\[\[)((http(s)?:\/\/)?(([a-zA-Z0-9\.\-\/_])+))(([^\]\|]*)\]\])/mg, '<a href="$2">$2</a>');
+	    	}
+	    	// line ====================================================
+	    	var _hrLine = function (line){
+	    		var re = /^(\s)*[\-]{4,}(\s)*$/;
+	    		if ((m = re.exec(line)) !== null){
+	    			newline = false;
+	    			return line.replace(re, '<hr>');
+	    		}
+	    		return line;
+	    	}
 	    	
-	    	//loop lines
+	    	//loop lines =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 			var lines = s.split(/\r?\n/);
 			var trimmed = '';
 			var closelist = [];
+			var lastNewline = false;
 			for (var i = 0; i < lines.length; i++){
 				newline = true;
 				lines[i] = _headline(lines[i]);
 				lines[i] = _list(lines[i]);
-				if (newline) lines[i] += '<br>';
+				lines[i] = _underline(lines[i]);
+				lines[i] = _italic(lines[i]);
+				lines[i] = _strong(lines[i]);
+				lines[i] = _code(lines[i]);
+				lines[i] = _extLink(lines[i]);
+				lines[i] = _hrLine(lines[i]);
+				if (lastNewline) lines[i] = '<br>' + lines[i];
+				lastNewline = newline;
 			}
 			return lines.join("");
 	    };
