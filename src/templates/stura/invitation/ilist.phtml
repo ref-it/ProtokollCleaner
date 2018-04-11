@@ -8,12 +8,13 @@
 <h3>Eingereichte Tops</h3>
 <div class="btn btn-success">Neues Top erstellen</div>
 <div class="silmph_top_counter_reset"></div>
+<div class="silmph_toplist">
 <?php
 $param = $param;
 
 foreach($param['tops'] as $top){
 	if (isset($top['used_on'])) continue;
-	echo '<div class="card border-secondary silmph_top'.(($top['skip_next'])?' skipnext':'').(($top['guest'])?' guest':'').'" data-tid="'.$top['id'].'" data-hash="'.$top['hash'].'">';
+	echo '<div class="card border-secondary silmph_top'.(($top['skip_next'])?' skipnext':'').(($top['guest'])?' guest':'').(isset($top['resort'])?' resort':'').'" data-tid="'.$top['id'].'" data-hash="'.$top['hash'].'">';
 	echo "\t".'<div class="card-header headline" data-resort="'.($top['resort']?$top['resort']:'').'" data-level="'.$top['level'].'" data-headline="'.json_encode($top['headline']).'">'.
 					((!$top['resort'])?
 						'<span class="top_counter"></span>'
@@ -35,13 +36,13 @@ foreach($param['tops'] as $top){
 	echo "\t</div>\n";
 	echo "\t<div class=\"card-body\">\n";
 		echo "\t\t<div class=\"text\">".$top['text']."</div>\n";
+		echo '<input class="d-none" id="texttoggle_top_cb_'.$top['id'].'" type="checkbox" >';
 		echo "\t\t<div class=\"text_rendered\"></div>\n";
+		echo '<label class="texttoggle btn btn-outline-secondary" for="texttoggle_top_cb_'.$top['id'].'"></label>';
 	echo "\t</div>\n";
 	echo "\t".'<div class="buttons"><div class="edit btn btn-outline-secondary" title="Bearbeiten"></div><div class="remove btn btn-outline-danger" title="Löschen"></div><div class="skipn btn btn-outline-secondary" title="Aussetzten"></div></div>'."\n";
 	echo "</div>\n";
 }
 
 ?>
-
-
-<?php
+</div>

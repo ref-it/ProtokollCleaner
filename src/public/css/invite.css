@@ -171,7 +171,54 @@
 }
 .silmph_top .text_rendered {
 	font-size: 0.8em;
+-webkit-transition: all 500ms cubic-bezier(0.900, 0.005, 0.125, 1.000);
+   -moz-transition: all 500ms cubic-bezier(0.900, 0.005, 0.125, 1.000);
+     -o-transition: all 500ms cubic-bezier(0.900, 0.005, 0.125, 1.000);
+        transition: all 500ms cubic-bezier(0.900, 0.005, 0.125, 1.000);
+	overflow: hidden;
 }
+.silmph_top input:not(:checked) + .text_rendered {
+	max-height: 60px;
+	border-bottom-color: coral;
+	border-bottom-style: dotted;
+}
+.silmph_top input:checked + .text_rendered {
+	max-height: 1200px;
+}
+.silmph_top label.texttoggle {
+	width: 1.28571429em;
+	text-align: center;
+	font: normal normal normal 14px/1 FontAwesome;
+	cursor: pointer;
+	position: absolute;
+	right: 0;
+	left: 0;
+	margin-left: auto;
+	margin-right: auto;
+	bottom: 19px;
+	width: 45px;
+	height: 45px;
+	line-height: 30px;
+	border-radius: 50%;
+	transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out, bottom .5s ease-in-out;
+}
+.silmph_top label.texttoggle:not(:hover){
+	background-color: #fff;
+}
+.silmph_top label.texttoggle::before {
+	content: "\f078";
+	transition: all 0.5s ease-in-out;
+	display: inline-block;
+	height: 32px;
+	width: 17px;
+}
+.silmph_top input:checked + .text_rendered + label.texttoggle {
+	bottom: -19px;
+}
+.silmph_top input:checked + .text_rendered + label.texttoggle::before {
+	transform: rotate(180deg);
+}
+
 .silmph_top .text_rendered h1,
 .silmph_top .text_rendered h2,
 .silmph_top .text_rendered h3,
