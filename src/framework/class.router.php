@@ -153,7 +153,7 @@ class Router {
 			&& isset($this->routes[$method][$path])){
 			
 			// check permission
-			if ($this->auth->hasGroup(self::$permission_map[$this->routes[$method][$path][0]], ',')){
+			if (isset(self::$permission_map[$this->routes[$method][$path][0]]) && $this->auth->hasGroup(self::$permission_map[$this->routes[$method][$path][0]], ',')){
 				$route_access = true;
 				if ($method == 'GET') {
 					$this->callController(
@@ -183,6 +183,9 @@ class Router {
 					);
 				}
 			} else {
+				if (!isset(self::$permission_map[$this->routes[$method][$path][0]])){
+					error_log('missing permission entry "'.$this->routes[$method][$path][0].'" on permission map');
+				}
 				$c = new MotherController($this->db, $this->auth, NULL);
 				$c->renderErrorPage(403, $this->navigation);
 			}
