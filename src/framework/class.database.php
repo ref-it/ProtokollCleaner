@@ -589,7 +589,7 @@ class Database
 	}
 	
 	/**
-	 * create todo entry
+	 * update todo entry
 	 * @param array $t todo element array
 	 * @return boolean|new id
 	 */
@@ -721,7 +721,111 @@ class Database
 		return $return;
 	}
 	
+	/**
+	 * returns tops
+	 * @return array
+	 */
+	public function getTops($gremium){
+		$sql = "SELECT T.* FROM `".TABLE_PREFIX."tops` T, `".TABLE_PREFIX."gremium` G WHERE T.gremium = G.id AND G.name = ? ORDER BY T.skip_next, T.resort ASC, T.order, T.added_on ASC";
+		$result = $this->getResultSet($sql, 's', [$gremium]);
+		$return = [];
+		foreach ($result as $line){
+			$return[$line['id']] = $line;
+		}
+		return $return;
+	}
+	
+	/**
+	 * returns top by id
+	 * @return array
+	 */
+	public function getTopById($id){
+		$sql = "SELECT T.*, G.name as 'gname' FROM `".TABLE_PREFIX."tops` T, `".TABLE_PREFIX."gremium` G WHERE T.gremium = G.id AND T.id = ? ORDER BY T.resort ASC, T.order, T.added_on ASC";
+		$result = $this->getResultSet($sql, 'i', [$id]);
+		$return = NULL;
+		foreach ($result as $line){
+			$return = $line;
+		}
+		return $return;
+	}
+	
+	/**
+	 * update top entry
+	 * @param array $t top element array
+	 * @return boolean|new id
+	 */
+	public function updateTop($t){
+		$pattern = 'siissssisisiiii';
+		$data = [
+			$t['headline'],
+			($t['resort'])?$t['resort']:NULL,
+			$t['level'],
+			($t['person'])?$t['person']:NULL,
+			($t['expected_duration'])?$t['expected_duration']:NULL,
+			($t['goal'])?$t['goal']:NULL,
+			$t['text'],
+			$t['gremium'],
+			$t['added_on'],
+			($t['used_on'])?$t['used_on']:NULL,
+			$t['hash'],
+			$t['guest'],
+			$t['order'],
+			$t['skip_next'],
+			$t['id']
+		];
+		$sql = "UPDATE `".TABLE_PREFIX."tops` SET
+				`headline` = ?,
+				`resort` = ?,
+				`level` = ?,
+				`person` = ?,
+				`expected_duration` = ?,
+				`goal` = ?,
+				`text` = ?,
+				`gremium` = ?,
+				`added_on` = ?,
+				`used_on` = ?,
+				`hash` = ?,
+				`guest` = ?,
+				`order` = ?,
+				`skip_next` = ?
+				WHERE `id` = ?";
+
+		$this->protectedInsert($sql, $pattern, $data);
+		$result = $this->affectedRows();
+		if ($this->affectedRows() > 0){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * returns resorts
+	 * @return array
+	 */
+	public function getResorts($gremium){
+		$sql = "SELECT R.* FROM `".TABLE_PREFIX."resort` R, `".TABLE_PREFIX."gremium` G WHERE R.gremium = G.id AND G.name = ? ORDER BY R.type ASC, R.name ASC";
+		$result = $this->getResultSet($sql, 's', [$gremium]);
+		$return = [];
+		foreach ($result as $line){
+			$return[$line['id']] = $line;
+		}
+		return $return;
+	}
+	
 	// --------- DELETE FUCNTIONS -----------------------------------------
+	
+	/**
+	 * delete top by id
+	 * @param integer $id
+	 * @return integer affected rows
+	 */
+	function deleteTopById($id){
+		$sql = "DELETE FROM `".TABLE_PREFIX."tops` WHERE `id` = ?;";
+		$this->protectedInsert($sql, 'i', [$id]);
+		$result = $this->affectedRows();
+		return ($result > 0)? $result : 0;
+	}
 	
 	/**
 	 * delete legislatur by id

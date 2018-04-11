@@ -29,13 +29,141 @@ class InvitationController extends MotherController {
 	/**
 	 * ACTION home
 	 */
-	public function base(){
+	public function ilist(){
+		$perm = 'stura';
 		$this->t->appendCSSLink('invite.css');
 		$this->t->appendJsLink('wiki2html.js');
 		$this->t->appendJsLink('invite.js');
-		
+		$tops = $this->db->getTops($perm);
+		$resorts = $this->db->getResorts($perm);
 		$this->t->printPageHeader();
-		$this->includeTemplate(__FUNCTION__);
+		$this->includeTemplate(__FUNCTION__, [
+			'tops' => $tops,
+			'resorts' => $resorts
+		]);
 		$this->t->printPageFooter();
 	}
+	
+	/**
+	 * POST action
+	 * delete top by id hash and committee
+	 */
+	public function tdelete(){
+		//calculate accessmap
+		$validator_map = [
+			'committee' => ['regex',
+				'pattern' => '/'.implode('|', array_keys(PROTOMAP)).'/',
+				'maxlength' => 10,
+				'error' => 'Du hast nicht die benötigten Berechtigungen, um dieses Protokoll zu bearbeiten.'
+			],
+			'hash' => ['regex',
+				'pattern' => '/^([0-9a-f]{32})$/',
+				'error' => 'Topkennung hat das falsche Format.'
+			],
+			'tid' => ['integer',
+				'min' => '1',
+				'error' => 'Ungültige Id.'
+			],
+		];
+		$vali = new Validator();
+		$vali->validateMap($_POST, $validator_map, true);
+		if ($vali->getIsError()){
+			if($vali->getLastErrorCode() == 403){
+				$this->json_access_denied();
+			} else if($vali->getLastErrorCode() == 404){
+				$this->json_not_found();
+			} else {
+				http_response_code ($vali->getLastErrorCode());
+				$this->json_result = ['success' => false, 'eMsg' => $vali->getLastErrorMsg()];
+				$this->print_json_result();
+			}
+		} else if (!checkUserPermission($vali->getFiltered('committee'))) {
+			$this->json_access_denied();
+		} else {
+			
+			$top = $this->db->getTopById($vali->getFiltered('tid'));
+			if (!$top 
+				|| $top['gname'] != $vali->getFiltered('committee') 
+				|| $top['hash'] != $vali->getFiltered('hash')){
+				$this->json_not_found('Top nicht gefunden');
+			} else {
+				$ok = $this->db->deleteTopById($top['id']);
+				if ($ok){
+					$this->json_result = [
+						'success' => true,
+						'msg' => 'Top wurde gelöscht.'
+					];
+				} else {
+					$this->json_result = [
+						'success' => false,
+						'eMsg' => 'Top konnte nicht gelöscht werden.'
+					];
+				}
+				$this->print_json_result();
+			}
+		}
+	}
+	
+	/**
+	 * POST action
+	 * delete top by id hash and committee
+	 */
+	public function tpause(){
+		//calculate accessmap
+		$validator_map = [
+			'committee' => ['regex',
+				'pattern' => '/'.implode('|', array_keys(PROTOMAP)).'/',
+				'maxlength' => 10,
+				'error' => 'Du hast nicht die benötigten Berechtigungen, um dieses Protokoll zu bearbeiten.'
+			],
+			'hash' => ['regex',
+				'pattern' => '/^([0-9a-f]{32})$/',
+				'error' => 'Topkennung hat das falsche Format.'
+			],
+			'tid' => ['integer',
+				'min' => '1',
+				'error' => 'Ungültige Id.'
+			],
+		];
+		$vali = new Validator();
+		$vali->validateMap($_POST, $validator_map, true);
+		if ($vali->getIsError()){
+			if($vali->getLastErrorCode() == 403){
+				$this->json_access_denied();
+			} else if($vali->getLastErrorCode() == 404){
+				$this->json_not_found();
+			} else {
+				http_response_code ($vali->getLastErrorCode());
+				$this->json_result = ['success' => false, 'eMsg' => $vali->getLastErrorMsg()];
+				$this->print_json_result();
+			}
+		} else if (!checkUserPermission($vali->getFiltered('committee'))) {
+			$this->json_access_denied();
+		} else {
+			$top = $this->db->getTopById($vali->getFiltered('tid'));
+			if (!$top
+				|| $top['gname'] != $vali->getFiltered('committee')
+				|| $top['hash'] != $vali->getFiltered('hash')){
+				$this->json_not_found('Top nicht gefunden');
+			} else {
+				$top['skip_next'] = ($top['skip_next']==1)?0:1;
+				$ok = $this->db->updateTop($top);
+				if ($ok){
+					$this->json_result = [
+						'success' => true,
+						'msg' => 'Top wurde geändert.',
+						'skipnext' => ($top['skip_next']==1)
+					];
+				} else {
+					$this->json_result = [
+						'success' => false,
+						'eMsg' => 'Top nicht geändert.',
+						'skipnext' => ($top['skip_next']==1)
+					];
+				}
+				$this->print_json_result();
+			}
+		}
+	}
+	
 }

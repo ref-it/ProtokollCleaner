@@ -1,0 +1,47 @@
+<?= $this->getChallenge() ?>
+<h2>Sitzungseinladung</h2>
+
+<h3>Geplante Sitzung</h3>
+<div class="btn btn-success">Sitzung planen</div>
+<div class="btn btn-danger">Sitzung absagen</div>
+<h4>Stura - Mitglieder</h4>
+<h3>Eingereichte Tops</h3>
+<div class="btn btn-success">Neues Top erstellen</div>
+<div class="silmph_top_counter_reset"></div>
+<?php
+$param = $param;
+
+foreach($param['tops'] as $top){
+	if (isset($top['used_on'])) continue;
+	echo '<div class="card border-secondary silmph_top'.(($top['skip_next'])?' skipnext':'').(($top['guest'])?' guest':'').'" data-tid="'.$top['id'].'" data-hash="'.$top['hash'].'">';
+	echo "\t".'<div class="card-header headline" data-resort="'.($top['resort']?$top['resort']:'').'" data-level="'.$top['level'].'" data-headline="'.json_encode($top['headline']).'">'.
+					((!$top['resort'])?
+						'<span class="top_counter"></span>'
+						:'<span class="top_resort">'.$param['resorts'][$top['resort']]['type'].' '.$param['resorts'][$top['resort']]['name'].'</span>')
+					.'<span>'.$top['headline'].'</span>'
+		."</div>\n";
+	echo "\t<div class=\"topinfo text-secondary\">\n";
+		echo '<span class="added">'.date_create($top['added_on'])->format('d.m.Y').'</span>'."\n";
+		$minutes = 0;
+		if (isset($top['expected_duration'])){
+			$tmp = explode(':', $top['expected_duration']);
+			$minutes = $tmp[0] * 60 + $tmp[1];
+		}
+		echo '<span class="duration">'.$minutes.' min.</span>'."\n";
+		echo '<span class="person">'.((isset($top['person'])&&trim($top['person']))?$top['person']:'---').'</span>'."\n";
+		echo '<span class="goal">'.(isset($top['goal'])?$top['goal']:'').'</span>'."\n";
+		echo '<span class="guest">Gast</span>'."\n";
+		echo '<span class="skipn">Aussetzten</span>'."\n";
+	echo "\t</div>\n";
+	echo "\t<div class=\"card-body\">\n";
+		echo "\t\t<div class=\"text\">".$top['text']."</div>\n";
+		echo "\t\t<div class=\"text_rendered\"></div>\n";
+	echo "\t</div>\n";
+	echo "\t".'<div class="buttons"><div class="edit btn btn-outline-secondary" title="Bearbeiten"></div><div class="remove btn btn-outline-danger" title="Löschen"></div><div class="skipn btn btn-outline-secondary" title="Aussetzten"></div></div>'."\n";
+	echo "</div>\n";
+}
+
+?>
+
+
+<?php

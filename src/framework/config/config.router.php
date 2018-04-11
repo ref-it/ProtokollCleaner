@@ -17,7 +17,7 @@ $routes = [
 		'reso/list'			=> ['resolist',		'resolution', 	'rlist'],
 		'reso/towiki'		=> ['resotowiki',	'resolution', 	'resoToWiki'],
 		'todo/list'			=> ['todolist',		'todo', 		'tlist'],
-		'invite'			=> ['invitebase',	'invitation', 	'base'],
+		'invite'			=> ['invitebase',	'invitation', 	'ilist'],
 		'crawl'				=> ['crawler',		'crawler', 		'home'],
 		'crawl/legislatur'	=> ['crawler',		'crawler', 		'crawlLegislatur'],
 		'crawl/resoproto'	=> ['crawler',		'crawler', 		'crawlResoProto'],
@@ -29,6 +29,8 @@ $routes = [
 		'admin/legislatur'	=> ['admin',		'admin', 		'legislatur'],
 		'protocol/publish'	=> ['protopublish',	'protocol', 	'p_publish'],
 		'todo/update'		=> ['todoupdate',	'todo', 		'tupdate'],
+		'invite/tdelete'	=> ['itopdelete',	'invitation', 	'tdelete'],
+		'invite/tpause'		=> ['itoppause',	'invitation', 	'tpause'],
 	]
 ];
 
@@ -99,6 +101,8 @@ $permission_map = [
 	'todolist' 		=> 'stura,ref-it,stura,konsul,admin',
 	'todoupdate' 	=> 'stura,ref-it,stura,konsul,admin',
 	'invitebase' 	=> 'stura,ref-it,stura,konsul,admin',
+	'itopdelete' 	=> 'stura,ref-it,stura,konsul,admin',
+	'itoppause' 	=> 'stura,ref-it,stura,konsul,admin',
 	'protoedit' 	=> 'ref-it,stura,konsul,admin',
 	'protopublish' 	=> 'ref-it,stura,konsul,admin',
 	'stura' 		=> 'stura',

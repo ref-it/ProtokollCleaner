@@ -4,22 +4,40 @@
 .silmph_top_counter_reset {
 	counter-reset: topcount;
 }
-.top_counter{
+.silmph_top:not(.skipnext) .top_counter{
 	counter-increment: topcount;
 	margin-right: 20px;
 }
-.top_counter::after{
+.silmph_top:not(.skipnext) .top_counter::before{
+	content: "Top ";
+	display:inline-block;
+}
+.silmph_top:not(.skipnext) .top_counter::after{
 	content: counter(topcount) ":";
 	display:inline-block;
 	min-width: 25px;
 	margin-left: 4px;
 	text-align: right;
 }
+.top_resort::after{
+	content: "-";
+	display:inline-block;
+	margin-left: 6px;
+	margin-right: 7px;
+}
 .silmph_top {
 	position: relative;
 }
 .silmph_top .headline{
 	font-weight: bold;
+}
+.silmph_top.skipnext .headline{
+	font-weight: bold;
+	color: #bbb;
+}
+.silmph_top .headline span:last-child{
+	margin-right: 70px;
+	display: inline-block;
 }
 .silmph_top .topinfo {
 	font-weight: bold;
@@ -28,6 +46,7 @@
 	margin-right: 30px;
 	margin-left: 10px;
 	display: inline-block;
+	min-width: 60px;
 }
 .silmph_top .topinfo > span:last-child{
 	margin-right: 0;
@@ -44,6 +63,18 @@
 	float:right;
 	margin-right: 10px;
 }
+.silmph_top.skipnext .topinfo span.skipn {
+	display: inline-block;
+}
+.silmph_top .topinfo span.skipn {
+	display: none;
+}
+.silmph_top.guest .topinfo span.guest {
+	display: inline-block;
+}
+.silmph_top .topinfo span.guest {
+	display: none;
+}
 .silmph_top .text{
 	white-space: pre-wrap;
 	white-space: -moz-pre-wrap;
@@ -56,6 +87,32 @@
 	border-radius: 3px;
 	border: 2px solid #ddd;
 	padding: 5px;
+}
+/* ------- Top info line symbols ------ */
+.silmph_top .topinfo span::before{
+	font: normal normal normal 14px/1 FontAwesome;
+	width: 1.28571429em;
+	text-align: center;
+	font-size: inherit;
+	display: inline-block;
+}
+.silmph_top .topinfo span.added::before{
+	content: "\f073";
+}
+.silmph_top .topinfo span.duration::before{
+	content: "\f017";
+}
+.silmph_top .topinfo span.person::before{
+	content: "\f007";
+}
+.silmph_top .topinfo span.guest::before{
+	content: "\f2c0";
+}
+.silmph_top .topinfo span.skipn::before{
+	content: "\f04c";
+}
+.silmph_top .topinfo span.goal::before{
+	content: "\f124";
 }
 /* ------- buttons ------- */
 .silmph_top .buttons > div{
@@ -92,6 +149,25 @@
 }
 .silmph_top .buttons .remove::before {
 	content: "\f00d";
+}
+.silmph_top .buttons .skipn {
+	right: 53px;
+	top: 7px;
+	width: 35px;
+	height: 35px;
+	line-height: 20px;
+	border-radius: 50%;
+	border-color: transparent;
+	padding-left: 10px;
+}
+.silmph_top .buttons .skipn::before {
+	content: "\f04c";
+}
+.silmph_top.skipnext .buttons .skipn {
+	padding-left: 12px;
+}
+.silmph_top.skipnext .buttons .skipn::before {
+	content: "\f04b";
 }
 .silmph_top .text_rendered {
 	font-size: 0.8em;
