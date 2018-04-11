@@ -164,7 +164,7 @@ class Template
 			}
 		}
 	}
-
+	
 	/**
 	 * add javascript
 	 * @param string $scriptname scriptname relative to scriptfolder
@@ -182,6 +182,26 @@ class Template
 		$this->scripts[] = '<script type="text/javascript">' . $script . '</script>';
 	}
 
+	/**
+	 * get javascript array
+	 * @return array of strings
+	 */
+	public function getJsLinks(){
+		return $this->scripts;
+	}
+	
+	/**
+	 * set javascript array
+	 * @param array $scripts
+	 */
+	public function setJsLinks($scripts){
+		if (is_array($scripts)){
+			$this->scripts = $scripts;
+			return true;
+		}
+		return false;
+	}
+	
 	/**
 	 * append ccs style file
 	 * @param string $stylename css style filename in js directory
