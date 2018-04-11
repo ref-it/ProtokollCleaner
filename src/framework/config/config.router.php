@@ -31,6 +31,7 @@ $routes = [
 		'todo/update'		=> ['todoupdate',	'todo', 		'tupdate'],
 		'invite/tdelete'	=> ['itopdelete',	'invitation', 	'tdelete'],
 		'invite/tpause'		=> ['itoppause',	'invitation', 	'tpause'],
+		'invite/tsort'		=> ['itopsort',		'invitation', 	'tsort'],
 	]
 ];
 
@@ -103,6 +104,7 @@ $permission_map = [
 	'invitebase' 	=> 'stura,ref-it,stura,konsul,admin',
 	'itopdelete' 	=> 'stura,ref-it,stura,konsul,admin',
 	'itoppause' 	=> 'stura,ref-it,stura,konsul,admin',
+	'itopsort' 		=> 'stura,ref-it,stura,konsul,admin',
 	'protoedit' 	=> 'ref-it,stura,konsul,admin',
 	'protopublish' 	=> 'ref-it,stura,konsul,admin',
 	'stura' 		=> 'stura',

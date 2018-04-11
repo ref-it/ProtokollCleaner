@@ -31,6 +31,9 @@ class InvitationController extends MotherController {
 	 */
 	public function ilist(){
 		$perm = 'stura';
+		$this->t->appendJsLink('libs/jquery-ui.min.js');
+		$s = $this->t->getJsLinks();
+		$this->t->setJsLinks([$s[0], $s[3], $s[1], $s[2]]);
 		$this->t->appendCSSLink('invite.css');
 		$this->t->appendJsLink('wiki2html.js');
 		$this->t->appendJsLink('invite.js');
@@ -166,4 +169,68 @@ class InvitationController extends MotherController {
 		}
 	}
 	
+	/**
+	 * POST action
+	 * sort tops
+	 */
+	public function tsort(){
+		//calculate accessmap
+		$validator_map = [
+			'committee' => ['regex',
+				'pattern' => '/'.implode('|', array_keys(PROTOMAP)).'/',
+				'maxlength' => 10,
+				'error' => 'Du hast nicht die benötigten Berechtigungen, um dieses Protokoll zu bearbeiten.'
+			],
+			'list' => ['array',
+				'minlength' => 2,
+				'validator' => ['integer',
+					'min' => '1',
+					'error' => 'Ungültige Id.'
+				],
+				'error' => 'Kein Array.'
+			],
+		];
+		$vali = new Validator();
+		$vali->validateMap($_POST, $validator_map, true);
+		if ($vali->getIsError()){
+			if($vali->getLastErrorCode() == 403){
+				$this->json_access_denied();
+			} else if($vali->getLastErrorCode() == 404){
+				$this->json_not_found();
+			} else {
+				http_response_code ($vali->getLastErrorCode());
+				$this->json_result = ['success' => false, 'eMsg' => $vali->getLastErrorMsg()];
+				$this->print_json_result();
+			}
+		} else if (!checkUserPermission($vali->getFiltered('committee'))) {
+			$this->json_access_denied();
+		} else {
+			$tops = $this->db->getTops($vali->getFiltered('committee'));
+			$sortpos = 1;
+			$ok = true;
+			foreach($vali->getFiltered('list') as $sortid){
+				if (!isset($tops[$sortid])) continue;
+				if (isset($tops[$sortid]['used_on'])) continue;
+				if (isset($tops[$sortid]['resort'])) continue;
+				if ($tops[$sortid]['order'] != $sortpos){
+					$tops[$sortid]['order'] = $sortpos;
+					$ok = $this->db->updateTop($tops[$sortid]);
+				}
+				if (!$ok) break;
+				$sortpos++;
+			}
+			if ($ok){
+				$this->json_result = [
+					'success' => true,
+					'msg' => 'Tops sortiert.'
+				];
+			} else {
+				$this->json_result = [
+					'success' => false,
+					'eMsg' => 'Top nicht geändert.',
+				];
+			}
+			$this->print_json_result();
+		}
+	}
 }
