@@ -194,21 +194,21 @@ button, input{
 /* GENERAL CONTENT  ==============================================  */
 .content_wrapper {
 	width: 85%;
-	width: calc(85% - 20px);
+	width: calc(85% - 50px);
 	margin-left: 15%;
-	margin-left: calc(15% + 20px);
+	margin-left: calc(15% + 50px);
 	min-width: 300px;
 	overflow-x: hidden;
 	min-height: 90%;
 	min-height: calc(100% - 60px);
-	padding: 10px;
+	padding: 10px 0 10px 10px;
 }
 @media screen and (max-width: 767px) {
 	.content_wrapper {
 		width: 100%;
 		left: 0;
 		margin-left: 0;
-		padding: 10px;
+		padding: 3px;
 	}
 }
 .main, .content {

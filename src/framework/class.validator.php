@@ -347,17 +347,38 @@ class Validator {
 	 * name validator
 	 *
 	 * @param $value
-	 * @param $params
+	 * $param
+	 *  minlengh 2	maximum string length
+	 *  maxlengh 2	maximum string length - default 127, set -1 for unlimited value
+	 *  error	 2  replace whole error message on error case
+	 *  empty	 1 	allow empty value
 	 * @return boolean
 	 */
 	public function V_name($value, $params = NULL)  {
 		$name = trim(strip_tags(''.$value));
-		$re = '/^[a-zA-Z0-9äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]+[a-zA-Z0-9\-_#&\/ .äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]*[a-zA-Z0-9äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]+$/';
-		if ( $name !== '' && (!preg_match($re, $name) || strlen($name) >= 128)){
-			return !$this->setError(true, 200, "name validation failed", 'name validation failed');
-		} else {
-			$this->filtered=$name;
+		if (in_array('empty', $params) && $name === ''){
+			$this->filtered = '';
+			return !$this->setError(false);
 		}
+		$re = '/^[a-zA-Z0-9äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]+[a-zA-Z0-9\-_ .äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]*[a-zA-Z0-9äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]+$/';
+		if ( $name !== '' && (!preg_match($re, $name))){
+			$msg = ((isset($params['error']) )?$params['error']:'name validation failed');
+			return !$this->setError(true, 200, $msg, 'name validation failed');
+		}
+		if (!isset($params['maxlength'])){
+			$params['maxlength'] = 127;
+		}
+		if (isset($params['maxlength']) && $params['maxlength'] != -1 && strlen($name) > $params['maxlength']){
+			$msg = "The password is too long (Maximum length: {$params['maxlength']})";
+			if (isset($params['error'])) $msg = $params['error'];
+			return !$this->setError(true, 200, $msg, 'name validation failed - too long');
+		}
+		if (isset($params['minlength']) && strlen($name) < $params['minlength']){
+			$msg = "The password is too short (Minimum length: {$params['minlength']})";
+			if (isset($params['error'])) $msg = $params['error'];
+			return !$this->setError(true, 200, $msg, 'name validation failed - too short');
+		}
+		$this->filtered=$name;
 		return !$this->setError(false);
 	}
 	
