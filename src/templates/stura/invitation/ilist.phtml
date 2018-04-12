@@ -1,16 +1,35 @@
-<?= $this->getChallenge() ?>
+<?php $param = $param; echo $this->getChallenge() ?>
 <h2>Sitzungseinladung</h2>
 
 <h3>Geplante Sitzung</h3>
 <div class="btn btn-success">Sitzung planen</div>
 <div class="btn btn-danger">Sitzung absagen</div>
 <h4>Stura - Mitglieder</h4>
+<div class="mb-3 silmph_memberbox<?= (checkUserPermission('admin'))?' editmember':''; ?>">
+	<button class="btn btn-secondary showtoggle" type="button">Anzeigen</button>
+	<ul class="list-group mt-1 mb-1">
+<?php 
+	foreach ($param['member'] as $member){
+		echo '<li class="member p-2 list-group-item"><span class="membername" data-id="'.$member['id'].'" data-name="'.$member['name'].'" data-management="'.$member['management'].'" data-protocol="'.$member['protocol'].'"></span><span class="delete btn btn-outline-danger"></span></li>';
+	}
+?>
+	</ul>
+<?php 
+if(checkUserPermission('admin')){
+	echo '<div class="form-row">';
+	echo '<div class="form-group col-md-8 mb-0">';
+	echo '<input class="newmember_name form-control" type="text" value="" placeholder="Neues Mitglied"></div>';
+	echo '<div class="form-group col-md-4 mb-0">';
+	echo '<button class="newmemberbtn btn btn-success w-100" type="button">Hinzufügen</button></div>';
+	echo '</div>';
+} ?>
+</div>
 <h3>Eingereichte Tops</h3>
 <div class="btn btn-success">Neues Top erstellen</div>
 <div class="silmph_top_counter_reset"></div>
 <div class="silmph_toplist">
 <?php
-$param = $param;
+
 
 foreach($param['tops'] as $top){
 	if (isset($top['used_on'])) continue;

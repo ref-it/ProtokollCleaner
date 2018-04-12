@@ -32,6 +32,8 @@ $routes = [
 		'invite/tdelete'	=> ['itopdelete',	'invitation', 	'tdelete'],
 		'invite/tpause'		=> ['itoppause',	'invitation', 	'tpause'],
 		'invite/tsort'		=> ['itopsort',		'invitation', 	'tsort'],
+		'invite/mdelete'	=> ['imemberdelete','invitation', 	'mdelete'],
+		'invite/madd'		=> ['imemberadd',	'invitation', 	'madd'],
 	]
 ];
 
@@ -105,6 +107,8 @@ $permission_map = [
 	'itopdelete' 	=> 'stura,ref-it,stura,konsul,admin',
 	'itoppause' 	=> 'stura,ref-it,stura,konsul,admin',
 	'itopsort' 		=> 'stura,ref-it,stura,konsul,admin',
+	'imemberdelete' => 'konsul,admin',
+	'imemberadd' => 'konsul,admin',
 	'protoedit' 	=> 'ref-it,stura,konsul,admin',
 	'protopublish' 	=> 'ref-it,stura,konsul,admin',
 	'stura' 		=> 'stura',

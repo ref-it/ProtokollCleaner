@@ -722,6 +722,72 @@ class Database
 	}
 	
 	/**
+	 * returns CurrentMembers of committee/gremium
+	 * @return array
+	 */
+	public function getMembers($gremium){
+		$sql = "SELECT M.* FROM `".TABLE_PREFIX."current_member` M, `".TABLE_PREFIX."gremium` G WHERE M.gremium = G.id AND G.name = ? ORDER BY M.name";
+		$result = $this->getResultSet($sql, 's', [$gremium]);
+		$return = [];
+		foreach ($result as $line){
+			$return[$line['id']] = $line;
+		}
+		return $return;
+	}
+	
+	/**
+	 * returns CurrentMembers of committee/gremium
+	 * @return array
+	 */
+	public function getMembersCounting($gremium){
+		$sql = "SELECT M.*, COUNT(P1.management) as management, COUNT(P2.protocol) as protocol FROM `".TABLE_PREFIX."current_member` M INNER JOIN `".TABLE_PREFIX."gremium` G ON M.gremium = G.id LEFT JOIN `".TABLE_PREFIX."newproto` P1 ON P1.management = M.id LEFT JOIN `".TABLE_PREFIX."newproto` P2 ON P2.protocol = M.id WHERE G.name = ? GROUP BY M.name ";
+		$result = $this->getResultSet($sql, 's', [$gremium]);
+		$return = [];
+		foreach ($result as $line){
+			$return[$line['id']] = $line;
+		}
+		return $return;
+	}
+	
+	/**
+	 * returns member by id
+	 * @return array
+	 */
+	public function getMemberById($id){
+		$sql = "SELECT M.*, G.name as 'gname' FROM `".TABLE_PREFIX."current_member` M, `".TABLE_PREFIX."gremium` G WHERE M.gremium = G.id AND M.id = ?";
+		$result = $this->getResultSet($sql, 'i', [$id]);
+		$return = NULL;
+		foreach ($result as $line){
+			$return = $line;
+		}
+		return $return;
+	}
+	
+	/**
+	 * create current member entry
+	 * @param array $m member element array
+	 * @return boolean|new id
+	 */
+	public function createMember($m){
+		$pattern = 'si';
+		$data = [
+			$m['name'],
+			$m['gremium'],
+		];
+		$sql = "INSERT INTO `".TABLE_PREFIX."current_member`
+			(	`name`,
+				`gremium`	)
+			VALUES(?,?) ";
+		$this->protectedInsert($sql, $pattern, $data);
+		$result = $this->affectedRows();
+		if ($this->affectedRows() > 0){
+			return $this->lastInsertId();
+		} else {
+			return false;
+		}
+	}
+	
+	/**
 	 * returns tops
 	 * @return array
 	 */
@@ -740,7 +806,7 @@ class Database
 	 * @return array
 	 */
 	public function getTopById($id){
-		$sql = "SELECT T.*, G.name as 'gname' FROM `".TABLE_PREFIX."tops` T, `".TABLE_PREFIX."gremium` G WHERE T.gremium = G.id AND T.id = ? ORDER BY T.resort ASC, T.order, T.added_on ASC";
+		$sql = "SELECT T.*, G.name as 'gname' FROM `".TABLE_PREFIX."tops` T, `".TABLE_PREFIX."gremium` G WHERE T.gremium = G.id AND T.id = ?";
 		$result = $this->getResultSet($sql, 'i', [$id]);
 		$return = NULL;
 		foreach ($result as $line){
@@ -816,6 +882,39 @@ class Database
 	// --------- DELETE FUCNTIONS -----------------------------------------
 	
 	/**
+	 * delete member by id
+	 * @param integer $id
+	 * @return integer affected rows
+	 */
+	function deleteMemberById($id){
+		$sql = "DELETE FROM `".TABLE_PREFIX."current_member` WHERE `id` = ?;";
+		$this->protectedInsert($sql, 'i', [$id]);
+		return !$this->isError();
+	}
+	
+	/**
+	 * delete newproto by member id
+	 * @param integer $id
+	 * @return integer affected rows
+	 */
+	function deleteNewprotoByMemberId($id){
+		$sql = "DELETE FROM `".TABLE_PREFIX."newproto` WHERE `management` = ? OR `protocol` = ?;";
+		$this->protectedInsert($sql, 'ii', [$id, $id]);
+		return !$this->isError();
+	}
+	
+	/**
+	 * delete tops by member id
+	 * @param integer $id
+	 * @return integer affected rows
+	 */
+	function deleteTopsByMemberId($id){
+		$sql = "DELETE FROM `".TABLE_PREFIX."tops` WHERE `used_on` IN (SELECT NP.id FROM `".TABLE_PREFIX."newproto` NP WHERE NP.management = ? OR NP.protocol = ?);";
+		$this->protectedInsert($sql, 'ii', [$id, $id]);
+		return !$this->isError();
+	}
+	
+	/**
 	 * delete top by id
 	 * @param integer $id
 	 * @return integer affected rows
@@ -823,8 +922,7 @@ class Database
 	function deleteTopById($id){
 		$sql = "DELETE FROM `".TABLE_PREFIX."tops` WHERE `id` = ?;";
 		$this->protectedInsert($sql, 'i', [$id]);
-		$result = $this->affectedRows();
-		return ($result > 0)? $result : 0;
+		return !$this->isError();
 	}
 	
 	/**
