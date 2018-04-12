@@ -186,6 +186,7 @@ class Router {
 				if (!isset(self::$permission_map[$this->routes[$method][$path][0]])){
 					error_log('missing permission entry "'.$this->routes[$method][$path][0].'" on permission map');
 				}
+				require_once (SYSBASE.'/framework/class._MotherController.php');
 				$c = new MotherController($this->db, $this->auth, NULL);
 				$c->renderErrorPage(403, $this->navigation);
 			}
