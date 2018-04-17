@@ -72,7 +72,11 @@
 	    		if (diff > 0){ //open new level
 	    			out += _openList(type, level);
 	    			out += __list(line,type,level);
-	    		} else if (diff < 0){
+	    		} else if (diff < 0 || (
+	    			openedLists.length > 0 &&
+	    			(openedLists[openedLists.length-1] == '</ul>' && type == 'ol')
+					|| (openedLists[openedLists.length-1] == '</ol>' && type == 'ul')
+	    		)){
 	    			out+= _closeList(-diff);
 	    			if (openedLists.length > 0){
 	    				//close list if listelement is a different type
