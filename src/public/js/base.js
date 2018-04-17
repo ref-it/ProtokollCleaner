@@ -241,9 +241,11 @@ function checkIsValidName(name){
                 boxClass: '',
                 headerClass: 'bg-success',
                 footerClass: 'bg-light',
+                headlineText: '',
+                ptag: true,
                 buttonClass: 'btn-outline-dark',
                 autoremove: false,//time in ms
-                html: '<div class="modal-content"><div class="modal-header [%HEADCLASS%]"><span class="close">&times;</span></div><div class="modal-body"><p>[%TEXT%]</p></div><div class="buttons modal-footer [%FOOTCLASS%]">[%BUTTONS%]</div></div>'
+                html: '<div class="modal-header [%HEADCLASS%]"><span class="modal-headtext">[%HEADLINE%]</span><span class="close">&times;</span></div><div class="modal-content"><div class="modal-body">[%TEXT%]</div><div class="buttons modal-footer [%FOOTCLASS%]">[%BUTTONS%]</div></div>'
             }, options );
     		//return obj
     		var $out = {};
@@ -259,7 +261,7 @@ function checkIsValidName(name){
     		var $modal = $("<div/>", {
     			'class': 'modal-box '+ settings.boxClass,
     			css: {'position': 'fixed'},
-    			html: settings.html.replace('[%TEXT%]', settings.text).replace('[%BUTTONS%]', buttons).replace('[%HEADCLASS%]', settings.headerClass).replace('[%FOOTCLASS%]', settings.footerClass)
+    			html: settings.html.replace('[%TEXT%]', (settings.ptag)? '<p>[%TEXT2%]</p>' : '[%TEXT2%]').replace('[%TEXT2%]', settings.text).replace('[%BUTTONS%]', buttons).replace('[%HEADCLASS%]', settings.headerClass).replace('[%FOOTCLASS%]', settings.footerClass).replace('[%HEADLINE%]', settings.headlineText)
     		});
     		//add callbacks
     		for (var key in settings.buttons) {

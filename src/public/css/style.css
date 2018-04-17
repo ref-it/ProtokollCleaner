@@ -296,7 +296,7 @@ div.silmph__message_success {
 	position: relative;
 	width: 100%;
 	height: 0;
-	z-index: 400;
+	z-index: 1100;
 	opacity: 0;
 	overflow: hidden;
 	transition: opacity 0.5s;
@@ -359,12 +359,36 @@ div.silmph__message_success {
 	min-width: 300px;
 	max-height: 80%;
 	overflow-y: auto;
+	background: #999;
 }
+.modalwrapper .modal-header {
+	width: 85%;
+	width: calc(84% - 20px);
+	width: calc(84% - 20px);
+	position: fixed;
+	z-index: 10;
+	top: 30px;
+}
+.modalwrapper .modal-header .modal-headtext {
+	font-weight: bold;
+	color: #fff;
+}
+.modalwrapper .modal-header.bg-warning .modal-headtext {
+	color: #000;
+}
+
 .modalwrapper .modal-box .modal-footer {
 	padding: 5px;
 }
 .modalwrapper .modal-box .modal-footer button {
 	min-width: 125px;
+}
+.modalwrapper .modal-box .modal-footer {
+	padding: 5px;
+}
+.modalwrapper .modal-content {
+	border-radius: 0;
+	border: 1px solid #999;
 }
 @media screen and (max-width: 767px) {
 	.modalwrapper .modal-box {
@@ -376,6 +400,9 @@ div.silmph__message_success {
 		display: block;
 		z-index: 500;
 		min-width: auto;
+	}
+	.modalwrapper .modal-header {
+		width: 98%;
 	}
 }
 
