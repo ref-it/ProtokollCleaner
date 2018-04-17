@@ -292,3 +292,83 @@
 .silmph_memberbox:not(.showlist) > div {
 	display: none;
 }
+.ui-autocomplete .ui-menu-item{
+	background-color: white;
+}
+.silmph_top_autocomplete_resort {
+	z-index: 1200;
+}
+.silmph_top_autocomplete_resort .ui-menu-item:first-child {
+    border-top-left-radius: .25rem;
+    border-top-right-radius: .25rem;
+}
+.silmph_top_autocomplete_resort .ui-menu-item {
+    position: relative;
+    display: block;
+    padding: .5rem;
+    margin-bottom: -1px;
+    background-color: #fff;
+    border: 1px solid rgba(0,0,0,.125);
+}
+.silmph_edit .wikitext {
+	min-height: 280px;
+}
+.silmph_edit .silmph_texteditor > textarea,
+.silmph_edit .silmph_texteditor > .CodeMirror{
+	border: 1px solid #777;
+}
+/* ------------- */
+.toggleswitch{
+	position: relative;
+	display: inline-block;
+	width: 128px;
+	height: 38px;
+}
+.toggleswitch_slider{
+	position: absolute;
+	cursor: pointer;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: #ccc;
+	-webkit-transition: .4s;
+	transition: .4s;
+	border-radius: 3px;
+}
+.toggleswitch_slider:before {
+	position: absolute;
+	content: "\2714";
+	color: white;
+	height: 30px;
+	width: 60px;
+	left: 4px;
+	bottom: 4px;
+	background-color: white;
+	-webkit-transition: .4s;
+	transition: .4s;
+	line-height: 30px;
+	text-align: center;
+	font-weight: bold;
+	font-size: 28px;
+}
+
+input:checked + .toggleswitch .toggleswitch_slider {
+	background-color: #1D87DA;
+}
+
+input:focus + .toggleswitch .toggleswitch_slider {
+	box-shadow: 0 0 1px #1D87DA;
+}
+
+input:checked + .toggleswitch .toggleswitch_slider:before {
+	-webkit-transform: translateX(60px);
+	-ms-transform: translateX(60px);
+	transform: translateX(60px);
+	color: #1D87DA;
+}
+/* -------------- */
+.silmph_edit .wikitext + .CodeMirror-fullscreen {
+    top: 58px;
+    z-index: 300;
+}

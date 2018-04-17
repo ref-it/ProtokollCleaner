@@ -40,6 +40,122 @@
 		}
 		return r;
 	}
+	// =========================
+	// js loader - append scripts to head
+	// ---------------
+	var loadCounter={};
+	var loadScripts = function(scripts, callback, param){
+		if (scripts.constructor === Array){
+			var g = 'g'+Math.floor((Math.random() * 1000) + 1);
+			loadCounter[g]=0;
+			var l = scripts.length;
+			if (l > 0){
+				for (var i = 0; i<l; i++){
+					_loadScript(scripts[i], l - 1, g, callback, param);
+				}
+			} else {
+				callback(param);
+			}
+		}
+	}
+	// ---------------
+	var _loadScript = function (src, counter, group, callback, param){
+		script = document.createElement('script');
+		script.type = 'text/javascript';
+		script.async = false;
+		script.onload = function(){
+	        // remote script has loaded
+			_loadCallback(counter, group, callback, param);
+	    };
+		script.src = src;
+		document.getElementsByTagName('head')[0].appendChild(script);
+	}
+	// ---------------
+	var _loadCallback = function(counter, group, callback, param){
+		//skip loading codemirror
+		if (loadCounter[group] < counter){
+			loadCounter[group]++;
+		} else if(loadCounter[group] == counter)  {
+			loadCounter[group]++;
+			callback(param);
+		}
+	};
+	// ====================================
+	// CodeMirror loader
+	var Codemirror_loaded = false;
+	var cmEditor = {};
+	var appendCodemirrorAddonCss = function (basepath, list) {
+		for(var prop in list) {
+			if (list.hasOwnProperty(prop)){
+				$('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', basepath + prop + '/' + list[prop] + '.css') );
+			}
+		}
+	}
+	var loadCodemirror = function(target, callback, param){
+		if (Codemirror_loaded==false){
+			Codemirror_loaded = true;
+			$('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', '/js/libs/codemirror/lib/codemirror.css') );
+			appendCodemirrorAddonCss('/js/libs/codemirror/addon/', {
+			    'dialog': 'dialog', 'display' : 'fullscreen', 'scroll' : 'simplescrollbars', 'search' : 'matchesonscrollbar'
+			});
+			loadScripts([
+				'/js/libs/codemirror/lib/codemirror.js',
+				'/js/libs/codemirror/addon/mode/loadmode.js',
+				'/js/libs/codemirror/addon/mode/multiplex.js',
+				'/js/libs/codemirror/addon/mode/overlay.js',
+				'/js/libs/codemirror/addon/mode/simple.js',
+				
+				'/js/libs/codemirror/mode/properties/properties.js',
+				'/js/libs/codemirror/mode/doku/dokuwiki.js',
+				'/js/libs/codemirror/mode/dokuwiki/dokuwiki.js',
+				
+				'/js/libs/codemirror/keymap/sublime.js',
+				'/js/libs/codemirror/addon/dialog/dialog.js',
+				'/js/libs/codemirror/addon/edit/closebrackets.js',
+				'/js/libs/codemirror/addon/edit/matchbrackets.js',
+				'/js/libs/codemirror/addon/display/fullscreen.js',
+				'/js/libs/codemirror/addon/runmode/runmode.js',
+				'/js/libs/codemirror/addon/search/search.js',
+				'/js/libs/codemirror/addon/search/searchcursor.js',
+				'/js/libs/codemirror/addon/search/search.js',
+				'/js/libs/codemirror/addon/search/jump-to-line.js',
+				'/js/libs/codemirror/addon/search/match-highlighter.js',
+				'/js/libs/codemirror/addon/selection/active-line.js',
+				'/js/libs/codemirror/addon/scroll/annotatescrollbar.js',
+				'/js/libs/codemirror/addon/scroll/simplescrollbars.js',
+				
+			], _loadCodemirror, {t: target, c: callback, p: param});
+		}
+	}
+	var _loadCodemirror = function (tcp){
+		var $t = tcp.t;
+		//append codemirror to targets
+		$t.each(function(i, e){
+			var textarea = this;
+			var e_sid = 'e_' + textarea.dataset.sid;
+			cmEditor = CodeMirror.fromTextArea(textarea, {
+				mode: 'doku',
+				lineNumbers: true,
+				keyMap: 'sublime',
+				extraKeys: {
+					"F11": function(cm) {
+						cm.setOption("fullScreen", !cm.getOption("fullScreen"));
+					},
+					"Esc": function(cm) {
+						if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
+					}
+				}
+			});
+			cmEditor.on('change', function(){
+				cmEditor.save();
+			});
+			
+		});
+		//callback
+		var callback = tcp.c;
+		var param = tcp.p;
+		callback(param);
+	}
 	// ------------------------------------------------
 	if (typeof(String.prototype.renderWiki != 'function')){
 		(function() {
@@ -91,35 +207,39 @@
 		// ------------------------------------------------
 		$('.silmph_top .remove').on('click', function(){
 			var $e = $(this).closest('.silmph_top');
-			
-			if(confirm('Soll das Top: "'+ $e.children('.headline').children('span').eq(1).text()+'" wirklich gelöscht werden?')){
-				var dataset = {
-					tid: $e[0].dataset.tid,
-					hash: $e[0].dataset.hash,
-					committee: 'stura'
-				};
-				fchal = document.getElementById('fchal');
-				dataset[fchal.getAttribute("name")] = fchal.value;
-				
-				//do ajax post request
-				$.ajax({
-					type: "POST",
-					url: '/invite/tdelete',
-					data: dataset,
-					success: function(data){
-						pdata = parseData(data);
-						if(pdata.success == true){
-							$e.animate({ height: 'toggle', opacity: 'toggle' }, 1400, function(){
-								$e.remove();
-							});
-							silmph__add_message(pdata.msg + ((typeof(pdata.timing) == 'number')? ' (In '+pdata.timing.toFixed(2)+' Sekunden)' : ''), MESSAGE_TYPE_SUCCESS, 3000);
-						} else {
-							silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
-						}
-					},
-					error: postError
-				});
-			}
+			$.modaltools({
+				headerClass: 'bg-danger',
+				text: 'Soll das Top: <strong>"'+ $e.children('.headline').children('span').eq(1).text()+'"</strong> wirklich gelöscht werden?', 
+				single_callback: function(key, obj){
+					if (key == 'ok'){
+						var dataset = {
+							tid: $e[0].dataset.tid,
+							hash: $e[0].dataset.hash,
+							committee: 'stura'
+						};
+						fchal = document.getElementById('fchal');
+						dataset[fchal.getAttribute("name")] = fchal.value;
+						//do ajax post request
+						$.ajax({
+							type: "POST",
+							url: '/invite/tdelete',
+							data: dataset,
+							success: function(data){
+								pdata = parseData(data);
+								if(pdata.success == true){
+									$e.animate({ height: 'toggle', opacity: 'toggle' }, 1400, function(){
+										$e.remove();
+									});
+									silmph__add_message(pdata.msg + ((typeof(pdata.timing) == 'number')? ' (In '+pdata.timing.toFixed(2)+' Sekunden)' : ''), MESSAGE_TYPE_SUCCESS, 3000);
+								} else {
+									silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
+								}
+							},
+							error: postError
+						});	
+					}
+				}
+			}).open();
 		});
 		// ------------------------------------------------
 		$('.silmph_top .skipn').on('click', function(){
@@ -171,34 +291,39 @@
 		// ------------------------------------------------
 		var deleteMember = function(){
 			var $e = $(this).prev();
-			
-			if(confirm('Soll das Mitglied: "'+ $e[0].dataset.name+'" wirklich gelöscht werden? Alle verknüpften Protokolle werden gelöscht.')){
-				var dataset = {
-					mid: $e[0].dataset.id,
-					committee: 'stura'
-				};
-				fchal = document.getElementById('fchal');
-				dataset[fchal.getAttribute("name")] = fchal.value;
-				
-				$.ajax({
-					type: "POST",
-					url: '/invite/mdelete',
-					data: dataset,
-					success: function(data){
-						pdata = parseData(data);
-						if(pdata.success == true){
-							var $p = $e.parent();
-							$p.css({overflow: 'hidden'}).animate({ height: '0', padding: '0', opacity: 'toggle' }, 500, function(){
-								$p.remove();
-							});
-							silmph__add_message(pdata.msg + ((typeof(pdata.timing) == 'number')? ' (In '+pdata.timing.toFixed(2)+' Sekunden)' : ''), MESSAGE_TYPE_SUCCESS, 3000);
-						} else {
-							silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
-						}
-					},
-					error: postError
-				});
-			}
+			$.modaltools({
+				headerClass: 'bg-danger',
+				text: 'Soll das Mitglied: <strong>"'+ $e[0].dataset.name+'"</strong> wirklich gelöscht werden? Alle verknüpften Protokolle werden gelöscht.', 
+				single_callback: function(key, obj){
+					if (key == 'ok'){
+						var dataset = {
+							mid: $e[0].dataset.id,
+							committee: 'stura'
+						};
+						fchal = document.getElementById('fchal');
+						dataset[fchal.getAttribute("name")] = fchal.value;
+						
+						$.ajax({
+							type: "POST",
+							url: '/invite/mdelete',
+							data: dataset,
+							success: function(data){
+								pdata = parseData(data);
+								if(pdata.success == true){
+									var $p = $e.parent();
+									$p.css({overflow: 'hidden'}).animate({ height: '0', padding: '0', opacity: 'toggle' }, 500, function(){
+										$p.remove();
+									});
+									silmph__add_message(pdata.msg + ((typeof(pdata.timing) == 'number')? ' (In '+pdata.timing.toFixed(2)+' Sekunden)' : ''), MESSAGE_TYPE_SUCCESS, 3000);
+								} else {
+									silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
+								}
+							},
+							error: postError
+						});
+					}
+				}
+			}).open();
 		};
 		$('.silmph_memberbox.editmember .delete').on('click', deleteMember);
 		// ------------------------------------------------
@@ -275,6 +400,42 @@
 					error: postError
 				});
 			}
+		});
+		// ------------------------------------------------
+		var createTEdit = function(id){
+			var dataset_get = { committee: 'stura' };
+			if (typeof(id)!='undefined' && id > 0){
+				dataset_get['tid'] = id;
+			}
+			jQuery.get( '/invite/tedit' , dataset_get, function(data){
+				$.modaltools({
+					headerClass: 'bg-success',
+					text: data, 
+					ptag: false,
+					headlineText: 'Neues Top erstellen',
+					buttons: {'abort': 'Abbrechen', 'ok':'Erstellen'},
+					callback: {'ok':function(obj){
+						var dataset_put = {
+								
+						};
+						console.log('ok-button');
+						obj.close();
+					}, 'abort': function(obj){ obj.close(); }}
+				}).open();
+				// ----------------------------------
+				//combobox top edit - resort list
+				if (typeof($( ".combobox_resort" ).combobox) == 'function'){
+					$( ".combobox_resort" ).combobox();
+				}
+				// ----------------------------------
+				//codemirror
+				loadCodemirror($('.silmph_edit textarea.wikitext'), function(){}, null);
+			});
+		};
+		// ------------------------------------------------
+		// ------------------------------------------------
+		$('.silmph_tcreate_btn').on('click', function(){
+			createTEdit(0);
 		});
 	});
 })();

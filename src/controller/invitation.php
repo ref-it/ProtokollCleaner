@@ -36,6 +36,7 @@ class InvitationController extends MotherController {
 		$this->t->setJsLinks([$s[0], $s[3], $s[1], $s[2]]);
 		$this->t->appendCSSLink('invite.css');
 		$this->t->appendJsLink('wiki2html.js');
+		$this->t->appendJsLink('libs/jquery_ui_widget_combobox.js');
 		$this->t->appendJsLink('invite.js');
 		$tops = $this->db->getTops($perm);
 		$resorts = $this->db->getResorts($perm);
@@ -375,4 +376,61 @@ class InvitationController extends MotherController {
 		}
 	}
 	
+	/**
+	 * ACTION home
+	 */
+	public function itopedit(){
+		$perm = 'stura';
+		if (!isset($_GET['committee'])){
+			$_GET['committee'] = $perm;
+		}
+		//create accessmap
+		$validator_map = [
+			'committee' => ['regex',
+				'pattern' => '/'.implode('|', array_keys(PROTOMAP)).'/',
+				'maxlength' => 10,
+				'error' => 'Du hast nicht die benötigten Berechtigungen, um dieses Protokoll zu bearbeiten.'
+			],
+			'tid' => ['integer',
+				'min' => '1',
+				'error' => 'Ungültige Id.'
+			],
+		];
+		$vali = new Validator();
+		$vali->validateMap($_GET, $validator_map, false);
+		if ($vali->getIsError()){
+			if($vali->getLastErrorCode() == 403){
+				$this->json_access_denied();
+			} else if($vali->getLastErrorCode() == 404){
+				$this->json_not_found();
+			} else {
+				http_response_code ($vali->getLastErrorCode());
+				$this->json_result = ['success' => false, 'eMsg' => $vali->getLastErrorMsg()];
+				$this->print_json_result();
+			}
+		} else if (!checkUserPermission($vali->getFiltered('committee'))) {
+			$this->json_access_denied();
+		} else {
+			$top = NULL;
+			if (isset($vali->getFiltered()['tid'])){
+				$t = $this->db->getTopById($vali->getFiltered('tid'));
+				if ($t && $t['used_on'] == NULL && $t['gname'] == $vali->getFiltered('committee')){
+					$top = $t;
+					$minutes = 0;
+					if (isset($top['expected_duration'])){
+						$tmp = explode(':', $top['expected_duration']);
+						$minutes = $tmp[0] * 60 + $tmp[1];
+						$top['minutes'] = $minutes;
+					}
+				}
+			}
+			$resorts = $this->db->getResorts($vali->getFiltered('committee'));
+			$member = $this->db->getMembers($vali->getFiltered('committee'));
+			$this->includeTemplate(__FUNCTION__, [
+				'top' => $top,
+				'resorts' => $resorts,
+				'member' => $member
+			]);
+		}
+	}
 }
