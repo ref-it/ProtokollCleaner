@@ -305,6 +305,7 @@ function checkIsValidName(name){
     		$modal.find('.modal-header > span').on('click', function(){
     			fadeRemove();
 			});
+    		$out.modal = $modal;
     		$out.open = open_func;
     		$out.close = fadeRemove;
     		$out.breakAutoremove = function(){

@@ -376,7 +376,7 @@ input:checked + .toggleswitch .toggleswitch_slider:before {
 .silmph_edit .silmph_multicheckbox {
 	overflow: hidden;
 	max-height: 400px;
-	transition: all .4s linear;
+	transition: all .4s ease-in-out;
 }
 .silmph_edit .silmph_multicheckbox.hiderow{
 	max-height: 0;
@@ -388,7 +388,13 @@ input:checked + .toggleswitch .toggleswitch_slider:before {
 	display: block;
 	position: relative;
 	cursor: pointer;
-	transition: all .4s linear;
+	transition: all .4s ease-in-out;
+	box-sizing: border-box;
+}
+.silmph_edit .silmph_multicheckbox .silmph_goal_multi_label:focus,
+.silmph_edit .silmph_multicheckbox .silmph_goal_multi_label:active,
+.silmph_edit .silmph_multicheckbox .silmph_goal_multi_label.focus {
+	outline: 2px solid #1D87DA;
 }
 .silmph_edit .silmph_multicheckbox input:checked + .silmph_goal_multi_label {
 	color: #1D87DA;
@@ -406,7 +412,7 @@ input:checked + .toggleswitch .toggleswitch_slider:before {
 	position: absolute;
 	right: 15px;
 	top: 12px;
-	transition: all .4s linear;
+	transition: all .4s ease-in-out;
 }
 .silmph_edit .silmph_multicheckbox input:checked + .silmph_goal_multi_label:before {
 	color: #1D87DA;
