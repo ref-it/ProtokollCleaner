@@ -408,6 +408,17 @@
 		createTEdit($e[0].dataset.tid);
 	};
 	// ===== TOP FUNCTIONS - CREATE|MODIFY ===============================================
+	var func_multiselect_close = function(event) {
+		var $e = $('.silmph_multicheckbox');
+		if(!$(event.target).closest('.silmph_goal_inp').length
+				&& !$(event.target).closest('.silmph_multicheckbox').length) {
+			if (!$e.hasClass('hiderow')){
+				$e.addClass('hiderow');
+				$(document).off('click', func_multiselect_close);
+			}
+	    }
+	};
+	// ------------------------------------------------
 	var createTEdit = function(id){
 		var dataset_get = { committee: 'stura' };
 		if (typeof(id)!='undefined' && id > 0){
@@ -449,7 +460,31 @@
 			}
 			// ----------------------------------
 			//multiselect
-			
+			$('.silmph_edit .silmph_goal_inp').find('input').on('focus', function(){
+				var $inp = $(this);
+				var $e = $inp.closest('.silmph_goal_inp').next();
+				if ($e.hasClass('hiderow')){
+					$e.removeClass('hiderow');
+					$(document).on('click', func_multiselect_close);
+					var vals = $inp.val().split(/ *, */g);
+					$('.silmph_edit .silmph_multicheckbox input + label').each(function(i, e){
+						var inp = $(e).prev()[0];
+						if (vals.indexOf(e.innerHTML) >= 0){
+							if(!inp.checked) inp.checked = true;
+						} else {
+							if(inp.checked) inp.checked = false;
+						}
+					});
+				}
+			});
+			$('.silmph_edit .silmph_multicheckbox input').on('change', function(){
+				var out_str = '';
+				$('.silmph_edit .silmph_multicheckbox input:checked + label').each(function(i, e){
+					if (out_str != '') out_str+= ', ';
+					out_str += e.innerHTML;
+				});
+				$('.silmph_edit .silmph_multicheckbox').prev().find('input').val(out_str);
+			});
 			// ----------------------------------
 			//codemirror
 			loadCodemirror($('.silmph_edit textarea.wikitext'), function(){}, null);
