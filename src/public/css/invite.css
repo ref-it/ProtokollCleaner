@@ -109,7 +109,7 @@
 	content: "\f2c0";
 }
 .silmph_top .topinfo span.skipn::before{
-	content: "\f04c";
+	content: "\f252";
 }
 .silmph_top .topinfo span.goal::before{
 	content: "\f124";
@@ -161,7 +161,7 @@
 	padding-left: 10px;
 }
 .silmph_top .buttons .skipn::before {
-	content: "\f04c";
+	content: "\f252";
 }
 .silmph_top.skipnext .buttons .skipn {
 	padding-left: 12px;
