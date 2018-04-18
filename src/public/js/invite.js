@@ -101,7 +101,9 @@
 			loadCounter[group]++;
 		} else if(loadCounter[group] == counter)  {
 			loadCounter[group]++;
-			callback(param);
+			setTimeout(function(){
+				callback(param);
+			}, 600);
 		}
 	};
 	// ===== CODE MIRROR LOADER ===============================================
@@ -407,16 +409,136 @@
 		console.log($e[0].dataset.tid);
 		createTEdit($e[0].dataset.tid);
 	};
-	// ===== TOP FUNCTIONS - CREATE|MODIFY ===============================================
+	// ===== HELPER - MULTISELECT ===============================================
 	var func_multiselect_close = function(event) {
 		var $e = $('.silmph_multicheckbox');
-		if(!$(event.target).closest('.silmph_goal_inp').length
-				&& !$(event.target).closest('.silmph_multicheckbox').length) {
+		if(event == true || (!$(event.target).closest('.silmph_goal_inp').length
+				&& !$(event.target).closest('.silmph_multicheckbox').length)) {
 			if (!$e.hasClass('hiderow')){
 				$e.addClass('hiderow');
 				$(document).off('click', func_multiselect_close);
+				$(document).off('keypress', func_multiselect_key);
 			}
 	    }
+	};
+	// ---------------------
+	var func_multiselect_key = function (evt) {
+		var labels = $('.silmph_multicheckbox:not(.hiderow) label');
+		if (evt.keyCode==40 || evt.keyCode == 9 || evt.keyCode==38){ //arrow down || tab  || array up 
+			if (labels.length > 0){
+				var focus_next = false;
+				var overflow = false;
+				var j = 0;
+				$('#frmIpt05')
+				for (var i = 0; i < labels.length + 1; i++){
+					if (evt.keyCode==38) {
+						j = (labels.length - i) % labels.length;
+						if (j < 0) j = -j;
+					} else {
+						j = i % labels.length;
+					}
+					if (i == labels.length && evt.keyCode == 9 && focus_next == true) {
+						overflow = true;
+						focus_next = false;
+					} else if (i == labels.length){
+						focus_next = true;
+					}
+					if (focus_next){
+						labels.eq(j).focus();
+						labels[j].focus();
+						labels[j].blur();
+						if (!labels.eq(j).hasClass("focus")) labels.eq(j).addClass("focus");
+						break;
+					}
+					if (labels.eq(j).is(":focus") || labels.eq(j).hasClass("focus")){
+						if (labels.eq(j).hasClass("focus")) labels.eq(j).removeClass("focus");
+						focus_next = true;
+					}
+				}
+				if (! overflow ){
+					evt.stopPropagation();
+					evt.preventDefault();
+				} else {
+					func_multiselect_close(true);
+				}
+			}
+		} else if (evt.keyCode==13){ //enter
+			for (var i = 0; i < labels.length; i++){
+				if (labels.eq(i).is(":focus") || labels.eq(i).hasClass("focus")){
+					labels.eq(i).click();
+					break;
+				}
+			}
+			evt.stopPropagation();
+			evt.preventDefault();
+		}
+	};	
+	// ===== TOP FUNCTIONS - CREATE|MODIFY ===============================================
+	var func_top_create_update = function(top) {
+		console.log(top);
+		var box = $('<div/>',{
+			'class': 'card border-secondary silmph_top'+((top.skipNext > 0)?' skipnext':'')+((top.guest > 0)?' guest':'')+((top.resort.id > 0)?' resort':''),
+			dataset: {
+				tid: top.id,
+				hash: top.hash,
+			},
+		});
+		var head = $('<div/>',{
+			'class': 'card-header headline',
+			dataset: {
+				resort: (top.resort.id > 0)?top.resort.id:'',
+				level: top.level,
+				headline: JSON.stringify([top.headline])
+			},
+			html: ((!(top.resort.id > 0))? 
+					'<span class="top_counter"></span>' : 
+					'<span class="top_resort">'+top.resort.type+' '+top.resort.name+'</span>')
+				+ '<span>'+top.headline+'</span>'
+		});
+		box.append(head);
+		var info = $('<div/>', {
+			'class': 'topinfo text-secondary',
+			html: '<span class="added">'+top.addedOn+'</span>'
+				+ '<span class="duration">'+top.minutes+' min.</span>'
+				+ '<span class="person">'+top.person+'</span>'
+				+ '<span class="goal">'+top.goal+'</span>'
+				+ '<span class="guest">Gast</span>'
+				+ '<span class="skipn">Auf nächste Woche verschoben</span>'	
+		});
+		box.append(info);		
+		var body = $('<div/>', {
+			'class': 'card-body',
+			html: '<div class="text">'+top.text+'</div>'
+				+ '<input class="d-none" id="texttoggle_top_cb_'+top.id+'" type="checkbox" >'
+				+ '<div class="text_rendered"></div>'
+				+ '<label class="texttoggle btn btn-outline-secondary" for="texttoggle_top_cb_'+top.id+'"></label>'
+		});
+		box.append(body);
+		var buttons = $('<div/>', {
+			'class': 'buttons',
+			html: '<div class="edit btn btn-outline-secondary" title="Bearbeiten"></div><div class="remove btn btn-outline-danger" title="Löschen"></div><div class="skipn btn btn-outline-secondary" title="Auf nächste Woche verschieben"></div>'
+		});
+		box.append(buttons);
+		// -------------
+		if (top.isNew){
+			before = false;
+			if ($('silmph_toplist .silmph_top.resort').length > 0){
+				before = $('silmph_toplist .silmph_top.resort').eq(0);
+			} else if ($('silmph_toplist .silmph_top.skipnext').length > 0){
+				before = $('silmph_toplist .silmph_top.skipnext').eq(0);
+			}
+			if (before != false){
+				box.insertBefore(before);
+			} else {
+				$('.silmph_toplist').append(box);
+			}
+		} else {
+			console.log($('silmph_toplist .silmph_top[data-id="'+top.id+'"]'));
+			
+			$('.silmph_toplist .silmph_top[data-id="'+top.id+'"]').replaceWith(box);
+		}
+		console.log(box);
+		handle_top(box);
 	};
 	// ------------------------------------------------
 	var createTEdit = function(id){
@@ -429,8 +551,8 @@
 				headerClass: 'bg-success',
 				text: data, 
 				ptag: false,
-				headlineText: ((typeof(id)!='undefined' && id > 0)?'Neues Top erstellen':'Top Bearbeiten'),
-				buttons: {'abort': 'Abbrechen', 'ok':'Erstellen'},
+				headlineText: ((typeof(id)!='undefined' && id > 0)?'Top Bearbeiten':'Neues Top erstellen'),
+				buttons: {'abort': 'Abbrechen', 'ok':((typeof(id)!='undefined' && id > 0)?'Übernehmen':'Erstellen')},
 				callback: {'ok':function(obj){
 					var dataset_put = {
 						committee: 'stura',
@@ -440,7 +562,9 @@
 						duration: obj.modal.find('#frmIpt04').val(),
 						goal: obj.modal.find('#frmIpt05').val(),
 						guest: obj.modal.find('#frmIpt06')[0].checked,
-						text: obj.modal.find('#frmIpt07').val()
+						text: obj.modal.find('#frmIpt07').val(),
+						skipNext: obj.modal.find('.silmph_edit')[0].dataset.skip
+						hash: (typeof(id)!='undefined' && id > 0)? obj.modal.find('.silmph_top')[0].dataset.hash : '';
 					};
 					if (typeof(id)!='undefined' && id > 0){
 						dataset_put['tid'] = id;
@@ -448,9 +572,34 @@
 					fchal = document.getElementById('fchal');
 					dataset_put[fchal.getAttribute("name")] = fchal.value;
 					
-					console.log(dataset_put);
-					console.log('ok-button');
-					obj.close();
+					
+					
+					
+					dataset_put['isNew'] = true;
+				
+					func_top_create_update(dataset_put);
+					/*//do ajax post request
+					$.ajax({
+						type: "POST",
+						url: '/invite/tupdate',
+						data: dataset_put,
+						success: function(data){
+							pdata = {};
+							pdata = parseData(data);
+							if(pdata.success == true){
+								//add/update top
+								func_top_create_update(pdata.top);
+								
+								$('.silmph_toplist').sortable('refresh');
+								silmph__add_message(pdata.msg, MESSAGE_TYPE_OK, 3000);
+								obj.close();
+							} else {
+								silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
+							}
+						},
+						error: postError
+					});
+					*/
 				}, 'abort': function(obj){ obj.close(); }}
 			}).open();
 			// ----------------------------------
@@ -466,16 +615,20 @@
 				if ($e.hasClass('hiderow')){
 					$e.removeClass('hiderow');
 					$(document).on('click', func_multiselect_close);
-					var vals = $inp.val().split(/ *, */g);
-					$('.silmph_edit .silmph_multicheckbox input + label').each(function(i, e){
-						var inp = $(e).prev()[0];
-						if (vals.indexOf(e.innerHTML) >= 0){
-							if(!inp.checked) inp.checked = true;
-						} else {
-							if(inp.checked) inp.checked = false;
-						}
-					});
+					$(document).on('keypress', func_multiselect_key);
 				}
+			});
+			$('.silmph_edit .silmph_goal_inp').find('input').on('change', function(){
+				var $inp = $(this);				
+				var vals = $inp.val().split(/ *, */g);
+				$('.silmph_edit .silmph_multicheckbox input + label').each(function(i, e){
+					var inp = $(e).prev()[0];
+					if (vals.indexOf(e.innerHTML) >= 0){
+						if(!inp.checked) inp.checked = true;
+					} else {
+						if(inp.checked) inp.checked = false;
+					}
+				});
 			});
 			$('.silmph_edit .silmph_multicheckbox input').on('change', function(){
 				var out_str = '';

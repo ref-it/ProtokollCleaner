@@ -1,5 +1,5 @@
 <?php $param = $param; ?>
-<div class="card silmph_edit" data-tid="<?= (isset($param['top']['id']))?$param['top']['id']: 0; ?>">
+<div class="card silmph_edit" data-tid="<?= (isset($param['top']['id']))?$param['top']['id']: 0; ?>" data-skip="<?= (isset($param['top']['skip_next']))?$param['top']['skip_next']: 0; ?>">
 	<div class="card-body">
 		<div class="form-row">
 			<div class="col">
@@ -31,7 +31,7 @@
 		<hr>
 		<div class="form-row">
 			<div class="col-md-6">
-				<label for="frmIpt03">Wer berichtet?</label>
+				<label for="frmIpt03">Wer berichtet vorraussichtlich?</label>
 				<input type="text" class="form-control" value="<?= (isset($param['top']['person']))?$param['top']['person']: '';  ?>" id="frmIpt03" placeholder="Person">
 				<small class="form-text text-muted">Name</small>
 			</div>
@@ -43,16 +43,29 @@
 				<small class="form-text text-muted">in Minuten</small>
 			</div>
 		</div>
-		<div class="form-row">
+		<div class="silmph_goal_inp form-row">
 			<div class="col-md-6 mt-3">
 				<label for="frmIpt05">Zielsetzung</label>
 				<input type="text" class="form-control" value="<?= (isset($param['top']['goal']))?$param['top']['goal']: ''; ?>" id="frmIpt05" placeholder="Ziel">
-				<small class="form-text text-muted">Name</small>
+			</div>
+		</div>
+		<div class="mt-0 pt-0 form-row silmph_multicheckbox hiderow">
+			<div class="col-md-6 mt-0 pt-0 list-group noselect">
+				<?php 
+					$goal_selected = (isset($param['top']['goal']))? preg_split('(,| ,)', $param['top']['goal'], -1, PREG_SPLIT_NO_EMPTY) :[];
+					$goal_base = ['Abstimmung', 'Diskussion', 'Information', 'Kommentar'];
+				 
+					foreach ($goal_base as $tmpos => $goal_name){
+						echo "\n".'<input class="silmph_goal_multi" type="checkbox" id="goalMultiCkb'.$tmpos.'"'.((in_array($goal_name, $goal_selected))?' checked="checked"':'').'>';
+						echo "\n".'<label tabindex="0" class="silmph_goal_multi_label noselect list-group-item pt-2 pb-2" for="goalMultiCkb'.$tmpos.'">'.$goal_name.'</label>';
+						
+					}
+				?>
 			</div>
 		</div>
 		<div class="form-row">
 			<div class="col-md-6 mt-3 mb-0">
-				<div class="form-check-label">Gäste erwartet</div>
+				<div class="form-check-label">Externe Gäste erwartet?</div>
 				<input type="checkbox" value="1" <?= (isset($param['top']['guest'])&&$param['top']['guest'])?' checked="checked" ': ''; ?> class="form-control form-check-input mb-4 d-none" id="frmIpt06">
 				<label tabindex="0" for="frmIpt06" class="form-check-label toggleswitch"><span class="toggleswitch_slider"></span></label>
 			</div>
