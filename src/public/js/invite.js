@@ -406,7 +406,6 @@
 	// ------------------------------------------------
 	var func_top_to_edit = function(){
 		var $e = $(this).parent().parent();
-		console.log($e[0].dataset.tid);
 		createTEdit($e[0].dataset.tid);
 	};
 	// ===== HELPER - MULTISELECT ===============================================
@@ -477,20 +476,16 @@
 	var func_top_create_update = function(top) {
 		console.log(top);
 		var box = $('<div/>',{
-			'class': 'card border-secondary silmph_top'+((top.skipNext > 0)?' skipnext':'')+((top.guest > 0)?' guest':'')+((top.resort.id > 0)?' resort':''),
-			dataset: {
-				tid: top.id,
-				hash: top.hash,
-			},
+			'class': 'card border-secondary silmph_top'+((top.skip_next > 0)?' skipnext':'')+((top.guest > 0)?' guest':'')+((top.intern > 0)?' internal':'')+((top.resort != null && top.resort.id > 0)?' resort':''),
+			'data-tid': top.id,
+			'data-hash': top.hash,
 		});
 		var head = $('<div/>',{
 			'class': 'card-header headline',
-			dataset: {
-				resort: (top.resort.id > 0)?top.resort.id:'',
-				level: top.level,
-				headline: JSON.stringify([top.headline])
-			},
-			html: ((!(top.resort.id > 0))? 
+			'data-resort': (top.resort != null && top.resort.id > 0)?top.resort.id:'',
+			'data-level': top.level,
+			'data-headline': JSON.stringify([top.headline]),
+			html: ((!(top.resort != null && top.resort.id > 0))? 
 					'<span class="top_counter"></span>' : 
 					'<span class="top_resort">'+top.resort.type+' '+top.resort.name+'</span>')
 				+ '<span>'+top.headline+'</span>'
@@ -499,17 +494,18 @@
 		var info = $('<div/>', {
 			'class': 'topinfo text-secondary',
 			html: '<span class="added">'+top.addedOn+'</span>'
-				+ '<span class="duration">'+top.minutes+' min.</span>'
+				+ '<span class="duration">'+top.expected_duration+' min.</span>'
 				+ '<span class="person">'+top.person+'</span>'
 				+ '<span class="goal">'+top.goal+'</span>'
 				+ '<span class="guest">Gast</span>'
+				+ '<span class="internal">Intern</span>'
 				+ '<span class="skipn">Auf nächste Woche verschoben</span>'	
 		});
 		box.append(info);		
 		var body = $('<div/>', {
 			'class': 'card-body',
 			html: '<div class="text">'+top.text+'</div>'
-				+ '<input class="d-none" id="texttoggle_top_cb_'+top.id+'" type="checkbox" >'
+				+ '<input class="d-none" id="texttoggle_top_cb_'+top.id+'" type="checkbox" checked="checked">'
 				+ '<div class="text_rendered"></div>'
 				+ '<label class="texttoggle btn btn-outline-secondary" for="texttoggle_top_cb_'+top.id+'"></label>'
 		});
@@ -532,12 +528,9 @@
 			} else {
 				$('.silmph_toplist').append(box);
 			}
-		} else {
-			console.log($('silmph_toplist .silmph_top[data-id="'+top.id+'"]'));
-			
-			$('.silmph_toplist .silmph_top[data-id="'+top.id+'"]').replaceWith(box);
+		} else {		
+			$('.silmph_toplist .silmph_top[data-tid="'+top.id+'"]').replaceWith(box);
 		}
-		console.log(box);
 		handle_top(box);
 	};
 	// ------------------------------------------------
@@ -561,24 +554,20 @@
 						person: obj.modal.find('#frmIpt03').val(),
 						duration: obj.modal.find('#frmIpt04').val(),
 						goal: obj.modal.find('#frmIpt05').val(),
-						guest: obj.modal.find('#frmIpt06')[0].checked,
+						guest: obj.modal.find('#frmIpt06')[0].checked? '1': '0',
+						intern: obj.modal.find('#frmIpt08')[0].checked? '1': '0',
 						text: obj.modal.find('#frmIpt07').val(),
-						skipNext: obj.modal.find('.silmph_edit')[0].dataset.skip
-						hash: (typeof(id)!='undefined' && id > 0)? obj.modal.find('.silmph_top')[0].dataset.hash : '';
+						hash: (typeof(id)!='undefined' && id > 0)? obj.modal.find('.silmph_edit')[0].dataset.hash : ''
 					};
 					if (typeof(id)!='undefined' && id > 0){
 						dataset_put['tid'] = id;
+					} else {
+						dataset_put['tid'] = 0;
 					}
 					fchal = document.getElementById('fchal');
 					dataset_put[fchal.getAttribute("name")] = fchal.value;
 					
-					
-					
-					
-					dataset_put['isNew'] = true;
-				
-					func_top_create_update(dataset_put);
-					/*//do ajax post request
+					//do ajax post request
 					$.ajax({
 						type: "POST",
 						url: '/invite/tupdate',
@@ -589,9 +578,8 @@
 							if(pdata.success == true){
 								//add/update top
 								func_top_create_update(pdata.top);
-								
 								$('.silmph_toplist').sortable('refresh');
-								silmph__add_message(pdata.msg, MESSAGE_TYPE_OK, 3000);
+								silmph__add_message(pdata.msg, MESSAGE_TYPE_SUCCESS, 3000);
 								obj.close();
 							} else {
 								silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
@@ -599,7 +587,7 @@
 						},
 						error: postError
 					});
-					*/
+					
 				}, 'abort': function(obj){ obj.close(); }}
 			}).open();
 			// ----------------------------------
@@ -642,7 +630,7 @@
 			//codemirror
 			loadCodemirror($('.silmph_edit textarea.wikitext'), function(){}, null);
 		});
-	};
+	};	
 	// ===== DOCUMENT READY ===============================================
 	$(document).ready(function(){
 		// member func ----------
@@ -655,7 +643,7 @@
 		// top func -------------
 		$('.silmph_toplist').sortable({
 			update: sortCallback,
-			items : '.silmph_top:not(.resort)',
+			items : '.silmph_top:not(.skipnext)',
 			handle: '.card-header',
 			axis: 'y'
 		});

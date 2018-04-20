@@ -27,6 +27,7 @@
 }
 .silmph_top {
 	position: relative;
+	vertical-align: bottom;
 }
 .silmph_top .headline{
 	font-weight: bold;
@@ -75,6 +76,12 @@
 .silmph_top .topinfo span.guest {
 	display: none;
 }
+.silmph_top.internal .topinfo span.internal {
+	display: inline-block;
+}
+.silmph_top .topinfo span.internal {
+	display: none;
+}
 .silmph_top .text{
 	white-space: pre-wrap;
 	white-space: -moz-pre-wrap;
@@ -107,6 +114,9 @@
 }
 .silmph_top .topinfo span.guest::before{
 	content: "\f2c0";
+}
+.silmph_top .topinfo span.internal::before{
+	content: "\f015";
 }
 .silmph_top .topinfo span.skipn::before{
 	content: "\f252";

@@ -821,7 +821,7 @@ class Database
 	 * @return boolean|new id
 	 */
 	public function updateTop($t){
-		$pattern = 'siissssisisiiii';
+		$pattern = 'siissssisisiiiii';
 		$data = [
 			$t['headline'],
 			($t['resort'])?$t['resort']:NULL,
@@ -837,6 +837,7 @@ class Database
 			$t['guest'],
 			$t['order'],
 			$t['skip_next'],
+			$t['intern'],
 			$t['id']
 		];
 		$sql = "UPDATE `".TABLE_PREFIX."tops` SET
@@ -853,17 +854,69 @@ class Database
 				`hash` = ?,
 				`guest` = ?,
 				`order` = ?,
-				`skip_next` = ?
+				`skip_next` = ?,
+				`intern` = ?
 				WHERE `id` = ?";
 
 		$this->protectedInsert($sql, $pattern, $data);
 		$result = $this->affectedRows();
-		if ($this->affectedRows() > 0){
+		if (!$this->isError()){
 			return true;
 		} else {
 			return false;
 		}
 	}
+	
+	
+	/**
+	 * create top entry
+	 * @param array $t top element array
+	 * @return boolean|new id
+	 */
+	public function createTop($t){
+		$pattern = 'siissssiisiiii';
+		$data = [
+			$t['headline'],
+			(isset($t['resort'])&&$t['resort'])?$t['resort']:NULL,
+			(isset($t['level'])&&$t['level'])?$t['level']:4,
+			(isset($t['person'])&&$t['person'])?$t['person']:NULL,
+			(isset($t['expected_duration'])&&$t['expected_duration'])?$t['expected_duration']:NULL,
+			(isset($t['goal'])&&$t['goal'])?$t['goal']:NULL,
+			(isset($t['text'])&&$t['text'])?$t['text']:'',
+			$t['gremium'],
+			(isset($t['used_on'])&&$t['used_on'])?$t['used_on']:NULL,
+			$t['hash'],
+			(isset($t['guest'])&&$t['guest'])?1:0,
+			(isset($t['order']))?$t['order']:9999,
+			(isset($t['skip_next'])&&$t['skip_next'])?1:0,
+			(isset($t['intern'])&&$t['intern'])?1:0
+		];
+		$sql = "INSERT INTO `".TABLE_PREFIX."tops`
+			(	`headline`,
+				`resort`,
+				`level`,
+				`person`,
+				`expected_duration`,
+				`goal`,
+				`text`,
+				`gremium`,
+				`used_on`,
+				`hash`,
+				`guest`,
+				`order`,
+				`skip_next`,
+				`intern` )
+			VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?) ";
+		$this->protectedInsert($sql, $pattern, $data);
+		$result = $this->affectedRows();
+		if ($this->affectedRows() > 0){
+			return $this->lastInsertId();
+		} else {
+			return false;
+		}
+	}
+	
+	
 	
 	/**
 	 * returns resorts

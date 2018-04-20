@@ -31,10 +31,10 @@ class InvitationController extends MotherController {
 	 */
 	public function ilist(){
 		$perm = 'stura';
+		$this->t->appendCSSLink('invite.css');
 		$this->t->appendJsLink('libs/jquery-ui.min.js');
 		$s = $this->t->getJsLinks();
 		$this->t->setJsLinks([$s[0], $s[3], $s[1], $s[2]]);
-		$this->t->appendCSSLink('invite.css');
 		$this->t->appendJsLink('wiki2html.js');
 		$this->t->appendJsLink('libs/jquery_ui_widget_combobox.js');
 		$this->t->appendJsLink('invite.js');
@@ -377,7 +377,7 @@ class InvitationController extends MotherController {
 	}
 	
 	/**
-	 * ACTION home
+	 * ACTION top edit|create - only create formular
 	 */
 	public function itopedit(){
 		$perm = 'stura';
@@ -416,12 +416,6 @@ class InvitationController extends MotherController {
 				$t = $this->db->getTopById($vali->getFiltered('tid'));
 				if ($t && $t['used_on'] == NULL && $t['gname'] == $vali->getFiltered('committee')){
 					$top = $t;
-					$minutes = 0;
-					if (isset($top['expected_duration'])){
-						$tmp = explode(':', $top['expected_duration']);
-						$minutes = $tmp[0] * 60 + $tmp[1];
-						$top['minutes'] = $minutes;
-					}
 				}
 			}
 			$resorts = $this->db->getResorts($vali->getFiltered('committee'));
@@ -431,6 +425,148 @@ class InvitationController extends MotherController {
 				'resorts' => $resorts,
 				'member' => $member
 			]);
+		}
+	}
+	
+	/**
+	 * POST action
+	 * itop update or create top in database 
+	 */
+	public function itopupdate(){
+		//calculate accessmap
+		$validator_map = [
+			'committee' => ['regex',
+				'pattern' => '/'.implode('|', array_keys(PROTOMAP)).'/',
+				'maxlength' => 10,
+				'error' => 'Du hast nicht die benötigten Berechtigungen, um dieses Protokoll zu bearbeiten.'
+			],
+			'headline' => [ 'regex',
+				'pattern' => '/^[a-zA-Z0-9äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]{1}[a-zA-Z0-9\-_;,.:!?+\*%()#\/\\ äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]+[a-zA-Z0-9\-_;,.:!?+\*%()#\/\\äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]{1}$/',
+				'error' => 'Ungültige Überschrift'
+			],
+			'resort' => ['integer',
+				'min' => '0',
+				'error' => 'Ungültige Resort Id.'
+			],
+			'person' => ['name',
+				'minlength' => '3',
+				'error' => 'Ungültige Zeichen im Namen.',
+				'empty'
+			],
+			'duration' => ['integer',
+				'min' => '0',
+				'error' => 'Ungültige Dauer'
+			],
+			'goal' => ['regex',
+				'pattern' => '/^[a-zA-Z0-9äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]+[a-zA-Z0-9, äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]+[a-zA-Z0-9äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]+$/',
+				'empty',
+				'error' => 'Ungültige Zielsetzung'
+			],
+			'guest' => ['integer',
+				'min' => '0',
+				'max' => '1',
+				'error' => 'Ungültiger "Gast" Status'
+			],
+			'intern' => ['integer',
+				'min' => '0',
+				'max' => '1',
+				'error' => 'Ungültiger "Intern" Status'
+			],
+			'text' => ['regex',
+				'pattern' => '/^(.|\r|\n)*$/',
+				'empty',
+				'noTagStrip',
+				'error' => 'Ungültiger Text',
+				'replace' => [['<del>','</del>'], ['%[[del]]%','%[[/del]]%']],
+			],
+			'hash' => ['regex',
+				'pattern' => '/^([0-9a-f]{32})$/',
+				'empty',
+				'error' => 'Topkennung hat das falsche Format.'
+			],
+			'tid' => ['integer',
+				'min' => '0',
+				'error' => 'Ungültige Top Id.'
+			],
+		];
+		$vali = new Validator();
+		$vali->validateMap($_POST, $validator_map, true);
+		if ($vali->getIsError()){
+			if($vali->getLastErrorCode() == 403){
+				$this->json_access_denied();
+			} else if($vali->getLastErrorCode() == 404){
+				$this->json_not_found();
+			} else {
+				http_response_code ($vali->getLastErrorCode());
+				$this->json_result = ['success' => false, 'eMsg' => $vali->getLastErrorMsg()];
+				$this->print_json_result();
+			}
+		} else if (!checkUserPermission($vali->getFiltered('committee'))) {
+			$this->json_access_denied();
+		} else {
+			$filtered = $vali->getFiltered();
+			$filtered['text'] = str_replace(['%[[del]]%','%[[/del]]%'], ['<del>','</del>'], strip_tags($filtered['text']));
+			
+			$top = [];
+			if ($filtered['tid'] > 0){
+				$top = $this->db->getTopById($filtered['tid']);
+				if (!$top
+					|| $top['gname'] != $filtered['committee']
+					|| $top['hash'] != $filtered['hash']){
+					$this->json_not_found('Top nicht gefunden');
+					return;
+				}
+			}
+			$resort = false;
+			if ($filtered['resort'] > 0){
+				$resorts = $this->db->getResorts($filtered['committee']);
+				if (isset($resorts[$filtered['resort']])){
+					$resort = $resorts[$filtered['resort']];
+				}
+			}
+			$gremium = $this->db->getCommitteebyName($filtered['committee']);
+
+			$top['headline'] = $filtered['headline'];
+			$top['resort'] = (is_array($resort))? $resort['id']: NULL;
+			$top['person'] = $filtered['person']? $filtered['person'] : NULL ;
+			$top['expected_duration'] = $filtered['duration'];
+			$top['goal'] = $filtered['goal']? $filtered['goal']: NULL;
+			$top['text'] = $filtered['text'];
+			$top['guest'] = $filtered['guest'];
+			$top['intern'] = $filtered['intern'];
+			$top['gremium'] = $gremium['id'];
+			$top['hash'] = (isset($top['hash']) && $top['hash'])? $top['hash'] : md5($top['headline'].date_create()->getTimestamp().$filtered['committee']);
+			
+			//create 
+			if (!isset($top['id'])){
+				$newtid = $this->db->createTop($top);
+				if (!$newtid) {
+					$this->json_not_found('Top konnte nicht erstellt werden.');
+					return;
+				} else {
+					$top['id'] = $newtid;
+				}
+			} else { //or update top 
+				$this->db->updateTop($top);
+				if (!$this->db->updateTop($top)) {
+					$this->json_not_found('Top konnte nicht aktualisiert werden.');
+					return;
+				}
+			}
+			$top = $this->db->getTopById($top['id']);
+			$top['addedOn'] = date_create($top['added_on'])->format('d.m.Y H:i');
+			if ($resort) {
+				$top['resort'] = $resort;
+			}
+			
+			//return result
+			$this->json_result = [
+				'top' => $top,
+				'success' => true,
+				'msg' => ($filtered['tid'])?'Top aktualisiert':'Top erstellt.'
+			];
+			
+			$this->print_json_result();
 		}
 	}
 }
