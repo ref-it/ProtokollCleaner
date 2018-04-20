@@ -501,19 +501,31 @@ class Validator {
 	 * regex validator
 	 * 
 	 * $param
-	 *  regex	 2	match pattern
-	 *  errorkey 2  replace 'regex' with errorkey on error case
-	 *  error	 2  replace whole error message on error case
-	 *  upper	 1  string to uppercase
-	 *  lower	 1  string to lower case
-	 *  replace  2	touple [search, replace] replace string
+	 *  regex	   2	match pattern
+	 *  errorkey   2	replace 'regex' with errorkey on error case
+	 *  error	   2	replace whole error message on error case
+	 *  upper	   1	string to uppercase
+	 *  lower	   1	string to lower case
+	 *  replace    2	touple [search, replace] replace string
+	 *  minlengh   2	maximum string length
+	 *  maxlengh   2	maximum string length
+	 *  noTagStrip 1	disable tag strip before validation
+	 *  empty	   1	allow empty string if not in regex
 	 * 
 	 * @param $value
 	 * @param $params
 	 * @return boolean
 	 */
 	public function V_regex($value, $params = ['pattern' => '/.*/']) {
-		$v = trim(strip_tags(''.$value));
+		$v = ''.$value;
+		if (!in_array('noTagStrip', $params)){
+			$v = strip_tags($v);
+		}
+		$v = trim($v);
+		if (in_array('empty', $params) && $v === ''){
+			$this->filtered = $v;
+			return !$this->setError(false);
+		}
 		if (isset($params['replace'])){
 			$v = str_replace($params['replace'][0], $params['replace'][1], $v);
 		}
@@ -522,6 +534,14 @@ class Validator {
 		}
 		if (in_array('lower', $params)){
 			$v = strtolower($v);
+		}
+		if (isset($params['maxlength']) && strlen($v) >= $params['maxlength']){
+			$msg = "String is too long (Maximum length: {$params['maxlength']})";
+			return !$this->setError(true, 200, $msg);
+		}
+		if (isset($params['minlength']) && strlen($v) < $params['minlength']){
+			$msg = "String is too short (Minimum length: {$params['minlength']})";
+			return !$this->setError(true, 200, $msg);
 		}
 		$re = $params['pattern'];
 		if (!preg_match($re, $v) || (isset($params['maxlength']) && strlen($v) >= $params['maxlength'])) {

@@ -233,7 +233,7 @@ div.message_relative{
 	box-sizing: border-box;
 	left: 20%;
 	right: 16px;
-	z-index: 400;
+	z-index: 1250;
 }
 .force_mobile #silmph__message_container{
 	left: 2%;
