@@ -437,26 +437,26 @@ class Database
 	 */
 	public function getResolutionByCommittee( $committee , $pid = NULL, $order = 'DESC'){
 		if (!is_string($committee) || $committee === '') {
-				$emsg = 'Wrong parameter in Database function ('.__FUNCTION__.'). ';
-				$emsg.= 'Require nonempty string';
-				error_log( $emsg );
-				throw new Exception($emsg);
-				return NULL;
-			}
-			$sql = "SELECT R.*, P.date, P.id as pid, P.name as pname FROM `".TABLE_PREFIX."resolution` R, `".TABLE_PREFIX."protocol` P, `".TABLE_PREFIX."gremium` G
-				WHERE R.on_protocol = P.id
-					AND P.gremium = G.id
-					AND G.name = ?"
-					.((isset($pid) && is_int($pid))?' AND R.on_protocol = ?':'').
-				" ORDER BY P.date $order;";
-			$data = [$committee];
-			if (isset($pid) && is_int($pid)) $data[] = $pid;
-			$result = $this->getResultSet($sql, ((isset($pid) && is_int($pid))?'si':'s'), $data );
-			$r = [];
-			foreach ($result as $res){
-				$r[] = $res;
-			}
-			return $r;
+			$emsg = 'Wrong parameter in Database function ('.__FUNCTION__.'). ';
+			$emsg.= 'Require nonempty string';
+			error_log( $emsg );
+			throw new Exception($emsg);
+			return NULL;
+		}
+		$sql = "SELECT R.*, P.date, P.id as pid, P.name as pname FROM `".TABLE_PREFIX."resolution` R, `".TABLE_PREFIX."protocol` P, `".TABLE_PREFIX."gremium` G
+			WHERE R.on_protocol = P.id
+				AND P.gremium = G.id
+				AND G.name = ?"
+				.((isset($pid) && is_int($pid))?' AND R.on_protocol = ?':'').
+			" ORDER BY P.date $order;";
+		$data = [$committee];
+		if (isset($pid) && is_int($pid)) $data[] = $pid;
+		$result = $this->getResultSet($sql, ((isset($pid) && is_int($pid))?'si':'s'), $data );
+		$r = [];
+		foreach ($result as $res){
+			$r[] = $res;
+		}
+		return $r;
 	}
 	
 	/**
@@ -788,7 +788,23 @@ class Database
 	}
 	
 	/**
+	 * return list of newproto
+	 * @param $gremium committee|gremium name
+	 * @return array
+	 */
+	public function getNewprotos($gremium){
+		$sql = "SELECT T.* FROM `".TABLE_PREFIX."newproro` NP, `".TABLE_PREFIX."gremium` G WHERE NP.gremium = G.id AND G.name = ? ORDER BY NP.date DESC";
+		$result = $this->getResultSet($sql, 's', [$gremium]);
+		$return = [];
+		foreach ($result as $line){
+			$return[$line['id']] = $line;
+		}
+		return $return;
+	}
+	
+	/**
 	 * returns tops
+	 * @param $gremium committee|gremium name
 	 * @return array
 	 */
 	public function getTops($gremium){

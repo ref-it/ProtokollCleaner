@@ -41,11 +41,20 @@ class InvitationController extends MotherController {
 		$tops = $this->db->getTops($perm);
 		$resorts = $this->db->getResorts($perm);
 		$member = $this->db->getMembersCounting($perm);
+		$committee = $this->db->getCommitteebyName($perm);
+		$newproto = $this->db->getNewprotos($perm);
+		$settings = $this->db->getSettings();
+		$sett = [];
+		$sett['auto_invite'] = intval($settings['AUTO_INVITE_N_HOURS']);
+		$sett['disable_restore'] = intval($settings['DISABLE_RESTORE_OLDER_DAYS']);
+		$sett['meeting_hour'] = intval($committee['default_meeting_hour']);
 		$this->t->printPageHeader();
 		$this->includeTemplate(__FUNCTION__, [
 			'tops' => $tops,
 			'resorts' => $resorts,
-			'member' => $member
+			'member' => $member,
+			'newproto' => $newproto,
+			'settings' => $sett
 		]);
 		$this->t->printPageFooter();
 	}

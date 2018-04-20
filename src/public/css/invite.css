@@ -427,3 +427,37 @@ input:checked + .toggleswitch .toggleswitch_slider:before {
 .silmph_edit .silmph_multicheckbox input:checked + .silmph_goal_multi_label:before {
 	color: #1D87DA;
 }
+/* ========================= */
+.silmph_nprotolist {
+	width: 100%;
+}
+.silmph_nprotolist .npheadline {
+	font-weight: bold;
+}
+.silmph_nprotolist .npbody {
+	height: 200px;
+	overflow-y: scroll;
+	overflow-x: hidden;
+	width: 100%;
+}
+.silmph_nprotolist .npbody > .row {
+	border-top: 1px solid #dee2e6;
+}
+.silmph_nprotolist .npbody > .row:nth-child(odd) {
+	background-color: #f2f2f2;
+}
+.silmph_nprotolist .npbody > .row:hover {
+	background-color: #ddd;
+}
+.fa-stack2 {
+	position: relative;
+	display: inline-block;
+	height: 1em;
+	line-height: 1em;
+	vertical-align: middle;
+}
+.fa-stack2 i:last-child{
+	left: 5px;
+	top: 3px;
+	opacity: 1;
+}

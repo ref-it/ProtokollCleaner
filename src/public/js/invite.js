@@ -400,8 +400,16 @@
 	// ------------------------------------------------
 	var func_top_showtoggle = function(){
 		var $e = $(this).parent();
-		if ($e.hasClass('showlist')) $e.removeClass('showlist');
-		else $e.addClass('showlist');
+		var $b = $(this);
+		if ($e.hasClass('showlist')){
+			$e.removeClass('showlist');
+		}
+		else {
+			$e.addClass('showlist');
+		}
+		var text = $b.text();
+		$b.text($b.data('texttoggle'));
+		$b.data('texttoggle', text);
 	};
 	// ------------------------------------------------
 	var func_top_to_edit = function(){
