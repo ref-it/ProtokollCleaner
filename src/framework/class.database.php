@@ -653,7 +653,7 @@ class Database
 	 * @return array
 	 */
 	public function getCurrentLegislatur(){
-		$sql = "SELECT * FROM `".TABLE_PREFIX."legislatur` L ORDER BY L.number DESC LIMIT BY 1;";
+		$sql = "SELECT * FROM `".TABLE_PREFIX."legislatur` L ORDER BY L.number DESC LIMIT 1;";
 		$result = $this->getResultSet($sql);
 		$return = [];
 		foreach ($result as $line){
@@ -793,7 +793,7 @@ class Database
 	 * @return array
 	 */
 	public function getNewprotos($gremium){
-		$sql = "SELECT T.* FROM `".TABLE_PREFIX."newproro` NP, `".TABLE_PREFIX."gremium` G WHERE NP.gremium = G.id AND G.name = ? ORDER BY NP.date DESC";
+		$sql = "SELECT T.* FROM `".TABLE_PREFIX."newproto` NP, `".TABLE_PREFIX."gremium` G WHERE NP.gremium = G.id AND G.name = ? ORDER BY NP.date DESC";
 		$result = $this->getResultSet($sql, 's', [$gremium]);
 		$return = [];
 		foreach ($result as $line){
