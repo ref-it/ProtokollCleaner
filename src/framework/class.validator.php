@@ -646,23 +646,35 @@ class Validator {
 	/**
 	 * time validator
 	 *
+	 * $param
+	 *  empty		1 	allow empty value
+	 *  format		2	datetime-format
+	 *  error		2	overwrite error message
+	 *  parse		2	parse date to format after validation
+	 *
 	 * @param $value
 	 * @param $params
 	 * @return boolean
 	 */
 	public function V_time($value, $params = NULL) {
 		$time = trim(strip_tags(''.$value));
-		if ($time === '0' || $time === 'false' || $time === ''||$time === false){
+		$fmt = (isset($params['format']))? $params['format'] : 'H:i';
+		if (in_array('empty', $params) && ($time === '0' || $time === 'false' || $time === ''||$time === false || $time == 0)){
 			$this->filtered = false;
+			return !$this->setError(false);
+		} elseif (!in_array('empty', $params) && ($time === '0' || $time === 'false' || $time === ''||$time === false || $time == 0)){
+			$msg = (isset($params['error']))? $params['error'] : 'time validation failed, format: "'.$fmt.'"';
+			return !$this->setError(true, 200, $msg, 'time validation failed, format: "'.$fmt.'"');
 		} else {
-			$d = DateTime::createFromFormat('H:i', $time);
-			if($d && $d->format('H:i') == $time){
-				$this->filtered = $d->format('H:i');
+			$d = DateTime::createFromFormat($fmt, $time);
+			if($d && $d->format($fmt) == $time){
+				$this->filtered = $d->format((isset($params['parse']))?$params['parse']:$fmt);
+				return !$this->setError(false);
 			} else {
-				return !$this->setError(true, 200, "time validation failed", 'time validation failed');
+				$msg = (isset($params['error']))? $params['error'] : 'time validation failed, format: "'.$fmt.'"';
+				return !$this->setError(true, 200, $msg, 'time validation failed, format: "'.$fmt.'"');
 			}
 		}
-		return !$this->setError(false);
 	}
 	
 	/**
