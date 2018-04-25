@@ -40,9 +40,9 @@ class JsonController {
 	/**
 	 * returns 403 access denied in json format
 	 */
-	function json_access_denied(){
+	function json_access_denied($message = false){
 		http_response_code (403);
-		$this->json_result = array('success' => false, 'eMsg' => $this->translate('Access Denied.'));
+		$this->json_result = array('success' => false, 'eMsg' => $this->translate( ($message)? $message : 'Access Denied.'));
 		$this->print_json_result();
 	}
 	
