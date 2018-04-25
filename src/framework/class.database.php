@@ -793,13 +793,123 @@ class Database
 	 * @return array
 	 */
 	public function getNewprotos($gremium){
-		$sql = "SELECT T.* FROM `".TABLE_PREFIX."newproto` NP, `".TABLE_PREFIX."gremium` G WHERE NP.gremium = G.id AND G.name = ? ORDER BY NP.date DESC";
+		$sql = "SELECT NP.* FROM `".TABLE_PREFIX."newproto` NP, `".TABLE_PREFIX."gremium` G WHERE NP.gremium = G.id AND G.name = ? ORDER BY NP.date DESC";
 		$result = $this->getResultSet($sql, 's', [$gremium]);
 		$return = [];
 		foreach ($result as $line){
 			$return[$line['id']] = $line;
 		}
 		return $return;
+	}
+	
+	/**
+	 * returns newproto by id
+	 * @return array
+	 */
+	public function getNewprotoById($id){
+		$sql = "SELECT NP.*, G.name as 'gname' FROM `".TABLE_PREFIX."newproto` NP, `".TABLE_PREFIX."gremium` G WHERE NP.gremium = G.id AND NP.id = ?";
+		$result = $this->getResultSet($sql, 'i', [$id]);
+		$return = NULL;
+		foreach ($result as $line){
+			$return = $line;
+		}
+		return $return;
+	}
+	
+	/**
+	 * create Newproto entry
+	 * @param array $n newproto element array
+	 * @return boolean|new id
+	 */
+	public function createNewproto($n){
+		$pattern = 'sisiiiissi';
+		$data = [
+			$n['date'],
+			(isset($n['legislatur'])&&$n['legislatur'])?$n['legislatur']:NULL,
+			(isset($n['generated_url'])&&$n['generated_url'])?$n['generated_url']:NULL,
+			(isset($n['management'])&&$n['management'])?$n['management']:NULL,
+			(isset($n['protocol'])&&$n['protocol'])?$n['protocol']:NULL,
+			(isset($n['invite_mail_done'])&&$n['invite_mail_done'])?$n['invite_mail_done']:0,
+			(isset($n['invite_telegram_done'])&&$n['invite_telegram_done'])?$n['invite_telegram_done']:0,
+			$n['created_by'],
+			$n['hash'],
+			$n['gremium']
+		];
+		$sql = "INSERT INTO `".TABLE_PREFIX."newproto`
+			(	`date`,
+				`legislatur`,
+				`generated_url`,
+				`management`,
+				`protocol`,
+				`invite_mail_done`,
+				`invite_telegram_done`,
+				`created_by`,
+				`hash`,
+				`gremium` )
+			VALUES(?,?,?,?,?,?,?,?,?,?) ";
+		$this->protectedInsert($sql, $pattern, $data);
+		$result = $this->affectedRows();
+		if ($this->affectedRows() > 0){
+			return $this->lastInsertId();
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * update top entry
+	 * @param array $t top element array
+	 * @return boolean|new id
+	 */
+	public function updateNewproto($n){
+		$pattern = 'sisiiiisssii';
+		$data = [
+			$n['date'],
+			(isset($n['legislatur'])&&$n['legislatur'])?$n['legislatur']:NULL,
+			(isset($n['generated_url'])&&$n['generated_url'])?$n['generated_url']:NULL,
+			(isset($n['management'])&&$n['management'])?$n['management']:NULL,
+			(isset($n['protocol'])&&$n['protocol'])?$n['protocol']:NULL,
+			(isset($n['invite_mail_done'])&&$n['invite_mail_done'])?$n['invite_mail_done']:0,
+			(isset($n['invite_telegram_done'])&&$n['invite_telegram_done'])?$n['invite_telegram_done']:0,
+			$n['created_on'],
+			$n['created_by'],
+			$n['hash'],
+			$n['gremium'],
+			$n['id']
+		];
+
+		$sql = "UPDATE `".TABLE_PREFIX."newproto` SET
+				`date` = ?,
+				`legislatur` = ?,
+				`generated_url` = ?,
+				`management` = ?,
+				`protocol` = ?,
+				`invite_mail_done` = ?,
+				`invite_telegram_done` = ?,
+				`created_on` = ?,
+				`created_by` = ?,
+				`hash` = ?,
+				`gremium` = ?
+				WHERE `id` = ?";
+	
+		$this->protectedInsert($sql, $pattern, $data);
+		$result = $this->affectedRows();
+		if (!$this->isError()){
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * delete newproto by id
+	 * @param integer $id
+	 * @return integer affected rows
+	 */
+	function deleteNewprotoById($id){
+		$sql = "DELETE FROM `".TABLE_PREFIX."newproto` WHERE `id` = ?;";
+		$this->protectedInsert($sql, 'i', [$id]);
+		return !$this->isError();
 	}
 	
 	/**

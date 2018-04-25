@@ -1,10 +1,10 @@
-<?php $param = $param; echo $this->getChallenge() ?>
+<?php $param = $param; echo $this->getChallenge(); ?>
 <h2>Sitzungseinladung</h2>
 
 <div class="card mb-3">
 	<div class="card-body">
 		<h3>Geplante Sitzung</h3>
-		<div class="silmph_nprotolist mb-1 border border-secondary" data-meetinghour="<?= $param['settings']['meeting_hour'];?>">
+		<div class="silmph_nprotolist mb-1 border border-secondary" data-meetinghour="<?= $param['settings']['meeting_hour'];?>" data-legislatur="<?= $param['legislatur']['number']; ?>">
 			<div class="bg-warning npheadline">
 	  			<div class="row p-2">
 	    			<div class="col-3">Datum</div>
@@ -20,7 +20,7 @@
 					// 2 - erstellt 	- generated_url!=null
 					$statelist = ['Geplant', 'Eingeladen', 'Erstellt'];
 					foreach($param['newproto'] as $nproto){
-						$state = ($nproto['generated_url'] != null)? 2 : (($nproto['invite_wiki_done'])? 1 : 0);
+						$state = ($nproto['generated_url'] != null)? 2 : (($nproto['invite_mail_done'])? 1 : 0);
 						$disable_restore = false;
 						if ($state == 2){
 							$today = date_create();
@@ -31,13 +31,13 @@
 								$disable_restore = true;
 							}
 						} ?>
-						<div class="nprotoelm row p-2" data-id="<?= $nproto['id'] ?>" data-hash="<?= (!$disable_restore)?$nproto['hash']:'' ?>">
-							<div class="col-3"><?= date_create($nproto['date'])->format('d.m.Y') ?></div>
+						<div class="nprotoelm row p-2" data-id="<?= $nproto['id'] ?>" data-hash="<?= (!$disable_restore)?$nproto['hash']:'' ?>" data-m="<?= $nproto['management']?$nproto['management']:'' ?>" data-p="<?= $nproto['protocol']?$nproto['protocol']:'' ?>">
+							<div class="col-3"><?= date_create($nproto['date'])->format('d.m.Y H:i') ?></div>
 	    					<div class="col-3"><?= $statelist[$state] ?></div>
 							<div class="col-6">
 								<?php if($state < 2){ ?>
 									<button class="infoedit btn btn-outline-secondary" title="Info | Bearbeiten" type="button"><i class="fa fa-fw fa-info"></i></button>
-									<button class="send<?= ($nproto['invite_wiki_done'])? ' resend':'' ?> btn btn-outline-secondary" title="Einladung<?= ($nproto['invite_wiki_done'])? ' erneut':'' ?> versenden" type="button"><i class="fa fa-fw fa-envelope"></i></button>
+									<button class="send<?= ($nproto['invite_mail_done'])? ' resend':'' ?> btn btn-outline-secondary" title="Einladung<?= ($nproto['invite_mail_done'])? ' erneut':'' ?> versenden" type="button"><i class="fa fa-fw fa-envelope"></i></button>
 									<button class="createp btn btn-outline-secondary" title="Protokoll erstellen" type="button">
 										<span class="fa-stack2 fa-fw">
 											<i class="fa fa-wikipedia-w fa-stack-1x"></i>
@@ -45,7 +45,7 @@
 										</span></button>
 									<button class="cancel btn btn-outline-secondary" title="Planung entfernen" type="button"><i class="fa fa-fw fa-times"></i></button>
 								<?php } else { ?>
-									<button class="restore btn btn-outline-secondary" title="Zum Protokoll" type="button"><i class="fa fa-fw fa-link"></i></button>
+									<button class="restore btn btn-outline-secondary" data-href="<?= $nproto['generated_url']? $nproto['generated_url']: ''?>" title="Zum Protokoll" type="button"><i class="fa fa-fw fa-link"></i></button>
 									<?php if ( !disable_restore ){ ?>
 										<button class="restore btn btn-outline-secondary" title="Wiederherstellen" type="button"><i class="fa fa-fw fa-refresh"></i></button>
 									<?php } ?>

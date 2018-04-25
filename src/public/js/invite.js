@@ -50,6 +50,79 @@
 			};
 		})();
 	}
+	// ===== HELPER FUNCTIONS -- Create Form element ===============================================
+	// create formular elements 
+	//
+	// list parameters:
+	// field (input) 'tag'
+	// field (input) 'tagClose'
+	// field (input) 'placeholder'
+	// field (input) 'hidden'
+	// field (input) overwrite 'defaultClass'
+	// field (input) append 'class'
+	// field (input) 'type'
+	// field (input) other 'attr'ibutes
+	// field (input) 'value'
+	// field (input) data 'alias'
+	// 'labelClass'
+	// 'label' text
+	// 'small' text
+	// 'smallClass'
+	// overwrite 'inner' class
+	// overwrite 'outer' class
+	var func_create_form_elem = function (list, params){
+		var s = {
+			startIndex: 0,	
+			outerClass:'form-row',
+			innerClass:'col mt-3',
+			fieldIdPrefix:'frmVal',
+			fieldDefaultTag:'input',
+			fieldDefaultTagClose:'>',
+			fieldDefaultClass: 'form-control',
+			fieldDefaultType: 'text',
+			labelDefaultClass: 'col-md-4 control-label',
+			smallDefaultClass: 'form-text text-muted help-block'
+		};
+		$.extend(s, params);
+		var out = '';
+		for (var i = 0; i < list.length; i++){
+			out += '<div class="'+(list[i].hasOwnProperty('outer')?list[i].outer:s.outerClass)+'">'
+					+ '<div class="'+(list[i].hasOwnProperty('inner')?list[i].outer:s.innerClass)+'">'
+						+ '<label class="'
+							+ (list[i].hasOwnProperty('labelClass')?list[i].labelClass:s.labelDefaultClass)
+							+'" for="'+s.fieldIdPrefix +(''+i+s.startIndex).padEnd(2, '0')+'">'
+							+ (list[i].hasOwnProperty('label')?list[i].label:'')
+							+'</label>'
+						+ '<'+(list[i].hasOwnProperty('tag')?list[i].tag:s.fieldDefaultTag)
+							+' id="'+s.fieldIdPrefix +(''+i+s.startIndex).padEnd(2, '0')+'" '
+								+(list[i].hasOwnProperty('placeholder')?' placeholder="'+list[i].placeholder+'"':'')
+							+' class="'
+								+ (list[i].hasOwnProperty('defaultClass')?list[i].defaultClass:s.fieldDefaultClass)
+								+ (list[i].hasOwnProperty('class')?' '+list[i].class:'')
+								+ (list[i].hasOwnProperty('hidden')&&(list[i]==true||list[i]==1)?' d-none':'')
+							+'" type="'
+								+ (list[i].hasOwnProperty('type')?list[i].type:s.fieldDefaultType)+'"'
+							+ (list[i].hasOwnProperty('value')?' value="'+list[i].value+'"':'')
+							+ ((list[i].hasOwnProperty('alias'))?
+									' data-alias="'+list[i].alias+'"':'');
+			if (list[i].hasOwnProperty('attr')){
+				for (prop in list[i].attr){
+					if (list[i].attr.hasOwnProperty(prop)){
+						out += ' '+prop+'="'+list[i].attr[prop]+'"';
+					}
+				}
+			}
+			out +=	(list[i].hasOwnProperty('tagClose')?list[i].tagClose:s.fieldDefaultTagClose)
+						+ ((list[i].hasOwnProperty('small'))?
+							'<small class="'
+								+ (list[i].hasOwnProperty('smallClass')?list[i].smallClass:s.smallDefaultClass)+'" >'
+								+ list[i].small
+							+'</small>':'')
+					+ '</div>'
+				+ '</div>';
+		}
+		return out;
+	}
 	// ===== HELPER FUNCTIONS -- FORM ERROR BACKGROUND COLOR ==========================
 	var formError = function ($element, isError){
 		if (isError){
@@ -638,7 +711,205 @@
 			//codemirror
 			loadCodemirror($('.silmph_edit textarea.wikitext'), function(){}, null);
 		});
-	};	
+	};
+	// ===== NEW PROTOCOL ===============================================
+	var func_np_create_listelem = function (data){
+		var out = $('<div/>', {
+			'class': 'nprotoelm row p-2',
+			'data-id': data.id,
+			'data-hash': data.hash,
+			'data-m': data.m,
+			'data-p': data.p,
+			'html': '<div class="col-3">'+data.date+'</div>'+
+					'<div class="col-3">'+data.stateLong+'</div>'+
+					'<div class="col-6">'+
+					((data.state < 2)?
+						' <button class="infoedit btn btn-outline-secondary" title="Info | Bearbeiten" type="button"><i class="fa fa-fw fa-info"></i></button>'+
+						' <button class="send'+ ((data.inviteMailDone)? ' resend':'')+' btn btn-outline-secondary" title="Einladung'+ ((data.inviteMailDone)? ' erneut':'')+' versenden" type="button"><i class="fa fa-fw fa-envelope"></i></button>'+
+						' <button class="createp btn btn-outline-secondary" title="Protokoll erstellen" type="button">'+
+							'<span class="fa-stack2 fa-fw"><i class="fa fa-wikipedia-w fa-stack-1x"></i><i class="fa fa-pencil fa-stack-1x text-success"></i></span>'+
+						'</button>'+
+						' <button class="cancel btn btn-outline-secondary" title="Planung entfernen" type="button"><i class="fa fa-fw fa-times"></i></button>'
+					:
+						' <button class="restore btn btn-outline-secondary" data-href="'+data.generatedUrl+'" title="Zum Protokoll" type="button"><i class="fa fa-fw fa-link"></i></button>'+
+						((!data.disableRestore)?' <button class="restore btn btn-outline-secondary" title="Wiederherstellen" type="button"><i class="fa fa-fw fa-refresh"></i></button>':'')
+					)+
+					'</div>'
+		});
+		return out;
+	}
+	//
+	var func_newproto_delete = function (){
+		$e = $(this).closest('.nprotoelm');
+		$.modaltools({
+			headerClass: 'bg-danger',
+			text: 'Soll die Sitzung(splanung) am <strong>'+$e.children('div').eq(0).text()+'</strong> wirklich gelöscht werden?', 
+			ptag: false,	
+			headlineText: 'Sitzung löschen',
+			buttons: {'abort': 'Abbrechen', 'ok': 'Protokoll löschen'},
+			callback: {'ok':function(obj){
+				var dataset = {
+					committee: 'stura',
+					hash: 		$e[0].dataset.hash,
+					npid: 		$e[0].dataset.id,
+				};
+				var fchal = document.getElementById('fchal');
+				dataset[fchal.getAttribute("name")] = fchal.value;
+				
+				//do ajax post request
+				$.ajax({
+					type: "POST",
+					url: '/invite/npdelete',
+					data: dataset,
+					success: function(data){
+						pdata = {};
+						pdata = parseData(data);
+						if(pdata.success == true){
+							//delete newprotocol
+							silmph__add_message(pdata.msg, MESSAGE_TYPE_SUCCESS, 3000);
+							$e.css({overflow: 'hidden'}).animate({ height: '0', padding: '0', opacity: 'toggle' }, 500, function(){
+								$e.remove();
+							});
+							obj.close();
+						} else {
+							silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
+						}
+					},
+					error: postError
+				});
+			}, 'abort': function(obj){ obj.close(); }}
+		}).open();
+	}
+	// add btn events to newproto elements
+	var func_newproto_add_events = function ($e){
+		// info / edit button
+		$e.find('.infoedit').on('click', function(){
+			func_newproto_editadd_modal($e[0].dataset.id);
+		});
+		// delete proto
+		$e.find('.cancel').on('click', func_newproto_delete);
+		// send/resend invitation
+		// write to wiki
+		// link to wiki
+		// restore
+		//TODO
+	}
+	// create /or update newProto list entry
+	var func_np_create_update = function (data){
+		var newLine = func_np_create_listelem(data);
+		// add events
+		func_newproto_add_events(newLine);
+		
+		if (data.isNew){//replace
+			var old = $('.silmph_nprotolist .nprotoelm[data-id="'+data.id+'"]');
+			old.replaceWith(newLine);
+		} else { //prepend new
+			$('.silmph_nprotolist .npbody').prepend(newLine);
+		}
+	}
+	// get new protocol proposal for management person and protocol person
+	var func_newproto_proposal = function () {
+		var d = new Date();
+		d.setDate(d.getDate() + (3 + 7 - d.getDay()) % 7);
+		
+		var out = {
+			legislatur: $('.silmph_nprotolist')[0].dataset.legislatur,
+			time: $('.silmph_nprotolist')[0].dataset.meetinghour+':00',
+			date: $.format.date(d, 'yyyy-MM-dd'),
+			management: {counter: -1, name: '', id: 0},
+			protocol: {counter: -1, name: '', id: 0}
+		};
+		$('.silmph_memberbox li.member span.membername').each(function(i, e){
+			if (out.management.counter < 0 || out.management.counter > e.dataset.management ){
+				out.management.counter = e.dataset.management;
+				out.management.name = e.dataset.name;
+			} else if (out.protocol.counter < 0 || out.protocol.counter > e.dataset.protocol ){
+				out.protocol.counter = e.dataset.protocol;
+				out.protocol.name = e.dataset.name;
+			}
+		});
+		return out;
+	};
+	// create info/edit/create newproto modal content
+	var func_newproto_getbox = function (proposal) {
+		return '<div class="silmph_createnewproto card" data-npid="'+(proposal.hasOwnProperty('npid')?proposal.npid:0)+'" data-hash="'+(proposal.hasOwnProperty('hash')?proposal.hash:'')+'">'
+				+ '<div class="card-body">'
+					+ func_create_form_elem([
+					   {alias: 'date', placeholder: 'Datum', label:'Datum der Sitzung', type:'date', value: proposal.date},
+					   {alias: 'time', placeholder: 'Uhrzeit', label:'Uhrzeit der Uhrzeit', type:'time', value: proposal.time},
+					   {alias: 'mana', placeholder: (proposal.management.name!=''?'Vorschlag: '+proposal.management.name:''), label:'Wer leitet die Sitzung?', value: (proposal.hasOwnProperty('mana')?proposal.mana:'')},
+					   {alias: 'prot', placeholder: (proposal.protocol.name!=''?'Vorschlag: '+proposal.protocol.name:''), label:'Wer protokolliert?', value: (proposal.hasOwnProperty('prot')?proposal.prot:'')}
+					  ], {fieldIdPrefix: 'frmNpVal'})
+					+ '</div>'
+				+ '</div>';
+	};
+	// open info/edit/create newproto modal + handle events
+	var func_newproto_editadd_modal = function(id) {
+		var proposal = func_newproto_proposal();
+		if (typeof(id) != 'undefined' && id > 0){
+			var old = $('.silmph_nprotolist .nprotoelm[data-id="'+id+'"]');
+			var members = {}; 
+			$('.silmph_memberbox li.member span.membername').each(function(i, e){
+				members['id'+e.dataset.id] = {id: e.dataset.id, name: e.dataset.name}
+			});
+			if (old.length > 0){
+				proposal['npid'] = old[0].dataset.id,
+				proposal['hash'] = old[0].dataset.hash,
+				proposal['date'] = $.format.date(stringToDate(old.children('div').eq(0).text().split(' ')[0]), 'yyyy-MM-dd'),
+				proposal['time'] = (old.children('div').eq(0).text().split(' '))[1],
+				proposal['mana'] = members.hasOwnProperty('id'+old[0].dataset.m)? members['id'+old[0].dataset.m].name: '',
+				proposal['prot'] = members.hasOwnProperty('id'+old[0].dataset.p)? members['id'+old[0].dataset.p].name: '';
+			}
+			console.log(proposal);
+		}
+		$.modaltools({
+			headerClass: 'bg-success',
+			text: func_newproto_getbox(proposal), 
+			ptag: false,	
+			headlineText: 'Neue Sitzung planen',
+			buttons: {'abort': 'Abbrechen', 'ok':(typeof(id) != 'undefined' && id > 0?'Protokoll aktualisieren':'Protokoll Anlegen')},
+			callback: {'ok':function(obj){
+				var dateNew = $.format.date(stringToDate(obj.modal.find('[id^=frmNpVal][data-alias=date]').val()), 'yyyy-MM-dd');
+				if (dateNew.substr(0,3) == 'NaN'){
+					silmph__add_message('Datum im Format dd.mm.yyyy angeben.', MESSAGE_TYPE_WARNING, 5000);
+					return false;
+				}
+				var dataset = {
+					committee: 'stura',
+					date: 		$.format.date(stringToDate(obj.modal.find('[id^=frmNpVal][data-alias=date]').val()), 'yyyy-MM-dd'),
+					time: 		obj.modal.find('[id^=frmNpVal][data-alias=time]').val(),
+					management: obj.modal.find('[id^=frmNpVal][data-alias=mana]').val(),
+					protocol: 	obj.modal.find('[id^=frmNpVal][data-alias=prot]').val(),
+					hash: 		obj.modal.find('.silmph_createnewproto')[0].dataset.hash,
+					npid: 		obj.modal.find('.silmph_createnewproto')[0].dataset.npid,
+				};
+				var fchal = document.getElementById('fchal');
+				dataset[fchal.getAttribute("name")] = fchal.value;
+				
+				//do ajax post request
+				$.ajax({
+					type: "POST",
+					url: '/invite/npupdate',
+					data: dataset,
+					success: function(data){
+						pdata = {};
+						pdata = parseData(data);
+						if(pdata.success == true){
+							//add/update top
+							silmph__add_message(pdata.msg, MESSAGE_TYPE_SUCCESS, 3000);
+							func_np_create_update(pdata.np);
+							obj.close();
+						} else {
+							silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
+						}
+					},
+					error: postError
+				});
+				
+			}, 'abort': function(obj){ obj.close(); }}
+		}).open();
+	};
+	
 	// ===== DOCUMENT READY ===============================================
 	$(document).ready(function(){
 		// member func ----------
@@ -658,6 +929,13 @@
 		$('.silmph_top').each(function(i,e){
 			$e = $(e);
 			handle_top($e);
+		});
+		// newproto -------------
+		$('.silmph_create_np').on('click', function () { 
+			func_newproto_editadd_modal(0);
+		});
+		$('.silmph_nprotolist .nprotoelm').each(function (i, e) { 
+			func_newproto_add_events($(e));
 		});
 		// ------------------------------------------------
 		$('.silmph_tcreate_btn').on('click', function(){
