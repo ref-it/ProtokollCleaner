@@ -205,7 +205,7 @@ class protocolHelper extends protocolOut
 		$tmpdateList = explode(' ',$tmp);
 		foreach($tmpdateList as $dateElem){
 			$pdate = false;
-			if (strlen($tmp) >= 10){
+			if (strlen($dateElem) >= 10){
 				$tmp2 = substr($dateElem, 0, 10);
 				$pdate = date_create_from_format('d-m-Y His', $tmp2.' 000000');
 				if ($pdate){
@@ -213,7 +213,7 @@ class protocolHelper extends protocolOut
 					continue;
 				}
 			}
-			if (strlen($tmp) >= 10){
+			if (strlen($dateElem) >= 10){
 				$tmp2 = substr($dateElem, 0, 10);
 				$pdate = date_create_from_format('Y-m-d His', $tmp2.' 000000');
 				if ($pdate){
@@ -221,7 +221,7 @@ class protocolHelper extends protocolOut
 					continue;
 				}
 			}
-			if (strlen($tmp) >= 8){
+			if (strlen($dateElem) >= 8){
 				$tmp2 = substr($dateElem, 0, 8);
 				$pdate = date_create_from_format('d-m-y His', $tmp2.' 000000');
 				if ($pdate){
@@ -229,9 +229,17 @@ class protocolHelper extends protocolOut
 					continue;
 				}
 			}
-			if (strlen($tmp) >= 6){
+			if (strlen($dateElem) >= 6){
 				$tmp2 = substr($dateElem, 0, 8);
 				$pdate = date_create_from_format('j-n-y His', $tmp2.' 000000');
+				if ($pdate){
+					$date[] = $pdate;
+					continue;
+				}
+			}
+			if (strlen($dateElem) >= 6){
+				$tmp2 = substr($dateElem, 0, 10);
+				$pdate = date_create_from_format('j-n-Y His', $tmp2.' 000000');
 				if ($pdate){
 					$date[] = $pdate;
 					continue;
