@@ -599,10 +599,10 @@
 		// -------------
 		if (top.isNew){
 			before = false;
-			if ($('silmph_toplist .silmph_top.resort').length > 0){
-				before = $('silmph_toplist .silmph_top.resort').eq(0);
-			} else if ($('silmph_toplist .silmph_top.skipnext').length > 0){
-				before = $('silmph_toplist .silmph_top.skipnext').eq(0);
+			if ($('.silmph_toplist .silmph_top.resort').length > 0){
+				before = $('.silmph_toplist .silmph_top.resort').eq(0);
+			} else if ($('.silmph_toplist .silmph_top.skipnext').length > 0){
+				before = $('.silmph_toplist .silmph_top.skipnext').eq(0);
 			}
 			if (before != false){
 				box.insertBefore(before);

@@ -619,9 +619,8 @@ class InvitationController extends MotherController {
 			$top['gremium'] = $gremium['id'];
 			$top['hash'] = (isset($top['hash']) && $top['hash'])? $top['hash'] : md5($top['headline'].date_create()->getTimestamp().$filtered['committee'].$vali->getFiltered('committee').mt_rand(0, 640000));
 			
-			//if is new top and there is no referat
-			
 			//create 
+			$newtid = 0;
 			if (!isset($top['id'])){
 				$newtid = $this->db->createTop($top);
 				if (!$newtid) {
@@ -641,6 +640,10 @@ class InvitationController extends MotherController {
 			if ($resort) {
 				$top['resort'] = $resort;
 			}
+			$top['isNew'] = ($newtid>0)? 1:0;
+			$top['goal'] = ($top['goal'])?$top['goal']:'';
+			$top['person'] = ($top['person'])?$top['person']:'---';
+			$top['expected_duration'] = ($top['expected_duration'])?$top['expected_duration']:0;
 			
 			//return result
 			$this->json_result = [
