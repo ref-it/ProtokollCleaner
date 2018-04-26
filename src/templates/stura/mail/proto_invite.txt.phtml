@@ -1,0 +1,63 @@
+<?php 
+	$params = $params; 
+	$links = [];
+?>Sitzungseinladung - <?=  ucfirst(strtolower($params['committee'])) ?>
+
+=================================================
+
+Der <?=  ucfirst(strtolower($params['committee'])) ?> der TU Ilmenau läd am <?= date_create($params['proto']['date'])->format('d.m.d') ?> um <?= date_create($params['proto']['date'])->format('H:i') ?> Uhr zur nächsten Sitzung ein.
+
+Voraussichtliche 
+  - Sitzungsleitung:    <?= ($params['proto']['membernames']['m'])? $params['proto']['membernames']['m']['name'] : '-' ?>
+
+  - Protokollkontrolle: <?= ($params['proto']['membernames']['p'])? $params['proto']['membernames']['p']['name'] : '-' ?>
+
+
+Tagesordnung
+------------
+
+<?php if ($params['unreconciled_protocols']){
+	echo 'Protokollkontrolle';
+	foreach ($params['unreconciled_protocols'] as $prot){
+		echo "\n    - ".$prot['name'].' - ['.count($links).']';
+		$links[] = $params['protoInternLink'].str_replace(':', '/', $prot['draft_url']);
+	}
+}?>
+<?php 
+	foreach ($params['tops'] as $top){
+		if (!$top['resort']){
+			echo "\n  * {$top['headline']}".(($top['goal'])?" ({$top['goal']})":'');
+		}
+	} ?>
+
+  * Berichte aus Referaten/AGs und von Angestellten
+  * Sonstiges
+
+<?php if ($params['message']){ ?>
+
+Weitere Informationen:
+----------------------
+<?= $params['message'] ?>
+
+<?php } ?>
+
+
+Weitere Tops können unter folgendem Link [<?php echo count($links); $links[] = $params['topLink'] ?>] nachgereicht werden, bedürfen aber eines Antrages an die Geschäftsordnung zur Änderung der Tagesordnung.
+
+Desweiteren können Referate, AGs und Angestellte ihre Berichte hier [<?php echo count($links); $links[] = $params['topLink'] ?>] noch bis zur Sitzung vortragen.  Dort befinden sich auch vorgetragene Referatberichte.
+	
+Solltet Ihr zum Zeitpunkt der Sitzung verhindert sein, meldet euch bitte rechtzeitig ab und hinterlegt gegebenenfalls für geplante Abstimmungen eine schriftliche Stimme.
+
+----------------------
+
+<?php 
+$c = floor(count($links) / 10);
+foreach ($links as $pos => $link){
+	echo '['.str_pad($pos, $c, "0", STR_PAD_LEFT).'] - '.$link."\n";
+}
+?>
+
+
+
+
+(<?= $params['sender']? "Diese Nachricht wurde von ({$params['sender']}) generiert.": 'Diese Nachricht wurde automatisch vom '.BASE_TITLE.' generiert.'?>)

@@ -26,6 +26,57 @@ class InvitationController extends MotherController {
 		parent::__construct($db, $auth, $template);
 	}
 	
+	// HELPER ==========================================================================
+	/**
+	 * 
+	 * @param array $proto Protocoll array, with additional fields: gname, membernames
+	 * @param array $user user data ['username' => xxx]
+	 * @param false|array $openProtos array of unreconciled protocols
+	 * @param string $additional_message additional mail message
+	 */
+	public function send_mail_invitation($proto, $user = NULL, $openProtos = false, $additional_message = ''){
+		$settings=$this->db->getSettings();
+		$mailer = new MailHandler();
+		$mailer->setLogoImagePath('/../public/images/logo_f.png');
+		$initOk = $mailer->init($settings);
+		// mail initialisation failed
+		if (!$initOk) return false;
+		
+		$pdate = date_create($proto['date']);
+		$mail_address = PROTOMAP[$proto['gname']][3];
+		$tops_tmp = $this->db->getTopsOpen($proto['gname']);
+		$tops = [];
+		foreach ($tops_tmp as $id => $top){
+			if (!$top['skip_next']){
+				$tops[$id] = $top;
+			}
+		}
+		
+		$mailer->mail->addAddress($mail_address);
+		$mailer->mail->Subject = 'Sitzungseinladung - '.ucfirst(strtolower($proto['gname'])).' - '.$pdate->format('d.m.Y H:i');
+		
+		$mailer->bindVariables([
+			'sender' 	=> ($user != NULL)? $user['username'] : '',
+			'message' 	=> $additional_message,
+			'committee' => $proto['gname'],
+			'tops' 		=> $tops,
+			'proto'		=> $proto, 
+			'protoInternLink' => WIKI_URL.'/',
+			'unreconciled_protocols' => $openProtos,
+			'topLink' 	=> BASE_URL.'/invite' 
+		]);
+		
+		$mailer->setTemplate('proto_invite');
+		if($mailer->send(false, false, true, true)){
+			return true;
+		} else {
+			error_log('Es konnte keine Mail versendet werden. Prüfen Sie bitte die Konfiguration. '.((isset($mailer->mail) && isset($mailer->mail->ErrorInfo))? $mailer->mail->ErrorInfo: '' ));
+			return false;
+		}
+	}
+	
+	// ACTIONS =========================================================================
+	
 	/**
 	 * ACTION home
 	 */
@@ -39,7 +90,7 @@ class InvitationController extends MotherController {
 		$this->t->appendJsLink('libs/jquery_ui_widget_combobox.js');
 		$this->t->appendJsLink('wiki2html.js');
 		$this->t->appendJsLink('invite.js');
-		$tops = $this->db->getTops($perm);
+		$tops = $this->db->getTopsOpen($perm);
 		$resorts = $this->db->getResorts($perm);
 		$member = $this->db->getMembersCounting($perm);
 		$committee = $this->db->getCommitteebyName($perm);
@@ -220,7 +271,7 @@ class InvitationController extends MotherController {
 		} else if (!checkUserPermission($vali->getFiltered('committee'))) {
 			$this->json_access_denied();
 		} else {
-			$tops = $this->db->getTops($vali->getFiltered('committee'));
+			$tops = $this->db->getTopsOpen($vali->getFiltered('committee'));
 			$sortpos = 1;
 			$ok = true;
 			foreach($vali->getFiltered('list') as $sortid){
@@ -649,6 +700,20 @@ class InvitationController extends MotherController {
 					return;
 				}
 			}
+			//don't allow old date
+			$validateDate = date_create_from_format('Y-m-d H:i:s', $vali->getFiltered('date').' '.$vali->getFiltered('time').':00');
+			$now = date_create();
+			
+			$diff = $now->getTimestamp() - $validateDate->getTimestamp();
+			if ($diff > 3600 * 24) { //one day
+				$this->json_result = [
+					'success' => false,
+					'eMsg' => 'Das Datum kann nicht in der Vergangenheit liegen.'
+				];
+				$this->print_json_result();
+				return;
+			}
+			
 			$gremium = $this->db->getCreateCommitteebyName($vali->getFiltered('committee'));
 			$members = $this->db->getMembers($vali->getFiltered('committee'));
 			$memberLink = ['proto'=> NULL, 'manag'=> NULL];
@@ -662,12 +727,12 @@ class InvitationController extends MotherController {
 			}
 			
 			$nproto['gremium'] = $gremium['id'];
-			$nproto['date'] = $vali->getFiltered('date').' '.$vali->getFiltered('time');
+			$nproto['date'] = $vali->getFiltered('date').' '.$vali->getFiltered('time').':00';
 			$nproto['management'] = $memberLink['manag'];
 			$nproto['protocol'] = $memberLink['proto'];
 			$nproto['hash'] = (isset($nproto['hash']) && $nproto['hash'])? $nproto['hash'] : md5($nproto['date'].date_create()->getTimestamp().$vali->getFiltered('committee').mt_rand(0, 640000));
 			$nproto['created_by'] = $this->auth->getUsername();
-			$nproto['created_on'] = date_create()->format('Y-m-d H:i:00');
+			$nproto['created_on'] = $now->format('Y-m-d H:i:00');
 			
 			//create
 			$newnpid = 0;
@@ -789,4 +854,101 @@ class InvitationController extends MotherController {
 		}
 	}
 	
+	/**
+	 * POST action
+	 * send invitation for new protocol
+	 */
+	public function npinvite(){
+		//calculate accessmap
+		$validator_map = [
+			'committee' => ['regex',
+				'pattern' => '/'.implode('|', array_keys(PROTOMAP)).'/',
+				'maxlength' => 10,
+				'error' => 'Du hast nicht die benötigten Berechtigungen, um dieses Protokoll zu bearbeiten.'
+			],
+			'hash' => ['regex',
+				'pattern' => '/^([0-9a-f]{32})$/',
+				'empty',
+				'error' => 'Protokollkennung hat das falsche Format.'
+			],
+			'npid' => ['integer',
+				'min' => '1',
+				'error' => 'Ungültige Top Id.'
+			],
+			'text' => ['regex',
+				'pattern' => '/^(.|\r|\n)*$/',
+				'empty',
+				'error' => 'Ungültiger Text'
+			],
+		];
+		$vali = new Validator();
+		$vali->validateMap($_POST, $validator_map, true);
+		if ($vali->getIsError()){
+			if($vali->getLastErrorCode() == 403){
+				$this->json_access_denied();
+			} else if($vali->getLastErrorCode() == 404){
+				$this->json_not_found();
+			} else {
+				http_response_code ($vali->getLastErrorCode());
+				$this->json_result = ['success' => false, 'eMsg' => $vali->getLastErrorMsg()];
+				$this->print_json_result();
+			}
+		} else if (!checkUserPermission($vali->getFiltered('committee'))) {
+			$this->json_access_denied();
+		} else {
+			$nproto = $this->db->getNewprotoById($vali->getFiltered('npid'));
+			if (!$nproto
+				|| $nproto['gname'] != $vali->getFiltered('committee')
+				|| $nproto['hash'] != $vali->getFiltered('hash')){
+				$this->json_not_found('Protokoll nicht gefunden');
+				return;
+			}
+			//don't allow dates in the past
+			$validateDate = date_create_from_format('Y-m-d H:i:s', $nproto['date']);
+			$now = date_create();
+			$diff = $now->getTimestamp() - $validateDate->getTimestamp();
+			
+			if ($diff > 3600) { //one hour
+				$this->json_result = [
+					'success' => false,
+					'eMsg' => 'Einladungen für vergangene Sitzungen können nicht gesendet werden'
+				];
+				$this->print_json_result();
+				return;
+			}
+			
+			$members = $this->db->getMembers($vali->getFiltered('committee'));
+			$membernames = [
+				'p'=> ($nproto['protocol'] && isset($members[$nproto['protocol']]))? $members[$nproto['protocol']] : NULL, 
+				'm'=> ($nproto['management'] && isset($members[$nproto['management']]))? $members[$nproto['management']] : NULL 
+			];
+			$nproto['membernames'] = $membernames;
+			$openProtos = $this->db->getProtocols($vali->getFiltered('committee'), true, false);
+			
+			$ok = $this->send_mail_invitation(
+				$nproto,
+				[	'username' => $this->auth->getUsername(), 
+					'userFullname' => $this->auth->getUserFullName(), 
+					'mail' => $this->auth->getUserMail()	],
+				$openProtos,
+				$vali->getFiltered('text')
+			);
+			if ($ok){
+				// update proto
+				$nproto['invite_mail_done'] = true;
+				//TODO $this->db->updateNewproto($nproto);
+				
+				$this->json_result = [
+					'success' => true,
+					'msg' => 'Einladung erfolgreich versendet.'
+				];
+			} else {
+				$this->json_result = [
+					'success' => false,
+					'eMsg' => 'Fehler beim Senden der Einladung.'
+				];
+			}
+			$this->print_json_result();
+		}
+	}
 }

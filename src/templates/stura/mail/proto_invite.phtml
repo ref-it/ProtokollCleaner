@@ -1,0 +1,92 @@
+<?php 
+	$params = $params;
+	$links = [];
+?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><!--[if IE]><html xmlns="http://www.w3.org/1999/xhtml" class="ie"><![endif]--><!--[if !IE]><!--><html style="margin: 0;padding: 0;" xmlns="http://www.w3.org/1999/xhtml"><!--<![endif]--><head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Sitzungseinladung - <?=  ucfirst(strtolower($params['committee'])) ?></title>
+    <!--[if !mso]><!--><meta http-equiv="X-UA-Compatible" content="IE=edge" /><!--<![endif]-->
+    <meta name="viewport" content="width=device-width" />
+<style type="text/css">
+	body {
+ 		margin: 0;
+		padding: 10px;
+		height: 90%;
+		width: 90%;
+		background-color: #ffffff;
+	}
+	html {
+		margin: 0;
+		padding: 0;
+		height: 100%;
+		width: 100%;
+	}
+	table {
+		border-collapse: collapse;
+		table-layout: fixed;
+	}
+	* {
+		line-height: inherit;
+	}
+</style>
+    <meta name="robots" content="noindex,nofollow" />
+	<meta property="og:title" content="Sitzungseinladung - <?=  ucfirst(strtolower($params['committee'])) ?>" />
+</head>
+<body class="half-padding" style="margin: 0;padding: 10px;-webkit-text-size-adjust: 100%;, height: 90%; width: 90%;">
+	<img style="display: block;height: auto;width: 100%;border: 0;max-width: 242px;" src="cid:logoattach" alt="Logo" width="242" />
+	<h2>Sitzungseinladung - <?=  ucfirst(strtolower($params['committee'])) ?></h2>
+	<p>Der <?= ucfirst(strtolower($params['committee'])) ?> der TU Ilmenau läd am <strong style="font-weight: bold;"><?= date_create($params['proto']['date'])->format('d.m.d') ?></strong> um <strong style="font-weight: bold;"><?= date_create($params['proto']['date'])->format('H:i') ?> Uhr</strong> zur nächsten Sitzung ein.</p>
+	<p>Voraussichtliche 
+		<ul>
+			<li>Sitzungsleitung:    <?= ($params['proto']['membernames']['m'])? $params['proto']['membernames']['m']['name'] : '-' ?></li>
+			<li>Protokollkontrolle: <?= ($params['proto']['membernames']['p'])? $params['proto']['membernames']['p']['name'] : '-' ?></li>
+		</ul>
+	</p>
+	<hr>
+	<h3>Tagesordnung</h3>
+	<p>
+		<ul>
+			<?php if ($params['unreconciled_protocols']){
+				echo '<li>Protokollkontrolle<ul>';
+				foreach ($params['unreconciled_protocols'] as $prot){
+					echo '<li><a href="'.$params['protoInternLink'].str_replace(':', '/', $prot['draft_url']).'">'.$prot['name'].' ['.count($links).']</a></li>';
+					$links[] = $params['protoInternLink'].str_replace(':', '/', $prot['draft_url']);
+				
+				}
+				echo '</ul></li>';
+			}?>
+			<?php 
+				foreach ($params['tops'] as $top){
+					if (!$top['resort']){
+						echo "<li>{$top['headline']}".(($top['goal'])?" ({$top['goal']})":'')."</li>\n";
+					}
+				}
+			?>
+			<li>Berichte aus Referaten/AGs und von Angestellten</li>
+			<li>Sonstiges</li>
+		</ul>
+	</p>
+	<p>&#8212;</p>
+	<p>Weitere Tops können unter folgendem <a href="<?= $params['topLink'] ?>">Link [<?php echo count($links); $links[] = $params['topLink'] ?>]</a> nachgereicht werden, bedürfen aber eines Antrages an die Geschäftsordnung zur Änderung der Tagesordnung.</p>
+	<p>Desweiteren können Referate, AGs und Angestellte ihre Berichte <a href="<?= $params['topLink'] ?>">hier [<?php echo count($links); $links[] = $params['topLink'] ?>]</a> noch bis zur Sitzung vortragen. Dort befinden sich auch vorgetragene Referatberichte.</p>
+	<p>Solltet Ihr zum Zeitpunkt der Sitzung verhindert sein, meldet euch bitte rechtzeitig ab und hinterlegt gegebenenfalls für geplante Abstimmungen eine schriftliche Stimme.</p>
+	<?php if ($params['message']){ ?>
+	<hr>
+	<h3>Weitere Informationen</h3>
+	<p>
+	<?= str_replace(["\n", '  '], ['<br>', '&nbsp;&nbsp;'], $params['message']) ?>
+	</p>
+	<?php } ?>
+	<hr>
+	<h3>Links</h3>
+	<p>
+	<?php 
+		$c = floor(count($links) / 10);
+		foreach ($links as $pos => $link){
+			echo '['.str_pad($pos, $c, "0", STR_PAD_LEFT).'] - <a href="'.$link.'">'.$link.'</a><br>';
+		}
+	?>
+	</p>
+	<br><br><br>
+	<p style="font-size: 8px; font-size: 0.7rem; font-weight: bold; color: #555555;"><?= $params['sender']? "Diese Nachricht wurde von ({$params['sender']}) generiert.": 'Diese Nachricht wurde automatisch vom '.BASE_TITLE.' generiert.'?></p>
+</body>
+</html>

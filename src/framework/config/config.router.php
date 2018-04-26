@@ -36,6 +36,7 @@ $routes = [
 		'invite/tupdate'	=> ['itopupdate',	'invitation', 	'itopupdate'],
 		'invite/npupdate'	=> ['inpupdate',	'invitation', 	'npupdate'],
 		'invite/npdelete'	=> ['inpdelete',	'invitation', 	'npdelete'],
+		'invite/npinvite'	=> ['inpinvite',	'invitation', 	'npinvite'],
 		'invite/mdelete'	=> ['imemberdelete','invitation', 	'mdelete'],
 		'invite/madd'		=> ['imemberadd',	'invitation', 	'madd'],
 	]
@@ -115,6 +116,7 @@ $permission_map = [
 	'itopupdate'	=> 'stura,ref-it,stura,konsul,admin',
 	'inpupdate'		=> 'stura,ref-it,stura,konsul,admin',
 	'inpdelete'		=> 'stura,ref-it,stura,konsul,admin',
+	'inpinvite'		=> 'stura,ref-it,stura,konsul,admin',
 	'imemberdelete' => 'konsul,admin',
 	'imemberadd' 	=> 'konsul,admin',
 	'protoedit' 	=> 'ref-it,stura,konsul,admin',

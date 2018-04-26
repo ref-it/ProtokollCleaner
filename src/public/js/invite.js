@@ -738,7 +738,7 @@
 		});
 		return out;
 	}
-	//
+	// delete newproto entry
 	var func_newproto_delete = function (){
 		$e = $(this).closest('.nprotoelm');
 		$.modaltools({
@@ -780,6 +780,89 @@
 			}, 'abort': function(obj){ obj.close(); }}
 		}).open();
 	}
+	// send invitations for newproto entry
+	var func_newproto_invite = function (){
+		$e = $(this).closest('.nprotoelm');
+		$.modaltools({
+			headerClass: 'bg-warning',
+			text: '<p><strong>Soll die Sitzungeinladung manuell versendet werden?</strong></p><p>Eine <strong>automatische Einladung</strong> erfolgt ca. 24 Stunden vor entsprechender Sitzung.</p><p>Nach einer Einladung benötigen neue Tops einen Beschluss, um noch auf der Sitzung vorgebracht zu werden.</p><div class="form-group"><label for="comment">Zusätzliche Nachricht:</label><textarea class="form-control" rows="5" id="comment"></textarea></div>', 
+			ptag: false,	
+			headlineText: 'Sitzungseinladung versenden',
+			buttons: {'abort': 'Abbrechen', 'ok': 'Einladung versenden.'},
+			callback: {'ok':function(obj){
+				var dataset = {
+					committee: 'stura',
+					hash: 		$e[0].dataset.hash,
+					npid: 		$e[0].dataset.id,
+					text: 		obj.modal.find('textarea#comment').val(),
+				};
+				var fchal = document.getElementById('fchal');
+				dataset[fchal.getAttribute("name")] = fchal.value;
+				
+				//do ajax post request
+				$.ajax({
+					type: "POST",
+					url: '/invite/npinvite',
+					data: dataset,
+					success: function(data){
+						pdata = {};
+						pdata = parseData(data);
+						if(pdata.success == true){
+							//delete newprotocol
+							silmph__add_message(pdata.msg, MESSAGE_TYPE_SUCCESS, 3000);
+							obj.close();
+						} else {
+							silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
+						}
+					},
+					error: postError
+				});
+			}, 'abort': function(obj){ obj.close(); }}
+		}).open();
+	}
+	// write newproto to wiki
+	var func_newproto_towiki = function (data){
+		$e = $(this).closest('.nprotoelm');
+		$.modaltools({
+			headerClass: 'bg-warning',
+			text: '<p><strong>'+((typeof(data) == 'undefined' || data==false)? 'Das Sitzungsprotokoll wird nun im Wiki erzeugt.': data.msg)+'</strong></p>', 
+			ptag: false,	
+			headlineText: 'Sitzungsprotokoll erzeugen',
+			buttons: {'abort': 'Abbrechen', 'ok': 'Fortfahren'},
+			callback: {'ok':function(obj){
+				var dataset = {
+					committee: 'stura',
+					hash: 		$e[0].dataset.hash,
+					npid: 		$e[0].dataset.id,
+					reaskdone:  (typeof(data) != 'undefined' && data == false && data.hasOwnProperty('reask') && data.reask == true)? 1: 0
+				};
+				var fchal = document.getElementById('fchal');
+				dataset[fchal.getAttribute("name")] = fchal.value;
+				
+				//do ajax post request
+				$.ajax({
+					type: "POST",
+					url: '/invite/nptowiki',
+					data: dataset,
+					success: function(data){
+						pdata = {};
+						pdata = parseData(data);
+						if(pdata.success == true){
+							if (pdata.hasOwnProperty('reask') && pdata.reask == true){
+								func_newproto_towiki(pdata);
+							} else {
+								silmph__add_message(pdata.msg, MESSAGE_TYPE_SUCCESS, 3000);
+							}
+							obj.close();
+						} else {
+							silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
+						}
+					},
+					error: postError
+				});
+			}, 'abort': function(obj){ obj.close(); }}
+		}).open();
+	}
 	// add btn events to newproto elements
 	var func_newproto_add_events = function ($e){
 		// info / edit button
@@ -788,11 +871,14 @@
 		});
 		// delete proto
 		$e.find('.cancel').on('click', func_newproto_delete);
-		// send/resend invitation
-		// write to wiki
-		// link to wiki
-		// restore
-		//TODO
+		// send/resend invitation TODO php
+		$e.find('.send').on('click', func_newproto_invite);
+		// write to wiki TODO php
+		$e.find('.createp').on('click', function () {
+			func_newproto_towiki(false);
+		});
+		// link to wiki TODO js + php
+		// restore TODO js + php
 	}
 	// create /or update newProto list entry
 	var func_np_create_update = function (data){
