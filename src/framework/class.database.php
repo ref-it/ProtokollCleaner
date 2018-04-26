@@ -869,8 +869,8 @@ class Database
 			(isset($n['generated_url'])&&$n['generated_url'])?$n['generated_url']:NULL,
 			(isset($n['management'])&&$n['management'])?$n['management']:NULL,
 			(isset($n['protocol'])&&$n['protocol'])?$n['protocol']:NULL,
-			(isset($n['invite_mail_done'])&&$n['invite_mail_done'])?$n['invite_mail_done']:0,
-			(isset($n['invite_telegram_done'])&&$n['invite_telegram_done'])?$n['invite_telegram_done']:0,
+			(isset($n['invite_mail_done'])&&$n['invite_mail_done'])?1:0,
+			(isset($n['invite_telegram_done'])&&$n['invite_telegram_done'])?1:0,
 			$n['created_on'],
 			$n['created_by'],
 			$n['hash'],
@@ -919,6 +919,21 @@ class Database
 	 */
 	public function getTops($gremium){
 		$sql = "SELECT T.* FROM `".TABLE_PREFIX."tops` T, `".TABLE_PREFIX."gremium` G WHERE T.gremium = G.id AND G.name = ? ORDER BY T.skip_next, T.resort ASC, T.order, T.added_on ASC";
+		$result = $this->getResultSet($sql, 's', [$gremium]);
+		$return = [];
+		foreach ($result as $line){
+			$return[$line['id']] = $line;
+		}
+		return $return;
+	}
+	
+	/**
+	 * returns tops
+	 * @param $gremium committee|gremium name
+	 * @return array
+	 */
+	public function getTopsOpen($gremium){
+		$sql = "SELECT T.* FROM `".TABLE_PREFIX."tops` T, `".TABLE_PREFIX."gremium` G WHERE T.gremium = G.id AND G.name = ? AND T.used_on IS NULL ORDER BY T.skip_next, T.resort ASC, T.order, T.added_on ASC";
 		$result = $this->getResultSet($sql, 's', [$gremium]);
 		$return = [];
 		foreach ($result as $line){
