@@ -102,11 +102,13 @@ class ProtocolController extends MotherController {
 		$x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
 		prof_flag('wiki request');
 		$intern = $x->getPagelistAutoDepth(parent::$protomap[$perm][0]);
+		if (!$intern) $intern = [];
 		prof_flag('wiki request end');
 		$extern = [];
 		if (parent::$protomap[$perm][0] != parent::$protomap[$perm][1]){
 			prof_flag('wiki request');
 			$extern = $x->getPagelistAutoDepth(parent::$protomap[$perm][1]);
+			if (!$extern) $extern = [];
 			prof_flag('wiki request end');
 		}
 		$dbprotocols = $this->db->getProtocols($perm);
