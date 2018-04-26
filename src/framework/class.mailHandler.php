@@ -47,14 +47,34 @@ class MailHandler
 	protected $templateName;
 	
 	/**
+	 * 
+	 * @var string
+	 */
+	protected $logoImagePath;
+	
+	/**
 	 * class constructor
 	 */
-	function __construct() {
+	function __construct($logoPath = '/../public/images/logo_wt.png') {
 		$this->initOk = false;
 		$this->templateVars = array();
 		$this->templateName = '';
+		$this->logoImagePath = $logoPath;
 	}
 	
+	
+	/**
+	 * set logo image path
+	 * set empty string to disable
+	 * default: '/../public/images/logo_wt.png'
+	 * 
+	 * @param string $logoImagePath
+	 */
+	public function setLogoImagePath($logoImagePath = '/../public/images/logo_wt.png')
+	{
+		$this->logoImagePath = $logoImagePath;
+	}
+
 	/**
 	 * test if settingsarray has all needed parameter
 	 * @param array $settings
@@ -99,7 +119,9 @@ class MailHandler
 		
 		$this->mail->setFrom($settings['MAIL_FROM'], $settings['MAIL_FROM_ALIAS']);
 		
-		$this->mail->AddEmbeddedImage(FRAMEWORK_PATH.'/../public/images/logo_wt.png', "logoattach", "mailLogo.png");
+		if ($this->logoImagePath){
+			$this->mail->AddEmbeddedImage(FRAMEWORK_PATH.$this->logoImagePath, "logoattach", "mailLogo.png");
+		}
 		
 		$this->mail->isHTML(true);							// Set email format to HTML	
 		$this->initOk = true;
@@ -152,19 +174,51 @@ class MailHandler
 	}
 	
 	/**
+	 * renders template phtml file and return string
+	 * @param string $file
+	 * @param array $param
+	 */
+	private static function renderPHTML($file, $params){
+		ob_start();
+		include($file);
+		$mail_content_html = ob_get_clean();
+		return $mail_content_html;
+	}
+	
+	/**
+	 * renders template txt file and return string
+	 * @param string $file
+	 * @param array $param
+	 */
+	private static function renderTXT($file, $params){
+		$text_replacers = array();
+		$text_values = array();
+		foreach ($params as $key => $value){
+			$text_replacers[] = "%".$key."%";
+			$text_values[] = $value;
+		}
+		$mail_content_text = str_replace(
+			$text_replacers,
+			$text_values,
+			file_get_contents($file)
+		);
+		return $mail_content_text;
+	}
+	
+	/**
 	 * send mail with phpmailer
 	 * load mailtemplate, bind variables, and send mail with them
 	 * @param string $echo echo mail status messages
-	 * @param string $toSesstionMessage store mail statusmessages to session (messagesystem)
+	 * @param string $toSessionMessage store mail statusmessages to session (messagesystem)
 	 * @param string $suppressOKMsg if $toSesstionMessage isset, suppress messages on success
 	 * @param string $showPhpmailError show phpmailer errormessages in echo/SessionMessage/error_log
 	 */
-	public function send($echo = false, $toSesstionMessage = true, $suppressOKMsg = true, $showPhpmailError = false){
+	public function send($echo = false, $toSessionMessage = true, $suppressOKMsg = true, $showPhpmailError = false){
 		if (!$this->initOk){
 			if ($echo) {
 				echo 'Mailinitialisierung fehlgeschlagen. Bitte Informieren Sie den Webseitenbetreiber über diesen Fehler.';
 			}
-			if ($toSesstionMessage){
+			if ($toSessionMessage){
 				$_SESSION['SILMPH']['MESSAGES'][] = array('Mailinitialisierung fehlgeschlagen. Bitte Informieren Sie den Webseitenbetreiber über diesen Fehler.', 'WARNING');
 			}
 			return false;
@@ -172,7 +226,7 @@ class MailHandler
 			if ($echo) {
 				echo 'Kein Mail-Template gewählt. Bitte Informieren Sie den Webseitenbetreiber über diesen Fehler.';
 			}
-			if ($toSesstionMessage){
+			if ($toSessionMessage){
 				$_SESSION['SILMPH']['MESSAGES'][] = array('Kein Mail-Template gewählt. Bitte Informieren Sie den Webseitenbetreiber über diesen Fehler.', 'WARNING');
 			}
 			ob_start();
@@ -181,11 +235,12 @@ class MailHandler
 			error_log("Kein Mail-Template gewählt. Stacktrace:\n" . sprintf($error_trace));
 			return false;
 		} else if (!file_exists(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".txt") && 
-				   !file_exists(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".phtml")){
+				   !file_exists(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".phtml") &&
+				   !file_exists(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".txt.phtml")){
 			if ($echo) {
 				echo 'Mail-Template konnte nicht gefunden werden. Bitte Informieren Sie den Webseitenbetreiber über diesen Fehler.';
 			}
-			if ($toSesstionMessage){
+			if ($toSessionMessage){
 				$_SESSION['SILMPH']['MESSAGES'][] = array('Mail-Template konnte nicht gefunden werden. Bitte Informieren Sie den Webseitenbetreiber über diesen Fehler.', 'WARNING');
 			}
 			ob_start();
@@ -196,31 +251,18 @@ class MailHandler
 		} else {
 			//bind template
 			if (file_exists(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".txt")){
-				$text_replacers = array();
-				$text_values = array();
-				foreach ($this->templateVars as $key => $value){
-					$text_replacers[] = "%".$key."%";
-					$text_values[] = $value;
-				}
-				$mail_content_text = str_replace(
-					$text_replacers,
-					$text_values,
-					file_get_contents(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".txt")
-				);
-				$this->mail->AltBody = $mail_content_text;
+				$this->mail->AltBody = self::renderTXT(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".txt", $this->templateVars);
+			} elseif (file_exists(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".txt.phtml")){
+				$this->mail->AltBody = self::renderPHTML(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".txt.phtml", $this->templateVars);
 			}
 			if (file_exists(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".phtml")){
-				ob_start();
-				include(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".phtml");
-				$mail_content_html = ob_get_clean();
-				$this->mail->Body = $mail_content_html;
+				$this->mail->Body = self::renderPHTML(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".phtml", $this->templateVars);
 			}
-			
 			if(!$this->mail->send()) {
 				if ($echo) {
 					echo 'Message could not be sent.'.(($showPhpmailError)? ' '.$this->mail->ErrorInfo : '');
 				}
-				if ($toSesstionMessage){
+				if ($toSessionMessage){
 					$_SESSION['SILMPH']['MESSAGES'][] = array('Die Nachricht konnte nicht gesendet werden.'.(($showPhpmailError)? ' '.$this->mail->ErrorInfo : ''), 'WARNING');
 				}
 				ob_start();
@@ -232,7 +274,7 @@ class MailHandler
 				if ($echo) {
 					if (!$suppressOKMsg) echo 'Die E-Mail wurde erfolgreich verschickt.';
 				}
-				if ($toSesstionMessage){
+				if ($toSessionMessage){
 					if (!$suppressOKMsg) $_SESSION['SILMPH']['MESSAGES'][] = array('Die E-Mail wurde erfolgreich verschickt.', 'SUCCESS');
 				}
 				return true;
