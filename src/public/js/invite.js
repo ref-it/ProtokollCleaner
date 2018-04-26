@@ -810,6 +810,7 @@
 						if(pdata.success == true){
 							//delete newprotocol
 							silmph__add_message(pdata.msg, MESSAGE_TYPE_SUCCESS, 3000);
+							$e.children('div').eq(1).text('Eingeladen');
 							obj.close();
 						} else {
 							silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
@@ -871,9 +872,9 @@
 		});
 		// delete proto
 		$e.find('.cancel').on('click', func_newproto_delete);
-		// send/resend invitation TODO php
+		// send/resend invitation
 		$e.find('.send').on('click', func_newproto_invite);
-		// write to wiki
+		// write to wiki TODO php
 		$e.find('.createp').on('click', function () {
 			func_newproto_towiki(false);
 		});

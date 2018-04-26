@@ -589,6 +589,25 @@ class InvitationController extends MotherController {
 			}
 			$gremium = $this->db->getCommitteebyName($filtered['committee']);
 
+			//check if there is planned protocol and mail invitation is done
+			$newprotos = $this->db->getNewprotos($filtered['committee']);
+			$newprotoMailDone = false;
+			foreach ($newprotos as $proto){
+				if (!$proto['generated_url'] && $proto['invite_mail_done']){
+					$newprotoMailDone = true;
+					break;
+				}
+			}
+			if ($newprotoMailDone){
+				if (!isset($top['id']) && !is_array($resort)){
+					//if is new top and there is no resort set automatically to 'skip_next' = true
+					$top['skip_next'] = 1;
+				} elseif(isset($top['id']) && $top['resort'] && !is_array($resort)){ 
+					//if resort top is refactored to normal top set automatically to 'skip_next' = true
+					$top['skip_next'] = 1;
+				}
+			}
+			
 			$top['headline'] = $filtered['headline'];
 			$top['resort'] = (is_array($resort))? $resort['id']: NULL;
 			$top['person'] = $filtered['person']? $filtered['person'] : NULL ;
@@ -599,6 +618,8 @@ class InvitationController extends MotherController {
 			$top['intern'] = $filtered['intern'];
 			$top['gremium'] = $gremium['id'];
 			$top['hash'] = (isset($top['hash']) && $top['hash'])? $top['hash'] : md5($top['headline'].date_create()->getTimestamp().$filtered['committee'].$vali->getFiltered('committee').mt_rand(0, 640000));
+			
+			//if is new top and there is no referat
 			
 			//create 
 			if (!isset($top['id'])){
