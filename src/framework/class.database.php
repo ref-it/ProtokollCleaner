@@ -740,7 +740,7 @@ class Database
 	 * @return array
 	 */
 	public function getMembersCounting($gremium){
-		$sql = "SELECT M.*, COUNT(P1.management) as management, COUNT(P2.protocol) as protocol FROM `".TABLE_PREFIX."current_member` M INNER JOIN `".TABLE_PREFIX."gremium` G ON M.gremium = G.id LEFT JOIN `".TABLE_PREFIX."newproto` P1 ON P1.management = M.id LEFT JOIN `".TABLE_PREFIX."newproto` P2 ON P2.protocol = M.id WHERE G.name = ? GROUP BY M.name ";
+		$sql = "SELECT M.*, COUNT(P1.management) as management, COUNT(P2.protocol) as protocol FROM `".TABLE_PREFIX."current_member` M INNER JOIN `".TABLE_PREFIX."gremium` G ON M.gremium = G.id LEFT JOIN (SELECT P.* FROM `".TABLE_PREFIX."newproto` P WHERE P.generated_url IS NOT NULL) P1 ON P1.management = M.id LEFT JOIN (SELECT P.* FROM `".TABLE_PREFIX."newproto` P WHERE P.generated_url IS NOT NULL) P2 ON P2.protocol = M.id AND P2.generated_url IS NOT NULL WHERE G.name = ? GROUP BY M.name ";
 		$result = $this->getResultSet($sql, 's', [$gremium]);
 		$return = [];
 		foreach ($result as $line){

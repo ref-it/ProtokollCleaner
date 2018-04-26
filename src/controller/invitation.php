@@ -936,7 +936,7 @@ class InvitationController extends MotherController {
 			if ($ok){
 				// update proto
 				$nproto['invite_mail_done'] = true;
-				//TODO $this->db->updateNewproto($nproto);
+				$this->db->updateNewproto($nproto);
 				
 				$this->json_result = [
 					'success' => true,

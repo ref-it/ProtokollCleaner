@@ -873,7 +873,7 @@
 		$e.find('.cancel').on('click', func_newproto_delete);
 		// send/resend invitation TODO php
 		$e.find('.send').on('click', func_newproto_invite);
-		// write to wiki TODO php
+		// write to wiki
 		$e.find('.createp').on('click', function () {
 			func_newproto_towiki(false);
 		});
