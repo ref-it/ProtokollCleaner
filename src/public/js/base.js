@@ -261,8 +261,9 @@ function checkIsValidName(name){
     		var $modal = $("<div/>", {
     			'class': 'modal-box '+ settings.boxClass,
     			css: {'position': 'fixed'},
-    			html: settings.html.replace('[%TEXT%]', (settings.ptag)? '<p>[%TEXT2%]</p>' : '[%TEXT2%]').replace('[%TEXT2%]', settings.text).replace('[%BUTTONS%]', buttons).replace('[%HEADCLASS%]', settings.headerClass).replace('[%FOOTCLASS%]', settings.footerClass).replace('[%HEADLINE%]', settings.headlineText)
+    			html: settings.html.replace('[%TEXT%]', (settings.ptag)? '<p>[%TEXT2%]</p>' : '[%TEXT2%]').replace('[%TEXT2%]', '<span class="TEXT2REPLACE"></span>').replace('[%BUTTONS%]', buttons).replace('[%HEADCLASS%]', settings.headerClass).replace('[%FOOTCLASS%]', settings.footerClass).replace('[%HEADLINE%]', settings.headlineText)
     		});
+    		$modal.find('span.TEXT2REPLACE').replaceWith(settings.text);
     		//add callbacks
     		for (var key in settings.buttons) {
 				if (settings.buttons.hasOwnProperty(key)) {
