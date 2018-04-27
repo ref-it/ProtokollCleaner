@@ -64,6 +64,7 @@
 	// field (input) other 'attr'ibutes
 	// field (input) 'value'
 	// field (input) data 'alias'
+	// field (select) 'options',
 	// 'labelClass'
 	// 'label' text
 	// 'small' text
@@ -109,6 +110,22 @@
 				for (prop in list[i].attr){
 					if (list[i].attr.hasOwnProperty(prop)){
 						out += ' '+prop+'="'+list[i].attr[prop]+'"';
+					}
+				}
+			}
+			if (list[i].hasOwnProperty('options') && list[i].options != ''){
+				out += '>';
+				var fieldOptions = list[i].options;
+				if (typeof(fieldOptions) == 'string'){
+					out += fieldOptions;
+				} else if (Array.isArray(fieldOptions)){
+					for (var ii = 0; ii < fieldOptions.length; ii++){
+						if (typeof(fieldOptions[ii]) == 'string'){
+							out += fieldOptions[ii];
+						} else {
+							var tout = $('<'+fieldOptions[ii].type+'/>', fieldOptions[ii].attr);
+							out += tout.prop('outerHTML');
+						}
 					}
 				}
 			}
@@ -555,7 +572,6 @@
 	};	
 	// ===== TOP FUNCTIONS - CREATE|MODIFY ===============================================
 	var func_top_create_update = function(top) {
-		console.log(top);
 		var box = $('<div/>',{
 			'class': 'card border-secondary silmph_top'+((top.skip_next > 0)?' skipnext':'')+((top.guest > 0)?' guest':'')+((top.intern > 0)?' internal':'')+((top.resort != null && top.resort.id > 0)?' resort':''),
 			'data-tid': top.id,
@@ -740,7 +756,7 @@
 	}
 	// delete newproto entry
 	var func_newproto_delete = function (){
-		$e = $(this).closest('.nprotoelm');
+		var $e = $(this).closest('.nprotoelm');
 		$.modaltools({
 			headerClass: 'bg-danger',
 			text: 'Soll die Sitzung(splanung) am <strong>'+$e.children('div').eq(0).text()+'</strong> wirklich gelöscht werden?', 
@@ -782,7 +798,7 @@
 	}
 	// send invitations for newproto entry
 	var func_newproto_invite = function (){
-		$e = $(this).closest('.nprotoelm');
+		var $e = $(this).closest('.nprotoelm');
 		$.modaltools({
 			headerClass: 'bg-warning',
 			text: '<p><strong>Soll die Sitzungeinladung manuell versendet werden?</strong></p><p>Eine <strong>automatische Einladung</strong> erfolgt ca. 24 Stunden vor entsprechender Sitzung.</p><p>Nach einer Einladung benötigen neue Tops einen Beschluss, um noch auf der Sitzung vorgebracht zu werden.</p><div class="form-group"><label for="comment">Zusätzliche Nachricht:</label><textarea class="form-control" rows="5" id="comment"></textarea></div>', 
@@ -822,11 +838,92 @@
 		}).open();
 	}
 	// write newproto to wiki
-	var func_newproto_towiki = function (data){
-		$e = $(this).closest('.nprotoelm');
+	var func_newproto_towiki = function (ee, data){
+		var $e = $(ee).closest('.nprotoelm');
+		var proposal = func_newproto_proposal();
+		var id = $e[0].dataset.id;
+		
+		var old = $('.silmph_nprotolist .nprotoelm[data-id="'+id+'"]');
+		var members = {}; 
+		$('.silmph_memberbox li.member span.membername').each(function(i, e){
+			members['id'+e.dataset.id] = {id: e.dataset.id, name: e.dataset.name}
+		});
+		if (old.length > 0){
+			proposal['npid'] = old[0].dataset.id,
+			proposal['hash'] = old[0].dataset.hash,
+			proposal['date'] = $.format.date(stringToDate(old.children('div').eq(0).text().split(' ')[0]), 'yyyy-MM-dd'),
+			proposal['time'] = (old.children('div').eq(0).text().split(' '))[1],
+			proposal['mana'] = members.hasOwnProperty('id'+old[0].dataset.m)? members['id'+old[0].dataset.m].name: '',
+			proposal['prot'] = members.hasOwnProperty('id'+old[0].dataset.p)? members['id'+old[0].dataset.p].name: '';
+		}
+		
+		var ttext = (typeof(data) == 'undefined' || data==false)? $('<div/>', {
+			html: '<h4><strong>Das Sitzungsprotokoll wird nun im Wiki erzeugt.</strong></h4>'
+		})
+		.append('<span><strong>'+$e.children('div').eq(0).text()+'</strong></span>')
+		.append(func_create_form_elem([
+		    {alias: 'legi', placeholder: 'Legislatur', label:'Legislaturperiode', type:'number', attr:{min:0, step:1}},
+		    {alias: 'sinr', placeholder: 'Sitzung', label:'Sitzungsnummer', type:'number', attr:{min:0, step:1}},
+		    {alias: 'mana', placeholder: (proposal.management.name!=''?'Vorschlag: '+proposal.management.name:''), label:'Wer leitet die Sitzung?', value: (proposal.hasOwnProperty('mana')?proposal.mana:'')},
+			{alias: 'prot', placeholder: (proposal.protocol.name!=''?'Vorschlag: '+proposal.protocol.name:''), label:'Wer protokolliert?', value: (proposal.hasOwnProperty('prot')?proposal.prot:'')}  
+		], {fieldIdPrefix: 'frmM2WVal'}))
+		.append((function(){ // Anwesenheit -----------------------
+			var out = [];
+			out.push($('<p/>'));
+			out.push($('<h4/>', {html: '<strong>Anwesenheit</strong>'}));
+			var memberboxbody = $('<div/>', {'class': 'card-body'});
+			$('.silmph_memberbox .member .membername').each(function (i, elm){
+				memberboxbody.append( func_create_form_elem( 
+						[{label: elm.dataset.name, 
+							type: '', tag:'fieldset', 
+							tagClose: '</fieldset>',
+							'class': 'member_to_wiki',
+							attr: {'data-id': elm.dataset.id}, 
+							options: [
+							    {type:'input', attr: { value: '0', id: 'frmMember_'+i+'_radioid_0', type: 'radio', 'class': 'col-2 col-sm-1',  name: 'frmMember_'+i+'_radio', checked: 'checked' }},
+							    {type:'label', attr: { 'for': 'frmMember_'+i+'_radioid_0', 'class': 'col-10 col-sm-5 col-md-2', text: 'Fixme' }},
+							    {type:'input', attr: { value: '1', id: 'frmMember_'+i+'_radioid_1', type: 'radio', 'class': 'col-2 col-sm-1',name: 'frmMember_'+i+'_radio' }},
+							    {type:'label', attr: { 'for': 'frmMember_'+i+'_radioid_1', 'class': 'col-10 col-sm-5 col-md-2', text: 'J' }},
+							    {type:'input', attr: { value: '2', id: 'frmMember_'+i+'_radioid_2', type: 'radio', 'class': 'col-2 col-sm-1',name: 'frmMember_'+i+'_radio' }},
+							    {type:'label', attr: { 'for': 'frmMember_'+i+'_radioid_2', 'class': 'col-10 col-sm-5 col-md-2', text: 'E' }},
+							    {type:'input', attr: { value: '3', id: 'frmMember_'+i+'_radioid_3', type: 'radio', 'class': 'col-2 col-sm-1',name: 'frmMember_'+i+'_radio' }},
+							    {type:'label', attr: { 'for': 'frmMember_'+i+'_radioid_3', 'class': 'col-10 col-sm-5 col-md-2', text: 'N' }}
+							]
+						}],
+						{fieldIdPrefix: 'frmMember_'+i+'_', innerClass: 'form-row mt-3 w-100 hover-bg-gray', labelDefaultClass: 'col-md-4 control-label mt-1', fieldDefaultClass: 'form-control col-md-8 onelineRadios hover-bg-transparent'}) );
+			});
+			var memberbox = $('<div/>', {'class': 'card'});
+			memberbox.append(memberboxbody);
+			out.push(memberbox);
+			return out;
+		})())
+		.append((function(){
+			var out = [];
+			out.push($('<p/>'));
+			out.push($('<h4/>', {html: '<strong>Tagesordnung eingereichter Tops</strong>'}));
+			var ul = $('<ul/>');
+			ul.append($('<li/>', { html: '(Protokollkontrolle)' }));
+			$('.silmph_toplist .silmph_top:not(.skipnext):not(.resort) .headline span:last-child').each(function(i, e){
+				ul.append($('<li/>', { html: 'Top '+(i+1)+': '+ e.innerHTML }));
+			});
+			var refli = $('<li/>', { html: 'Berichte aus Referaten, AGs und von Angestellten' });
+			if ($('.silmph_toplist .silmph_top.resort:not(.skipnext) .headline span:last-child').length > 0){
+				var ul2 = $('<ul/>');
+				$('.silmph_toplist .silmph_top.resort:not(.skipnext) .headline span:last-child').each(function(i,e){
+					var tmp_e = $(e).prev();
+					ul2.append($('<li/>', { html: tmp_e.text()+': '+ e.innerHTML }));
+				});
+				refli.append(ul2);
+			}
+			ul.append(refli);
+			ul.append($('<li/>', { html: 'Sonstiges' }));
+			out.push(ul);
+			console.log(ul);
+			return out;
+		})()) : '<p><strong>'+data.msg+'</strong></p>';
 		$.modaltools({
 			headerClass: 'bg-warning',
-			text: '<p><strong>'+((typeof(data) == 'undefined' || data==false)? 'Das Sitzungsprotokoll wird nun im Wiki erzeugt.': data.msg)+'</strong></p>', 
+			text: ttext, 
 			ptag: false,	
 			headlineText: 'Sitzungsprotokoll erzeugen',
 			buttons: {'abort': 'Abbrechen', 'ok': 'Fortfahren'},
@@ -850,7 +947,7 @@
 						pdata = parseData(data);
 						if(pdata.success == true){
 							if (pdata.hasOwnProperty('reask') && pdata.reask == true){
-								func_newproto_towiki(pdata);
+								func_newproto_towiki(ee, pdata);
 							} else {
 								silmph__add_message(pdata.msg, MESSAGE_TYPE_SUCCESS, 3000);
 							}
@@ -876,7 +973,7 @@
 		$e.find('.send').on('click', func_newproto_invite);
 		// write to wiki TODO php
 		$e.find('.createp').on('click', function () {
-			func_newproto_towiki(false);
+			func_newproto_towiki(this, false);
 		});
 		// link to wiki TODO js + php
 		// restore TODO js + php

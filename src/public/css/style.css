@@ -919,3 +919,19 @@ div.silmph__message_success {
 .reftag.top150 {
 	top: 150px;
 }
+/* ------ member 2 wiki ------- */
+.hover-bg-gray:hover, 
+.hover-bg-gray:active {
+	background-color: #eee;
+}
+.hover-bg-gray:hover .hover-bg-transparent, 
+.hover-bg-gray:active .hover-bg-transparent{
+	background-color: transparent;
+}
+.onelineRadios {
+	padding-bottom: 0;
+}
+.onelineRadios > label {
+	margin-bottom: 0;
+	vertical-align: top;
+}
