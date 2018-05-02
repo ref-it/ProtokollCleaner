@@ -277,7 +277,7 @@ function checkIsValidName(name){
 				}
     		}
     		//remove modal overlay
-    		var fadeRemove = function (){
+    		var fadeRemove = function (callback){
     			if (to != null){
     				clearTimeout(to);
     				to = null;
@@ -286,6 +286,7 @@ function checkIsValidName(name){
     				var $t = $(settings.target);
     				if ($t.hasClass('open')) $t.removeClass('open');
     				$(this).remove();
+    				if (typeof(callback) == 'function') callback();
     			});
     			return $out;
     		};
