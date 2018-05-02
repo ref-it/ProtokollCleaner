@@ -41,6 +41,23 @@
 		<button type="button" class="submit" title="Einstellungen testen. Dabei wird eine E-Mail versendet.">Einstellungen testen</button>
 	</div>
 </div>
+<div class="half_container oset_settings admin"><h3 class="noprint">Weitere Einstellungen</h3><h3 class="printonly">Weitere Einstellungen</h3>
+	<?php $settings = $this->db->getSettings(); ?>
+	<table class="striped">
+		<tr>
+			<th></th>
+			<th></th>
+		</tr>
+		<tr>
+			<th>Einladungen X Tage wiederherstellbar.</th>
+			<td><div class="editable oset" tabindex="0" data-value="DISABLE_RESTORE_OLDER_DAYS" data-validator="integer"><?php echo $settings['DISABLE_RESTORE_OLDER_DAYS']; ?></div></td>
+		</tr>
+		<tr>
+			<th>Autoeinladung X Stunden vor Sitzung.</th>
+			<td><div class="editable oset" tabindex="0" data-value="AUTO_INVITE_N_HOURS" data-validator="integer"><?php echo $settings['AUTO_INVITE_N_HOURS']; ?></div></td>
+		</tr>
+	</table>
+</div>
 <div class="full_container legis_settings admin"><h3>Legislaturperioden</h3>
 	<table class="striped">
 		<tr>
