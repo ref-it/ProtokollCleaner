@@ -337,17 +337,17 @@ class ProtocolController extends MotherController {
 					'success' => false,
 					'eMsg' => 'Fehler beim Veröffentlichen. (Code: '.$x->getStatusCode().')'
 				];
-				error_log('Proto Publish: Could not publish. Wiki respond: '.$x->getStatusCode().' - '.(($x->isError())?$x->getError():''));
+				error_log('Proto Publish: Could not publish. Request: Put Page - '.parent::$protomap[$vali->getFiltered('committee')][1].':'.$p->name.' - Wiki respond: '.$x->getStatusCode().' - '.(($x->isError())?$x->getError():''));
 				$this->print_json_result();
 				return;
 			}
 			$is_draft = true;
 			if ($p->agreed_on === NULL){
 				$p->public_url = NULL;
-				$p->draft_url = parent::$protomap[$vali->getFiltered()['committee']][1].':'.$p->name;
+				$p->draft_url = $p->name;
 			} else {
 				$is_draft = false;
-				$p->public_url = parent::$protomap[$vali->getFiltered()['committee']][1].':'.$p->name;
+				$p->public_url = $p->name;
 				$p->draft_url = NULL;
 			}
 			
@@ -413,9 +413,16 @@ class ProtocolController extends MotherController {
 					$this->db->deleteResolutionById($reso['id']);
 				}
 			}
+			$gremium = $this->db->getCreateCommitteebyName($vali->getFiltered('commitee'));
 			//create new protocoll resolutions now
 			foreach ($proto_reso_new as $reso){
-				$this->db->createResolution($reso);
+				$newresoid = $this->db->createResolution($reso);
+				//Update protocols -> set agreed on resolution
+				if ($newresoid){
+					foreach ($reso['p_link_date'] as $resoDate){
+						$this->db->updateProtocolSetAgreed($newresoid, $gremium['id'], $resoDate);
+					}
+				}
 			}
 			//---------------------------------
 			//create/update/delete todo|fixme|deleteme
