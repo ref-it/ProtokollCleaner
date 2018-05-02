@@ -22,7 +22,7 @@ class ProtocolController extends MotherController {
 	 * basic information:
 	 * 		name
 	 * 		url
-	 * 		comittee
+	 * 		committee
 	 * 		(committe_id) if protocol is known in database
 	 * 		date
 	 * 		(id) if protocol is known in database
@@ -262,16 +262,16 @@ class ProtocolController extends MotherController {
 				$this->json_result = ['success' => false, 'eMsg' => $vali->getLastErrorMsg()];
 				$this->print_json_result();
 			}
-		} else if (!checkUserPermission($vali->getFiltered()['committee'])) {
+		} else if (!checkUserPermission($vali->getFiltered('committee'))) {
 			$this->json_access_denied();
-		} else if (parent::$protomap[$vali->getFiltered()['committee']][0] == parent::$protomap[$vali->getFiltered()['committee']][1]) {
+		} else if (parent::$protomap[$vali->getFiltered('committee')][0] == parent::$protomap[$vali->getFiltered('committee')][1]) {
 			// on save dont allow intern == extern protocol path =>> parse view is ok, but no storing
 			//may allow partial save like Todos, Fixmes, resolutions...
 			http_response_code (403);
 			$this->json_result = ['success' => false, 'eMsg' => 'Your not allowed to store this protocol.'];
 			$this->print_json_result();
 		} else {
-			$p = $this->loadWikiProtoBase($vali->getFiltered()['committee'], $vali->getFiltered()['proto'], true);
+			$p = $this->loadWikiProtoBase($vali->getFiltered('committee'), $vali->getFiltered()['proto'], true);
 			if ($p === NULL) {
 				$this->json_not_found();
 				return;
@@ -330,7 +330,7 @@ class ProtocolController extends MotherController {
 			//create protocol in wiki
 			$x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
 			prof_flag('write wiki page');
-			$put_res = $x->putPage(parent::$protomap[$vali->getFiltered()['committee']][1].':'.$p->name, $p->external, ['sum' => 'GENERIERT mit '.BASE_TITLE.' von ('. $this->auth->getUserFullName().')']);
+			$put_res = $x->putPage(parent::$protomap[$vali->getFiltered('committee')][1].':'.$p->name, $p->external, ['sum' => 'GENERIERT mit '.BASE_TITLE.' von ('. $this->auth->getUserName().')']);
 			prof_flag('wiki page written');
 			if ($put_res == false){
 				$this->json_result = [
