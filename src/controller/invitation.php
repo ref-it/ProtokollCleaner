@@ -43,7 +43,7 @@ class InvitationController extends MotherController {
 		if (!$initOk) return false;
 		
 		$pdate = date_create($proto['date']);
-		$mail_address = PROTOMAP[$proto['gname']][3];
+		$mail_address = parent::$protomap[$proto['gname']][3];
 		$tops_tmp = $this->db->getTopsOpen($proto['gname']);
 		$tops = [];
 		foreach ($tops_tmp as $id => $top){
@@ -61,9 +61,11 @@ class InvitationController extends MotherController {
 			'committee' => $proto['gname'],
 			'tops' 		=> $tops,
 			'proto'		=> $proto, 
-			'protoInternLink' => WIKI_URL.'/',
+			'protoInternLink' => WIKI_URL.'/'.parent::$protomap[$proto['gname']][0].'/',
+			'protoPublicLink' => WIKI_URL.'/'.parent::$protomap[$proto['gname']][1].'/',
 			'unreconciled_protocols' => $openProtos,
-			'topLink' 	=> BASE_URL.'/invite' 
+			'topLink' 	=> BASE_URL.'/invite',
+			'protoLink' => BASE_URL.'/protolist'
 		]);
 		
 		$mailer->setTemplate('proto_invite');
@@ -947,14 +949,16 @@ class InvitationController extends MotherController {
 				'm'=> ($nproto['management'] && isset($members[$nproto['management']]))? $members[$nproto['management']] : NULL 
 			];
 			$nproto['membernames'] = $membernames;
-			$openProtos = $this->db->getProtocols($vali->getFiltered('committee'), true, false);
-			
+			// open protocols // not aggreed
+			$notAgreedProtocols = $this->db->getProtocols($vali->getFiltered('committee'), false, false, true, false, " AND LENGTH(P.name) = 10 AND P.date > '2017-01-01' AND date < '".date_create()->format('Y-m-d')."'");
+			$draftStateProtocols = $this->db->getProtocols($vali->getFiltered('committee'), false, false, false, true, " AND (P.public_url IS NULL) AND LENGTH(P.name) = 10 AND P.date > '2017-01-01' AND date < '".date_create()->format('Y-m-d')."'");
+		
 			$ok = $this->send_mail_invitation(
 				$nproto,
 				[	'username' => $this->auth->getUsername(), 
 					'userFullname' => $this->auth->getUserFullName(), 
 					'mail' => $this->auth->getUserMail()	],
-				$openProtos,
+				['notAgreed' => $notAgreedProtocols, 'draftState' => $draftStateProtocols ],
 				$vali->getFiltered('text')
 			);
 			if ($ok){
