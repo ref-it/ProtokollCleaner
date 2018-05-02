@@ -58,6 +58,19 @@
 		</tr>
 	</table>
 </div>
+<div class="half_container link_settings admin">
+	<h3>Links</h3>
+	<p>
+		<i>Schreibt die Beschlussliste im Wiki neu.<br><?php 
+			$pmap = PROTOMAP;
+			foreach ($pmap as $committee => $map){
+				echo '<br>&emsp;&emsp;&#149;&emsp; <a target="_blank" href="'.WIKI_URL.'/'.$map[2].'">Beschlussliste des '.ucfirst($committee).'</a>';
+			}
+			echo "\n<br><br>";
+		?></i><br>
+		<a class="btn btn-outline-danger w-75" href="/reso/towiki">Schreibe Beschlussliste</a>
+	</p>
+</div>
 <div class="full_container legis_settings admin"><h3>Legislaturperioden</h3>
 	<table class="striped">
 		<tr>

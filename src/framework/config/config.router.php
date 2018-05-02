@@ -63,7 +63,6 @@ $navigation = [
 	'crawl'	 	=> ['crawler', 		'Crawler', 			'&#xf0e7;',		''],
 	'protolist' => ['protolist', 	'Protokolle', 		'&#xf266;',		'log.png'],
 	'reso/list' => ['resolist', 	'Beschlussliste', 	'&#xf0cb;',		'log.png'],
-	'reso/towiki' => ['resotowiki', 'Beschluss zu Wiki', '&#xf0cb;',	'log.png'],
 	'todo/list' => ['todolist', 	'Todos', 			'&#xf046;',		'log.png'],
 	'invite'	=> ['invitebase', 	'Sitzungseinladung', '&#xf0e0;',	'log.png'],
 	'https://stura.tu-ilmenau.de/impressum' => ['baseaccess', 'Impressum', '&#xf129;', ''],
