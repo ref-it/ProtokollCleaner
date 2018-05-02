@@ -129,3 +129,23 @@ if (!function_exists('silmph_decrypt_key')) {
 		}
 	}
 }
+
+if (!function_exists('mb_str_pad')) {
+	/**
+	 * pad string based on encoding
+	 * @see str_pad
+	 * @param string $input
+	 * @param int $pad_length
+	 * @param string $pad_string
+	 * @param int $pad_type
+	 * @param string $encoding
+	 */
+	function mb_str_pad ($input, $pad_length, $pad_string, $pad_type, $encoding="UTF-8") {
+		return str_pad(
+			$input,
+			strlen($input) - mb_strlen($input, $encoding) + $pad_length, 
+			$pad_string, 
+			$pad_type
+		);
+	}
+}
