@@ -45,12 +45,18 @@
 	<h3>Tagesordnung</h3>
 	<p>
 		<ul>
-			<?php if ($params['unreconciled_protocols']){
+			<?php if ($param['unreconciled_protocols']['notAgreed']){
 				echo '<li>Protokollkontrolle<ul>';
-				foreach ($params['unreconciled_protocols'] as $prot){
-					echo '<li><a href="'.$params['protoInternLink'].str_replace(':', '/', $prot['draft_url']).'">'.$prot['name'].' ['.count($links).']</a></li>';
-					$links[] = $params['protoInternLink'].str_replace(':', '/', $prot['draft_url']);
-				
+				foreach ($param['unreconciled_protocols']['notAgreed'] as $prot){
+					$tmplink = (($prot['draft_url'])? 
+							$param['protoPublicLink'] . $prot['draft_url'] : 
+							(($prot['public_url'])? 
+								$param['protoPublicLink'] . $prot['public_url'] : 
+								$param['protoInternLink'] . $prot['name']));
+					$tmplink = str_replace(':', '/', $tmplink);
+					$tmplink = str_replace(['https///', 'http///'], ['https://', 'http://'], $tmplink);
+					echo '<li><a href="'.$tmplink.'">'.$prot['name'].' ['.count($links).']</a></li>';
+					$links[] = $tmplink;
 				}
 				echo '</ul></li>';
 			}?>
@@ -80,7 +86,7 @@
 	<h3>Links</h3>
 	<p>
 	<?php 
-		$c = floor(count($links) / 10);
+		$c = strlen(''.count($links));
 		foreach ($links as $pos => $link){
 			echo '['.str_pad($pos, $c, "0", STR_PAD_LEFT).'] - <a href="'.$link.'">'.$link.'</a><br>';
 		}
