@@ -683,6 +683,7 @@ class Validator {
 	 *
 	 *
 	 * $param
+	 *  key			2	validate array key to -> validatorelelemnt, requires param->validator to be set
 	 *  minlengh	2	maximum string length
 	 *  maxlengh	2	maximum string length
 	 *  empty		1	allow empty array
@@ -720,10 +721,22 @@ class Validator {
 			return !$this->setError(false);
 		}
 		$out = [];
-		foreach($a as $entry){
+		foreach($a as $key => $entry){
+			//key
+			$keyFiltered = NULL;
+			if (isset($params['key'])){
+				$this->validate($key, $params['key']);
+				if ($this->isError) break;
+				$keyFiltered = $this->filtered;
+			}
+			//value
 			$this->validate($entry, $params['validator']);
 			if ($this->isError) break;
-			$out[] = $this->filtered;
+			if ($keyFiltered === NULL){
+				$out[] = $this->filtered;
+			} else {
+				$out[$keyFiltered] = $this->filtered;
+			}
 		}
 		$this->filtered = $out;
 		return !$this->isError;
