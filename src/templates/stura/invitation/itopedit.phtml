@@ -53,7 +53,7 @@
 			<div class="col-md-6 mt-0 pt-0 list-group noselect">
 				<?php 
 					$goal_selected = (isset($param['top']['goal']))? preg_split('(,| ,)', $param['top']['goal'], -1, PREG_SPLIT_NO_EMPTY) :[];
-					$goal_base = ['Abstimmung', 'Diskussion', 'Information', 'Kommentar'];
+					$goal_base = ['Abstimmung', 'Diskussion', 'Information', 'Kommentar', 'Meinungsbild'];
 				 
 					foreach ($goal_base as $tmpos => $goal_name){
 						echo "\n".'<input class="silmph_goal_multi" type="checkbox" id="goalMultiCkb'.$tmpos.'"'.((in_array($goal_name, $goal_selected))?' checked="checked"':'').'>';

@@ -193,7 +193,7 @@ class MailHandler
 	private static function renderTXT($file, $param = NULL){
 		$text_replacers = array();
 		$text_values = array();
-		foreach ($params as $key => $value){
+		foreach ($param as $key => $value){
 			$text_replacers[] = "%".$key."%";
 			$text_values[] = $value;
 		}

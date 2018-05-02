@@ -173,11 +173,19 @@ class ResolutionController extends MotherController
 		prof_flag('Write Resolist To Wiki');
 		$x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
 		
-		$x->putPage( 
+		$ok = $x->putPage( 
 			parent::$protomap[$perm][2], 
 			$wikiText, 
 			['sum' => 'GENERIERT mit '.BASE_TITLE.' von ('. $this->auth->getUserName().')']);
-		
+		if ($ok == false){
+			$this->json_result = [
+				'success' => false,
+				'eMsg' => 'Fehler beim Schreiben. (Code: '.$x->getStatusCode().')'
+			];
+			error_log('NewProto -> WIKI: Could not write. Request: Put Page - '.parent::$protomap[$perm][2].' - Wiki respond: '.$x->getStatusCode().' - '.(($x->isError())?$x->getError():''));
+			$this->print_json_result();
+			return;
+		}
 		// Return result and timing
 		prof_flag('Done');
 		
