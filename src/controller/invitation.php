@@ -99,6 +99,7 @@ class InvitationController extends MotherController {
 		$newproto = $this->db->getNewprotos($perm);
 		$settings = $this->db->getSettings();
 		$legis = $this->db->getCurrentLegislatur();
+		$oldproto = $this->db->getProtocolsByLegislatur($perm, $legis['number']);
 		$sett = [];
 		$sett['auto_invite'] = intval($settings['AUTO_INVITE_N_HOURS']);
 		$sett['disable_restore'] = intval($settings['DISABLE_RESTORE_OLDER_DAYS']);
@@ -110,7 +111,9 @@ class InvitationController extends MotherController {
 			'member' => $member,
 			'newproto' => $newproto,
 			'settings' => $sett,
-			'legislatur' => $legis
+			'legislatur' => $legis,
+			'protomap' => self::$protomap[$perm],
+			'nth-proto' => (count($oldproto)+1)
 		]);
 		$this->t->printPageFooter();
 	}
@@ -895,11 +898,11 @@ class InvitationController extends MotherController {
 			'hash' => ['regex',
 				'pattern' => '/^([0-9a-f]{32})$/',
 				'empty',
-				'error' => 'Protokollkennung hat das falsche Format.'
+				'error' => 'Sitzungskennung hat das falsche Format.'
 			],
 			'npid' => ['integer',
 				'min' => '1',
-				'error' => 'Ungültige Top Id.'
+				'error' => 'Ungültige Sitzungsid'
 			],
 			'text' => ['regex',
 				'pattern' => '/^(.|\r|\n)*$/',

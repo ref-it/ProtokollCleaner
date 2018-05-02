@@ -878,10 +878,12 @@
 		}).open();
 	}
 	// write newproto to wiki
-	var func_newproto_towiki = function (ee, data){
+	var func_newproto_towiki = function (ee, fdata, dataset_){
+		//setup variables , get information -------------------------------
 		var $e = $(ee).closest('.nprotoelm');
 		var proposal = func_newproto_proposal();
 		var id = $e[0].dataset.id;
+		var dset = (typeof(dataset_)=='object')? true: false;
 		
 		var old = $('.silmph_nprotolist .nprotoelm[data-id="'+id+'"]');
 		var members = {}; 
@@ -896,16 +898,18 @@
 			proposal['mana'] = members.hasOwnProperty('id'+old[0].dataset.m)? members['id'+old[0].dataset.m].name: '',
 			proposal['prot'] = members.hasOwnProperty('id'+old[0].dataset.p)? members['id'+old[0].dataset.p].name: '';
 		}
-		
-		var ttext = (typeof(data) == 'undefined' || data==false)? $('<div/>', {
+		// build modal content ---------------------------------------------
+		var ttext = (typeof(fdata) == 'undefined' || fdata==false || fdata==null || (typeof(fdata)=='object' && (!fdata.hasOwnProperty('reask') || fdata.reask == false)))? $('<div/>', {
 			html: '<h4><strong>Das Sitzungsprotokoll wird nun im Wiki erzeugt.</strong></h4>'
-		})
+		}) : $('<p/>', {html: '<strong>'+fdata.msg+'</strong>'});
+		// append to modal content
+		ttext
 		.append('<span><strong>'+$e.children('div').eq(0).text()+'</strong></span>')
 		.append(func_create_form_elem([
-		    {alias: 'legi', placeholder: 'Legislatur', label:'Legislaturperiode', type:'number', attr:{min:0, step:1}},
-		    {alias: 'sinr', placeholder: 'Sitzung', label:'Sitzungsnummer', type:'number', attr:{min:0, step:1}},
-		    {alias: 'mana', placeholder: (proposal.management.name!=''?'Vorschlag: '+proposal.management.name:''), label:'Wer leitet die Sitzung?', value: (proposal.hasOwnProperty('mana')?proposal.mana:'')},
-			{alias: 'prot', placeholder: (proposal.protocol.name!=''?'Vorschlag: '+proposal.protocol.name:''), label:'Wer protokolliert?', value: (proposal.hasOwnProperty('prot')?proposal.prot:'')}  
+		    {alias: 'legi', placeholder: 'Legislatur', label:'Legislaturperiode', type:'number', attr:{min:0, step:1}, value: (dset)? dataset_.legislatur: $('.silmph_nprotolist').data('legislatur')},
+		    {alias: 'nthp', placeholder: 'Sitzung', label:'Sitzungsnummer', type:'number', attr:{min:0, step:1}, value: (dset)? dataset_.nthproto: $('.silmph_nprotolist').data('nthproto')},
+		    {alias: 'mana', placeholder: (proposal.management.name!=''?'Vorschlag: '+proposal.management.name:''), label:'Wer leitet die Sitzung?', value: (dset)? dataset_.management : ( (proposal.hasOwnProperty('mana')?proposal.mana:''))},
+			{alias: 'prot', placeholder: (proposal.protocol.name!=''?'Vorschlag: '+proposal.protocol.name:''), label:'Wer protokolliert?', value: (dset)? dataset_.protocol : ( (proposal.hasOwnProperty('prot')?proposal.prot:''))}  
 		], {fieldIdPrefix: 'frmM2WVal'}))
 		.append((function(){ // Anwesenheit -----------------------
 			var out = [];
@@ -913,22 +917,22 @@
 			out.push($('<h4/>', {html: '<strong>Anwesenheit</strong>'}));
 			var memberboxbody = $('<div/>', {'class': 'card-body'});
 			$('.silmph_memberbox .member .membername').each(function (i, elm){
+				var chk = (dset && dataset_.member.hasOwnProperty(''+elm.dataset.id))? dataset_.member[(''+elm.dataset.id)] : 0;
+				var radioOptions = ['Fixme', 'J', 'E', 'N'];
+				var opts = [];
+				for (var ci = 0; ci < radioOptions.length; ci++){
+					var at = { value: ''+ci, id: 'frmMember_'+i+'_radioid_'+ci, type: 'radio', 'class': 'col-2 col-sm-1',  name: 'frmMember_'+i+'_radio'};
+					if (chk == ci) at['checked'] = 'checked';
+					opts.push({type:'input', attr: at });
+					opts.push({type:'label', attr: { 'for': 'frmMember_'+i+'_radioid_'+ci, 'class': 'col-10 col-sm-5 col-md-2', text: radioOptions[ci] }},);
+				}
 				memberboxbody.append( func_create_form_elem( 
 						[{label: elm.dataset.name, 
 							type: '', tag:'fieldset', 
 							tagClose: '</fieldset>',
 							'class': 'member_to_wiki',
-							attr: {'data-id': elm.dataset.id}, 
-							options: [
-							    {type:'input', attr: { value: '0', id: 'frmMember_'+i+'_radioid_0', type: 'radio', 'class': 'col-2 col-sm-1',  name: 'frmMember_'+i+'_radio', checked: 'checked' }},
-							    {type:'label', attr: { 'for': 'frmMember_'+i+'_radioid_0', 'class': 'col-10 col-sm-5 col-md-2', text: 'Fixme' }},
-							    {type:'input', attr: { value: '1', id: 'frmMember_'+i+'_radioid_1', type: 'radio', 'class': 'col-2 col-sm-1',name: 'frmMember_'+i+'_radio' }},
-							    {type:'label', attr: { 'for': 'frmMember_'+i+'_radioid_1', 'class': 'col-10 col-sm-5 col-md-2', text: 'J' }},
-							    {type:'input', attr: { value: '2', id: 'frmMember_'+i+'_radioid_2', type: 'radio', 'class': 'col-2 col-sm-1',name: 'frmMember_'+i+'_radio' }},
-							    {type:'label', attr: { 'for': 'frmMember_'+i+'_radioid_2', 'class': 'col-10 col-sm-5 col-md-2', text: 'E' }},
-							    {type:'input', attr: { value: '3', id: 'frmMember_'+i+'_radioid_3', type: 'radio', 'class': 'col-2 col-sm-1',name: 'frmMember_'+i+'_radio' }},
-							    {type:'label', attr: { 'for': 'frmMember_'+i+'_radioid_3', 'class': 'col-10 col-sm-5 col-md-2', text: 'N' }}
-							]
+							attr: {'data-id': elm.dataset.id,'data-pos': i}, 
+							options: opts
 						}],
 						{fieldIdPrefix: 'frmMember_'+i+'_', innerClass: 'form-row mt-3 w-100 hover-bg-gray', labelDefaultClass: 'col-md-4 control-label mt-1', fieldDefaultClass: 'form-control col-md-8 onelineRadios hover-bg-transparent'}) );
 			});
@@ -960,22 +964,32 @@
 			out.push(ul);
 			console.log(ul);
 			return out;
-		})()) : '<p><strong>'+data.msg+'</strong></p>';
+		})());
 		$.modaltools({
 			headerClass: 'bg-warning',
 			text: ttext, 
 			ptag: false,	
 			headlineText: 'Sitzungsprotokoll erzeugen',
-			buttons: {'abort': 'Abbrechen', 'ok': 'Fortfahren'},
+			buttons: {'abort': 'Abbrechen', 'ok': ((typeof(fdata) != 'undefined' && fdata != false && fdata != null && typeof(fdata) == 'object' && fdata.hasOwnProperty('reask') && fdata.reask == true)? 'Fortfahren': 'Protokoll schreiben')},
 			callback: {'ok':function(obj){
 				var dataset = {
 					committee: 'stura',
 					hash: 		$e[0].dataset.hash,
 					npid: 		$e[0].dataset.id,
-					reaskdone:  (typeof(data) != 'undefined' && data == false && data.hasOwnProperty('reask') && data.reask == true)? 1: 0
+					management: obj.modal.find('[id^=frmM2WVal][data-alias=mana]').val(),
+					protocol: 	obj.modal.find('[id^=frmM2WVal][data-alias=prot]').val(),
+					legislatur: obj.modal.find('[id^=frmM2WVal][data-alias=legi]').val(),
+					nthproto: 	obj.modal.find('[id^=frmM2WVal][data-alias=nthp]').val(),
+					reaskdone:  (typeof(fdata) != 'undefined' && fdata != false && fdata != null && typeof(fdata) == 'object' && fdata.hasOwnProperty('reask') && fdata.reask == true)? 1: 0,
+					member: {}
 				};
+				obj.modal.find('fieldset.member_to_wiki').each(function(fi, fe){
+					dataset.member[''+fe.dataset.id] = $(fe).children('input:checked').val();
+				});
 				var fchal = document.getElementById('fchal');
 				dataset[fchal.getAttribute("name")] = fchal.value;
+				
+				console.log(dataset);//TODO
 				
 				//do ajax post request
 				$.ajax({
@@ -985,13 +999,17 @@
 					success: function(data){
 						pdata = {};
 						pdata = parseData(data);
+						console.log(pdata);
 						if(pdata.success == true){
 							if (pdata.hasOwnProperty('reask') && pdata.reask == true){
-								func_newproto_towiki(ee, pdata);
+								obj.close(function(){
+									func_newproto_towiki(ee, pdata, dataset);
+								});
 							} else {
 								silmph__add_message(pdata.msg, MESSAGE_TYPE_SUCCESS, 3000);
+								obj.close();
+								auto_page_reload(3000);
 							}
-							obj.close();
 						} else {
 							silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
 						}
@@ -1011,7 +1029,7 @@
 		$e.find('.cancel').on('click', func_newproto_delete);
 		// send/resend invitation
 		$e.find('.send').on('click', func_newproto_invite);
-		// write to wiki TODO php
+		// write to wiki
 		$e.find('.createp').on('click', function () {
 			func_newproto_towiki(this, false);
 		});
