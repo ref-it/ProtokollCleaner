@@ -75,7 +75,27 @@
 	<p>Weitere Tops können unter folgendem <a href="<?= $param['topLink'] ?>">Link [<?php echo count($links); $links[] = $param['topLink'] ?>]</a> nachgereicht werden, bedürfen aber eines Antrages an die Geschäftsordnung zur Änderung der Tagesordnung.</p>
 	<p>Desweiteren können Referate, AGs und Angestellte ihre Berichte <a href="<?= $param['topLink'] ?>">hier [<?php echo count($links); $links[] = $param['topLink'] ?>]</a> noch bis zur Sitzung vortragen. Dort befinden sich auch vorgetragene Referatberichte.</p>
 	<p>Solltet Ihr zum Zeitpunkt der Sitzung verhindert sein, meldet euch bitte rechtzeitig ab und hinterlegt gegebenenfalls für geplante Abstimmungen eine schriftliche Stimme.</p>
-	<?php if ($params['message']){ ?>
+	<?php if (count($param['unreconciled_protocols']['draftState'])){ ?>
+	<p>&#8212;</p>
+	<h4>Erinnerung</h4>
+	<p>Folgende Protokolle wurden noch nicht (endgültig) veröffentlicht, wurden aber bereits abgestimmt:</p>
+	<ul>
+	<?php 
+	foreach ($param['unreconciled_protocols']['draftState'] as $prot){
+		$tmplink = (($prot['draft_url'])?
+			$param['protoPublicLink'] . $prot['draft_url'] :
+			(($prot['public_url'])?
+				$param['protoPublicLink'] . $prot['public_url'] :
+				$param['protoInternLink'] . $prot['name']));
+		$tmplink = str_replace(':', '/', $tmplink);
+		$tmplink = str_replace(['https///', 'http///'], ['https://', 'http://'], $tmplink);
+		echo '<li><a href="'.$tmplink.'">'.$prot['name'].' ['.count($links).']</a></li>';
+		$links[] = $tmplink;
+	}?>
+	</ul>
+	<p>Unter folgendem <a href="<?= $param['protoLink'] ?>">Link [<?php echo count($links); $links[] = $param['protoLink'] ?>]</a> können Protokolle ohne großen Aufwand veröffentlicht werden.</p>
+	<?php } ?>
+	<?php if ($param['message']){ ?>
 	<hr>
 	<h3>Weitere Informationen</h3>
 	<p>
