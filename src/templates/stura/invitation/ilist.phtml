@@ -45,8 +45,8 @@
 										</span></button>
 									<button class="cancel btn btn-outline-secondary" title="Planung entfernen" type="button"><i class="fa fa-fw fa-times"></i></button>
 								<?php } else { ?>
-									<button class="restore btn btn-outline-secondary" data-href="<?= $nproto['generated_url']? $nproto['generated_url']: ''?>" title="Zum Protokoll" type="button"><i class="fa fa-fw fa-link"></i></button>
-									<?php if ( !disable_restore ){ ?>
+									<a target="_blank" class="link btn btn-outline-secondary" href="<?= ($nproto['generated_url']? WIKI_URL.'/'.str_replace(':', '/', $param['protomap'][0]).'/'.$nproto['generated_url']: '#')?>" title="Zum Protokoll" type="button"><i class="fa fa-fw fa-link"></i></a>
+									<?php if ( !$disable_restore ){ ?>
 										<button class="restore btn btn-outline-secondary" title="Wiederherstellen" type="button"><i class="fa fa-fw fa-refresh"></i></button>
 									<?php } ?>
 								<?php } ?>

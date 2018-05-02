@@ -975,7 +975,7 @@
 		$e.find('.createp').on('click', function () {
 			func_newproto_towiki(this, false);
 		});
-		// link to wiki TODO js + php
+		// link to wiki
 		// restore TODO js + php
 	}
 	// create /or update newProto list entry
