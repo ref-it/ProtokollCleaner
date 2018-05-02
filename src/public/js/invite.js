@@ -796,6 +796,46 @@
 			}, 'abort': function(obj){ obj.close(); }}
 		}).open();
 	}
+	// delete newproto entry
+	var func_newproto_restore = function (){
+		var $e = $(this).closest('.nprotoelm');
+		$.modaltools({
+			headerClass: 'bg-warning',
+			text: 'Soll die Sitzung(splanung) am <strong>'+$e.children('div').eq(0).text()+'</strong> wiederhergestellt?', 
+			ptag: false,	
+			headlineText: 'Wiederherstellen',
+			buttons: {'abort': 'Abbrechen', 'ok': 'Wiederherstellen'},
+			callback: {'ok':function(obj){
+				var dataset = {
+					committee: 'stura',
+					hash: 		$e[0].dataset.hash,
+					npid: 		$e[0].dataset.id,
+				};
+				var fchal = document.getElementById('fchal');
+				dataset[fchal.getAttribute("name")] = fchal.value;
+				
+				//do ajax post request
+				$.ajax({
+					type: "POST",
+					url: '/invite/nprestore',
+					data: dataset,
+					success: function(data){
+						pdata = {};
+						pdata = parseData(data);
+						if(pdata.success == true){
+							//delete newprotocol
+							silmph__add_message(pdata.msg, MESSAGE_TYPE_SUCCESS, 3000);
+							obj.close();
+							auto_page_reload(3000);
+						} else {
+							silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
+						}
+					},
+					error: postError
+				});
+			}, 'abort': function(obj){ obj.close(); }}
+		}).open();
+	}
 	// send invitations for newproto entry
 	var func_newproto_invite = function (){
 		var $e = $(this).closest('.nprotoelm');
@@ -977,6 +1017,7 @@
 		});
 		// link to wiki
 		// restore TODO js + php
+		$e.find('.restore').on('click', func_newproto_restore);
 	}
 	// create /or update newProto list entry
 	var func_np_create_update = function (data){

@@ -38,6 +38,7 @@ $routes = [
 		'invite/npdelete'	=> ['inpdelete',	'invitation', 	'npdelete'],
 		'invite/npinvite'	=> ['inpinvite',	'invitation', 	'npinvite'],
 		'invite/nptowiki'	=> ['inp2wiki',		'invitation', 	'nptowiki'],
+		'invite/nprestore'	=> ['inprestore',	'invitation', 	'nprestore'],
 		'invite/mdelete'	=> ['imemberdelete','invitation', 	'mdelete'],
 		'invite/madd'		=> ['imemberadd',	'invitation', 	'madd'],
 	]
@@ -118,6 +119,7 @@ $permission_map = [
 	'inpdelete'		=> 'stura,ref-it,stura,konsul,admin',
 	'inpinvite'		=> 'stura,ref-it,stura,konsul,admin',
 	'inp2wiki'		=> 'stura,ref-it,stura,konsul,admin',
+	'inprestore'	=> 'stura,ref-it,stura,konsul,admin',
 	'imemberdelete' => 'konsul,admin',
 	'imemberadd' 	=> 'konsul,admin',
 	'protoedit' 	=> 'ref-it,stura,konsul,admin',
