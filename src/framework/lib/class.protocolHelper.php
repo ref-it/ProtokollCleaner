@@ -64,6 +64,10 @@ class protocolHelper extends protocolOut
 			'match' => ['Protokoll', 'vom', 'bestätigt', '\d\d\d\d'], 
 			'long' => 'Protokoll',
 			'short' => 'P'
+		], [ //old resolutions on resolist2
+			'match' => ['Protokoll', 'beschließt', 'vom', 'Wiki vorliegende', 'Fassung', '\d+'], 
+			'long' => 'Protokoll',
+			'short' => 'P'
 		], [
 			'match' => ['Tagesordnung'], 
 			'long' => 'Tagesordnung',
@@ -480,7 +484,7 @@ class protocolHelper extends protocolOut
 		
 		//categorize pregmatches
 		if (isset($pregFind['resolution']['public']))
-			$p->resolutions = $p->resolutions +  self::parseResolutionArray($pregFind['resolution']['public'], $p);
+			$p->resolutions = $p->resolutions + self::parseResolutionArray($pregFind['resolution']['public'], $p);
 		if (isset($pregFind['resolution']['intern']))
 			$p->resolutions = $p->resolutions + self::parseResolutionArray($pregFind['resolution']['intern'], $p, ['long' => 'Intern', 'short' => 'I']);
 		//create resolution tags

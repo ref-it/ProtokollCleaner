@@ -288,6 +288,10 @@ class CrawlerController extends MotherController
 					//type short
 					$type_short = strtoupper(substr($resoExp[1],0,1));
 					
+					//fix wrong spelled Long Type: 'Intern', 'Protokoll'
+					if ($type_short == 'P') $resoExp[1] = 'Protokoll';
+					if ($type_short == 'I') $resoExp[1] = 'Intern';
+					
 					//calculate resolution type by resolution text
 					$tmp_type = protocolHelper::parseResolutionType($resoExp[2]);
 					
