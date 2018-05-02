@@ -975,4 +975,212 @@ class InvitationController extends MotherController {
 			$this->print_json_result();
 		}
 	}
+	
+	/**
+	 * POST action
+	 * create protocol in wiki
+	 */
+	public function nptowiki(){
+		$memberStateOptions = ['Fixme', 'J', 'E', 'N'];
+		//calculate accessmap
+		$validator_map = [
+			'committee' => ['regex',
+				'pattern' => '/'.implode('|', array_keys(PROTOMAP)).'/',
+				'maxlength' => 10,
+				'error' => 'Du hast nicht die benötigten Berechtigungen, um dieses Protokoll zu bearbeiten.'
+			],
+			'hash' => ['regex',
+				'pattern' => '/^([0-9a-f]{32})$/',
+				'empty',
+				'error' => 'Protokollkennung hat das falsche Format.'
+			],
+			'npid' => ['integer',
+				'min' => '1',
+				'error' => 'Ungültige Sitzungsid'
+			],
+			'legislatur' => ['integer',
+				'min' => '0',
+				'error' => 'Ungültige Legislatur.'
+			],
+			'nthproto' => ['integer',
+				'min' => '0',
+				'error' => 'Ungültige Sitzungsnummer'
+			],
+			'reaskdone' => ['integer',
+				'min' => '0',
+				'max' => '1',
+				'error' => 'Ungültiger Parameter: reaskdone'
+			],
+			'management' => ['name',
+				'empty',
+				'error' => 'Ungültiger Name: Sitzungsleitung'
+			],
+			'protocol' => ['name',
+				'empty',
+				'error' => 'Ungültige Name: Protokoll'
+			],
+			'member' => [ 'array',
+				'key' => ['integer',
+					'min' => '1',
+					'error' => 'Invalid Member Id.'
+				],
+				'validator' => ['integer',
+					'min' => '0',
+					'max' => max(0, count($memberStateOptions)-1),
+					'error' => 'Invalid Member State.'
+				],
+			]
+		];
+		$vali = new Validator();
+		$vali->validateMap($_POST, $validator_map, true);
+		if ($vali->getIsError()){
+			if($vali->getLastErrorCode() == 403){
+				$this->json_access_denied();
+			} else if($vali->getLastErrorCode() == 404){
+				$this->json_not_found();
+			} else {
+				http_response_code ($vali->getLastErrorCode());
+				$this->json_result = ['success' => false, 'eMsg' => $vali->getLastErrorMsg()];
+				$this->print_json_result();
+			}
+		} else if (!checkUserPermission($vali->getFiltered('committee'))) {
+			$this->json_access_denied();
+		} else {
+			$nproto = $this->db->getNewprotoById($vali->getFiltered('npid'));
+			if (!$nproto
+				|| $nproto['gname'] != $vali->getFiltered('committee')
+				|| $nproto['hash'] != $vali->getFiltered('hash')){
+				$this->json_not_found('Protokoll nicht gefunden');
+				return;
+			}
+			$nproto['name'] = date_create($nproto['date'])->format('Y-m-d');
+			//don't allow dates in the past
+			$validateDate = date_create_from_format('Y-m-d H:i:s', $nproto['date']);
+			$now = date_create();
+			$diff = $now->getTimestamp() - $validateDate->getTimestamp();
+				
+			if ($diff > 3600) { //one hour
+				$this->json_result = [
+					'success' => false,
+					'eMsg' => 'Vergangene Sitzungen können nicht im Wiki erzeugt werden.'
+				];
+				$this->print_json_result();
+				return;
+			}
+			// dont allow duplicate creation on same newprotoelement
+			if ($nproto['generated_url']) {
+				$this->json_result = [
+					'success' => false,
+					'eMsg' => 'Abeschlossene Protokolle können nicht noch einmal erzeugt werden.'
+				];
+				$this->print_json_result();
+				return;
+			}
+			// check if page exists on wiki -> reask user if it should be overwritten
+			require_once (SYSBASE.'/framework/class.wikiClient.php');
+			$x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
+			if (!$vali->getFiltered('reaskdone')) {
+				$a = $x->getPage(parent::$protomap[$vali->getFiltered('committee')][0].':'.$nproto['name']);
+				if ($a != ''){
+					$this->json_result = [
+						'success' => true,
+						'reask' => true,
+						'msg' => '<div class="alert alert-danger" style="color: #770000;">Im Wiki existiert bereits ein Protokoll mit dem Namen "'.$nproto['name'].'".<br>Soll das Protokoll wirklich überschrieben werden?</div>'
+					];
+					$this->print_json_result();
+					return;
+				}
+			}
+			//management , protocol, member statemap
+			$members = $this->db->getMembers($vali->getFiltered('committee'));
+			foreach ($members as $id => $member){
+				//management , protocol
+				if ($member['name'] === $vali->getFiltered('management')){
+					$nproto['management'] = $member['id'];
+				}
+				if ($member['name'] === $vali->getFiltered('protocol')){
+					$nproto['protocol'] = $member['id'];
+				}
+				// member statemap
+				$members[$id]['state'] = (isset($vali->getFiltered('member')[$member['id']]))? $vali->getFiltered('member')[$member['id']] : 0;
+				$members[$id]['stateName'] = $memberStateOptions[$members[$id]['state']];
+			}
+			// open protocols // not aggreed
+			$notAgreedProtocols = $this->db->getProtocols($vali->getFiltered('committee'), false, false, true, false, " AND LENGTH(P.name) = 10 AND P.date > '2017-01-01' AND date < '".date_create()->format('Y-m-d')."'");
+			$draftStateProtocols = $this->db->getProtocols($vali->getFiltered('committee'), false, false, false, true, " AND (P.public_url IS NULL) AND LENGTH(P.name) = 10 AND P.date > '2017-01-01' AND date < '".date_create()->format('Y-m-d')."'");
+			$newprotoProtocols_tmp = $this->db->getNewprotos($vali->getFiltered('committee'));
+			$newprotoProtocols = [];
+			foreach ($newprotoProtocols_tmp as $np) {
+				$newprotoProtocols[ date_create($np['date'])->format('Y-m-d') ] = $np;
+			}
+			//tops
+			$tops_tmp = $this->db->getTopsOpen($nproto['gname']);
+			$tops = [];
+			foreach ($tops_tmp as $id => $top){
+				if (!$top['skip_next']){
+					$tops[$id] = $top;
+				}
+			}
+			//resortalias
+			$resorts = $this->db->getResorts($vali->getFiltered('committee'));
+			
+			//create protocoltext
+			ob_start();
+			$this->includeTemplate('protocol_template_'.strtolower($vali->getFiltered('committee')), [
+				'legislatur' => $vali->getFiltered('legislatur'),
+				'nthproto' => $vali->getFiltered('nthproto'),
+				'proto' => $nproto,
+				'members' => $members,
+				'date' => date_create($nproto['date']),
+				'protoInternLink' => WIKI_URL.'/'.parent::$protomap[$vali->getFiltered('committee')][0].'/',
+				'protoPublicLink' => WIKI_URL.'/'.parent::$protomap[$vali->getFiltered('committee')][1].'/',
+				'openProtocols' => ['notAgreed' => $notAgreedProtocols, 'draftState' => $draftStateProtocols, 'newproto' => $newprotoProtocols ],
+				'tops' => $tops,
+				'resorts' => $resorts,
+			]);
+			$prot_text = ob_get_clean();
+			
+			$ok = false;
+			//write protocol to wiki
+			$ok = $x->putPage(
+				parent::$protomap[$vali->getFiltered('committee')][0].':'.$nproto['name'],
+				$prot_text,
+				['sum' => 'GENERIERT mit '.BASE_TITLE.' von ('. $this->auth->getUsername().')']
+				);
+			if ($ok == false){
+				$this->json_result = [
+					'success' => false,
+					'eMsg' => 'Fehler beim Schreiben. (Code: '.$x->getStatusCode().')'
+				];
+				error_log('NewProto -> WIKI: Could not write. Request: Put Page - '.parent::$protomap[$vali->getFiltered('committee')][0].':'.$nproto['name'].' - Wiki respond: '.$x->getStatusCode().' - '.(($x->isError())?$x->getError():''));
+				$this->print_json_result();
+				return;
+			}
+			// update tops
+			foreach ($tops as $top){
+				$top['used_on'] = $nproto['id'];
+				$this->db->updateTop($top);
+			}
+			
+			// update newproto 
+			$nproto['generated_url'] = $nproto['name'];
+			$this->db->updateNewproto($nproto);
+			if (!$ok){
+				$this->json_result = [
+					'success' => false,
+					'eMsg' => 'Fehler beim DB Update.'
+				];
+				$this->print_json_result();
+				return;
+			}
+
+			$this->json_result = [
+				'success' => true,
+				'msg' => 'Protokoll im Wiki erstellt.',
+				'url' => WIKI_URL.'/'.str_replace(':', '/', parent::$protomap[$vali->getFiltered('committee')][0].':'.$nproto['name'])
+			];
+			$this->print_json_result();
+			
+		}
+	}
 }

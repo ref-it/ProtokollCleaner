@@ -364,13 +364,17 @@ class Database
 	 * @param string $committee get protocols of choosen committee
 	 * @param boolean $draftOnly only get protocols with draft status
 	 * @param boolean $publicOnly only get protocols with public status (overwrites $draftOnly)
+	 * @param boolean $notAgreedOnly only get protocols where agreed state is NULL
+	 * @param boolean $agreedOnly only get protocols where agreed state is NOT NULL
 	 * @return array protocol list by protocol name
 	 */
-	public function getProtocols( $committee , $draftOnly = false , $publicOnly = false ){
+	public function getProtocols( $committee , $draftOnly = false , $publicOnly = false, $notAgreedOnly = false, $agreedOnly = false, $where = ''){
 		$a = ($draftOnly)? ' AND P.draft_url IS NOT NULL' : '';
 		$a .= ($publicOnly)? ' AND P.public_url IS NOT NULL' : '';
+		$a .= ($notAgreedOnly)? ' AND P.agreed IS NULL' : '';
+		$a .= ($agreedOnly)? ' AND P.agreed IS NOT NULL' : '';
 		//TODO optional join and count todos and resolutions
-		$sql = "SELECT P.*, G.id as gid, G.name as gname FROM `".TABLE_PREFIX."protocol` P, `".TABLE_PREFIX."gremium` G WHERE P.gremium = G.id AND G.name = ?$a;";
+		$sql = "SELECT P.*, G.id as gid, G.name as gname FROM `".TABLE_PREFIX."protocol` P, `".TABLE_PREFIX."gremium` G WHERE P.gremium = G.id AND G.name = ?$a $where;";
 		$result = $this->getResultSet($sql, 's', $committee);
 		
 		$r = [];
@@ -381,6 +385,28 @@ class Database
 	}
 	
 	/**
+	 * return protocol list
+	 * @param string $committee get protocols of choosen committee
+	 * @param integer $lnum legislaturnumber
+	 * @param boolean $draftOnly only get protocols with draft status
+	 * @param boolean $publicOnly only get protocols with public status (overwrites $draftOnly)
+	 * @return array protocol list by protocol name
+	 */
+	public function getProtocolsByLegislatur( $committee , $lnum ,$draftOnly = false , $publicOnly = false ){
+		$a = ($draftOnly)? ' AND P.draft_url IS NOT NULL' : '';
+		$a .= ($publicOnly)? ' AND P.public_url IS NOT NULL' : '';
+		//TODO optional join and count todos and resolutions
+		$sql = "SELECT P.*, G.id as gid, G.name as gname FROM `".TABLE_PREFIX."protocol` P, `".TABLE_PREFIX."gremium` G, `".TABLE_PREFIX."legislatur` L WHERE P.date >= L.start AND L.number = ? AND P.gremium = G.id AND G.name = ?$a;";
+		$result = $this->getResultSet($sql, 'is', [$lnum, $committee]);
+	
+		$r = [];
+		foreach ($result as $pro){
+			$r[$pro['name']] = $pro;
+		}
+		return $r;
+	}
+	
+	
 	 * return name => protocol id map
 	 * used on protocol list -> for resolution linking
 	 * @param string $committee get protocols of choosen committee
@@ -792,12 +818,16 @@ class Database
 	 * @param $gremium committee|gremium name
 	 * @return array
 	 */
-	public function getNewprotos($gremium){
+	public function getNewprotos($gremium, $key = 'id'){
 		$sql = "SELECT NP.* FROM `".TABLE_PREFIX."newproto` NP, `".TABLE_PREFIX."gremium` G WHERE NP.gremium = G.id AND G.name = ? ORDER BY NP.date DESC";
 		$result = $this->getResultSet($sql, 's', [$gremium]);
 		$return = [];
 		foreach ($result as $line){
-			$return[$line['id']] = $line;
+			if ($key){
+				$return[$line[$key]] = $line;
+			} else {
+				$return[] = $line;
+			}	
 		}
 		return $return;
 	}
@@ -935,6 +965,21 @@ class Database
 	public function getTopsOpen($gremium){
 		$sql = "SELECT T.* FROM `".TABLE_PREFIX."tops` T, `".TABLE_PREFIX."gremium` G WHERE T.gremium = G.id AND G.name = ? AND T.used_on IS NULL ORDER BY T.skip_next, T.resort ASC, T.order, T.added_on ASC";
 		$result = $this->getResultSet($sql, 's', [$gremium]);
+		$return = [];
+		foreach ($result as $line){
+			$return[$line['id']] = $line;
+		}
+		return $return;
+	}
+	
+	/**
+	 * returns tops
+	 * @param integer $npid newproto id
+	 * @return array
+	 */
+	public function getTopsByNewproto($npid){
+		$sql = "SELECT T.* FROM `".TABLE_PREFIX."tops` T, `".TABLE_PREFIX."gremium` G WHERE T.gremium = G.id AND T.used_on = ? ORDER BY T.skip_next, T.resort ASC, T.order, T.added_on ASC";
+		$result = $this->getResultSet($sql, 'i', [$npid]);
 		$return = [];
 		foreach ($result as $line){
 			$return[$line['id']] = $line;
