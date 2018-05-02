@@ -1,9 +1,9 @@
 <?php 
-	$params = $params;
+	$param = $param;
 	$links = [];
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><!--[if IE]><html xmlns="http://www.w3.org/1999/xhtml" class="ie"><![endif]--><!--[if !IE]><!--><html style="margin: 0;padding: 0;" xmlns="http://www.w3.org/1999/xhtml"><!--<![endif]--><head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Sitzungseinladung - <?=  ucfirst(strtolower($params['committee'])) ?></title>
+    <title>Sitzungseinladung - <?=  ucfirst(strtolower($param['committee'])) ?></title>
     <!--[if !mso]><!--><meta http-equiv="X-UA-Compatible" content="IE=edge" /><!--<![endif]-->
     <meta name="viewport" content="width=device-width" />
 <style type="text/css">
@@ -29,16 +29,16 @@
 	}
 </style>
     <meta name="robots" content="noindex,nofollow" />
-	<meta property="og:title" content="Sitzungseinladung - <?=  ucfirst(strtolower($params['committee'])) ?>" />
+	<meta property="og:title" content="Sitzungseinladung - <?=  ucfirst(strtolower($param['committee'])) ?>" />
 </head>
 <body class="half-padding" style="margin: 0;padding: 10px;-webkit-text-size-adjust: 100%;, height: 90%; width: 90%;">
 	<img style="display: block;height: auto;width: 100%;border: 0;max-width: 242px;" src="cid:logoattach" alt="Logo" width="242" />
-	<h2>Sitzungseinladung - <?=  ucfirst(strtolower($params['committee'])) ?></h2>
-	<p>Der <?= ucfirst(strtolower($params['committee'])) ?> der TU Ilmenau läd am <strong style="font-weight: bold;"><?= date_create($params['proto']['date'])->format('d.m.d') ?></strong> um <strong style="font-weight: bold;"><?= date_create($params['proto']['date'])->format('H:i') ?> Uhr</strong> zur nächsten Sitzung ein.</p>
+	<h2>Sitzungseinladung - <?=  ucfirst(strtolower($param['committee'])) ?></h2>
+	<p>Der <?= ucfirst(strtolower($param['committee'])) ?> der TU Ilmenau läd am <strong style="font-weight: bold;"><?= date_create($param['proto']['date'])->format('d.m.d') ?></strong> um <strong style="font-weight: bold;"><?= date_create($param['proto']['date'])->format('H:i') ?> Uhr</strong> zur nächsten Sitzung ein.</p>
 	<p>Voraussichtliche 
 		<ul>
-			<li>Sitzungsleitung:    <?= ($params['proto']['membernames']['m'])? $params['proto']['membernames']['m']['name'] : '-' ?></li>
-			<li>Protokollkontrolle: <?= ($params['proto']['membernames']['p'])? $params['proto']['membernames']['p']['name'] : '-' ?></li>
+			<li>Sitzungsleitung:    <?= ($param['proto']['membernames']['m'])? $param['proto']['membernames']['m']['name'] : '-' ?></li>
+			<li>Protokollkontrolle: <?= ($param['proto']['membernames']['p'])? $param['proto']['membernames']['p']['name'] : '-' ?></li>
 		</ul>
 	</p>
 	<hr>
@@ -55,9 +55,9 @@
 				echo '</ul></li>';
 			}?>
 			<?php 
-				foreach ($params['tops'] as $top){
+				foreach ($param['tops'] as $top){
 					if (!$top['resort']){
-						echo "<li>{$top['headline']}".(($top['goal'])?" ({$top['goal']})":'')."</li>\n";
+						echo "<li>{$top['headline']}".(($top['goal'])?" ({$top['goal']})":'').(($top['guest'])?' (Gäste erwartet)':'')."</li>\n";
 					}
 				}
 			?>
@@ -66,14 +66,14 @@
 		</ul>
 	</p>
 	<p>&#8212;</p>
-	<p>Weitere Tops können unter folgendem <a href="<?= $params['topLink'] ?>">Link [<?php echo count($links); $links[] = $params['topLink'] ?>]</a> nachgereicht werden, bedürfen aber eines Antrages an die Geschäftsordnung zur Änderung der Tagesordnung.</p>
-	<p>Desweiteren können Referate, AGs und Angestellte ihre Berichte <a href="<?= $params['topLink'] ?>">hier [<?php echo count($links); $links[] = $params['topLink'] ?>]</a> noch bis zur Sitzung vortragen. Dort befinden sich auch vorgetragene Referatberichte.</p>
+	<p>Weitere Tops können unter folgendem <a href="<?= $param['topLink'] ?>">Link [<?php echo count($links); $links[] = $param['topLink'] ?>]</a> nachgereicht werden, bedürfen aber eines Antrages an die Geschäftsordnung zur Änderung der Tagesordnung.</p>
+	<p>Desweiteren können Referate, AGs und Angestellte ihre Berichte <a href="<?= $param['topLink'] ?>">hier [<?php echo count($links); $links[] = $param['topLink'] ?>]</a> noch bis zur Sitzung vortragen. Dort befinden sich auch vorgetragene Referatberichte.</p>
 	<p>Solltet Ihr zum Zeitpunkt der Sitzung verhindert sein, meldet euch bitte rechtzeitig ab und hinterlegt gegebenenfalls für geplante Abstimmungen eine schriftliche Stimme.</p>
 	<?php if ($params['message']){ ?>
 	<hr>
 	<h3>Weitere Informationen</h3>
 	<p>
-	<?= str_replace(["\n", '  '], ['<br>', '&nbsp;&nbsp;'], $params['message']) ?>
+	<?= str_replace(["\n", '  '], ['<br>', '&nbsp;&nbsp;'], $param['message']) ?>
 	</p>
 	<?php } ?>
 	<hr>
@@ -87,6 +87,6 @@
 	?>
 	</p>
 	<br><br><br>
-	<p style="font-size: 8px; font-size: 0.7rem; font-weight: bold; color: #555555;"><?= $params['sender']? "Diese Nachricht wurde von ({$params['sender']}) generiert.": 'Diese Nachricht wurde automatisch vom '.BASE_TITLE.' generiert.'?></p>
+	<p style="font-size: 8px; font-size: 0.7rem; font-weight: bold; color: #555555;"><?= $param['sender']? "Diese Nachricht wurde von ({$param['sender']}) generiert.": 'Diese Nachricht wurde automatisch vom '.BASE_TITLE.' generiert.'?></p>
 </body>
 </html>

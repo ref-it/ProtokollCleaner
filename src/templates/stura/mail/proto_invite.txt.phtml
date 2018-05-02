@@ -1,16 +1,16 @@
 <?php 
-	$params = $params; 
+	$param = $param; 
 	$links = [];
-?>Sitzungseinladung - <?=  ucfirst(strtolower($params['committee'])) ?>
+?>Sitzungseinladung - <?=  ucfirst(strtolower($param['committee'])) ?>
 
 =================================================
 
-Der <?=  ucfirst(strtolower($params['committee'])) ?> der TU Ilmenau läd am <?= date_create($params['proto']['date'])->format('d.m.d') ?> um <?= date_create($params['proto']['date'])->format('H:i') ?> Uhr zur nächsten Sitzung ein.
+Der <?=  ucfirst(strtolower($param['committee'])) ?> der TU Ilmenau läd am <?= date_create($param['proto']['date'])->format('d.m.d') ?> um <?= date_create($param['proto']['date'])->format('H:i') ?> Uhr zur nächsten Sitzung ein.
 
 Voraussichtliche 
-  - Sitzungsleitung:    <?= ($params['proto']['membernames']['m'])? $params['proto']['membernames']['m']['name'] : '-' ?>
+  - Sitzungsleitung:    <?= ($param['proto']['membernames']['m'])? $param['proto']['membernames']['m']['name'] : '-' ?>
 
-  - Protokollkontrolle: <?= ($params['proto']['membernames']['p'])? $params['proto']['membernames']['p']['name'] : '-' ?>
+  - Protokollkontrolle: <?= ($param['proto']['membernames']['p'])? $param['proto']['membernames']['p']['name'] : '-' ?>
 
 
 Tagesordnung
@@ -24,9 +24,9 @@ Tagesordnung
 	}
 }?>
 <?php 
-	foreach ($params['tops'] as $top){
+	foreach ($param['tops'] as $top){
 		if (!$top['resort']){
-			echo "\n  * {$top['headline']}".(($top['goal'])?" ({$top['goal']})":'');
+			echo "\n  * {$top['headline']}".(($top['goal'])?" ({$top['goal']})":'').(($top['guest'])?' (Gäste erwartet)':'');
 		}
 	} ?>
 
@@ -37,7 +37,7 @@ Tagesordnung
 
 Weitere Informationen:
 ----------------------
-<?= $params['message'] ?>
+<?= $param['message'] ?>
 
 <?php } ?>
 
@@ -60,4 +60,4 @@ foreach ($links as $pos => $link){
 
 
 
-(<?= $params['sender']? "Diese Nachricht wurde von ({$params['sender']}) generiert.": 'Diese Nachricht wurde automatisch vom '.BASE_TITLE.' generiert.'?>)
+(<?= $param['sender']? "Diese Nachricht wurde von ({$param['sender']}) generiert.": 'Diese Nachricht wurde automatisch vom '.BASE_TITLE.' generiert.'?>)

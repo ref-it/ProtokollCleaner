@@ -178,7 +178,7 @@ class MailHandler
 	 * @param string $file
 	 * @param array $param
 	 */
-	private static function renderPHTML($file, $params){
+	private static function renderPHTML($file, $param = NULL){
 		ob_start();
 		include($file);
 		$mail_content_html = ob_get_clean();
@@ -190,7 +190,7 @@ class MailHandler
 	 * @param string $file
 	 * @param array $param
 	 */
-	private static function renderTXT($file, $params){
+	private static function renderTXT($file, $param = NULL){
 		$text_replacers = array();
 		$text_values = array();
 		foreach ($params as $key => $value){
