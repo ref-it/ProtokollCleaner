@@ -475,6 +475,7 @@
 		});
 		//editables + button functions
 		editable_mail_settings( $('.admin .editable.mail') , 'edit_mailsetting');
+		editable_mail_settings( $('.admin .editable.oset') , 'edit_mailsetting');
 		$('.admin.mail_settings .footerline button.submit').click(sendTestMail);
 		$('.admin.legis_settings .footerline button#add_legislatur').click(createLegislatur);
 		$('.admin.legis_settings tr .legremove').click(removeLegislatur);

@@ -62,6 +62,15 @@ class AdminController extends MotherController {
 			'pattern' => "/^([a-zA-Z0-9äöüÄÖÜß]+[a-zA-Z0-9\-_&#\/ .äöüÄÖÜß]*[a-zA-Z0-9äöüÄÖÜß]+)$/",
 			'maxlength' => 64,
 			'error' => 'Der Aliasname für den Mailabsender enthält ungültige Zeichen.']],
+		// OTHER SETTINGS
+		'DISABLE_RESTORE_OLDER_DAYS' => ['value' => ['integer',
+			'min' => 1,
+			'max' => 365,
+			'error' => 'Der erlaubte Zeitraum liegt zwischen 1 und 365']],
+		'AUTO_INVITE_N_HOURS' => ['value' => ['integer',
+			'min' => 1,
+			'max' => 168,
+			'error' => 'Der erlaubte Zeitraum liegt zwischen 1 und 168']],
 	];
 	
 	/**
@@ -95,7 +104,7 @@ class AdminController extends MotherController {
 				} else {
 					if($this->db->setSettings($data_key, $data_value)){
 						$this->db->setSettings('LAST_TESTMAIL', 0);
-						$this->json_result = array('success' => true, 'msg' => 'E-Maileinstellungen erfolgreich aktualisiert.', 'val' => (($data_key != 'SMTP_PASSWORD')? $data_value : ''));
+						$this->json_result = array('success' => true, 'msg' => 'Einstellungen erfolgreich aktualisiert.', 'val' => (($data_key != 'SMTP_PASSWORD')? $data_value : ''));
 					} else {
 						$this->json_result = array('success' => false, 'eMsg' => 'Unbekannter DB Fehler aufgetreten.');
 						error_log('DB Error on Mail Settings update. Key: "' . addslashes($data_key) . '" Value: "' . $data_value);

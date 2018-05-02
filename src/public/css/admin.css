@@ -1,6 +1,7 @@
 /* EMAIL SETTINGS =================================================*/
 .admin.mail_settings button, .admin.mail_settings input,
-.admin.mail_settings button, .admin.legis_settings input{
+.admin.legis_settings button, .admin.legis_settings input,
+.admin.oset_settings button, .admin.oset_settings input{
 	border-radius: 0;
 }
 .admin.mail_settings button,
@@ -22,13 +23,17 @@
 .admin.mail_settings button:focus,
 .admin.legis_settings .footerline button:hover,
 .admin.legis_settings .footerline button:active,
-.admin.legis_settings .footerline button:focus {
+.admin.legis_settings .footerline button:focus,
+.admin.oset_settings button:hover,
+.admin.oset_settings button:active,
+.admin.oset_settings button:focus {
 	cursor: pointer;
 	border: 1px solid #314885;
 	background-color: #E5891A;
 }
 .admin.mail_settings input, .admin.mail_settings textarea,
-.admin.legis_settings input, .admin.legis_settings textarea {
+.admin.legis_settings input, .admin.legis_settings textarea,
+.admin.oset_settings input, .admin.oset_settings textarea{
 	height: 28px;
 	line-height: 28px;
 	font-weight: bold;
@@ -43,13 +48,15 @@
 }
 /* ----------- */
 .admin.mail_settings table tr th:nth-child(1),
-.admin.legis_settings table tr th:nth-child(1){
+.admin.legis_settings table tr th:nth-child(1),
+.admin.oset_settings table tr th:nth-child(1){
 	text-align: left;
 	padding-left: 10px;
 	padding-right: 10px;
 }
 .editable.mail,
-.editable.legis {
+.editable.legis,
+.editable.oset {
 	-ms-word-break: break-all;
     word-break: break-all;
 	/* Non standard for webkit */
@@ -65,7 +72,10 @@
 .editable.mail:focus,
 .editable.legis:hover,
 .editable.legis:active,
-.editable.legis:focus {
+.editable.legis:focus,
+.editable.oset:hover,
+.editable.oset:active,
+.editable.oset:focus {
 	border: 1px solid gray;
 }
 .admin.mail_settings .footerline,
