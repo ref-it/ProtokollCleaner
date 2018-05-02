@@ -227,6 +227,8 @@
 				
 				'/js/libs/codemirror/keymap/sublime.js',
 				'/js/libs/codemirror/addon/dialog/dialog.js',
+				'/js/libs/codemirror/addon/display/panel.js',
+				'/js/libs/codemirror/addon/codemirror-buttons/buttons.js',
 				'/js/libs/codemirror/addon/edit/closebrackets.js',
 				'/js/libs/codemirror/addon/edit/matchbrackets.js',
 				'/js/libs/codemirror/addon/display/fullscreen.js',
@@ -262,7 +264,183 @@
 					"Esc": function(cm) {
 						if (cm.getOption("fullScreen")) cm.setOption("fullScreen", false);
 					}
-				}
+				},
+				buttons: [
+		          {
+		              hotkey: 'Ctrl-B',
+		              class: 'bold btn btn btn-outline-secondary mb-1 mr-1 p-1',
+		              label: '<i class="fa fa-fw fa-bold" title="Bold"></i>',
+		              callback: function (cm) {
+		                  var selection = cm.getSelection();
+		                  cm.replaceSelection('**' + selection + '**');
+		                  if (!selection) {
+		                      var cursorPos = cm.getCursor();
+		                      cm.setCursor(cursorPos.line, cursorPos.ch - 2);
+		                  }
+		              }
+		          },
+		          {
+		              hotkey: 'Ctrl-I',
+		              class: 'italic btn btn btn-outline-secondary mb-1 mr-1 p-1',
+		              label: '<i class="fa fa-fw fa-italic" title="Kursiv"></i>',
+		              callback: function (cm) {
+		                  var selection = cm.getSelection();
+		                  cm.replaceSelection('//' + selection + '//');
+		                  if (!selection) {
+		                      var cursorPos = cm.getCursor();
+		                      cm.setCursor(cursorPos.line, cursorPos.ch - 2);
+		                  }
+		              }
+		          },
+		          {
+		              hotkey: 'Ctrl-U',
+		              class: 'underline btn btn btn-outline-secondary mb-1 mr-1 p-1',
+		              label: '<i class="fa fa-fw fa-underline" title="Underline"></i>',
+		              callback: function (cm) {
+		                  var selection = cm.getSelection();
+		                  cm.replaceSelection('__' + selection + '__');
+		                  if (!selection) {
+		                      var cursorPos = cm.getCursor();
+		                      cm.setCursor(cursorPos.line, cursorPos.ch - 2);
+		                  }
+		              }
+		          },
+		          {
+		              class: 'strike btn btn btn-outline-secondary mb-1 mr-1 p-1',
+		              label: '<i class="fa fa-fw fa-strikethrough" title="Strikethrough"></i>',
+		              callback: function (cm) {
+		                  var selection = cm.getSelection();
+		                  cm.replaceSelection('<del>' + selection + '</del>');
+		                  if (!selection) {
+		                      var cursorPos = cm.getCursor();
+		                      cm.setCursor(cursorPos.line, cursorPos.ch - 6);
+		                  }
+		              }
+		          },
+		          {
+		              class: 'hrline btn btn btn-outline-secondary mb-1 mr-1 p-1',
+		              label: '<i class="fa fa-fw fa-window-minimize" title="Line"></i>',
+		              callback: function (cm) {
+		                  cm.replaceSelection("\n----\n" + cm.getSelection());
+		              }
+		          },
+		          {
+		              class: 'inline-code btn btn btn-outline-secondary mb-1 mr-1 p-1',
+		              label: '<i class="fa fa-fw fa-code"  title="Code"></i>',
+		              callback: function (cm) {
+		                  var selection = cm.getSelection();
+		                  cm.replaceSelection("''" + selection + "''");
+		                  if (!selection) {
+		                      var cursorPos = cm.getCursor();
+		                      cm.setCursor(cursorPos.line, cursorPos.ch - 2);
+		                  }
+		              }
+		          },
+		          {
+		              class: 'alink btn btn btn-outline-secondary mb-1 mr-3 p-1',
+		              label: '<i class="fa fa-fw fa-link"  title="Code"></i>',
+		              callback: function (cm) {
+		                  var selection = cm.getSelection();
+		                  var text = '';
+		                  var link = '';
+		
+		                  if (selection.match(/^https?:\/\//)) {
+		                      link = selection;
+		                  } else {
+		                      text = selection;
+		                  }
+		                  cm.replaceSelection('[[' + link + '|' + text + ']]');
+		                  var cursorPos = cm.getCursor();
+		                  if (!selection) {
+		                      cm.setCursor(cursorPos.line, cursorPos.ch - 3);
+		                  } else if (link) {
+		                      cm.setCursor(cursorPos.line, cursorPos.ch - 2);
+		                  } else {
+		                      cm.setCursor(cursorPos.line, cursorPos.ch - (3 + text.length));
+		                  }
+		              }
+		          },
+		          {
+		              class: 'ol btn btn btn-outline-secondary mb-1 mr-1 p-1',
+		              label: '<i class="fa fa-fw fa-list-ol" title="List OL"></i>',
+		              callback: function (cm) {
+		            	  var cursorPos = cm.getCursor();
+		            	  var line=  cursorPos.line
+		            	  var cpos = cursorPos.ch;
+		            	  var content = ''+cm.getLine(line);
+		            	  content = content.trim();
+		            	  var add = '';
+		            	  if (content.length > 0 && content[0] == '-'){
+		            		  cpos += 2;
+		            		  add = '  ';
+		            	  } else {
+		            		  cpos += 4;
+		            		  add = '  - ';
+		            	  }
+		            	  cm.setCursor(line, 0);
+		            	  cm.replaceSelection(add + cm.getSelection() );
+		            	  cm.setCursor(line, cpos);
+		              }
+		          },
+		          {
+		              class: 'ul btn btn btn-outline-secondary mb-1 mr-3 p-1',
+		              label: '<i class="fa fa-fw fa-list-ul" title="List UL"></i>',
+		              callback: function (cm) {
+		            	  var cursorPos = cm.getCursor();
+		            	  var line=  cursorPos.line
+		            	  var cpos = cursorPos.ch;
+		            	  var content = ''+cm.getLine(line);
+		            	  content = content.trim();
+		            	  var add = '';
+		            	  if (content.length > 0 && content[0] == '*'){
+		            		  cpos += 2;
+		            		  add = '  ';
+		            	  } else {
+		            		  cpos += 4;
+		            		  add = '  * ';
+		            	  }
+		            	  cm.setCursor(line, 0);
+		            	  cm.replaceSelection(add + cm.getSelection() );
+		            	  cm.setCursor(line, cpos);
+		              }
+		          },
+		          {
+		              class: 'beschlussStura btn btn btn-outline-secondary mb-1 mr-1 p-1',
+		              label: '<i class="fa fa-fw fa-users" title="Stura Beschluss"></i>S',
+		              callback: function (cm) {
+		                  var selection = cm.getSelection();
+		                  cm.replaceSelection("{{template>:vorlagen:stimmen|Titel=|J=|N=|E=|S=angenommen oder abgelehnt}}" + selection);
+		                  if (!selection) {
+		                      var cursorPos = cm.getCursor();
+		                      cm.setCursor(cursorPos.line, cursorPos.ch - 39);
+		                  }
+		              }
+		          },
+		          {
+		              class: 'beschlussSturaExtern btn btn btn-outline-secondary mb-1 mr-1 p-1',
+		              label: '<i class="fa fa-fw fa-users" title="Stura Extern"></i>E',
+		              callback: function (cm) {
+		                  var selection = cm.getSelection();
+		                  cm.replaceSelection("{{template>:vorlagen:stimmen|Titel=Der StuRa beschließt eine Risikofinanzierung in Höhe von XXX EUR für das Projekt YYY entsprechend der Förderrichtlinie und der Kreditrichtlinie des Studierendenrates sowie dem vorliegenden Finanzplan. Davon werden ZZZ EUR als Vorkasse ausgezahlt.|J=|N=|E=|S=angenommen oder abgelehnt}}" + selection);
+		                  if (!selection) {
+		                      var cursorPos = cm.getCursor();
+		                      cm.setCursor(cursorPos.line, cursorPos.ch - 285);
+		                  }
+		              }
+		          },
+		          {
+		              class: 'beschlussSturaIntern btn btn btn-outline-secondary mb-1 mr-0 p-1',
+		              label: '<i class="fa fa-fw fa-users" title="Stura Intern"></i>I',
+		              callback: function (cm) {
+		                  var selection = cm.getSelection();
+		                  cm.replaceSelection("{{template>:vorlagen:stimmen|Titel=Der StuRa beschließt ein Budget in Höhe von XXX EUR für das Projekt YYY.|J=|N=|E=|S=angenommen oder abgelehnt}}" + selection);
+		                  if (!selection) {
+		                      var cursorPos = cm.getCursor();
+		                      cm.setCursor(cursorPos.line, cursorPos.ch - 111);
+		                  }
+		              }
+		          },
+		        ],
 			});
 			cmEditor.on('change', function(){
 				cmEditor.save();
