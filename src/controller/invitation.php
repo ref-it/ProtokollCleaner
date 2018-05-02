@@ -343,10 +343,10 @@ class InvitationController extends MotherController {
 				$tr = false;
 				$me = false;
 				//delete tops
-				$tr = $this->db->deleteTopsByMemberId($vali->getFiltered('mid'));
+				$tr = $this->db->deleteTopsByMemberIdSoft($vali->getFiltered('mid'));
 				//delete newprotocol
 				if ($tr){
-					$np = $this->db->deleteNewprotoByMemberId($vali->getFiltered('mid'));
+					$np = $this->db->deleteNewprotoByMemberIdSoft($vali->getFiltered('mid'));
 				}
 				//delete member
 				if ($np){

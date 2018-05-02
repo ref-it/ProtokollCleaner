@@ -1172,6 +1172,38 @@ class Database
 	}
 	
 	/**
+	 * delete newproto by member id
+	 * but only removes entries if management and protocol are empty, else update and remove id
+	 * @param integer $id
+	 * @return integer affected rows
+	 */
+	function deleteNewprotoByMemberIdSoft($id){
+		$sql = "DELETE FROM `".TABLE_PREFIX."newproto` WHERE `generated_url` IS NOT NULL AND ((`management` = ? AND `protocol` IS NULL) OR (`protocol` = ? AND `management` IS NULL) OR (`protocol` = ? AND `management` = ?))";
+		$this->protectedInsert($sql, 'iiii', [$id, $id, $id, $id]);
+		if (!$this->isError()){
+			$pattern = 'i';
+			$data = [
+				$id,
+			];
+			$sql = "UPDATE `".TABLE_PREFIX."newproto` SET
+				`management` = NULL
+				WHERE `management` = ? ";
+			$this->protectedInsert($sql, $pattern, $data);	
+		}
+		if (!$this->isError()){
+			$pattern = 'i';
+			$data = [
+				$id,
+			];
+			$sql = "UPDATE `".TABLE_PREFIX."newproto` SET
+				`protocol` = NULL
+				WHERE `protocol` = ? ";
+			$this->protectedInsert($sql, $pattern, $data);
+		}
+		return !$this->isError();
+	}
+	
+	/**
 	 * delete tops by member id
 	 * @param integer $id
 	 * @return integer affected rows
@@ -1179,6 +1211,18 @@ class Database
 	function deleteTopsByMemberId($id){
 		$sql = "DELETE FROM `".TABLE_PREFIX."tops` WHERE `used_on` IN (SELECT NP.id FROM `".TABLE_PREFIX."newproto` NP WHERE NP.management = ? OR NP.protocol = ?);";
 		$this->protectedInsert($sql, 'ii', [$id, $id]);
+		return !$this->isError();
+	}
+	
+	/**
+	 * delete tops by member id
+	 * but only removes entries if management and protocol are empty
+	 * @param integer $id
+	 * @return integer affected rows
+	 */
+	function deleteTopsByMemberIdSoft($id){
+		$sql = "DELETE FROM `".TABLE_PREFIX."tops` WHERE `used_on` IN (SELECT NP.id FROM `".TABLE_PREFIX."newproto` NP WHERE (NP.management = ? AND NP.protocol IS NULL) OR (NP.protocol = ? AND NP.management IS NULL) OR (NP.protocol = ? AND NP.management = ?) );";
+		$this->protectedInsert($sql, 'iiii', [$id, $id, $id, $id]);
 		return !$this->isError();
 	}
 	
