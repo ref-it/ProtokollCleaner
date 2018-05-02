@@ -176,7 +176,7 @@ class ResolutionController extends MotherController
 		$x->putPage( 
 			parent::$protomap[$perm][2], 
 			$wikiText, 
-			['sum' => 'GENERIERT mit '.BASE_TITLE.' von ('. $this->auth->getUserFullName().')']);
+			['sum' => 'GENERIERT mit '.BASE_TITLE.' von ('. $this->auth->getUserName().')']);
 		
 		// Return result and timing
 		prof_flag('Done');
