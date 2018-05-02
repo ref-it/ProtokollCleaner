@@ -58,15 +58,15 @@ $rawRoutes = [
  * @var array
  */
 $navigation = [
-	'/' 		=> ['baseaccess', 	'Home', 			'&#xf015;',		''],
-	'admin' 	=> ['admin', 		'Admin', 			'&#xf085;',		'gearLogo.png'],
+	'/' 		=> ['baseaccess', 	'Home', 			'&#xf015;',		NULL],
+	'admin' 	=> ['admin', 		'Admin', 			'&#xf085;',		''],
 	'crawl'	 	=> ['crawler', 		'Crawler', 			'&#xf0e7;',		''],
-	'protolist' => ['protolist', 	'Protokolle', 		'&#xf266;',		'log.png'],
-	'reso/list' => ['resolist', 	'Beschlussliste', 	'&#xf0cb;',		'log.png'],
-	'todo/list' => ['todolist', 	'Todos', 			'&#xf046;',		'log.png'],
-	'invite'	=> ['invitebase', 	'Sitzungseinladung', '&#xf0e0;',	'log.png'],
-	'https://stura.tu-ilmenau.de/impressum' => ['baseaccess', 'Impressum', '&#xf129;', ''],
-	'https://www.tu-ilmenau.de/impressum/datenschutz/' => ['baseaccess', 'Datenschutz', '&#xf1c0;', ''],
+	'protolist' => ['protolist', 	'Protokolle', 		'&#xf266;',		''],
+	'reso/list' => ['resolist', 	'Beschlussliste', 	'&#xf0cb;',		''],
+	'todo/list' => ['todolist', 	'Todos', 			'&#xf046;',		''],
+	'invite'	=> ['invitebase', 	'Sitzungseinladung', '&#xf0e0;',	''],
+	'https://stura.tu-ilmenau.de/impressum' => ['baseaccess', 'Impressum', '&#xf129;', NULL],
+	'https://www.tu-ilmenau.de/impressum/datenschutz/' => ['baseaccess', 'Datenschutz', '&#xf1c0;', NULL],
 ];
 
 

@@ -17,13 +17,22 @@
 	$tnav = $this->t->getNavigation();
 	$counter = 0;
 	foreach ($tnav as $route => $linkdata){ 
-		if ($linkdata[2] == '') continue;		?>
+		if ($linkdata[2] === NULL) continue;
+		if ($linkdata[2] == '') {	?>
 		<div class="button_container">
-			<a href="<?= $route?>" target="_self" title="<?= $linkdata[0] ?>">
+			<a class="btn btn-outline-secondary" href="<?= $route?>" target="_self" title="<?= $linkdata[0] ?>">
+				<h3><?= $linkdata[0] ?></h3>
+				<div class="fa fa-5x fa-fw mt-3"><?= $linkdata[1] ?></div>
+			</a>
+		</div>
+		<?php } else { ?>
+		<div class="button_container">
+			<a class="btn btn-outline-secondary" href="<?= $route?>" target="_self" title="<?= $linkdata[0] ?>">
 				<h3><?= $linkdata[0] ?></h3>
 				<div class="img" style="background-image: url('/images/<?= $linkdata[2] ?>')"></div>
 			</a>
 		</div>
+		<?php } ?>
 	<?php 
 		$counter++;
 	} ?>
