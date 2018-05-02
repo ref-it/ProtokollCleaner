@@ -410,8 +410,7 @@ div.silmph__message_success {
 
 /* GENERAL HALF + FULL BOXES ==============================================  */
 .half_container, 
-.full_container,
-.button_container{
+.full_container{
 	border: 1px solid #173d92;
 	width: calc(50% - 10px);
 	margin: 5px 5px;
@@ -420,14 +419,22 @@ div.silmph__message_success {
 	padding: 5px;
 	position: relative;
 }
+.button_container{
+	width: calc(50% - 10px);
+	margin: 5px 5px;
+	float: left;
+	min-height: 200px;
+	padding: 2px;
+	position: relative;
+}
 .full_container {
 	width: calc(100% - 10px);
 }
 .button_container {
 	width: calc(25% - 10px);
 	height: 200px;
-	min-width: 220px;
-	margin: 5px 5px;
+	min-width: 272px;
+	margin: 4px 4px;
 }
 .max_height400{
 	max-height: 400px;
@@ -528,7 +535,7 @@ div.silmph__message_success {
 }
 .button_container div.img{
 	width: 90%;
-	height: 150px;
+	height: 125px;
 	margin: 5px auto 5px;
 	left: 0;
 	right: 0;
