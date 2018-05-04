@@ -54,7 +54,7 @@ define('CRON_USERMAP', [
 		'password' => '1234', //
 		'displayName' => 'Cron User',
 		'mail' => 'ref-it@tu-ilmenau.de',
-		'groups' => ['cron', 'croninfo', 'cronmail', 'cronwiki', 'stura'],
+		'groups' => ['cron', 'croninfo', 'cronmail', 'cronwiki'],
 		'eduPersonPrincipalName' => ['cronuser'],
 	]
 ]);
