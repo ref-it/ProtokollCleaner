@@ -74,23 +74,11 @@ $navigation = [
 
 
 if (DEBUG >= 1) {
-	$routes['GET']['dev'] = ['dev', 'dev',  'link'];
-	$navigation['dev'] = ['dev', 'Dev', '&#xf20e;', ''];
-
-	$routes['GET']['devWiki'] = ['dev', 'dev', 'link2'];
-	$navigation['devWiki'] = ['dev', 'devWiki', '&#xf20e;', ''];
-	
 	$routes['GET']['wiki'] = ['dev', 'dev',  'wiki'];
 	$navigation['wiki'] = ['dev', 'WikiTest', '&#xf266;', ''];
 
     $routes['GET']['wikiPut'] = ['dev', 'dev', 'putwiki'];
     $navigation['wikiPut'] = ['dev', 'WikiTestPut', '&#xf266;', ''];
-
-    $routes['GET']['data'] = ['dev', 'dev', 'Data'];
-    $navigation['data'] = ['dev', 'WriteFiles', '&#xf0c5;', ''];
-
-    $routes['GET']['del'] = ['dev', 'dev', 'DeleteFiles'];
-    $navigation['del'] = ['dev', 'Delete Files', '&#xf1f8;', ''];
 }
 
 /**

@@ -28,24 +28,6 @@ class DevController extends MotherController
 	}
 	
 	/**
-	 * ACTION link
-	 */
-	public function link(){
-		$this->t->printPageHeader();
-		include (SYSBASE.'/framework/lib/o/PCUI.php');
-		$this->t->printPageFooter();
-	}
-
-    public function link2()
-    {
-        $this->t->printPageHeader();
-        include(SYSBASE . '/framework/lib/o/Main.php');
-        $x = new Main();
-        $x->WikiMain();
-        $this->t->printPageFooter();
-    }
-	
-	/**
 	 * ACTION wiki
 	 */
 	public function wiki(){
@@ -69,26 +51,6 @@ class DevController extends MotherController
 		
 		$this->t->printPageFooter();
 	}
-	
-	/**
-	 * ACTION Data
-	 */
-    public function Data()
-    {
-        $this->t->printPageHeader();
-        include(SYSBASE . '/framework/lib/o/ShowFiles.php');
-        $this->t->printPageFooter();
-    }
-
-    /**
-     * ACTION DeleteFiles
-     */
-    public function DeleteFiles()
-    {
-        $this->t->printPageHeader();
-        include(SYSBASE . '/framework/lib/o/delete.php');
-        $this->t->printPageFooter();
-    }
 
     public function putwiki()
     {
