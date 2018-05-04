@@ -52,7 +52,14 @@ class InvitationController extends MotherController {
 			}
 		}
 		
-		$mailer->mail->addAddress($mail_address);
+		if (is_string($mail_address)){
+			$mailer->mail->addAddress($mail_address);
+		} elseif (is_array($mail_address)) {
+			foreach ($mail_address as $mail_addr){
+				$mailer->mail->addAddress($mail_addr);
+			}
+		}
+		
 		$mailer->mail->Subject = 'Sitzungseinladung - '.ucfirst(strtolower($proto['gname'])).' - '.$pdate->format('d.m.Y H:i');
 		
 		$mailer->bindVariables([
