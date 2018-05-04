@@ -24,7 +24,7 @@ class MotherController extends JsonController {
 	
 	/**
 	 * contains the database connection
-	 * Database
+	 * DatabaseModel
 	 */
 	protected $db;
 	

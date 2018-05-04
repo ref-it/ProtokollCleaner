@@ -97,6 +97,7 @@ if (!file_exists(dirname(__FILE__, 2).'/secret.php')){
  * include database
  */
 require_once (dirname(__FILE__)."/class.database.php");
+require_once (dirname(__FILE__, 2)."/model/class.databaseModel.php");
 $db = NULL; //set in session
 
 /**

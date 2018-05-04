@@ -35,7 +35,7 @@ if (!isset($_SESSION['SILMPH']['FORM_CHALLENGE_NAME'])){
 	$_SESSION['SILMPH']['FORM_CHALLENGE_VALUE'] = generateRandomString(22);
 }
 
-if($db === NULL) $db = new Database();
+if($db === NULL) $db = new DatabaseModel();
 
 $router = Router::getInstance();
 $router->route();
