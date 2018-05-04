@@ -29,7 +29,7 @@ class Router {
 	
 	/**
 	 * contains the AuthHandler
-	 * @var AuthHandler
+	 * @var AuthHandler|BasicAuthHandler
 	 */
 	protected $auth;
 	
@@ -91,8 +91,17 @@ class Router {
 	}
 	
 	/**
+	 * return auth handler
+	 * @return array
+	 */
+	public function getAuth(){
+		return $this->auth;
+	}
+	
+	/**
 	 * returns instance of this class
 	 * implements singleton pattern
+	 * @return Router
 	 */
 	public static function getInstance()
 	{

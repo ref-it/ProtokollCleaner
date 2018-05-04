@@ -21,7 +21,8 @@ if (!function_exists('checkUserPermission')){
 	function checkUserPermission( $requested_permission ){
 		$map = Router::getPermissionMap();
 		if (isset($map[$requested_permission])){
-			$auth = AuthHandler::getInstance();
+			$ri = Router::getInstance();
+			$auth = $ri->getAuth();
 			return $auth->requireGroup($map[$requested_permission]);
 		} else {
 			return false;
