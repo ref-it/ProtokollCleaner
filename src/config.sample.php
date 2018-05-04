@@ -48,6 +48,17 @@ define('RENAME_FILES_ON_UPLOAD', 'ph.*?,cgi,pl,pm,exe,com,bat,pif,cmd,src,asp,as
 define('ENABLE_ADMIN_INSTALL', false);
 define('DEBUG', false); //Level = false / 0 => disabled || 1 => Basic debug information || 2 => additional information || 3 => all
 
+// ===== CRON SETTINGS =====
+define('CRON_USERMAP', [
+	'cronuser' => [
+		'password' => '1234', //
+		'displayName' => 'Cron User',
+		'mail' => 'ref-it@tu-ilmenau.de',
+		'groups' => ['cron', 'cronuser'],
+		'eduPersonPrincipalName' => ['cronuser'],
+	]
+]);
+
 // ===== DO NOT CHANGE THIS =====
 require_once (dirname(__FILE__)."/framework/init.php");
 // end of file -------------

@@ -1,0 +1,27 @@
+<?php $param = $param; ?>
+<h3>Hier kann getestet werden, ob der Cron Login funktioniert:</h3>
+<div class="card">
+  <div class="card-body">
+    <h5 class="card-title">Folgende Cronnutzer wurden eingerichtet:</h5>
+    <ul class="list-group list-group-flush">
+		<?php 
+			foreach ($param['user'] as $userName){
+				echo "<li class=\"list-group-item\">$userName</li>";
+			}
+		?>
+	</ul>
+  </div>
+</div>
+<div class="card mt-3">
+  <div class="card-body">
+    <h5 class="card-title">Folgende Routen stehen zur Verfügung:</h5>
+    <ul class="list-group list-group-flush">
+		<?php 
+			foreach ($param['routes'] as $routeName){
+				echo "<li class=\"list-group-item\">$routeName</li>";
+			}
+		?>
+	</ul>
+  </div>
+</div>
+<?php

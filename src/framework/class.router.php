@@ -43,15 +43,15 @@ class Router {
 	
 	/**
 	 * contains route map
-	 * controller are called directly
-	 * @var $rawRoutes
+	 * use other auth: basic auth
+	 * @var $cronRoutes
 	 */
-	protected $rawRoutes;
+	protected $cronRoutes;
 	
 	/**
 	 * contains navigation map
 	 * controller are called directly
-	 * @var $rawRoutes
+	 * @var $navigation
 	 */
 	private $navigation;
 	
@@ -77,7 +77,7 @@ class Router {
 		
 		include (dirname(__FILE__).'/config/config.router.php');
 		$this->routes = $routes;
-		$this->rawRoutes = $rawRoutes;
+		$this->cronRoutes = $cronRoutes;
 		$this->navigation = $navigation;
 		self::$permission_map = $permission_map;
 	}
@@ -190,12 +190,13 @@ class Router {
 				$c = new MotherController($this->db, $this->auth, NULL);
 				$c->renderErrorPage(403, $this->navigation);
 			}
-		} else if (isset($this->rawRoutes[$method]) 
-			&& isset($this->rawRoutes[$method][$path])){
-			if ($this->auth->hasGroup(self::$permission_map[$this->rawRoutes[$method][$path][0]], ',')){
+		} else if (isset($this->cronRoutes[$method]) 
+			&& isset($this->cronRoutes[$method][$path])){
+			//check permission
+			if ($this->auth->requireGroup(self::$permission_map[$this->cronRoutes[$method][$path][0]], ',')){
 				$route_access = true;
 				$this->callController(
-					array_slice($this->rawRoutes[$method][$path], 1 ), $method, $path
+					array_slice($this->cronRoutes[$method][$path], 1 ), $method, $path, true
 				);
 			}
 		} else {

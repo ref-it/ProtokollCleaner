@@ -45,12 +45,14 @@ $routes = [
 ];
 
 /**
- * raw routes will call controller without initialising template
+ * cron routes only use basic auth
  * REQUEST METHOD => ROUTE => [PERMISSION, DATA]
  * @var array
  */
-$rawRoutes = [
-	
+$cronRoutes = [
+	'GET' => [
+		'cron'				=> ['cron',		'cron', 		'base'],
+	]
 ];
 
 /**
@@ -110,6 +112,7 @@ $permission_map = [
 	'inprestore'	=> 'stura,ref-it,stura,konsul,admin',
 	'imemberdelete' => 'konsul,admin',
 	'imemberadd' 	=> 'konsul,admin',
+	'cron'			=> 'cron,cronuser',
 	'protoedit' 	=> 'ref-it,stura,konsul,admin',
 	'protopublish' 	=> 'ref-it,stura,konsul,admin',
 	'stura' 		=> 'stura',
