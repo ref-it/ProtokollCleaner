@@ -38,7 +38,9 @@
      		<a class="navbar-brand mr-auto" href="<?= BASE_URL ?>">
      			<img alt="logo" src="/images/logo_wt.png" height="30px"><span class="hide_on_small">Protokollautomatisierung</span></a>
 	  		<button class="btn btn-outline-light mr-1 fa ml-auto d-block d-md-none" onclick="printPage();" type="button">&#xf02f;</button>
-	  		<a class="btn btn-outline-light mr-1 fa ml-0 d-block d-md-none" href="<?= $this->auth->getLogoutURL(); ?>">&#xf011;</a>
+	  		<?php if (isset($this->auth)) { ?>
+	  			<a class="btn btn-outline-light mr-1 fa ml-0 d-block d-md-none" href="<?= $this->auth->getLogoutURL(); ?>">&#xf011;</a>
+		  	<?php } ?>
 		  	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
 		    	<span class="navbar-toggler-icon"></span>
 		  	</button>
@@ -49,18 +51,22 @@
 						foreach ($tnav as $route => $linkdata){ ?>
 							<a target="_self" href="<?= $route?>" title="<?= $linkdata[0] ?>" class="nav-item nav-link <?= ((isset($linkdata['active']))?'active':'') ?>"><i class="fa fa-fw"><?= $linkdata[1] ?></i><?= $linkdata[0] ?></a>
 					<?php }	?>
-					<div class="nav-link nav-item ml-auto mr-0 pull-right"><?= $this->auth->getUserFullName(); ?></div>
+					<?php if (isset($this->auth)) { ?>
+						<div class="nav-link nav-item ml-auto mr-0 pull-right"><?= $this->auth->getUserFullName(); ?></div>
+					<?php } ?>
 				</div>
 
 			</div>
 			<button class="btn btn-outline-light mr-1 fa ml-auto d-none d-md-block" onclick="printPage();" type="button">&#xf02f;</button>
-		  	<a class="btn btn-outline-light fa ml-0 d-none d-md-block" href="<?= $this->auth->getLogoutURL(); ?>">&#xf011;</a>
+		  	<?php if (isset($this->auth)) { ?>
+		  		<a class="btn btn-outline-light fa ml-0 d-none d-md-block" href="<?= $this->auth->getLogoutURL(); ?>">&#xf011;</a>
+			<?php } ?>
 		</nav>
 		<div class="bar_placeholder noprint"></div>
 		<div class="d-none d-md-block noprint">
 			<div class="profile-sidebar noprint">
 		        <div class="profile-usertitle">
-		            <div class="profile-usertitle-name"><?= $this->auth->getUserFullName(); ?></div>
+		            <div class="profile-usertitle-name"><?= (isset($this->auth))? $this->auth->getUserFullName(): ''; ?></div>
 	            </div>
 	            <div class="profile-usermenu">
 	            	<ul class="">
