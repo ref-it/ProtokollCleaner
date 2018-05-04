@@ -221,9 +221,7 @@
 				'/js/libs/codemirror/addon/mode/overlay.js',
 				'/js/libs/codemirror/addon/mode/simple.js',
 				
-				'/js/libs/codemirror/mode/properties/properties.js',
 				'/js/libs/codemirror/mode/doku/dokuwiki.js',
-				'/js/libs/codemirror/mode/dokuwiki/dokuwiki.js',
 				
 				'/js/libs/codemirror/keymap/sublime.js',
 				'/js/libs/codemirror/addon/dialog/dialog.js',
