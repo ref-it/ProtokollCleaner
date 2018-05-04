@@ -64,8 +64,6 @@ class CronController extends MotherController {
 		$date = date_create();
 		if ($date->format('i') != '0'){ // current time + 1-59 minutes -> round to next hour
 			$date->modify("+1 hour");
-			//TODO 
-			$date->modify("+4 day");
 			$date->setTime($date->format('H'), 0, 0 );
 		}
 		$date->modify("+{$settings['AUTO_INVITE_N_HOURS']} hour"); // add auto invite time
