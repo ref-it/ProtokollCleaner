@@ -57,7 +57,55 @@ class CronController extends MotherController {
 	 * ACTION cronmail
 	 */
 	public function mail(){
+		// calculate pending date
+		$settings = $this->db->getSettings();
+		$nowm = date_create();
+		$nowm->modify("-1 hour");
+		$date = date_create();
+		if ($date->format('i') != '0'){ // current time + 1-59 minutes -> round to next hour
+			$date->modify("+1 hour");
+			//TODO 
+			$date->modify("+4 day");
+			$date->setTime($date->format('H'), 0, 0 );
+		}
+		$date->modify("+{$settings['AUTO_INVITE_N_HOURS']} hour"); // add auto invite time
+		// get pending newprotos
+		//calculate pending protos
+		$nprotos = $this->db->getNewprotoPending($date->format('Y-m-d H:i:s'), $nowm->format('Y-m-d H:i:s'));
+		// send mail for each pending protocol
+		$ok = true;
+		require_once(SYSBASE.'/controller/invitation.php');
+		$ic = new InvitationController($this->db, $this->auth, null);
 		
+		foreach ($nprotos as $nproto){
+			if (!$ok) break;
+			$members = $this->db->getMembers($nproto['gname']);
+			$membernames = [
+				'p'=> ($nproto['protocol'] && isset($members[$nproto['protocol']]))? $members[$nproto['protocol']] : NULL,
+				'm'=> ($nproto['management'] && isset($members[$nproto['management']]))? $members[$nproto['management']] : NULL
+			];
+			$nproto['membernames'] = $membernames;
+			// open protocols // not aggreed
+			$notAgreedProtocols = $this->db->getProtocols($nproto['gname'], false, false, true, false, " AND LENGTH(P.name) = 10 AND P.date > '2017-01-01' AND date < '".date_create()->format('Y-m-d')."'");
+			$draftStateProtocols = $this->db->getProtocols($nproto['gname'], false, false, false, true, " AND (P.public_url IS NULL) AND LENGTH(P.name) = 10 AND P.date > '2017-01-01' AND date < '".date_create()->format('Y-m-d')."'");
+		
+			//send mail invitation
+			$ok = $ic->send_mail_invitation(
+				$nproto,
+				NULL,
+				['notAgreed' => $notAgreedProtocols, 'draftState' => $draftStateProtocols ],
+				''
+			);
+			if ($ok){
+				// update proto
+				$nproto['invite_mail_done'] = true;
+				$this->db->updateNewproto($nproto);
+			} else {
+				echo  date_create()->format('Y-m-d H:i:s').': Fehler beim Senden der Mail-Einladung. Gremium: '.$nproto['gname'];
+			}
+		}
+		//return nothing if ok -> so cron only creates mail if something gone wrong
+		return;
 	}
 	
 	/**

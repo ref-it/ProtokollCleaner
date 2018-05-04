@@ -588,6 +588,23 @@ class DatabaseModel extends Database
 	}
 	
 	/**
+	 * returns all open newproto by pending date
+	 * @param string $pendingDate select newprotos below or equal this date - format: Y-m-d H:i:s
+	 * @param string $ignoreDate select newprotos above or equal this date - format: Y-m-d H:i:s
+	 * @return array
+	 */
+	public function getNewprotoPending($pendingDate, $ignoreDate){
+		$sql = "SELECT NP.*, G.name as 'gname' FROM `".TABLE_PREFIX."newproto` NP, `".TABLE_PREFIX."gremium` G WHERE NP.gremium = G.id AND NP.date <= ? AND NP.date >= ? AND NP.invite_mail_done = 0 ORDER BY NP.date ASC";
+		$result = $this->getResultSet($sql, 'ss', [$pendingDate, $ignoreDate]);
+		$return = [];
+		foreach ($result as $line){
+			$return[] = $line;
+		}
+		return $return;
+	}
+	
+	
+	/**
 	 * create Newproto entry
 	 * @param array $n newproto element array
 	 * @return boolean|new id
