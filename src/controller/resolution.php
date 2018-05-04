@@ -145,7 +145,7 @@ class ResolutionController extends MotherController
 		$this->t->printPageFooter();
 	}
 	
-	public function resoToWiki() {
+	public function resoToWiki($noecho = false) {
 		prof_flag('Reso To Wiki');
 		$perm = 'stura';
 		
@@ -177,25 +177,35 @@ class ResolutionController extends MotherController
 			parent::$protomap[$perm][2], 
 			$wikiText, 
 			['sum' => 'GENERIERT mit '.BASE_TITLE.' von ('. $this->auth->getUserName().')']);
-		if ($ok == false){
+		if (!$ok){
+			error_log('NewProto -> WIKI: Could not write. Request: Put Page - '.parent::$protomap[$perm][2].' - Wiki respond: '.$x->getStatusCode().' - '.(($x->isError())?$x->getError():''));
 			$this->json_result = [
 				'success' => false,
 				'eMsg' => 'Fehler beim Schreiben. (Code: '.$x->getStatusCode().')'
 			];
-			error_log('NewProto -> WIKI: Could not write. Request: Put Page - '.parent::$protomap[$perm][2].' - Wiki respond: '.$x->getStatusCode().' - '.(($x->isError())?$x->getError():''));
+		}
+		if (!$ok && !$noecho){
 			$this->print_json_result();
 			return;
+		} elseif (!$ok && $noecho){
+			$this->json_result['eMsg'] = 'NewProto -> WIKI: Could not write. Request: Put Page - '.parent::$protomap[$perm][2].' - Wiki respond: '.$x->getStatusCode().' - '.(($x->isError())?$x->getError():'');
+			return $this->json_result;
 		}
 		// Return result and timing
 		prof_flag('Done');
 		
-		http_response_code (200);
 		$this->json_result = [
 			'success' => true,
 			'msg' => 'Beschlussliste erfolgreich aktualisiert.',
 			'timing' => prof_print(false)['sum']
 		];
-		$this->print_json_result();
+		if (!$noecho){
+			http_response_code (200);
+			$this->print_json_result();
+			return;
+		} else {
+			return $this->json_result;
+		}
 	}
 }
 

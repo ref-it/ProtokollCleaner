@@ -64,6 +64,16 @@ class CronController extends MotherController {
 	 * ACTION cronwiki
 	 */
 	public function wiki(){
-		
+		// trigger resolution to wiki
+		// load resolutions
+		require_once(SYSBASE.'/controller/resolution.php');
+		$rc = new ResolutionController($this->db, $this->auth, null);
+		$result = $resos = $rc->resoToWiki(true);
+		//load protocols
+		if (!$result['success']){
+			echo $result['eMsg'];
+		}
+		//return nothing if ok -> so cron only creates mail if something gone wrong
+		return;
 	}
 }
