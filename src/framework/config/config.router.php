@@ -4,7 +4,7 @@
  * GET Request will trigger Template Class
  * POST Requests will be handled with JsonHandler
  * 
- * REQUEST METHOD => ROUTE => [PERMISSION, DATA]
+ * REQUEST METHOD => ROUTE => [PERMISSION, CONTROLLER, ACTION]
  *
  * @var array
  */
@@ -46,12 +46,16 @@ $routes = [
 
 /**
  * cron routes only use basic auth
- * REQUEST METHOD => ROUTE => [PERMISSION, DATA]
+ * REQUEST METHOD => ROUTE => [PERMISSION, CONTROLLER, ACTION, DESCRIPTION]
  * @var array
  */
 $cronRoutes = [
 	'GET' => [
-		'cron'				=> ['cron',		'cron', 		'base'],
+		'cron'			=> ['croninfo',		'cron', 		'info' , 'This Page'],
+	],
+	'POST' => [
+		'cron/mail'		=> ['cronmail',		'cron', 		'mail' , 'Trigger auto mail creation.<br><strong>Suggestion: hourly</strong>'],
+		'cron/wiki'		=> ['cronwiki',		'cron', 		'wiki' , 'Writes resolution list to wiki.<br><strong>Suggestion: daily 2:00am</strong>' ],
 	]
 ];
 
@@ -112,12 +116,15 @@ $permission_map = [
 	'inprestore'	=> 'stura,ref-it,stura,konsul,admin',
 	'imemberdelete' => 'konsul,admin',
 	'imemberadd' 	=> 'konsul,admin',
-	'cron'			=> 'cron,cronuser',
 	'protoedit' 	=> 'ref-it,stura,konsul,admin',
 	'protopublish' 	=> 'ref-it,stura,konsul,admin',
 	'stura' 		=> 'stura',
 	'ref-it' 		=> 'ref-it',
-	'legislatur_all' => 'ref-it,konsul,admin'	//allow all legislatur numbers on protocols (not oly current +-1)
+	'legislatur_all' => 'ref-it,konsul,admin',	//allow all legislatur numbers on protocols (not oly current +-1)
+	'cron'			=> 'cron',
+	'croninfo'		=> 'croninfo',
+	'cronmail'		=> 'cronmail',
+	'cronwiki'		=> 'cronwiki',
 ];
 
 ?>

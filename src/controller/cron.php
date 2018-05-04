@@ -27,22 +27,23 @@ class CronController extends MotherController {
 	}
 	
 	/**
-	 * ACTION home
+	 * ACTION croninfo
 	 */
-	public function base(){
+	public function info(){
+		$this->t->setTitlePrefix('Croninfo');
 		$this->t->printPageHeader();
 		// cron users
 		$users = CRON_USERMAP;
 		$u = [];
 		foreach ($users as $userName => $d){
-			$u[] = $userName;
+			$u[] = [$userName, $d['groups']];
 		}
 		// cron routes
 		include (FRAMEWORK_PATH . '/config/config.router.php');
 		$r = [];
 		foreach ($cronRoutes as $request => $d){
 			foreach ($d as $routeName => $d2){
-				$r[] = $request.': '.$routeName;
+				$r[] = [$request, $routeName, $d2[3]] ;
 			}
 		}
 		$this->includeTemplate(__FUNCTION__, [
@@ -50,5 +51,19 @@ class CronController extends MotherController {
 			'routes' => $r,
 		]);
 		$this->t->printPageFooter();
+	}
+	
+	/**
+	 * ACTION cronmail
+	 */
+	public function mail(){
+		
+	}
+	
+	/**
+	 * ACTION cronwiki
+	 */
+	public function wiki(){
+		
 	}
 }
