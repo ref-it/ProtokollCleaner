@@ -24,13 +24,13 @@ class MotherController extends JsonController {
 	
 	/**
 	 * contains the database connection
-	 * DatabaseModel
+	 * @var DatabaseModel|Database
 	 */
 	protected $db;
 	
 	/**
 	 * contains the AuthHandler
-	 * AuthHandler
+	 * @var AuthHandler|BasicAuthHandler
 	 */
 	protected $auth;
 	
