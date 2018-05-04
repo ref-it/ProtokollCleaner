@@ -112,7 +112,7 @@ class Database
 	 * @param string|array $bind_params variable/parameterset for bind
 	 * @return array fetched resultset
 	 */
-	private function getResultSet($sql, $bind_type = NULL, $bind_params = NULL){ //use to bind params
+	protected function getResultSet($sql, $bind_type = NULL, $bind_params = NULL){ //use to bind params
 		if ($bind_params !== NULL && !is_array($bind_params)){
 			$bind_params = array($bind_params);
 		}
@@ -216,7 +216,7 @@ class Database
 	 * @param string $bind_type bind type for database
 	 * @param string|array $bind_params variable/parameterset for bind
 	 */
-	private function protectedInsert($sql, $bind_type = NULL, $bind_params = NULL){ //use to bind params
+	protected function protectedInsert($sql, $bind_type = NULL, $bind_params = NULL){ //use to bind params
 		if ($bind_params !== NULL && !is_array($bind_params)){
 			$bind_params = array($bind_params);
 		}
