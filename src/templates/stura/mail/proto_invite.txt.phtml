@@ -1,0 +1,94 @@
+<?php 
+	$param = $param; 
+	$links = [];
+?>Sitzungseinladung - <?=  ucfirst(strtolower($param['committee'])) ?>
+
+=================================================
+
+Der <?=  ucfirst(strtolower($param['committee'])) ?> der TU Ilmenau läd am <?= date_create($param['proto']['date'])->format('d.m.d') ?> um <?= date_create($param['proto']['date'])->format('H:i') ?> Uhr zur nächsten Sitzung ein.
+
+Voraussichtliche 
+  - Sitzungsleitung:    <?= ($param['proto']['membernames']['m'])? $param['proto']['membernames']['m']['name'] : '-' ?>
+
+  - Protokollkontrolle: <?= ($param['proto']['membernames']['p'])? $param['proto']['membernames']['p']['name'] : '-' ?>
+
+
+Tagesordnung
+------------
+
+<?php if ($param['unreconciled_protocols']['notAgreed']){
+	echo 'Protokollkontrolle';
+	foreach ($param['unreconciled_protocols']['notAgreed'] as $prot){
+		$tmplink = (($prot['draft_url'])?
+			$param['protoPublicLink'] . $prot['draft_url'] :
+			(($prot['public_url'])?
+				$param['protoPublicLink'] . $prot['public_url'] :
+				$param['protoInternLink'] . $prot['name']));
+		$tmplink = str_replace(':', '/', $tmplink);
+		$tmplink = str_replace(['https///', 'http///'], ['https://', 'http://'], $tmplink);
+		echo "\n    - ".$prot['name'].' - ['.count($links).']';
+		$links[] = $tmplink;
+	}
+}?>
+<?php 
+	foreach ($param['tops'] as $top){
+		if (!$top['resort']){
+			echo "\n  * {$top['headline']}".(($top['goal'])?" ({$top['goal']})":'').(($top['guest'])?' (Gäste erwartet)':'');
+		}
+	} ?>
+
+  * Berichte aus Referaten/AGs und von Angestellten
+  * Sonstiges
+
+___
+  
+Weitere Tops können unter folgendem Link [<?php echo count($links); $links[] = $param['topLink'] ?>] nachgereicht werden, bedürfen aber eines Antrages an die Geschäftsordnung zur Änderung der Tagesordnung.
+
+Desweiteren können Referate, AGs und Angestellte ihre Berichte hier [<?php echo count($links); $links[] = $param['topLink'] ?>] noch bis zur Sitzung vortragen.  Dort befinden sich auch vorgetragene Referatberichte.
+	
+Solltet Ihr zum Zeitpunkt der Sitzung verhindert sein, meldet euch bitte rechtzeitig ab und hinterlegt gegebenenfalls für geplante Abstimmungen eine schriftliche Stimme.
+
+<?php if (count($param['unreconciled_protocols']['draftState'])){ ?>
+___
+
+Erinnerung
+
+Folgende Protokolle wurden noch nicht (endgültig) veröffentlicht, wurden aber bereits abgestimmt:
+<?php 
+foreach ($param['unreconciled_protocols']['draftState'] as $prot){
+	$tmplink = (($prot['draft_url'])?
+		$param['protoPublicLink'] . $prot['draft_url'] :
+		(($prot['public_url'])?
+			$param['protoPublicLink'] . $prot['public_url'] :
+			$param['protoInternLink'] . $prot['name']));
+	$tmplink = str_replace(':', '/', $tmplink);
+	$tmplink = str_replace(['https///', 'http///'], ['https://', 'http://'], $tmplink);
+	echo "\n    - ".$prot['name'].' - ['.count($links).']';
+	$links[] = $tmplink;
+} ?>
+
+
+Unter folgendem [<?php echo count($links); $links[] = $param['protoLink'] ?>] können Protokolle ohne großen Aufwand veröffentlicht werden.
+<?php } ?>
+<?php if ($param['message']){ ?>
+Weitere Informationen:
+----------------------
+<?= $param['message'] ?>
+
+<?php } ?>
+
+
+Links
+----------------------
+
+<?php 
+	$c = strlen(''.count($links));
+	foreach ($links as $pos => $link){
+		echo '['.str_pad($pos, $c, "0", STR_PAD_LEFT).'] - '.$link."\n";
+	}
+?>
+
+
+
+
+(<?= $param['sender']? "Diese Nachricht wurde von ({$param['sender']}) generiert.": 'Diese Nachricht wurde automatisch vom '.BASE_TITLE.' generiert.'?>)

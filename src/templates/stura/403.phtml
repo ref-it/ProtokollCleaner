@@ -1,0 +1,27 @@
+<?php 
+/**
+ * WARNING PAGE 403 error page
+ * 
+ * @author michael g
+ * @author Stura - Referat IT <ref-it@tu-ilmenau.de>
+ * @since 17.02.2018
+ * @copyright 	Copyright (C) 2018 - All rights reserved
+ */
+?>
+<div class="half_container access_denied">
+	<h3>403 - Zugriff verweigert</h3>
+	<span>Sie Sind nicht berechtigt auf diesen Inhalt zuzugreifen.</span>
+	<div>
+		<h4>Weitere Informationen</h4>
+		<p>Ihr momentaner Benutzerstatus verfügt nicht über die benötigten Berechtigungen, um auf diese Seite zuzugreifen. Melden Sie sich mit einem Nutzer an, der über entsprechende Zugriffe verfügt.</p>
+		<h5>Angeforderte Seite</h5>
+		<span>&#62; <?php
+			$protocol = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off')? 'https://' : 'http://'; 
+		
+		echo htmlentities(urldecode($protocol . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'])); ?></span>
+		<?php if (isset($_SERVER['HTTP_REFERER']) && $_SERVER['HTTP_REFERER']){ ?>
+			<h5>Sie sind von folgender Seite hier gelandet</h5>
+			<span>&#62; <?php echo htmlentities(urldecode($_SERVER['HTTP_REFERER'])); ?></span>
+		<?php } ?>
+	</div>
+</div>

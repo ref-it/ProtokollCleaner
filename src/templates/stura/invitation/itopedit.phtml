@@ -1,0 +1,98 @@
+<?php $param = $param; ?>
+<div class="card silmph_edit" data-tid="<?= (isset($param['top']['id']))?$param['top']['id']: 0; ?>" data-hash="<?= (isset($param['top']['id']))?$param['top']['hash']: ''; ?>" data-skip="<?= (isset($param['top']['skip_next']))?$param['top']['skip_next']: 0; ?>">
+	<div class="card-body">
+		<div class="form-row">
+			<div class="col">
+				<input type="text" class="form-control font-weight-bold" id="frmIpt01" placeholder="Top Überschrift" value="<?= (isset($param['top']['headline']))?$param['top']['headline']: ''; ?>">
+				<small class="form-text text-muted">Top Überschrift ohne extra ' = ' Zeichen</small>
+			</div>
+		</div>
+		<div class="form-row mt-2">
+			<div class="col-md-6" style="position:relative;">
+				<label for="frmIpt02">Sektion</label>
+				<div class="input-group mb-3">
+					<select class="form-control combobox_resort" id="frmIpt02">
+						<option value="0">Keine</option>
+						<?php
+							$resnr = (isset($param['top']['resort']))? ($param['top']['resort']) : 0;
+							foreach ($param['resorts'] as $resort){
+								echo "\t\t\t\t\t\t".
+									'<option'.(($resort['id'] == $resnr)?' selected':'').' value="'.$resort['id'].'">'.$resort['name'].' ('.$resort['type'].')</option>';
+							}
+						?>
+				  	</select>
+				  	<div class="input-group-append">
+						<button class="btnselect_link btn btn-outline-secondary" title="Zeige Alle" type="button"><i class="fa fa-chevron-down" ></i></button>
+					</div>
+			  	</div>
+			  	<small class="form-text text-muted">Referate, AGs, Konsul, Angestellte</small>
+			</div>
+		</div>
+		<hr>
+		<div class="form-row">
+			<div class="col-md-6">
+				<label for="frmIpt03">Wer berichtet vorraussichtlich?</label>
+				<input type="text" class="form-control" value="<?= (isset($param['top']['person']))?$param['top']['person']: '';  ?>" id="frmIpt03" placeholder="Person">
+				<small class="form-text text-muted">Name</small>
+			</div>
+		</div>
+		<div class="form-row">
+			<div class="col-md-6 mt-3">
+				<label for="frmIpt04">Erwartete Dauer</label>
+				<input type="number" min="0" step="1" value="<?= (isset($param['top']['expected_duration']))?$param['top']['expected_duration']: 0;  ?>" class="form-control" id="frmIpt04" placeholder="X Minuten">
+				<small class="form-text text-muted">in Minuten</small>
+			</div>
+		</div>
+		<div class="silmph_goal_inp form-row">
+			<div class="col-md-6 mt-3">
+				<label for="frmIpt05">Zielsetzung</label>
+				<input type="text" class="form-control" value="<?= (isset($param['top']['goal']))?$param['top']['goal']: ''; ?>" id="frmIpt05" placeholder="Ziel">
+			</div>
+		</div>
+		<div class="mt-0 pt-0 form-row silmph_multicheckbox hiderow">
+			<div class="col-md-6 mt-0 pt-0 list-group noselect">
+				<?php 
+					$goal_selected = (isset($param['top']['goal']))? preg_split('(,| ,)', $param['top']['goal'], -1, PREG_SPLIT_NO_EMPTY) :[];
+					$goal_base = ['Abstimmung', 'Diskussion', 'Information', 'Kommentar', 'Meinungsbild'];
+				 
+					foreach ($goal_base as $tmpos => $goal_name){
+						echo "\n".'<input class="silmph_goal_multi" type="checkbox" id="goalMultiCkb'.$tmpos.'"'.((in_array($goal_name, $goal_selected))?' checked="checked"':'').'>';
+						echo "\n".'<label tabindex="0" class="silmph_goal_multi_label noselect list-group-item pt-2 pb-2" for="goalMultiCkb'.$tmpos.'">'.$goal_name.'</label>';
+					}
+				?>
+			</div>
+		</div>
+		<div class="form-row">
+			<div class="col-md-6 mt-3 mb-0">
+				<div class="form-check-label">Externe Gäste erwartet?</div>
+				<input id="frmIpt06" type="checkbox" value="1" <?= (isset($param['top']['guest'])&&$param['top']['guest'])?' checked="checked" ': ''; ?> class="form-control form-check-input mb-4 d-none">
+				<label tabindex="0" for="frmIpt06" class="form-check-label toggleswitch"><span class="toggleswitch_slider"></span></label>
+			</div>
+		</div>
+		<div class="form-row">
+			<div class="col-md-6 mt-3 mb-0">
+				<div class="form-check-label">StuRa Internes Top?</div>
+				<input id="frmIpt08" type="checkbox" value="1" <?= (isset($param['top']['intern'])&&$param['top']['intern'])?' checked="checked" ': ''; ?> class="form-control form-check-input mb-4 d-none">
+				<label tabindex="0" for="frmIpt08" class="form-check-label toggleswitch"><span class="toggleswitch_slider"></span></label>
+			</div>
+		</div>
+		<hr>
+		<div class="form-row">
+			<div class="col-md-12 silmph_texteditor">
+				<label for="frmIpt07">Text</label>
+				<textarea class="wikitext form-control" id="frmIpt07" placeholder="Text"><?= (isset($param['top']['text']))?$param['top']['text']: '';  ?></textarea>
+				<small class="form-text text-muted">DokuWiki Format</small>
+			</div>
+		</div>
+		<?php /*
+		<div class="form-row">
+			<div class="col-md-4 mt-3">
+				<button type="button" class="abort btn btn-danger w-100">Abbrechen</button>
+			</div>
+			<div class="col-md-4 mt-3 d-none d-md-block"></div>
+			<div class="col-md-4 mt-3">
+				<button type="button" class="submit btn btn-success w-100"><?= (isset($param['top']['id']))?'Übernehmen': 'Erstellen';  ?></button>
+			</div>
+		</div> */ ?>
+	</div>
+</div>

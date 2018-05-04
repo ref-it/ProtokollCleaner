@@ -1,0 +1,45 @@
+<?= $this->getChallenge() ?>
+
+<h3>Todos - <?php
+	$param = $param;
+	echo ucfirst(strtolower($param['perm']));
+	$count = 0;
+	foreach ($param['todos'] as $entry){
+		if ($entry['done']=='0') $count++;
+	}
+	echo ' - Offen: '.$count; ?></h3>
+<?php //legende ?>
+<div class="todo_legend noselect">
+	<div class="legendelem" data-filter="<?= $param['limit_date']?'0':'1' ?>" data-type="nolimit">
+		<span class="color" style="background-color:#f9d70b;"></span>
+		<span class="name" data-cid="1" data-ccid="0">Zeige Alle</span>
+	</div>
+	<div class="legendelem" data-filter="<?= $param['limit_todo']?'0':'1' ?>" data-type="alltype">
+		<span class="color" style="background-color:#ff5000;"></span>
+		<span class="name" data-cid="1" data-ccid="0">Zeige FIXME und DELETEME</span>
+	</div>
+</div>
+<?php if($param['limit_date']){ ?>
+<div class="todoinfo">Todos werden nur für die letzten 4 Wochen angezeigt</div>
+<?php } ?>
+<div class="todolist">
+<?php
+	$protomao = PROTOMAP;
+	$last_type = '';
+	$alert_type = '';
+	$stamp = date_create()->getTimestamp();
+	foreach ($param['todos'] as $pos => $entry){
+		if ($last_type != $entry['type']){
+			$last_type = $entry['type'];
+			$alert_type = (($entry['type'] == 'fixme'|| $entry['type'] == 'deleteme')?'alert-danger':'alert-warning');
+			echo "<div class=\"typeheadline $last_type\">".ucfirst(strtolower($last_type)).'</div>';
+		}
+		echo 	"<div class=\"todoentry $last_type alert $alert_type".(($entry['done'])?' done':'').'">'.
+					'<input id="todo_ckb_'.$entry['hash'].'_'.$stamp.'" type="checkbox" value="1" data-hash="'.$entry['hash'].'" data-pid="'.$entry['on_protocol'].'" '.(($entry['done'])?'checked="checked"':'').'>'.
+					'<label for="todo_ckb_'.$entry['hash'].'_'.$stamp.'"></label>'.
+						'<span class="proto">'.((isset($entry['url']) && $entry['url'] != '')?'<a href="'.WIKI_URL.'/'.str_replace(':', '/', $entry['url']).'">'.$entry['date'].'</a>':$entry['date']).'</span>'.
+						'<span class="line">'.$entry['line'].'</span><span class="text">'.$entry['text'].'</span>'.
+				'</div>';
+	}
+?>
+</div>

@@ -1,0 +1,102 @@
+<?php 
+/**
+ * PAGE global header
+ * 
+ * @author michael g
+ * @author Stura - Referat IT <ref-it@tu-ilmenau.de>
+ * @since 17.02.2018
+ * @copyright 	Copyright (C) 2018 - All rights reserved
+ */
+ ?>
+<!DOCTYPE html>
+<html lang="de">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="description" content="stura protocol helper" />
+		<meta name="keywords" content="" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="theme-color" content="#173d92" />
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="mobile-web-app-capable" content="yes">
+		<?php $this->printMetaOther(true); ?>
+		
+		<?php $this->printCss(true); ?>
+		<?php $this->printScript(true); ?>
+
+		<script type="text/javascript">
+			function printPage(){
+				document.getElementById('content').style.marginLeft = "0px";
+				document.getElementById('content').style.transition = "all 0s";
+				window.print();
+				document.getElementById('content').removeAttribute("style");
+			}
+		</script>
+	    <title><? $this->getTitle(true); ?></title>
+	</head>
+	<body id="body" <?php if ($this->extra_body_class) echo 'class="'.$this->extra_body_class.'"'; ?> >
+		<nav class="navbar fixed-top navbar-expand-md navbar-dark bg-<?= (DEBUG>=1)? 'danger':'dark' ?> noprint" style="position:fixed">
+     		<a class="navbar-brand mr-auto" href="<?= BASE_URL ?>">
+     			<img alt="logo" src="/images/logo_wt.png" height="30px"><span class="hide_on_small">Protokollautomatisierung</span></a>
+	  		<button class="btn btn-outline-light mr-1 fa ml-auto d-block d-md-none" onclick="printPage();" type="button">&#xf02f;</button>
+	  		<?php if (isset($this->auth)) { ?>
+	  			<a class="btn btn-outline-light mr-1 fa ml-0 d-block d-md-none" href="<?= $this->auth->getLogoutURL(); ?>">&#xf011;</a>
+		  	<?php } ?>
+		  	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+		    	<span class="navbar-toggler-icon"></span>
+		  	</button>
+	  		<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+	    		<div class="navbar-nav mr-auto d-block d-md-none">
+	    			<?php
+	    				$tnav = $this->getNavigation();
+						foreach ($tnav as $route => $linkdata){ ?>
+							<a target="_self" href="<?= $route?>" title="<?= $linkdata[0] ?>" class="nav-item nav-link <?= ((isset($linkdata['active']))?'active':'') ?>"><i class="fa fa-fw"><?= $linkdata[1] ?></i><?= $linkdata[0] ?></a>
+					<?php }	?>
+					<?php if (isset($this->auth)) { ?>
+						<div class="nav-link nav-item ml-auto mr-0 pull-right"><?= $this->auth->getUserFullName(); ?></div>
+					<?php } ?>
+				</div>
+
+			</div>
+			<button class="btn btn-outline-light mr-1 fa ml-auto d-none d-md-block" onclick="printPage();" type="button">&#xf02f;</button>
+		  	<?php if (isset($this->auth)) { ?>
+		  		<a class="btn btn-outline-light fa ml-0 d-none d-md-block" href="<?= $this->auth->getLogoutURL(); ?>">&#xf011;</a>
+			<?php } ?>
+		</nav>
+		<div class="bar_placeholder noprint"></div>
+		<div class="d-none d-md-block noprint">
+			<div class="profile-sidebar noprint">
+		        <div class="profile-usertitle">
+		            <div class="profile-usertitle-name"><?= (isset($this->auth))? $this->auth->getUserFullName(): ''; ?></div>
+	            </div>
+	            <div class="profile-usermenu">
+	            	<ul class="">
+	            		<?php $tnav = $this->getNavigation();
+							$counter = 0;
+							foreach ($tnav as $route => $linkdata){ ?>
+								<li <?= (isset($linkdata['active']))?'class="active"':'' ?>>
+									<a href="<?= $route?>" target="_self" title="<?= $linkdata[0] ?>">
+										<i class="fa fa-fw"><?= $linkdata[1] ?></i>
+										<?= $linkdata[0] ?>
+									</a>
+								</li>
+							<?php 
+								$counter++;
+							}
+						?>
+					</ul>
+				</div>
+	        </div>
+	    </div>
+		<div class="printheader printonly" style="position: fixed;">
+			<img class="logo printonly" src="/images/logo.png" width="83" height="39" />Protokollautomatisierung
+		</div>
+
+		<div class="content_wrapper">
+			<div class="main content" id="content">
+				<div class="modalwrapper">
+					<div class="modal_bg" style="position: fixed"></div>
+					<div class="modal_close noselect" style="position: fixed">&#x274C;</div>
+					<?php $this->printModal(true); ?>
+				</div>
+				<div class="message_relative"><div id="silmph__message_container" class="silmph__message_container" style="position:fixed"></div></div>
+				

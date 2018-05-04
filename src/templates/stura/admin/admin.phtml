@@ -1,0 +1,97 @@
+<?= $this->getChallenge() ?>
+
+<div class="half_container mail_settings admin"><h3 class="noprint">E-Maileinstellungen</h3><h3 class="printonly">E-Maileinstellungen</h3>
+	<?php $settings = $this->db->getSettings(); ?>
+	<table class="striped">
+		<tr>
+			<th></th>
+			<th></th>
+		</tr>
+		<tr>
+			<th>SMTP Ausgangs-Server</th>
+			<td><div class="editable mail" tabindex="0" data-value="SMTP_HOST" data-validator="host"><?php echo $settings['SMTP_HOST']; ?></div></td>
+		</tr>
+		<tr>
+			<th>SMTP Nutzer</th>
+			<td><div class="editable mail" tabindex="0" data-value="SMTP_USER" data-validator="username"><?php echo $settings['SMTP_USER']; ?></div></td>
+		</tr>
+		<tr>
+			<th>SMTP Passwort</th>
+			<td><div class="editable mail" tabindex="0" data-value="MAIL_PASSWORD" data-validator="password"><?php for ($i=0; $i<16; $i++) echo '&#8226;'; ?></div></td>
+		</tr>
+		<tr>
+			<th>SMTP Sicherheit</th>
+			<td><div class="editable mail" tabindex="0" data-value="SMTP_SECURE" data-validator="ssltls"><?php echo $settings['SMTP_SECURE']; ?></div></td>
+		</tr>
+		<tr>
+			<th>SMTP Port</th>
+			<td><div class="editable mail" tabindex="0" data-value="SMTP_PORT" data-validator="integer"><?php echo $settings['SMTP_PORT']; ?></div></td>
+		</tr>
+		<tr>
+			<th>Absender E-Mailadresse</th>
+			<td><div class="editable mail" tabindex="0" data-value="MAIL_FROM" data-validator="mail"><?php echo $settings['MAIL_FROM']; ?></div></td>
+		</tr>
+		<tr>
+			<th>Absender Name</th>
+			<td><div class="editable mail" tabindex="0" data-value="MAIL_FROM_ALIAS" data-validator="user"><?php echo $settings['MAIL_FROM_ALIAS']; ?></div></td>
+		</tr>
+	</table>
+	<div class="addfooterspace"></div>
+	<div class="footerline">
+		<button type="button" class="submit" title="Einstellungen testen. Dabei wird eine E-Mail versendet.">Einstellungen testen</button>
+	</div>
+</div>
+<div class="half_container oset_settings admin"><h3 class="noprint">Weitere Einstellungen</h3><h3 class="printonly">Weitere Einstellungen</h3>
+	<?php $settings = $this->db->getSettings(); ?>
+	<table class="striped">
+		<tr>
+			<th></th>
+			<th></th>
+		</tr>
+		<tr>
+			<th>Einladungen X Tage wiederherstellbar.</th>
+			<td><div class="editable oset" tabindex="0" data-value="DISABLE_RESTORE_OLDER_DAYS" data-validator="integer"><?php echo $settings['DISABLE_RESTORE_OLDER_DAYS']; ?></div></td>
+		</tr>
+		<tr>
+			<th>Autoeinladung X Stunden vor Sitzung.</th>
+			<td><div class="editable oset" tabindex="0" data-value="AUTO_INVITE_N_HOURS" data-validator="integer"><?php echo $settings['AUTO_INVITE_N_HOURS']; ?></div></td>
+		</tr>
+	</table>
+</div>
+<div class="half_container link_settings admin">
+	<h3>Links</h3>
+	<p>
+		<i>Schreibt die Beschlussliste im Wiki neu.<br><?php 
+			$pmap = PROTOMAP;
+			foreach ($pmap as $committee => $map){
+				echo '<br>&emsp;&emsp;&#149;&emsp; <a target="_blank" href="'.WIKI_URL.'/'.$map[2].'">Beschlussliste des '.ucfirst($committee).'</a>';
+			}
+			echo "\n<br><br>";
+		?></i><br>
+		<a class="btn btn-outline-danger w-75" href="/reso/towiki">Schreibe Beschlussliste</a>
+	</p>
+</div>
+<div class="full_container legis_settings admin"><h3>Legislaturperioden</h3>
+	<table class="striped">
+		<tr>
+			<th>#</th>
+			<th>Start</th>
+			<th>Endet</th>
+		</tr>
+		<?php 
+			$legis = $this->db->getLegislaturen();
+			foreach ($legis as $key => $line) {
+				echo "<tr data-id=\"{$line['id']}\">".
+						"<td><span class=\"legnumber\">".$line['number']."</span><button class=\"btn btn-outline-danger legremove fa fa-times\"></button></td>".
+						"<td><div class=\"editable legis\" tabindex=\"0\" data-value=\"START\">".date_create_from_format('Y-m-d', $line['start'])->format('d.m.Y')."</div></td>".
+						"<td><div class=\"editable legis\" tabindex=\"0\" data-value=\"END\">".date_create_from_format('Y-m-d', $line['end'])->format('d.m.Y')."</div></td>".
+					'</tr>';
+			}
+		?>
+	</table>
+	<div class="addfooterspace"></div>
+	<div class="footerline">
+		<input type="number" min="1" step="1" max ="1000" name="legislatur_number" placeholder="Legislatur"><input type="date" name="legislatur_start" placeholder="Ab"><input type="date" name="legislatur_end" placeholder="Bis"><button type="button" class="add" id="add_legislatur">+</button>
+	</div>
+</div>
+<div class="clear"></div>

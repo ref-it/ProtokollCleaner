@@ -1,0 +1,7 @@
+Test-EMail,
+
+Der Nutzer %name% hat %time% eine Testemail angefordert.
+
+Wenn Sie diese Nachricht empfangen haben, funktioniert der Mailversand korrekt.
+
+Zum Login: %base_url%

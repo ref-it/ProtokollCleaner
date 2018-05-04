@@ -1,0 +1,296 @@
+<?php 
+	$param = $param;
+	$now = date_create();
+?>
+{{template>:vorlagen:Protokoll
+|Gremium=StuRa
+|Jahr=<?= $param['date']->format('Y'); ?> 
+|Monat=<?= $param['date']->format('m'); ?> 
+|Tag=<?= $param['date']->format('d'); ?> 
+|von=<?= ($now->getTimestamp() - $param['date']->getTimestamp() > 0 )? $now->format('H:i'): $param['date']->format('H:i'); ?> 
+|bis=FIXME
+|Sitzungsleitung=<?= ($param['proto']['management'])? $param['members'][$param['proto']['management']] : 'FIXME' ?> 
+|Protokollierung=<?= ($param['proto']['protocol'])? $param['members'][$param['proto']['protocol']] : 'FIXME' ?> 
+}}
+
+====== <?= ($param['nthproto'])? str_pad($param['nthproto'], 2, "0", STR_PAD_LEFT): 'XX'; ?>. StuRa-Sitzung ======
+
+===== Organisatorisches =====
+
+==== Begrüßung und Feststellung der Beschlussfähigkeit ====
+<?php //TODO SGIS VOODO: Name -> Tätigkeitsbereich 
+	$memberNameIdMap = [];
+	$counter = [
+		'stimmberechtigtAnwesend' => 0
+	];
+	foreach ($param['members'] as $id => $m){
+		$memberNameIdMap[$m['name']] = $id;
+		if ($m['stateName'] == 'J') $counter['stimmberechtigtAnwesend']++;
+	}
+	$member = [
+		'overwrite' => [
+			'Mark-Dominik Schust' => '(ruhend)',
+			'Verena Scholtz-Mücke' => 'N'
+		],
+		'base' => [
+			'Lukas Staab' => 'Ref IT, Konsul',
+			'Vanessa Gombisch' => 'Ref Öffentlichkeitsarbeit, FSR IA, FAK IA',
+			'Michelle Storandt' => 'HV, stellv. KV',
+			'Sarah Noriya Kraus' => 'KV',
+			'Florian Rippstein' => 'stellv. Ref IT, FSR IA, FAK IA, GSR',
+			'Dmitriy Shorin' => 'stellv. HV, stellv. Ref SUG, stellv. Ref Stadt',
+			'Mark-Dominik Schust' => 'FSR MN',
+			'Stefan Kostrzebski' => '',
+			'Julian Brückner' => 'stellv. KV',
+			'Rick Augner' => 'KTS',
+			'Maximilian Neubronner' => 'Ref Stadt',
+			'Christopher Grolmus' => 'FAK WM',
+			'Léon Geide' => '',
+			'Maximilian Ermisch' => '',
+			'Rahul Galda' => '',
+			'Uwe Ziegler' => 'Entsandt FSR EI',
+			'Martin Rudolph' => 'Entsandt FSR IA',
+			'Dennis Ritter' => 'Entsandt FSR MB',
+			'Alex Steinacker' => 'Entsandt FSR MN',
+			'Christian Gorf' => 'Entsandt FSR WM',
+		],
+		'angestellt' => [
+			'Verena Scholtz-Mücke' => 'Angestellte',
+			'Lukas Staab' => 'Konsul',
+		],
+		'referate' => [
+			'Simon Bruhn' => 'Ref Ehrenamt',
+			'Mark-Dominik Schust' => 'stellv. Ref Ehrenamt',
+			'Johann Riedlberger' => 'stellv. Ref Ehrenamt',
+			'Beatrix Bau' => 'Ref Erstiwoche',
+			'Florian Funk' => 'stellv. Ref ErstiWoche',
+			'René Hasenbein' => 'Ref Hopo',
+			'Maria Honecker' => 'stellv. Ref Hopo',
+			'Franziska Chuleck' => 'stellv. Ref HoPo',
+			'Fabian Julius de Planque' => 'Ref Internationales, stellv. Ref SUG',
+			'Alina Valitova' => 'stellv. Ref Internationales',
+			'Irina Tribusean' => 'stellv. Ref Internationales, stellv. Ref Kultur',
+			'Toni Schildhauer' => 'Ref Kultur',
+			'Alexander Rohrbach' => 'stellv. Ref Kultur',
+			'Jasmin Reis' => 'stellv. Ref Kultur',
+			'Ella Kunze' => 'stellv. Ref Öffentlichkeitsarbeit',
+			'Julian Wüster' => 'stellv. Ref Kultur',
+			'Erik Rothamel' => 'stellv. Ref Soziales',
+			'René Böttcher' => 'Ref SUG',
+			'Martin Hofmann' => 'stellv. Ref Stadt, Ref PoliBi',
+		]
+	];
+	
+	$resorts = [
+		'Referate' => [
+			'Finanzen' => 'Michelle Storandt',
+			'Ehrenamt' => 'Simon Bruhn',
+			'Erstiwoche' => 'Beatrix Bau',
+			'Hochschulpolitik' => 'René Hasenbein',
+			'Internationales' => 'Fabian Julius de Planque|Fabian de Planque',
+			'IT' => 'Lukas Staab',
+			'Kultur' => 'Toni Schildhauer',
+			'Öffentlichkeitsarbeit' => 'Vanessa Gombisch',
+			'Politische Bildung' => 'Martin Hofmann',
+			'Soziales' => 'Erik Rothamel',
+			'Sport, Umwelt und Gesundheit' => 'René Böttcher',
+			'Stadt und Studierendenbeirat' => 'Maximilian Neubronner',
+			'Thüringer Studierendenschaften (KTS)' => 'Rick Augner',
+		],
+		'Fachschaftsräte' => [
+			'EI' => 'Uwe Ziegler',
+			'IA' => 'Martin Rudolph',
+			'MB' => 'Jan Schmitz',
+			'MN' => 'Alex Steinacker',
+			'WM' => 'Christian Gorf',
+		],
+		'Berichte aus AGs und von Verantwortlichen' => [
+			'Interclub' => 'Michelle Storandt',
+			'Umbau' => 'Michelle Storandt',
+			'Semesteranfangsparty' => '',
+			'Wohnen' => '',
+			'Ordnungen' => '',
+			'Diversity' => 'Florian Rippstein',
+			'Asylpolitik' => '',
+		]
+	];
+	
+	// ==================================================================
+	// update counter
+	foreach ($member as $kat => $mem){
+		$kat = ucfirst($kat);
+		$counter['member'.$kat] = 0;
+		$counter['member'.$kat.'Job'] = 0;
+		foreach ($mem as $name => $job){
+			$counter['member'.$kat] = max($counter['member'.$kat], mb_strlen($name)+mb_strlen($job));
+		}
+	}
+?>
+
+  * <?= $counter['stimmberechtigtAnwesend']; ?> stimmberechtigte Mitglieder -> FIXME keine beschlussfähige Sitzung
+  * Anwesenheit (stimmberechtigt): 
+
+^ Mitglieder (besonderer Tätigkeitsbereich)                                   ^  Anwesend (J/N/E)  ^
+<?php 
+	foreach ($member['base'] as $name => $job){
+		$state = strtoupper( isset($memberNameIdMap[$name]) ? $param['members'][$memberNameIdMap[$name]]['stateName'] : 'FIXME');
+		if (isset($member['overwrite'][$name])) $state = $member['overwrite'][$name];
+		
+		echo "\n| "
+			.mb_str_pad('[[:person:'.$name.']]' . ($job?' ('.$job.')':''), $counter['memberBase'] + 15, ' ', STR_PAD_RIGHT)
+			.' | '.
+			mb_str_pad	($state, 10, ' ', STR_PAD_BOTH)
+			.' | ';
+	}
+
+?>
+
+^ Angestellte                                                                 ^  Anwesend (J/N/E)  ^
+<?php 
+	foreach ($member['angestellt'] as $name => $job){
+		$state = strtoupper( isset($memberNameIdMap[$name]) ? $param['members'][$memberNameIdMap[$name]]['stateName'] : 'FIXME');
+		if (isset($member['overwrite'][$name])) $state = $member['overwrite'][$name];
+	
+		echo "\n| "
+			.mb_str_pad('[[:person:'.$name.']]' . ($job?' ('.$job.')':''), $counter['memberAngestellt'] + 15, ' ', STR_PAD_RIGHT)
+			.' | '.
+			mb_str_pad($state, 10, ' ', STR_PAD_BOTH)
+			.' | ';
+	}
+?>
+
+^ Referatsleiter*innen / StuRa-Aktive / Beratende Mitglieder                      ^  Anwesend (J/N/E)  ^
+<?php 
+	foreach ($member['referate'] as $name => $job){
+		$state = strtoupper( isset($memberNameIdMap[$name]) ? $param['members'][$memberNameIdMap[$name]]['stateName'] : 'FIXME');
+		if (isset($member['overwrite'][$name])) $state = $member['overwrite'][$name];
+	
+		echo "\n| "
+			.mb_str_pad('[[:person:'.$name.']]' . ($job?' ('.$job.')':''), $counter['memberReferate'] + 15, ' ', STR_PAD_RIGHT)
+			.' | '.
+			mb_str_pad($state, 10, ' ', STR_PAD_BOTH)
+			.' | ';
+	}
+?>
+
+
+
+^ Gäste               ^ ^
+^  Name(n)  ^ Organisation / Verein ^
+| XX                    | XX        |
+| XX                    | XX        |
+
+
+==== Tagesordnung ====
+
+//nicht zutreffendes Template streichen//
+//NUR TOPS MIT GESCHÄTZTER ZEIT UND ZIELSETZUNG ANNEHMEN//
+
+{{template>:vorlagen:stimmen|Titel=Der StuRa stimmt der Tagesordnung zu.|J=XX|N=XX|E=XX|S=angenommen/abgelehnt}}
+
+{{template>:vorlagen:stimmen|Titel=Der StuRa stimmt den oben genannten Änderungen in der Tagesordnung zu.|J=XX|N=XX|E=XX|S=angenommen/abgelehnt}}
+
+==== Alte TODO's ==== 
+  * [[<?= BASE_URL.'/todo/list'; ?>|Liste im ProtocolHelper Tool]]
+  * TODO (FIXME | DELETEME)
+
+==== Protokollkontrolle ====
+<?php 
+	foreach ($param['openProtocols']['notAgreed'] as $prot){
+		$newproto = (isset($param['openProtocols']['newproto'][$prot['date']]))?$param['openProtocols']['newproto'][$prot['date']]: NULL;
+		echo "\n  * [[".$param['protoInternLink'] . $prot['name']."|Protokoll vom ".$prot['name']."]] Protokollverantwortliche*r: [[:person:".((isset($newproto['management']))?$param['members'][$newproto['management']]['name']:'XXX')."]]";
+	}
+	echo "\n";
+	foreach ($param['openProtocols']['notAgreed'] as $prot){
+		echo "\n {{template>:vorlagen:stimmen|Titel=Der StuRa beschließt das Protokoll der Sitzung vom ".date_create_from_format('Y-m-d', $prot['date'])->format('d.m.Y')." in der im Wiki vorliegenden Fassung.|J=|N=|E=|S=angenommen/abgelehnt}}\n";
+	}
+	echo "\n";
+?>
+
+==== Verkündung von Umlaufabstimmungen ====
+
+  * keine seit der letzten Sitzung getätigten Umlaufabstimmungen
+
+===== Übergeordnete Themen =====
+<?php 
+
+$tops = $param['tops'];
+
+$tcount = 1;
+foreach ($tops as $id => $top){
+	if (!$top['resort']){
+		echo "\n".str_repeat('=', $top['level']).' Top '.$tcount.': '.$top['headline'].' '.str_repeat('=', $top['level']);
+		$tcount++;
+		echo "\n".'//[[:person:'.($top['person']?$top['person']:'').']] berichtet, geschätzte benötigte Zeit: '.($top['expected_duration']?$top['expected_duration']:'XX').' min, real benötigte Zeit: XX min, Zielsetzung: '.($top['goal']?$top['goal']:'XXX').'//';
+		echo "\n\n".$top['text']."\n";
+		unset($tops[$id]);
+	}
+}
+
+?>
+
+===== Angestellte =====
+<?php 
+
+foreach ($member['angestellt'] as $name => $job){	
+	echo "\n==== $job ====";
+	$found = false;
+	foreach ($tops as $id => $top){
+		if (isset($top['resort']) && $param['resorts'][$top['resort']]['type'] == 'Angestellte' && $param['resorts'][$top['resort']]['name'] == $job){
+			echo "\n".'//[[:person:'.($top['person']?$top['person']:'').']] berichtet, geschätzte benötigte Zeit: '.($top['expected_duration']?$top['expected_duration']:'XX').' min, real benötigte Zeit: XX min, Zielsetzung: '.($top['goal']?$top['goal']:'XXX').'//';
+			echo "\n\n".$top['text']."\n";
+			unset($tops[$id]);
+			$found = true;
+		}
+	}
+	if (!$found){
+		echo "\n".'//[[:person:]] berichtet, geschätzte benötigte Zeit: XX min, real benötigte Zeit: XX min, Zielsetzung: XXX//';
+		echo "\n\n  * nicht anwesend\n";
+	}
+}
+?><?php 
+
+foreach ($resorts as $resort_type_headl => $resortList){
+	echo "\n\n===== $resort_type_headl =====\n";
+	$job = mb_substr($resort_type_headl, 0, -1);
+	if ($resort_type_headl == 'Fachschaftsräte') $job = 'FSR';
+	if ($resort_type_headl == 'Berichte aus AGs und von Verantwortlichen') $job = 'AG';
+	foreach ($resortList as $resortName => $who){
+		echo "\n==== $job $resortName ====";
+		$found = false;
+		foreach ($tops as $id => $top){
+			if (isset($top['resort']) && $param['resorts'][$top['resort']]['type'] == $job && $param['resorts'][$top['resort']]['name'] == $resortName){
+				echo "\n".'//[[:person:'.($top['person']?$top['person']:'').']] berichtet, geschätzte benötigte Zeit: '.($top['expected_duration']?$top['expected_duration']:'XX').' min, real benötigte Zeit: XX min, Zielsetzung: '.($top['goal']?$top['goal']:'XXX').'//';
+				echo "\n\n".$top['text']."\n";
+				unset($tops[$id]);
+				$found = true;
+			}
+		}
+		if (!$found){
+			echo "\n".'//[[:person:'.$who.']] berichtet, geschätzte benötigte Zeit: XX min, real benötigte Zeit: XX min, Zielsetzung: XXX//';
+			
+			if ($resortName == 'Finanzen') {
+				echo "\n\n=== Ausgaben, die einen StuRa-Beschluss benötigen ===";
+				echo "\n\n=== Ausgaben, die vom HV genehmigt wurden ===";
+			}
+			echo "\n";
+		}
+	}
+}
+
+?>
+
+===== Sonstiges =====
+
+==== Campus-Veranstaltungen kommende Woche ====
+  * 
+
+==== Nächste Sitzungsleitung und Protokollperson ====
+  * [[<?= BASE_URL.'/invite'; ?>|Liste im ProtocolHelper Tool]]
+  * Die nächste Sitzung leitet [[person:FIXME]]
+  * Die Verantwortung des Protokolls der nächsten Sitzung hat [[person:FIXME]]
+  * Die aktuelle Sitzungsleitung informiert diese Personen darüber und verweist sie auf den [[leitfaden:sitzungsleitung|Leitfaden Sitzungsleitung]]
+
+===== Anlagen =====
+
+{{medialist>protokoll:stura:<?= $param['date']->format('Y-m-d') ?>}}
