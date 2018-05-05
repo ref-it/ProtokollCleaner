@@ -621,8 +621,7 @@ class DatabaseModel extends Database
 			(isset($n['invite_telegram_done'])&&$n['invite_telegram_done'])?$n['invite_telegram_done']:0,
 			$n['created_by'],
 			$n['hash'],
-			$n['gremium'],
-			date_create()->format('Y-m-d H:i:s')
+			$n['gremium']
 		];
 		$sql = "INSERT INTO `".TABLE_PREFIX."newproto`
 			(	`date`,
@@ -634,9 +633,8 @@ class DatabaseModel extends Database
 				`invite_telegram_done`,
 				`created_by`,
 				`hash`,
-				`gremium`,
-				`created_on`)
-			VALUES(?,?,?,?,?,?,?,?,?,?,?) ";
+				`gremium` )
+			VALUES(?,?,?,?,?,?,?,?,?,?) ";
 		$this->protectedInsert($sql, $pattern, $data);
 		$result = $this->affectedRows();
 		if ($this->affectedRows() > 0){
@@ -835,8 +833,7 @@ class DatabaseModel extends Database
 			(isset($t['guest'])&&$t['guest'])?1:0,
 			(isset($t['order']))?$t['order']:9999,
 			(isset($t['skip_next'])&&$t['skip_next'])?1:0,
-			(isset($t['intern'])&&$t['intern'])?1:0,
-			date_create()->format('Y-m-d H:i:s')
+			(isset($t['intern'])&&$t['intern'])?1:0
 		];
 		$sql = "INSERT INTO `".TABLE_PREFIX."tops`
 			(	`headline`,
@@ -852,8 +849,7 @@ class DatabaseModel extends Database
 				`guest`,
 				`order`,
 				`skip_next`,
-				`intern`,
-				`added_on`)
+				`intern` )
 			VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?) ";
 		$this->protectedInsert($sql, $pattern, $data);
 		$result = $this->affectedRows();
