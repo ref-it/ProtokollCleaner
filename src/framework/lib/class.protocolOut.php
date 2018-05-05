@@ -130,6 +130,7 @@ class protocolOut
 			(($p->id == NULL)? 'Nicht öffentlich': 
 			(($p->draft_url!=NULL)?'Entwurf öffentlicht':
 			(($p->public_url!=NULL)?'Veröffentlicht':'Unbekannt'))).'</span></span>';
+		if ($p->ignore) echo '<span class="state2"><span>IGNORIERT</span><span>(Nicht beschlussfähig)</span></span>';
 		echo '<span class="legislatur"><span>Legislatur:</span><span>'.
 			 '<div class="fa fa-info css-tooltip mr-1 btn btn-outline-primary" tabindex="0"><span class="tooltiptext">Sollte dieser Wert nicht stimmen, informiert bitte den Konsul, oder Referat-IT um diesen dauerhaft zu aktualisieren.</span></div>'
 			.'<button type="button" class="btn btn-outline-primary sub">-</button><span>'.$p->legislatur.'</span><button type="button" class="add btn btn-outline-primary">+</button></span></span>';
@@ -167,11 +168,13 @@ class protocolOut
     	if ($p->draft_url){
     		echo '<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][1]).'/'.$p->name.'" target="_blank"><i class="fa fa-eye fa-fw"></i>View Draft</a>';
     	}
+    	echo '<button class="btn btn-secondary mr-1 ignore" type="button">'.'Protokoll '.((!$p->ignore)?'Ignorieren' : 'berücksichtigen').'</button>';
     	if ($p->public_url){
     		echo '<a class="btn btn-primary mr-1" href="'.WIKI_URL.'/'.str_replace(':', '/', self::$protomap[$p->committee][1]).'/'.$p->name.'" target="_blank"><i class="fa fa-eye fa-fw"></i>View Public</a>';
     	} else {
     		echo '<button class="btn btn-success mr-1 commit" type="button">'.(($p->agreed_on === NULL)?'Entwurf ': '' ).'Veröffentlichen</button>';
     	}
+    	
     	echo '</div>';
     }
     

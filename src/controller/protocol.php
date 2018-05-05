@@ -57,6 +57,7 @@ class ProtocolController extends MotherController {
 			$p->id = $dbprotocols[$p->name]['id'];
 			$p->draft_url = $dbprotocols[$p->name]['draft_url'];
 			$p->public_url = $dbprotocols[$p->name]['public_url'];
+			$p->ignore = $dbprotocols[$p->name]['ignore'];
 		}
 		$dbresolution = $this->db->getResolutionByPTag($committee, $protocol_name, true);
 		if ($dbresolution != NULL && count($dbresolution) >= 1){
@@ -483,6 +484,88 @@ class ProtocolController extends MotherController {
 				'msg' => 'Protokoll erfolgreich erstellt',
 				'timing' => prof_print(false)['sum']
 			];
+			$this->print_json_result();
+		}
+	}
+	
+	/**
+	 * ACTION p_ignore
+	 * ignore protocol -> d'ont remember on mails and new protocols
+	 */
+	public function p_ignore(){
+		//calculate accessmap
+		$validator_map = [
+			'committee' => ['regex',
+				'pattern' => '/'.implode('|', array_keys(PROTOMAP)).'/',
+				'maxlength' => 10,
+				'error' => 'Du hast nicht die benötigten Berechtigungen, um dieses Protokoll zu bearbeiten.'
+			],
+			'proto' => ['regex',
+				'pattern' => '/^([2-9]\d\d\d)-(0[1-9]|1[0-2])-([0-3]\d)((-|_)([a-zA-Z0-9]){1,30}((-|_)?([a-zA-Z0-9]){1,2}){0,30})?$/'
+			],
+		];
+		$vali = new Validator();
+		$vali->validateMap($_POST, $validator_map, true);
+		if ($vali->getIsError()){
+			if($vali->getLastErrorCode() == 403){
+				$this->json_access_denied();
+			} else if($vali->getLastErrorCode() == 404){
+				$this->json_not_found();
+			} else {
+				http_response_code ($vali->getLastErrorCode());
+				$this->json_result = ['success' => false, 'eMsg' => $vali->getLastErrorMsg()];
+				$this->print_json_result();
+			}
+		} else if (!checkUserPermission($vali->getFiltered('committee'))) {
+			$this->json_access_denied();
+		} else if (parent::$protomap[$vali->getFiltered('committee')][0] == parent::$protomap[$vali->getFiltered('committee')][1]) {
+			// on save dont allow intern == extern protocol path =>> parse view is ok, but no storing
+			//may allow partial save like Todos, Fixmes, resolutions...
+			http_response_code (403);
+			$this->json_result = ['success' => false, 'eMsg' => 'Your not allowed to store this protocol.'];
+			$this->print_json_result();
+		} else {
+			// load protocol from db ------------------
+			$dbprotocols = $this->db->getProtocols($committee);
+			$p = NULL;
+			if (array_key_exists($p->name, $dbprotocols)){
+				$p = new Protocol();
+				$p->id = $dbprotocols[$p->name]['id'];
+				$p->url = $dbprotocols[$p->name]['url'];
+				$p->name = $dbprotocols[$p->name]['name'];
+				$p->date = $dbprotocols[$p->name]['date'];
+				$p->agreed = $dbprotocols[$p->name]['agreed'];
+				$p->gremium = $dbprotocols[$p->name]['gremium'];
+				$p->legislatur = $dbprotocols[$p->name]['legislatur'];
+				$p->draft_url = $dbprotocols[$p->name]['draft_url'];
+				$p->public_url = $dbprotocols[$p->name]['public_url'];
+				$p->ignore = $dbprotocols[$p->name]['ignore'];
+			} else {
+			// load protocol from wiki -----------------
+				$p = $this->loadWikiProtoBase($vali->getFiltered('committee'), $vali->getFiltered()['proto'], false);
+			}
+			if ($p === NULL) {
+				$this->json_not_found();
+				return;
+			}
+			//---------------------------------
+			$p->ignore = ($p->ignore)? 0 : 1;
+			//create/update protocol in db
+			$ok = $this->db->createUpdateProtocol($p);
+			if ($ok){
+				$this->json_result = [
+					'success' => true,
+					'msg' => ($p->ignore)?'Protokoll wird bei zukünftigen Einladungen und Protokollen ignoriert. (Sollte nur bei nicht beschlussfähigen Sitzungen geschehen.)': 'Protokoll wird bei zukünftigen Einladungen berücksichtigt.',
+					'timing' => prof_print(false)['sum']
+				];
+			} else {
+				$this->json_result = [
+					'success' => false,
+					'eMsg' => 'Fehler beim Ändern der Protokolleinstellung',
+					'timing' => prof_print(false)['sum']
+				];
+			}
+			http_response_code (200);
 			$this->print_json_result();
 		}
 	}

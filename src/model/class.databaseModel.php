@@ -1061,7 +1061,7 @@ class DatabaseModel extends Database
 	 */
 	public function createUpdateProtocol($p){
 		$sql = ''; 
-		$pattern = 'sssiiiss';
+		$pattern = 'sssiiissi';
 		$data = [
 			$p->url,
 			$p->name,
@@ -1071,6 +1071,7 @@ class DatabaseModel extends Database
 			$p->legislatur,
 			$p->draft_url,
 			$p->public_url,
+			($p->ignore)? 1 : 0,
 		];
 		if ($p->id != NULL){
 			$pattern.='i';
@@ -1083,7 +1084,8 @@ class DatabaseModel extends Database
 					`gremium` = ?, 
 					`legislatur` = ?, 
 					`draft_url` = ?, 
-					`public_url` = ?
+					`public_url` = ?,
+					`ignore` = ?
 				WHERE `id` = ?;";
 		} else {
 			$sql = "INSERT INTO `".TABLE_PREFIX."protocol`
@@ -1094,8 +1096,9 @@ class DatabaseModel extends Database
 				`gremium`, 
 				`legislatur`, 
 				`draft_url`, 
-				`public_url`)
-			VALUES(?,?,?,?,?,?,?,?) ";
+				`public_url`,
+				`ignore`)
+			VALUES(?,?,?,?,?,?,?,?,?) ";
 		}
 		$this->protectedInsert($sql, $pattern, $data);
 		$result = $this->affectedRows();
@@ -1116,7 +1119,7 @@ class DatabaseModel extends Database
 	 */
 	public function createProtocol($p){
 		$sql = '';
-		$pattern = 'sssiiiss';
+		$pattern = 'sssiiissi';
 		$data = [
 			$p['url'],
 			$p['name'],
@@ -1126,6 +1129,7 @@ class DatabaseModel extends Database
 			$p['legislatur'],
 			$p['draft_url'],
 			$p['public_url'],
+			($p->ignore)? 1 : 0,
 		];
 		$sql = "INSERT INTO `".TABLE_PREFIX."protocol`
 			(	`url`,
@@ -1135,8 +1139,9 @@ class DatabaseModel extends Database
 				`gremium`,
 				`legislatur`,
 				`draft_url`,
-				`public_url`)
-			VALUES(?,?,?,?,?,?,?,?) ";
+				`public_url`,
+				`ignore`)
+			VALUES(?,?,?,?,?,?,?,?,?) ";
 		$this->protectedInsert($sql, $pattern, $data);
 		if ($this->affectedRows() > 0){
 			return $this->lastInsertId();
