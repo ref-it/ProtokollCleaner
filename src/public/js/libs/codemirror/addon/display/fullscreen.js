@@ -25,6 +25,7 @@
     wrap.style.width = "";
     wrap.style.height = "auto";
     wrap.className += " CodeMirror-fullscreen";
+    $(wrap).parent().children('.CodeMirror-buttonsPanel:not(.cm-button-panel-fullscreen)').addClass('cm-button-panel-fullscreen');
     document.documentElement.style.overflow = "hidden";
     cm.refresh();
   }
@@ -35,6 +36,7 @@
     document.documentElement.style.overflow = "";
     var info = cm.state.fullScreenRestore;
     wrap.style.width = info.width; wrap.style.height = info.height;
+    $(wrap).parent().children('.CodeMirror-buttonsPanel.cm-button-panel-fullscreen').removeClass('cm-button-panel-fullscreen');
     window.scrollTo(info.scrollLeft, info.scrollTop);
     cm.refresh();
   }
