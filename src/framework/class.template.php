@@ -388,7 +388,7 @@ class Template
 	 */
 	public function printPageHeader(){
 		$this->header_printed = true;
-		include (dirname(__FILE__, 2)."/templates/".TEMPLATE."/header.phtml");
+		include (realpath(dirname(__FILE__) . '/..')."/templates/".TEMPLATE."/header.phtml");
 	}
 
 	/**
@@ -396,7 +396,7 @@ class Template
 	 */
 	public function printPageFooter(){
 		prof_flag('template_footer');
-		include (dirname(__FILE__, 2)."/templates/".TEMPLATE."/footer.phtml");
+		include (realpath(dirname(__FILE__) . '/..')."/templates/".TEMPLATE."/footer.phtml");
 	}
 
 	/**

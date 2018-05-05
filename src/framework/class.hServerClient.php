@@ -13,7 +13,7 @@
  * @requirements    PHP 7.0 or higher
  */
 
-require_once(dirname(__FILE__, 1).'/class.hHttpClient.php');
+require_once(dirname(__FILE__).'/class.hHttpClient.php');
 
 class hServerClient extends hHttpClient
 {

@@ -13,8 +13,8 @@
  * @requirements    PHP 7.0 or higher
  */
 // ===== load framework =====
-if (!file_exists ( dirname(__FILE__, 2).'/config.php' )){
+if (!file_exists ( realpath(dirname(__FILE__) . '/..').'/config.php' )){
 	echo "No configuration file found! Please create and edit 'config.php'";
 	die();
 }
-require_once (dirname(__FILE__, 2).'/config.php');
+require_once (realpath(dirname(__FILE__) . '/..').'/config.php');
