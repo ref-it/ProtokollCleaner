@@ -168,11 +168,67 @@
 				});
 				return;
 			}
+		};
+		
+		var handleIgnore = function ($e){
+			var dataset = {
+				proto: $('.protostatus .date > span').last().data('name'),
+				committee: $('.protostatus .committee > span').last().text(),
+			};
+			fchal = document.getElementById('fchal');
+			dataset[fchal.getAttribute("name")] = fchal.value;
+			//show info
+			var modal = $.modaltools({
+				text: '<strong>Anfrage wird verarbeitet. Bitte warten.</strong></p><p><div class="multifa center"><span class="fa fa-cog sym-spin"></span><span class="fa fa-cog sym-spin-reverse"></span></div>', 
+				buttons: {}
+			}).open();
+			// do ajax post
+			$.ajax({
+				type: "POST",
+				url: 'protocol/ignore',
+				data: dataset,
+				success: function(data){
+					modal.close();
+					pdata = {};
+					try {
+						pdata = JSON.parse(data);
+					} catch(e) {
+						console.log(data);
+						pdata.success=false;
+						pdata.eMsg = ('Unerwarteter Fehler (Code: "'+data.status+'"). Seite wird neu geladen...');
+						auto_page_reload(5000);
+					}
+					if(pdata.success == true){
+						silmph__add_message(pdata.msg + ((typeof(pdata.timing) == 'number')? ' (In '+pdata.timing.toFixed(2)+' Sekunden)' : ''), MESSAGE_TYPE_SUCCESS, 3000);
+						auto_page_reload(3000);
+					} else {
+						silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
+					}
+				},
+				error: function(data){silmph__add_message
+					modal.close();
+					console.log(data);
+					try {
+						pdata = JSON.parse(data.responseText);
+						silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
+					} catch(e) {
+						console.log(data);
+						silmph__add_message('Unerwarteter Fehler (Code: "'+data.status+'"). Seite wird neu geladen...', MESSAGE_TYPE_WARNING, 5000);
+						auto_page_reload(5000);
+					}
+				}
+			});
+			return;
+			
 		}
 		
 		$('.protolinks button.commit').click(function(e){
 			$e = $(this);
 			handleCommit($e, 0);
+		});
+		$('.protolinks button.ignore').click(function(e){
+			$e = $(this);
+			handleIgnore($e);
 		});
 		
 	});

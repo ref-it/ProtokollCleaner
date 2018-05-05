@@ -77,6 +77,12 @@ class Protocol
 	public $draft_url;
 	
 	/**
+	 * ignore protocols on mail invitations and dont remember
+	 * @var Integer
+	 */
+	public $ignore;
+	
+	/**
 	 * current legislatur
 	 * @var int
 	 */
@@ -168,6 +174,7 @@ class Protocol
 		$this->todos = [];
 		$this->parse_errors = [];
 		$this->resolutions = [];
+		$this->ignore = 0;
 	}
 }
 

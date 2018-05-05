@@ -84,8 +84,8 @@ class CronController extends MotherController {
 			];
 			$nproto['membernames'] = $membernames;
 			// open protocols // not aggreed
-			$notAgreedProtocols = $this->db->getProtocols($nproto['gname'], false, false, true, false, " AND LENGTH(P.name) = 10 AND P.date > '2017-01-01' AND date < '".date_create()->format('Y-m-d')."'");
-			$draftStateProtocols = $this->db->getProtocols($nproto['gname'], false, false, false, true, " AND (P.public_url IS NULL) AND LENGTH(P.name) = 10 AND P.date > '2017-01-01' AND date < '".date_create()->format('Y-m-d')."'");
+			$notAgreedProtocols = $this->db->getProtocols($nproto['gname'], false, false, true, false, " AND P.ignore = 0 AND LENGTH(P.name) = 10 AND P.date > '2017-01-01' AND date < '".date_create()->format('Y-m-d')."'");
+			$draftStateProtocols = $this->db->getProtocols($nproto['gname'], false, false, false, true, " AND P.ignore = 0 AND (P.public_url IS NULL) AND LENGTH(P.name) = 10 AND P.date > '2017-01-01' AND date < '".date_create()->format('Y-m-d')."'");
 		
 			//send mail invitation
 			$ok = $ic->send_mail_invitation(
