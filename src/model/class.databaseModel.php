@@ -1129,7 +1129,7 @@ class DatabaseModel extends Database
 			$p['legislatur'],
 			$p['draft_url'],
 			$p['public_url'],
-			($p->ignore)? 1 : 0,
+			(isset($p['ignore']) && $p['ignore'])? 1 : 0,
 		];
 		$sql = "INSERT INTO `".TABLE_PREFIX."protocol`
 			(	`url`,
