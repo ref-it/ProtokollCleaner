@@ -490,19 +490,22 @@
 	};
 	// ------------------------------------------------
 	var func_add_member_btn = function(){
-		var $e = $(this).parent().prev().children('input');
-		var val = $e.val().trim();
+		var $e = $(this).parent().prev().prev().children('input');
+		var $ej = $(this).parent().prev().children('input');
+		var val_name = $e.val().trim();
+		var val_job = $ej.val().trim();
 		
 		var error = false;
-		if (val.length != 0 && val.length < 3){
+		if (val_name.length != 0 && val_name.length < 3){
 			silmph__add_message('Der Name muss mindestens 3 Zeichen lang sein.', MESSAGE_TYPE_WARNING, 5000);
 			error = true;
 		}
 		formError($e, error);
 		
-		if(!error && val.length > 0){
+		if(!error && val_name.length > 0){
 			var dataset = {
-				mname: val,
+				mname: val_name,
+				mjob: val_job,
 				committee: 'stura'
 			};
 			fchal = document.getElementById('fchal');
@@ -522,6 +525,7 @@
 							html: '<span class="membername"'+
 									' data-id="'+pdata.newmember.id+
 									'" data-name="'+pdata.newmember.name+
+									'" data-job="'+(pdata.newmember.job!=''?'('+pdata.newmember.job+')':'')+
 									'" data-management="0" data-protocol="0"></span>'
 						});
 						if ($e.closest('.silmph_memberbox').hasClass('editmember')){

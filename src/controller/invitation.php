@@ -397,6 +397,11 @@ class InvitationController extends MotherController {
 				'minlength' => '3',
 				'error' => 'Ungültige Zeichen im Namen.'
 			],
+			'mjob' => ['regex',
+				'empty',
+				'pattern' => '/^[a-zA-Z0-9\-_ .,äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]*$/',
+				'error' => 'Fehler bei der Tätigkeitsangabe. Kommaseparierte Liste.'
+			],
 		];
 		$vali = new Validator();
 		$vali->validateMap($_POST, $validator_map, true);
@@ -428,9 +433,17 @@ class InvitationController extends MotherController {
 				];
 			} else {
 				$grem = $this->db->getCreateCommitteebyName($vali->getFiltered('committee'));
+				$joblist_tmp = explode(',', $vali->getFiltered('mjob'));
+				$joblist = [];
+				foreach ($joblist_tmp as $job){
+					$job = trim($job, "-.,_ \t\n\r\0\x0B");
+					if ($job != '') $joblist[] = $job;
+				}
+				
 				$newmem = [
 					'name' => $vali->getFiltered('mname'),
 					'gremium' => $grem['id'],
+					'job' => implode(', ', $joblist)
 				];
 				$res = $this->db->createMember($newmem);
 				if ($res){
