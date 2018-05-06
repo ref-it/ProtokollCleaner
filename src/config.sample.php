@@ -36,6 +36,10 @@ define('TEMPLATE', 'stura');
 
 // ===== SimpleSAML Settings & Konstants
 define('SIMPLESAML_ACCESS_GROUP', 'stura');
+define("SAML_SIMPLESAMLDIR" , dirname(__FILE__,4) . "/simplesamlphp");
+define("SAML_SIMPLESAMLAUTHSOURCE" , "");
+define("SAML_AUTHGROUP" , "");
+define("SAML_ADMINGROUP" , "");
 
 // ===== Wiki Settings =====
 define('WIKI_URL', 'https://wiki.stura.tu-ilmenau.de');

@@ -35,6 +35,16 @@ function setAuthHandler(){
 		$auth = BasicAuthHandler::getInstance(empty($cronRoutes[$method][$path][0]));
 		$hasAuth = (empty($cronRoutes[$method][$path][0]))? true : $auth->requireGroup('cron');
 	} else {
+		$conf = [
+			"AuthHandler" => [
+				"SIMPLESAMLDIR" => SAML_SIMPLESAMLDIR,
+				"SIMPLESAMLAUTHSOURCE" => SAML_SIMPLESAMLAUTHSOURCE,
+				"AUTHGROUP" => SAML_AUTHGROUP,
+				"ADMINGROUP" => SAML_ADMINGROUP,
+			],
+		];
+		Singleton::configureAll($conf);
+		
 		$auth = AuthHandler::getInstance();
 		$hasAuth = $auth->requireGroup(SIMPLESAML_ACCESS_GROUP);
 	}
