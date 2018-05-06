@@ -526,13 +526,13 @@ class ProtocolController extends MotherController {
 			$this->print_json_result();
 		} else {
 			// load protocol from db ------------------
-			$dbprotocols = $this->db->getProtocols($committee);
+			$dbprotocols = $this->db->getProtocols($vali->getFiltered('committee'));
 			$p = NULL;
-			if (array_key_exists($p->name, $dbprotocols)){
+			if (array_key_exists($vali->getFiltered('proto'), $dbprotocols)){
 				$p = new Protocol();
+				$p->name = $dbprotocols[$vali->getFiltered('proto')]['name'];
 				$p->id = $dbprotocols[$p->name]['id'];
 				$p->url = $dbprotocols[$p->name]['url'];
-				$p->name = $dbprotocols[$p->name]['name'];
 				$p->date = $dbprotocols[$p->name]['date'];
 				$p->agreed = $dbprotocols[$p->name]['agreed'];
 				$p->gremium = $dbprotocols[$p->name]['gremium'];
