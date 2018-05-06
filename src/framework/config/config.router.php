@@ -136,16 +136,24 @@ if (BASE_SUBDIRECTORY != '/'){
 	$tmpf1 = function($a) {
 		$tmp1 = [];
 		foreach ($a as $k1 => $v1){
+			$tmp2 = [];
 			foreach ($v1 as $k2 => $v2){
-				$tmp1[BASE_SUBDIRECTORY.(($k2=='/')?'':$k2)]=$v2;
+				$key  = substr(BASE_SUBDIRECTORY,1);
+				if ($k2!='/') {
+					$key.=$k2;
+				} else {
+					$key = substr($key,0,-1);
+				}
+				$tmp2[$key]=$v2;
 			}
+			$tmp1[$k1] = $tmp2;
 		}
 		return $tmp1;
 	};
 	$tmpf2 = function($a) {
 		$tmp1 = [];
 		foreach ($a as $k1 => $v1){
-			$tmp1[BASE_SUBDIRECTORY.(($k1=='/')?'':$k1)]=$v1;
+			$tmp1[substr(BASE_SUBDIRECTORY,1).(($k1=='/')?'':$k1)]=$v1;
 		}
 		return $tmp1;
 	};
