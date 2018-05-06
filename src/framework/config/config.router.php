@@ -129,4 +129,32 @@ $permission_map = [
 	'cronwiki'		=> 'cronwiki',
 ];
 
+// handle BASE_SUBDIRECTORIES
+if (BASE_SUBDIRECTORY != '/'){
+	$tmpf1 = function($a) {
+		$tmp1 = [];
+		foreach ($a as $k1 => $v1){
+			foreach ($v1 as $k2 => $v2){
+				$tmp1[BASE_SUBDIRECTORY.(($k2=='/')?'':$k2)]=$v2;
+			}
+		}
+		return $tmp1;
+	};
+	$tmpf2 = function($a) {
+		$tmp1 = [];
+		foreach ($a as $k1 => $v1){
+			$tmp1[BASE_SUBDIRECTORY.(($k1=='/')?'':$k1)]=$v1;
+		}
+		return $tmp1;
+	};
+	//update routes
+	$routes = $tmpf1($routes);
+	//update cron routes
+	$cronRoutes = $tmpf1($cronRoutes);
+	//update navigation
+	$navigation = $tmpf2($navigation);
+	unset($tmpf1);
+	unset($tmpf2);
+}
+
 ?>

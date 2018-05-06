@@ -18,11 +18,12 @@
 		<meta name="theme-color" content="#173d92" />
 		<meta name="apple-mobile-web-app-capable" content="yes">
 		<meta name="mobile-web-app-capable" content="yes">
+		<script type="text/javascript">
+			var GLOBAL_RELATIVE = "<?= BASE_SUBDIRECTORY; ?>";
+		</script>
 		<?php $this->printMetaOther(true); ?>
-		
 		<?php $this->printCss(true); ?>
 		<?php $this->printScript(true); ?>
-
 		<script type="text/javascript">
 			function printPage(){
 				document.getElementById('content').style.marginLeft = "0px";
@@ -35,8 +36,8 @@
 	</head>
 	<body id="body" <?php if ($this->extra_body_class) echo 'class="'.$this->extra_body_class.'"'; ?> >
 		<nav class="navbar fixed-top navbar-expand-md navbar-dark bg-<?= (DEBUG>=1)? 'danger':'dark' ?> noprint" style="position:fixed">
-     		<a class="navbar-brand mr-auto" href="<?= BASE_URL ?>">
-     			<img alt="logo" src="/images/logo_wt.png" height="30px"><span class="hide_on_small">Protokollautomatisierung</span></a>
+     		<a class="navbar-brand mr-auto" href="<?= BASE_URL.BASE_SUBDIRECTORY ?>">
+     			<img alt="logo" src="<?= BASE_SUBDIRECTORY ?>images/logo_wt.png" height="30px"><span class="hide_on_small">Protokollautomatisierung</span></a>
 	  		<button class="btn btn-outline-light mr-1 fa ml-auto d-block d-md-none" onclick="printPage();" type="button">&#xf02f;</button>
 	  		<?php if (isset($this->auth)) { ?>
 	  			<a class="btn btn-outline-light mr-1 fa ml-0 d-block d-md-none" href="<?= $this->auth->getLogoutURL(); ?>">&#xf011;</a>
@@ -88,7 +89,7 @@
 	        </div>
 	    </div>
 		<div class="printheader printonly" style="position: fixed;">
-			<img class="logo printonly" src="/images/logo.png" width="83" height="39" />Protokollautomatisierung
+			<img class="logo printonly" src="<?= BASE_SUBDIRECTORY ?>images/logo.png" width="83" height="39" />Protokollautomatisierung
 		</div>
 
 		<div class="content_wrapper">

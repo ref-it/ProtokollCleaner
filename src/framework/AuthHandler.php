@@ -84,7 +84,7 @@ class  AuthHandler{
 		}
 		
 		if ($_SESSION['SILMPH']['USER_ID'] === 0){
-			echo 'Please Login: <a href="'.BASE_URL.'?login=1'.'">Use THIS LINK</a>';
+			echo 'Please Login: <a href="'.BASE_URL.BASE_SUBDIRECTORY.'?login=1'.'">Use THIS LINK</a>';
 			die();
 		}
 	
@@ -122,11 +122,11 @@ class  AuthHandler{
     }
     
     function getLogoutURL(){
-    	return BASE_URL . '?logout=1';
+    	return BASE_URL.BASE_SUBDIRECTORY . '?logout=1';
     }
     
     function logout($param = NULL){
-    	header('Location: '.BASE_URL . '?logout=1');
-		die();
+    	header('Location: ' . BASE_URL.BASE_SUBDIRECTORY . '?logout=1');
+ 		die();
     }
 }

@@ -29,6 +29,7 @@ define('TABLE_PREFIX', 'silmph__'); //_S_tura _ILM_enau _P_rotocol _H_elper
 // ===== Base Settings =====
 define('BASE_TITLE', 'ProtocolHelper');
 define('BASE_URL', 'https://refit01.mollybee.de');
+define('BASE_SUBDIRECTORY', '/'); // starts and ends with letter '/'
 
 define('TIMEZONE', 'Europe/Berlin'); //Mögliche Werte: http://php.net/manual/de/timezones.php
 define('TEMPLATE', 'stura');
