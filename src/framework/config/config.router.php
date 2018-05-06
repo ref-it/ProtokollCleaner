@@ -17,7 +17,6 @@ $routes = [
 		'reso/list'			=> ['resolist',		'resolution', 	'rlist'],
 		'reso/towiki'		=> ['resotowiki',	'resolution', 	'resoToWiki'],
 		'todo/list'			=> ['todolist',		'todo', 		'tlist'],
-		'todo/manifest'		=> ['todomanifest',	'todo', 		'manifest'],
 		'invite'			=> ['invitebase',	'invitation', 	'ilist'],
 		'invite/tedit'		=> ['itopedit',		'invitation', 	'itopedit'],
 		'crawl'				=> ['crawler',		'crawler', 		'home'],
@@ -48,11 +47,13 @@ $routes = [
 
 /**
  * cron routes only use basic auth
+ * also place routes with empty permissionentry here
  * REQUEST METHOD => ROUTE => [PERMISSION, CONTROLLER, ACTION, DESCRIPTION]
  * @var array
  */
 $cronRoutes = [
 	'GET' => [
+		'todo/manifest'	=> ['',				'todo', 		'manifest'],
 		'cron'			=> ['croninfo',		'cron', 		'info' , 'This Page'],
 	],
 	'POST' => [
@@ -104,7 +105,6 @@ $permission_map = [
 	'resolist' 		=> 'ref-it,stura,konsul,admin',
 	'resotowiki' 	=> 'ref-it,stura,konsul,admin',
 	'todolist' 		=> 'stura,ref-it,stura-activ,konsul,admin',
-	'todomanifest' 	=> '',
 	'todoupdate' 	=> 'stura,ref-it,stura-activ,konsul,admin',
 	'invitebase' 	=> 'stura,ref-it,stura-activ,konsul,admin',
 	'itopdelete' 	=> 'stura,ref-it,stura-activ,konsul,admin',

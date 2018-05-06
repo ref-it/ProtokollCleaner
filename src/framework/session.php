@@ -32,8 +32,8 @@ function setAuthHandler(){
 	if (isset($cronRoutes[$method])
 		&& isset($cronRoutes[$method][$path])){
 		require_once (dirname(__FILE__)."/BasicAuthHandler.php");
-		$auth = BasicAuthHandler::getInstance();
-		$hasAuth = $auth->requireGroup('cron');
+		$auth = BasicAuthHandler::getInstance(empty($cronRoutes[$method][$path][0]));
+		$hasAuth = (empty($cronRoutes[$method][$path][0]))? true : $auth->requireGroup('cron');
 	} else {
 		$auth = AuthHandler::getInstance();
 		$hasAuth = $auth->requireGroup(SIMPLESAML_ACCESS_GROUP);
