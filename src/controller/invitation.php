@@ -1167,6 +1167,11 @@ class InvitationController extends MotherController {
 			]);
 			$prot_text = ob_get_clean();
 			
+			if (DEBUG >= 2){
+				echo '<pre>'; var_dump($prot_text); echo '</pre>';
+				return;
+			}
+			
 			$ok = false;
 			//write protocol to wiki
 			$ok = $x->putPage(

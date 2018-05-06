@@ -18,106 +18,127 @@
 ===== Organisatorisches =====
 
 ==== Begrüßung und Feststellung der Beschlussfähigkeit ====
-<?php //TODO SGIS VOODO: Name -> Tätigkeitsbereich 
+<?php //
 	$memberNameIdMap = [];
 	$counter = [
-		'stimmberechtigtAnwesend' => 0
+		'stimmberechtigtAnwesend' => 0,
+		'stimmberechtigt' => 0
 	];
+	
+	//anwesenheit =================================================
+	$stuff = ['Konsul', 'Angestellte'];
+	$anwesenheit = [
+		'overwrite' => [],
+		'base' => [],
+		'angestellt' => [],
+		'referate' => []
+	];
+	
+	//member loop --- handle DB data ==============================
+	$trr = []; // temp reverse resort
 	foreach ($param['members'] as $id => $m){
 		$memberNameIdMap[$m['name']] = $id;
-		if ($m['stateName'] == 'J') $counter['stimmberechtigtAnwesend']++;
+		// Mitglieder
+		if ($m['flag_elected']) $anwesenheit['base'][$m['name']] = $m['job'];
+		// overwrite
+		if ($m['overwrite']!==NULL) $anwesenheit['overwrite'][$m['name']] = $m['overwrite'];
+		// stuff
+		if ($m['flag_stuff']){
+			foreach ($stuff as $s){
+				if (strpos(strtolower($m['job']), strtolower($s)) !== false){
+					$anwesenheit['angestellt'][$m['name']] = $s;
+				}
+			}
+		}
+		//referate / active /or non of all - anwesenheit list
+		if (!$m['flag_stuff'] && !$m['flag_elected']){
+			$anwesenheit['referate'][$m['name']] = ($m['flag_active']&&!$m['job'])? 'Aktiv' : $m['job'];
+		} 
+		//counter
+		if ($m['flag_stuff'] && $m['overwrite'] != '(ruhend)') $counter['stimmberechtigt']++;
+		if ($m['stateName'] == 'J' && $m['flag_stuff']) $counter['stimmberechtigtAnwesend']++;
+		//job / resort reverse
+		if ($m['job'] != '' // member has job
+			&& $m['overwrite'] != '(ruhend)' // member is present (overwrite)
+			&& $m['overwrite'] != 'N' 		 // member is present (overwrite)
+			&& $m['stateName'] != 'N'){ 	 // member is present
+			$jobs = (strpos($m['job'], ',')!== false)? explode(',', $m['job']) : [$m['job']];
+			foreach ($jobs as $k => $j){
+				$j = mb_strtolower(trim(strip_tags($j)));
+				$trr[$j] = $m['name'];
+				if (mb_strpos($j, 'hv')!==false){
+					$tj = str_replace('hv', 'ref finanzen', $j);
+					$trr[$tj] = $m['name'];
+				}
+				if ($j == 'hv'){
+					$tj = 'leitung ref finanzen';
+					$trr[$tj] = $m['name'];
+				}
+				if (mb_strpos($j, 'sport')!==false){
+					$tj = str_replace('sport', 'sug', $j);
+					$trr[$tj] = $m['name'];
+				}
+				if (mb_strpos($j, 'sport')!==false){
+					$trr['sport, umwelt und gesundheit'] = $m['name'];
+				}
+				if (mb_strpos($j, 'kts')!==false){
+					$trr['ref kts'] = $m['name'];
+				}
+			}
+		}
 	}
-	$member = [
-		'overwrite' => [
-			'Mark-Dominik Schust' => '(ruhend)',
-			'Verena Scholtz-Mücke' => 'N'
-		],
-		'base' => [
-			'Lukas Staab' => 'Ref IT, Konsul',
-			'Vanessa Gombisch' => 'Ref Öffentlichkeitsarbeit, FSR IA, FAK IA',
-			'Michelle Storandt' => 'HV, stellv. KV',
-			'Sarah Noriya Kraus' => 'KV',
-			'Florian Rippstein' => 'stellv. Ref IT, FSR IA, FAK IA, GSR',
-			'Dmitriy Shorin' => 'stellv. HV, stellv. Ref SUG, stellv. Ref Stadt',
-			'Mark-Dominik Schust' => 'FSR MN',
-			'Stefan Kostrzebski' => '',
-			'Julian Brückner' => 'stellv. KV',
-			'Rick Augner' => 'KTS',
-			'Maximilian Neubronner' => 'Ref Stadt',
-			'Christopher Grolmus' => 'FAK WM',
-			'Léon Geide' => '',
-			'Maximilian Ermisch' => '',
-			'Rahul Galda' => '',
-			'Uwe Ziegler' => 'Entsandt FSR EI',
-			'Martin Rudolph' => 'Entsandt FSR IA',
-			'Dennis Ritter' => 'Entsandt FSR MB',
-			'Alex Steinacker' => 'Entsandt FSR MN',
-			'Christian Gorf' => 'Entsandt FSR WM',
-		],
-		'angestellt' => [
-			'Verena Scholtz-Mücke' => 'Angestellte',
-			'Lukas Staab' => 'Konsul',
-		],
-		'referate' => [
-			'Simon Bruhn' => 'Ref Ehrenamt',
-			'Mark-Dominik Schust' => 'stellv. Ref Ehrenamt',
-			'Johann Riedlberger' => 'stellv. Ref Ehrenamt',
-			'Beatrix Bau' => 'Ref Erstiwoche',
-			'Florian Funk' => 'stellv. Ref ErstiWoche',
-			'René Hasenbein' => 'Ref Hopo',
-			'Maria Honecker' => 'stellv. Ref Hopo',
-			'Franziska Chuleck' => 'stellv. Ref HoPo',
-			'Fabian Julius de Planque' => 'Ref Internationales, stellv. Ref SUG',
-			'Alina Valitova' => 'stellv. Ref Internationales',
-			'Irina Tribusean' => 'stellv. Ref Internationales, stellv. Ref Kultur',
-			'Toni Schildhauer' => 'Ref Kultur',
-			'Alexander Rohrbach' => 'stellv. Ref Kultur',
-			'Jasmin Reis' => 'stellv. Ref Kultur',
-			'Ella Kunze' => 'stellv. Ref Öffentlichkeitsarbeit',
-			'Julian Wüster' => 'stellv. Ref Kultur',
-			'Erik Rothamel' => 'stellv. Ref Soziales',
-			'René Böttcher' => 'Ref SUG',
-			'Martin Hofmann' => 'stellv. Ref Stadt, Ref PoliBi',
-		]
-	];
+	ksort($anwesenheit['base']);
+	ksort($anwesenheit['referate']);
+	asort($anwesenheit['angestellt']);
 	
-	$resorts = [
-		'Referate' => [
-			'Finanzen' => 'Michelle Storandt',
-			'Ehrenamt' => 'Simon Bruhn',
-			'Erstiwoche' => 'Beatrix Bau',
-			'Hochschulpolitik' => 'René Hasenbein',
-			'Internationales' => 'Fabian Julius de Planque|Fabian de Planque',
-			'IT' => 'Lukas Staab',
-			'Kultur' => 'Toni Schildhauer',
-			'Öffentlichkeitsarbeit' => 'Vanessa Gombisch',
-			'Politische Bildung' => 'Martin Hofmann',
-			'Soziales' => 'Erik Rothamel',
-			'Sport, Umwelt und Gesundheit' => 'René Böttcher',
-			'Stadt und Studierendenbeirat' => 'Maximilian Neubronner',
-			'Thüringer Studierendenschaften (KTS)' => 'Rick Augner',
-		],
-		'Fachschaftsräte' => [
-			'EI' => 'Uwe Ziegler',
-			'IA' => 'Martin Rudolph',
-			'MB' => 'Jan Schmitz',
-			'MN' => 'Alex Steinacker',
-			'WM' => 'Christian Gorf',
-		],
-		'Berichte aus AGs und von Verantwortlichen' => [
-			'Interclub' => 'Michelle Storandt',
-			'Umbau' => 'Michelle Storandt',
-			'Semesteranfangsparty' => '',
-			'Wohnen' => '',
-			'Ordnungen' => '',
-			'Diversity' => 'Florian Rippstein',
-			'Asylpolitik' => '',
-		]
+	//resorts =====================================================
+	$resortHeadlines = [
+		'Referat'	=> 'Referate',
+		'FSR'		=> 'Fachschaftsräte',
+		'AG'		=> 'Berichte aus AGs und von Verantwortlichen',
 	];
+	$resorts = [
+		'Referat'	=> [],
+		'FSR' 		=> [],
+		'AG' 		=> []
+	];
+	foreach($param['resorts'] as $resort){
+		if (isset($resorts[$resort['type']])){
+			$k = mb_strtolower($resort['name']);
+			$ks = ($resort['name_short'])? mb_strtolower($resort['name_short']): '';
+			$t = $resort['type'];
+			$resorts[$t][$resort['name']] = '';
+			
+			// REFERAT
+			if ($t == 'Referat' && isset($trr['leitung ref '.$k])){
+				$resorts[$t][$resort['name']] = $trr['leitung ref '.$k];
+			} elseif ($t == 'Referat' && isset($trr['stellv. ref '.$k])){
+				$resorts[$t][$resort['name']] = $trr['stellv. ref '.$k];
+			} elseif ($t == 'Referat' && isset($trr['ref '.$k])){
+				$resorts[$t][$resort['name']] = $trr['ref '.$k];
+			} elseif ($t == 'Referat' && $ks != '' && isset($trr['leitung ref '.$ks])){
+				$resorts[$t][$resort['name']] = $trr['leitung ref '.$ks];
+			} elseif ($t == 'Referat' && $ks != '' && isset($trr['stellv. ref '.$ks])){
+				$resorts[$t][$resort['name']] = $trr['stellv. ref '.$ks];
+			} elseif ($t == 'Referat' && $ks != '' && isset($trr['ref '.$ks])){
+				$resorts[$t][$resort['name']] = $trr['ref '.$ks];
+			} // AG
+			elseif ($t == 'AG' && isset($trr['ag '.$k])){
+				$resorts[$t][$resort['name']] = $trr['ag '.$k];
+			} elseif ($t == 'AG' && $ks != '' && isset($trr['ag '.$ks])){
+				$resorts[$t][$resort['name']] = $trr['ag '.$ks];
+			} // FSR
+			elseif ($t == 'FSR' && isset($trr['entsandt fsr '.$k])){
+				$resorts[$t][$resort['name']] = $trr['entsandt fsr '.$k];
+			} elseif ($t == 'FSR' && isset($trr['fsr '.$k])){
+				$resorts[$t][$resort['name']] = $trr['fsr '.$k];
+			}
+		}
+	}
 	
 	// ==================================================================
-	// update counter
-	foreach ($member as $kat => $mem){
+	// update counter stringlength
+	foreach ($anwesenheit as $kat => $mem){
 		$kat = ucfirst($kat);
 		$counter['member'.$kat] = 0;
 		$counter['member'.$kat.'Job'] = 0;
@@ -129,12 +150,11 @@
 
   * <?= $counter['stimmberechtigtAnwesend']; ?> stimmberechtigte Mitglieder -> FIXME keine beschlussfähige Sitzung
   * Anwesenheit (stimmberechtigt): 
-
-^ Mitglieder (besonderer Tätigkeitsbereich)                                   ^  Anwesend (J/N/E)  ^
-<?php 
-	foreach ($member['base'] as $name => $job){
+  
+^ Mitglieder (besonderer Tätigkeitsbereich)                                   ^  Anwesend (J/N/E)  ^<?php 
+	foreach ($anwesenheit['base'] as $name => $job){
 		$state = strtoupper( isset($memberNameIdMap[$name]) ? $param['members'][$memberNameIdMap[$name]]['stateName'] : 'FIXME');
-		if (isset($member['overwrite'][$name])) $state = $member['overwrite'][$name];
+		if (isset($anwesenheit['overwrite'][$name])) $state = $anwesenheit['overwrite'][$name];
 		
 		echo "\n| "
 			.mb_str_pad('[[:person:'.$name.']]' . ($job?' ('.$job.')':''), $counter['memberBase'] + 15, ' ', STR_PAD_RIGHT)
@@ -145,11 +165,10 @@
 
 ?>
 
-^ Angestellte                                                                 ^  Anwesend (J/N/E)  ^
-<?php 
-	foreach ($member['angestellt'] as $name => $job){
+^ Angestellte                                                                 ^  Anwesend (J/N/E)  ^<?php 
+	foreach ($anwesenheit['angestellt'] as $name => $job){
 		$state = strtoupper( isset($memberNameIdMap[$name]) ? $param['members'][$memberNameIdMap[$name]]['stateName'] : 'FIXME');
-		if (isset($member['overwrite'][$name])) $state = $member['overwrite'][$name];
+		if (isset($anwesenheit['overwrite'][$name])) $state = $anwesenheit['overwrite'][$name];
 	
 		echo "\n| "
 			.mb_str_pad('[[:person:'.$name.']]' . ($job?' ('.$job.')':''), $counter['memberAngestellt'] + 15, ' ', STR_PAD_RIGHT)
@@ -159,11 +178,10 @@
 	}
 ?>
 
-^ Referatsleiter*innen / StuRa-Aktive / Beratende Mitglieder                      ^  Anwesend (J/N/E)  ^
-<?php 
-	foreach ($member['referate'] as $name => $job){
+^ Referatsleiter*innen / StuRa-Aktive / Beratende Mitglieder                      ^  Anwesend (J/N/E)  ^<?php 
+	foreach ($anwesenheit['referate'] as $name => $job){
 		$state = strtoupper( isset($memberNameIdMap[$name]) ? $param['members'][$memberNameIdMap[$name]]['stateName'] : 'FIXME');
-		if (isset($member['overwrite'][$name])) $state = $member['overwrite'][$name];
+		if (isset($anwesenheit['overwrite'][$name])) $state = $anwesenheit['overwrite'][$name];
 	
 		echo "\n| "
 			.mb_str_pad('[[:person:'.$name.']]' . ($job?' ('.$job.')':''), $counter['memberReferate'] + 15, ' ', STR_PAD_RIGHT)
@@ -231,35 +249,34 @@ foreach ($tops as $id => $top){
 
 ===== Angestellte =====
 <?php 
-
-foreach ($member['angestellt'] as $name => $job){	
+foreach ($anwesenheit['angestellt'] as $name => $job){
 	echo "\n==== $job ====";
 	$found = false;
 	foreach ($tops as $id => $top){
 		if (isset($top['resort']) && $param['resorts'][$top['resort']]['type'] == 'Angestellte' && $param['resorts'][$top['resort']]['name'] == $job){
-			echo "\n".'//[[:person:'.($top['person']?$top['person']:'').']] berichtet, geschätzte benötigte Zeit: '.($top['expected_duration']?$top['expected_duration']:'XX').' min, real benötigte Zeit: XX min, Zielsetzung: '.($top['goal']?$top['goal']:'XXX').'//';
+			echo "\n".'//[[:person:'.($top['person']?$top['person']:((isset($trr[mb_strtolower($job)]))?$trr[mb_strtolower($job)]:'')).']] berichtet, geschätzte benötigte Zeit: '.($top['expected_duration']?$top['expected_duration']:'XX').' min, real benötigte Zeit: XX min, Zielsetzung: '.($top['goal']?$top['goal']:'XXX').'//';
 			echo "\n\n".$top['text']."\n";
 			unset($tops[$id]);
 			$found = true;
 		}
 	}
 	if (!$found){
-		echo "\n".'//[[:person:]] berichtet, geschätzte benötigte Zeit: XX min, real benötigte Zeit: XX min, Zielsetzung: XXX//';
+		echo "\n".'//[[:person:'.((isset($trr[mb_strtolower($job)]))?$trr[mb_strtolower($job)]:'').']] berichtet, geschätzte benötigte Zeit: XX min, real benötigte Zeit: XX min, Zielsetzung: XXX//';
 		echo "\n\n  * nicht anwesend\n";
 	}
 }
 ?><?php 
 
-foreach ($resorts as $resort_type_headl => $resortList){
-	echo "\n\n===== $resort_type_headl =====\n";
-	$job = mb_substr($resort_type_headl, 0, -1);
-	if ($resort_type_headl == 'Fachschaftsräte') $job = 'FSR';
-	if ($resort_type_headl == 'Berichte aus AGs und von Verantwortlichen') $job = 'AG';
+foreach ($resorts as $job => $resortList){
+	echo "\n\n===== {$resortHeadlines[$job]} =====\n";
+	
 	foreach ($resortList as $resortName => $who){
 		echo "\n==== $job $resortName ====";
 		$found = false;
 		foreach ($tops as $id => $top){
-			if (isset($top['resort']) && $param['resorts'][$top['resort']]['type'] == $job && $param['resorts'][$top['resort']]['name'] == $resortName){
+			if (isset($top['resort']) // is resort top
+				&& $param['resorts'][$top['resort']]['type'] == $job // is current resort type
+				&& $param['resorts'][$top['resort']]['name'] == $resortName){ // is current resort name
 				echo "\n".'//[[:person:'.($top['person']?$top['person']:'').']] berichtet, geschätzte benötigte Zeit: '.($top['expected_duration']?$top['expected_duration']:'XX').' min, real benötigte Zeit: XX min, Zielsetzung: '.($top['goal']?$top['goal']:'XXX').'//';
 				echo "\n\n".$top['text']."\n";
 				unset($tops[$id]);
