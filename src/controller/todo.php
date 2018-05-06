@@ -34,7 +34,7 @@ class TodoController extends MotherController {
 		
 		$this->t->setTitlePrefix('Todos - '.ucfirst(strtolower($perm)));
 		$this->t->clearMetaOther();
-		//$this->t->appendOtherHeadTag('<link rel="manifest" href="'.BASE_SUBDIRECTORY.'todo/manifest">');
+		$this->t->appendOtherHeadTag('<link rel="manifest" href="'.BASE_SUBDIRECTORY.'todo/manifest?committee='.$perm.'">');
 		$this->t->appendMeta(['name' => 'mobile-web-app-capable', 'content' => 'yes']);
 		$this->t->appendMeta(['name' => 'apple-mobile-web-app-capable', 'content' => 'yes']);
 		$this->t->appendMeta(['name' => 'application-name', 'content' => 'Todoliste - '. ucfirst(strtolower($perm))]);
@@ -125,5 +125,21 @@ class TodoController extends MotherController {
 				$this->print_json_result();
 			}
 		}
+	}
+	
+	public function manifest(){
+		if (!isset($_GET['committee'])) $_GET['committee'] = 'stura';
+		$validator_map = [
+			'committee' => ['regex',
+				'pattern' => '/'.implode('|', array_keys(self::$protomap)).'/',
+				'maxlength' => 10,
+			],
+		];
+		$vali = new Validator();
+		$vali->validateMap($_GET, $validator_map, true);
+		if ($vali->getIsError()){
+			$this->renderErrorPage(404);
+		}
+		$this->includeTemplate(__FUNCTION__, ['committee' => $vali->getFiltered('committee')] );
 	}
 }
