@@ -60,41 +60,41 @@ class Template
 	private $floating_links;
 	
 	/**
-	 * AuthHandler
+	 * @var AuthHandler|BasicAuthHandler
 	 */
 	private $auth;
 	
 	/**
 	 * $navigation array
 	 * 
-	 * array
+	 * @var array
 	 */
 	private $nav;
 	
 	/**
 	 * current url path
-	 * string
+	 * @var string
 	 */
 	private $path;
 
 	/**
 	 * 
-	 * string $title_prefix
+	 * @var string $title_prefix
 	 */
 	private $title_prefix;
 	
 	/**
-	 * boolean $header_printed
+	 * @var boolean $header_printed
 	 */
 	private $header_printed;
 	
 	/**
-	 * string|boolean $logged_in_user
+	 * @var string|boolean $logged_in_user
 	 */
 	private $logged_in_user;
 	
 	/**
-	 * string $extra_body_class
+	 * @var string $extra_body_class
 	 */
 	private $extra_body_class;
 	
