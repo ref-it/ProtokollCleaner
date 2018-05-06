@@ -132,7 +132,8 @@ class AdminController extends MotherController {
 				$mailer->bindVariables(array(
 					'name' 			=> $this->auth->getUserFullName().' ('.$this->auth->getUsername().')',
 					'time' 			=> date_create()->format('H:i d.m.Y'),
-					'base_url' 		=> BASE_URL
+					'base_url' 		=> BASE_URL,
+					'base_sub' 		=> BASE_SUBDIRECTORY
 				));
 			}
 			$mailer->setTemplate('test_mail');

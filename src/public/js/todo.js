@@ -64,7 +64,7 @@
 			//do ajax post request
 			$.ajax({
 				type: "POST",
-				url: '/todo/update',
+				url: GLOBAL_RELATIVE+'todo/update',
 				data: dataset,
 				success: function(data){
 					pdata = {};

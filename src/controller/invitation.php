@@ -71,8 +71,8 @@ class InvitationController extends MotherController {
 			'protoInternLink' => WIKI_URL.'/'.parent::$protomap[$proto['gname']][0].'/',
 			'protoPublicLink' => WIKI_URL.'/'.parent::$protomap[$proto['gname']][1].'/',
 			'unreconciled_protocols' => $openProtos,
-			'topLink' 	=> BASE_URL.'/invite',
-			'protoLink' => BASE_URL.'/protolist'
+			'topLink' 	=> BASE_URL.BASE_SUBDIRECTORY.'invite',
+			'protoLink' => BASE_URL.BASE_SUBDIRECTORY.'protolist'
 		]);
 		
 		$mailer->setTemplate('proto_invite');

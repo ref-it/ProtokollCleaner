@@ -210,35 +210,35 @@
 	var loadCodemirror = function(target, callback, param){
 		if (Codemirror_loaded==false){
 			Codemirror_loaded = true;
-			$('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', '/js/libs/codemirror/lib/codemirror.css') );
-			appendCodemirrorAddonCss('/js/libs/codemirror/addon/', {
+			$('head').append( $('<link rel="stylesheet" type="text/css" />').attr('href', GLOBAL_RELATIVE+'js/libs/codemirror/lib/codemirror.css') );
+			appendCodemirrorAddonCss(GLOBAL_RELATIVE+'js/libs/codemirror/addon/', {
 			    'dialog': 'dialog', 'display' : 'fullscreen', 'scroll' : 'simplescrollbars', 'search' : 'matchesonscrollbar'
 			});
 			loadScripts([
-				'/js/libs/codemirror/lib/codemirror.js',
-				'/js/libs/codemirror/addon/mode/loadmode.js',
-				'/js/libs/codemirror/addon/mode/multiplex.js',
-				'/js/libs/codemirror/addon/mode/overlay.js',
-				'/js/libs/codemirror/addon/mode/simple.js',
+				GLOBAL_RELATIVE+'js/libs/codemirror/lib/codemirror.js',
+				GLOBAL_RELATIVE+'js/libs/codemirror/addon/mode/loadmode.js',
+				GLOBAL_RELATIVE+'js/libs/codemirror/addon/mode/multiplex.js',
+				GLOBAL_RELATIVE+'js/libs/codemirror/addon/mode/overlay.js',
+				GLOBAL_RELATIVE+'js/libs/codemirror/addon/mode/simple.js',
 				
-				'/js/libs/codemirror/mode/doku/dokuwiki.js',
+				GLOBAL_RELATIVE+'js/libs/codemirror/mode/doku/dokuwiki.js',
 				
-				'/js/libs/codemirror/keymap/sublime.js',
-				'/js/libs/codemirror/addon/dialog/dialog.js',
-				'/js/libs/codemirror/addon/display/panel.js',
-				'/js/libs/codemirror/addon/codemirror-buttons/buttons.js',
-				'/js/libs/codemirror/addon/edit/closebrackets.js',
-				'/js/libs/codemirror/addon/edit/matchbrackets.js',
-				'/js/libs/codemirror/addon/display/fullscreen.js',
-				'/js/libs/codemirror/addon/runmode/runmode.js',
-				'/js/libs/codemirror/addon/search/search.js',
-				'/js/libs/codemirror/addon/search/searchcursor.js',
-				'/js/libs/codemirror/addon/search/search.js',
-				'/js/libs/codemirror/addon/search/jump-to-line.js',
-				'/js/libs/codemirror/addon/search/match-highlighter.js',
-				'/js/libs/codemirror/addon/selection/active-line.js',
-				'/js/libs/codemirror/addon/scroll/annotatescrollbar.js',
-				'/js/libs/codemirror/addon/scroll/simplescrollbars.js',
+				GLOBAL_RELATIVE+'js/libs/codemirror/keymap/sublime.js',
+				GLOBAL_RELATIVE+'js/libs/codemirror/addon/dialog/dialog.js',
+				GLOBAL_RELATIVE+'js/libs/codemirror/addon/display/panel.js',
+				GLOBAL_RELATIVE+'js/libs/codemirror/addon/codemirror-buttons/buttons.js',
+				GLOBAL_RELATIVE+'js/libs/codemirror/addon/edit/closebrackets.js',
+				GLOBAL_RELATIVE+'js/libs/codemirror/addon/edit/matchbrackets.js',
+				GLOBAL_RELATIVE+'js/libs/codemirror/addon/display/fullscreen.js',
+				GLOBAL_RELATIVE+'js/libs/codemirror/addon/runmode/runmode.js',
+				GLOBAL_RELATIVE+'js/libs/codemirror/addon/search/search.js',
+				GLOBAL_RELATIVE+'js/libs/codemirror/addon/search/searchcursor.js',
+				GLOBAL_RELATIVE+'js/libs/codemirror/addon/search/search.js',
+				GLOBAL_RELATIVE+'js/libs/codemirror/addon/search/jump-to-line.js',
+				GLOBAL_RELATIVE+'js/libs/codemirror/addon/search/match-highlighter.js',
+				GLOBAL_RELATIVE+'js/libs/codemirror/addon/selection/active-line.js',
+				GLOBAL_RELATIVE+'js/libs/codemirror/addon/scroll/annotatescrollbar.js',
+				GLOBAL_RELATIVE+'js/libs/codemirror/addon/scroll/simplescrollbars.js',
 				
 			], _loadCodemirror, {t: target, c: callback, p: param});
 		} else {
@@ -468,7 +468,7 @@
 					
 					$.ajax({
 						type: "POST",
-						url: '/invite/mdelete',
+						url: GLOBAL_RELATIVE+'invite/mdelete',
 						data: dataset,
 						success: function(data){
 							pdata = parseData(data);
@@ -510,7 +510,7 @@
 			
 			$.ajax({
 				type: "POST",
-				url: '/invite/madd',
+				url: GLOBAL_RELATIVE+'invite/madd',
 				data: dataset,
 				success: function(data){
 					pdata = parseData(data);
@@ -563,7 +563,7 @@
 		//do ajax post request
 		$.ajax({
 			type: "POST",
-			url: '/invite/tsort',
+			url: GLOBAL_RELATIVE+'invite/tsort',
 			data: dataset,
 			success: function(data){
 				pdata = parseData(data);
@@ -611,7 +611,7 @@
 					//do ajax post request
 					$.ajax({
 						type: "POST",
-						url: '/invite/tdelete',
+						url: GLOBAL_RELATIVE+'invite/tdelete',
 						data: dataset,
 						success: function(data){
 							pdata = parseData(data);
@@ -644,7 +644,7 @@
 		//do ajax post request
 		$.ajax({
 			type: "POST",
-			url: '/invite/tpause',
+			url: GLOBAL_RELATIVE+'invite/tpause',
 			data: dataset,
 			success: function(data){
 				pdata = {};
@@ -812,7 +812,7 @@
 		if (typeof(id)!='undefined' && id > 0){
 			dataset_get['tid'] = id;
 		}
-		jQuery.get( '/invite/tedit' , dataset_get, function(data){
+		jQuery.get( GLOBAL_RELATIVE+'invite/tedit' , dataset_get, function(data){
 			$.modaltools({
 				headerClass: 'bg-success',
 				text: data, 
@@ -843,7 +843,7 @@
 					//do ajax post request
 					$.ajax({
 						type: "POST",
-						url: '/invite/tupdate',
+						url: GLOBAL_RELATIVE+'invite/tupdate',
 						data: dataset_put,
 						success: function(data){
 							pdata = {};
@@ -951,7 +951,7 @@
 				//do ajax post request
 				$.ajax({
 					type: "POST",
-					url: '/invite/npdelete',
+					url: GLOBAL_RELATIVE+'invite/npdelete',
 					data: dataset,
 					success: function(data){
 						pdata = {};
@@ -993,7 +993,7 @@
 				//do ajax post request
 				$.ajax({
 					type: "POST",
-					url: '/invite/nprestore',
+					url: GLOBAL_RELATIVE+'invite/nprestore',
 					data: dataset,
 					success: function(data){
 						pdata = {};
@@ -1034,7 +1034,7 @@
 				//do ajax post request
 				$.ajax({
 					type: "POST",
-					url: '/invite/npinvite',
+					url: GLOBAL_RELATIVE+'invite/npinvite',
 					data: dataset,
 					success: function(data){
 						pdata = {};
@@ -1170,7 +1170,7 @@
 				//do ajax post request
 				$.ajax({
 					type: "POST",
-					url: '/invite/nptowiki',
+					url: GLOBAL_RELATIVE+'invite/nptowiki',
 					data: dataset,
 					success: function(data){
 						pdata = {};
@@ -1308,7 +1308,7 @@
 				//do ajax post request
 				$.ajax({
 					type: "POST",
-					url: '/invite/npupdate',
+					url: GLOBAL_RELATIVE+'invite/npupdate',
 					data: dataset,
 					success: function(data){
 						pdata = {};

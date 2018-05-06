@@ -26,7 +26,7 @@
 
 				$.ajax({
 					type: "POST",
-					url: 'admin/savemail',
+					url: GLOBAL_RELATIVE+'admin/savemail',
 					data: dataset,
 					success: function(data){
 						console.log(data);
@@ -223,7 +223,7 @@
 			dataset[fchal.getAttribute("name")] = fchal.value;
 			$.ajax({
 				type: "POST",
-				url: 'admin/testmail',
+				url: GLOBAL_RELATIVE+'admin/testmail',
 				data: dataset,
 				success: function(data){
 					pdata = {};
@@ -286,7 +286,7 @@
 		dataset['mfunction'] = 'create';
 		$.ajax({
 			type: "POST",
-			url: 'admin/legislatur',
+			url: GLOBAL_RELATIVE+'admin/legislatur',
 			data: dataset,
 			success: function(data){
 				pdata = {};
@@ -332,7 +332,7 @@
 		
 		$.ajax({
 			type: "POST",
-			url: 'admin/legislatur',
+			url: GLOBAL_RELATIVE+'admin/legislatur',
 			data: dataset,
 			success: function(data){
 				pdata = {};
@@ -387,7 +387,7 @@
 				
 				$.ajax({
 					type: "POST",
-					url: 'admin/legislatur',
+					url: GLOBAL_RELATIVE+'admin/legislatur',
 					data: dataset,
 					success: function(data){
 						console.log(data);

@@ -118,7 +118,7 @@ class Template
 		$this->path = $path;
 		$this->scripts = [];
 		$this->css = [];
-		$this->meta_other = ['<link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon" />'];
+		$this->meta_other = ['<link rel="shortcut icon" href="'.BASE_SUBDIRECTORY.'images/favicon.ico" type="image/x-icon" />'];
 		$this->modals = [];
 		$this->floating_links = [];
 		$this->title_prefix = '';
@@ -171,7 +171,8 @@ class Template
 	 * @param boolean $js_relative
 	 */
 	public function appendJsLink( $scriptname, $js_relative = true ){
-		$this->scripts[] = "<script src=\"".(($js_relative)?'/js/':'')."$scriptname\" type=\"text/javascript\"></script>";
+		if ($js_relative) $scriptname = BASE_SUBDIRECTORY . 'js/'. $scriptname;
+		$this->scripts[] = "<script src=\""."$scriptname\" type=\"text/javascript\"></script>";
 	}
 
 	/**
@@ -207,8 +208,9 @@ class Template
 	 * @param string $stylename css style filename in js directory
 	 * @param string $media html media tag if necessary
 	 */
-	public function appendCssLink( $stylename, $media = NULL ){
-		$this->css[] = "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/$stylename\"".(($media)? ' media="'.$media.'"' : '')."/>";
+	public function appendCssLink( $stylename, $media = NULL, $css_relative = true ){
+		if ($css_relative) $stylename = BASE_SUBDIRECTORY . 'css/'. $stylename;
+		$this->css[] = "<link rel=\"stylesheet\" type=\"text/css\" href=\"$stylename\"".(($media)? ' media="'.$media.'"' : '')."/>";
 	}
 	
 	/**

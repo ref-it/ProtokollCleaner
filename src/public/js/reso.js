@@ -3,7 +3,7 @@
 		//highlight id tag -------------------------------
 		setTimeout(function(){
 			//highlight id tag if it belongs to gallery
-			if(window.location.hash && window.location.href.indexOf("/resolist#reso-") > -1) {
+			if(window.location.hash && window.location.href.indexOf(GLOBAL_RELATIVE+'resolist#reso-') > -1) {
 				// Fragment exists
 				if(window.location.hash.lastIndexOf('#reso-', 0) === 0){
 					$(window.location.hash).addClass("bg-warning");
@@ -19,13 +19,29 @@
 			var value = $(this).val().toLowerCase();
 			var l = (value.length >= last_val_length)? false: true; 
 			last_val_length = value.length;
-			$("#resotable .resolution").filter(function() {
+			
+			var $searchon = (l)? $("#resotable .resolution") : $("#resotable .resolution:visible");
+			$searchon.filter(function() {
 				//remove text from togglebox, then search text
 				$(this).toggle($(this).clone().find('.togglebox').remove().end().text().toLowerCase().indexOf(value) > -1)
 			});
 			if (l) $('#resotable .resolution:visible').prevUntil('tr.newweek:visible', '.newweek').show();
-			$('#resotable tr.newweek:visible').prevUntil('tr.resolution:visible', '.newweek').hide()
-			
+			/*if (l){
+				$('#resotable .resolution:visible').each(function(i, e){
+					$l = $(e);
+					while(true){
+						$l = $l.prev();
+						if ($l.is(':visible')) return;
+						if ($l.hasClass('newweek')){
+							$l.show();
+							return;
+						}
+					}
+				});
+			}*/
+			if (!l) $('#resotable tr.newweek:visible').prevUntil('tr.resolution:visible', '.newweek').hide();
+			//
+			/**/
 		});
 	});
 	

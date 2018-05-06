@@ -3,7 +3,7 @@
 	$(window).on('load',function(){
 		setTimeout(function(){
 			//highlight id tag if it belongs to gallery
-			if(window.location.hash && window.location.href.indexOf("/protolist#proto-2") > -1) {
+			if(window.location.hash && window.location.href.indexOf(GLOBAL_RELATIVE+'protolist#proto-2') > -1) {
 				// Fragment exists
 				if(window.location.hash.lastIndexOf('#proto-', 0) === 0){
 					$(window.location.hash).addClass("bg-warning");
@@ -21,7 +21,7 @@
 			$e = $(this);
 			var proto = $e.parent().prev().text();
 			var perm = 'stura';
-			window.location.href = '/protoedit?committee='+perm+'&proto='+proto;
+			window.location.href = GLOBAL_RELATIVE+'protoedit?committee='+perm+'&proto='+proto;
 		});
 		//protocol list: Edit button: middle mouse button -> new tab
 		$('.protolist .proto button.compare').on('mousedown', function(ev){
@@ -33,7 +33,7 @@
 					var proto = $e.parent().prev().text();
 					var perm = 'stura';
 					//open in new tab
-		        	var win = window.open('/protoedit?committee='+perm+'&proto='+proto, '_blank');
+		        	var win = window.open(GLOBAL_RELATIVE+'protoedit?committee='+perm+'&proto='+proto, '_blank');
 		        	return true;// to allow the browser to know that we handled it.
 		        break;
 		        case 3: break; //right
@@ -131,7 +131,7 @@
 				// do ajax post
 				$.ajax({
 					type: "POST",
-					url: 'protocol/publish',
+					url: GLOBAL_RELATIVE+'protocol/publish',
 					data: dataset,
 					success: function(data){
 						modal.close();
@@ -147,7 +147,7 @@
 						if(pdata.success == true){
 							silmph__add_message(pdata.msg + ((typeof(pdata.timing) == 'number')? ' (In '+pdata.timing.toFixed(2)+' Sekunden)' : ''), MESSAGE_TYPE_SUCCESS, 3000);
 							setTimeout(function(){
-								window.location.href = '/protolist#proto-'+dataset.proto;
+								window.location.href = GLOBAL_RELATIVE+'protolist#proto-'+dataset.proto;
 							}, 3000);
 						} else {
 							silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
@@ -185,7 +185,7 @@
 			// do ajax post
 			$.ajax({
 				type: "POST",
-				url: 'protocol/ignore',
+				url: GLOBAL_RELATIVE+'protocol/ignore',
 				data: dataset,
 				success: function(data){
 					modal.close();
