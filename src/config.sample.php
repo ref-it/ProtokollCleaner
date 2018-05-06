@@ -50,7 +50,7 @@ define('ENABLE_ADMIN_INSTALL', false);
 define('DEBUG', false); //Level = false / 0 => disabled || 1 => Basic debug information || 2 => additional information || 3 => all
 
 // ===== CRON SETTINGS =====
-define('CRON_USERMAP', [
+const CRON_USERMAP = [
 	'cronuser' => [
 		'password' => '1234', //
 		'displayName' => 'Cron User',
@@ -58,7 +58,7 @@ define('CRON_USERMAP', [
 		'groups' => ['cron', 'croninfo', 'cronmail', 'cronwiki'],
 		'eduPersonPrincipalName' => ['cronuser'],
 	]
-]);
+];
 
 // ===== DO NOT CHANGE THIS =====
 require_once (dirname(__FILE__)."/framework/init.php");
