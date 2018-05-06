@@ -68,6 +68,8 @@ class  BasicAuthHandler{
 			$_SESSION['SILMPH']['USER_ID'] = 0;
 			header('WWW-Authenticate: Basic realm="basic_'.BASE_TITLE.'_realm"');
 			header('HTTP/1.0 401 Unauthorized');
+			echo '<strong>You are not allowd to access this page. Please Login.</strong>';
+			die();
 		} else {
 			if (!self::$noPermCheck) {
 				$_SESSION['SILMPH']['USER_ID'] = 0;
