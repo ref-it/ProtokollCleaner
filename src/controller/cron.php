@@ -43,6 +43,7 @@ class CronController extends MotherController {
 		$r = [];
 		foreach ($cronRoutes as $request => $d){
 			foreach ($d as $routeName => $d2){
+				if (substr($routeName, strlen(BASE_SUBDIRECTORY) -1, 4) != 'cron') continue;
 				$r[] = [$request, $routeName, $d2[3]] ;
 			}
 		}
