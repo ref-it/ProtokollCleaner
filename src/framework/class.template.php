@@ -211,6 +211,7 @@ class Template
 	public function appendCssLink( $stylename, $media = NULL, $css_relative = true ){
 		if ($css_relative) $stylename = BASE_SUBDIRECTORY . 'css/'. $stylename;
 		$this->css[] = "<link rel=\"stylesheet\" type=\"text/css\" href=\"$stylename\"".(($media)? ' media="'.$media.'"' : '')."/>";
+	}
 	
 	/**
 	 * prepend css style file
