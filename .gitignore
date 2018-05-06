@@ -5,7 +5,6 @@ config.php
 .settings/
 src/config.php
 src/secret.php
-src/framework/AuthHandler.php
 src/logs/error.log
 src/framework/conf/config.php
 
