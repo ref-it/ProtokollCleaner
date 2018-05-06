@@ -73,7 +73,7 @@ class  AuthHandler extends Singleton{
    
     function requireGroup($group){
     	$this->requireAuth();
-    	return $this->hasGroup($group)
+    	return $this->hasGroup($group);
     }
     
     /**
