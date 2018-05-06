@@ -1,6 +1,6 @@
 <?php
 // will be replaced with real one on live system.
-require_once (dirname(__FILE__).'Singleton.php');
+require_once (dirname(__FILE__).'/Singleton.php');
 
 class  AuthHandler extends Singleton{
 	private static $SIMPLESAMLDIR;
