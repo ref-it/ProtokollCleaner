@@ -202,7 +202,7 @@ class Router {
 		} else if (isset($this->cronRoutes[$method]) 
 			&& isset($this->cronRoutes[$method][$path])){
 			//check permission
-			if ($this->auth->requireGroup(self::$permission_map[$this->cronRoutes[$method][$path][0]], ',')){
+			if (isset($this->cronRoutes[$method][$path]) && ($this->cronRoutes[$method][$path][0] == '' ||  $this->auth->requireGroup(self::$permission_map[$this->cronRoutes[$method][$path][0]], ','))){
 				$route_access = true;
 				$this->callController(
 					array_slice($this->cronRoutes[$method][$path], 1 ), $method, $path, true

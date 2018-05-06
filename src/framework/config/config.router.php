@@ -47,11 +47,13 @@ $routes = [
 
 /**
  * cron routes only use basic auth
+ * also place routes with empty permissionentry here
  * REQUEST METHOD => ROUTE => [PERMISSION, CONTROLLER, ACTION, DESCRIPTION]
  * @var array
  */
 $cronRoutes = [
 	'GET' => [
+		'todo/manifest'	=> ['',				'todo', 		'manifest'],
 		'cron'			=> ['croninfo',		'cron', 		'info' , 'This Page'],
 	],
 	'POST' => [
@@ -97,8 +99,8 @@ if (DEBUG >= 1) {
 $permission_map = [
 	'baseaccess' 	=> SIMPLESAML_ACCESS_GROUP,
 	'admin' 		=> 'konsul,admin',
+	'crawler' 		=> 'konsul,admin',
 	'dev' 			=> 'ref-it,konsul,admin',
-	'crawler' 		=> 'ref-it,konsul,admin',
 	'protolist' 	=> 'ref-it,stura,konsul,admin',
 	'resolist' 		=> 'ref-it,stura,konsul,admin',
 	'resotowiki' 	=> 'ref-it,stura,konsul,admin',
@@ -128,5 +130,33 @@ $permission_map = [
 	'cronmail'		=> 'cronmail',
 	'cronwiki'		=> 'cronwiki',
 ];
+
+// handle BASE_SUBDIRECTORIES
+if (BASE_SUBDIRECTORY != '/'){
+	$tmpf1 = function($a) {
+		$tmp1 = [];
+		foreach ($a as $k1 => $v1){
+			foreach ($v1 as $k2 => $v2){
+				$tmp1[BASE_SUBDIRECTORY.(($k2=='/')?'':$k2)]=$v2;
+			}
+		}
+		return $tmp1;
+	};
+	$tmpf2 = function($a) {
+		$tmp1 = [];
+		foreach ($a as $k1 => $v1){
+			$tmp1[BASE_SUBDIRECTORY.(($k1=='/')?'':$k1)]=$v1;
+		}
+		return $tmp1;
+	};
+	//update routes
+	$routes = $tmpf1($routes);
+	//update cron routes
+	$cronRoutes = $tmpf1($cronRoutes);
+	//update navigation
+	$navigation = $tmpf2($navigation);
+	unset($tmpf1);
+	unset($tmpf2);
+}
 
 ?>

@@ -8,15 +8,18 @@ class  BasicAuthHandler{
     
     private $attributes;
     
-    private function __construct(){
+    private static $noPermCheck;
+    
+    private function __construct($noPermCheck = false){
         //create session
 		session_start();
 		self::$usermap = CRON_USERMAP;
+		self::$noPermCheck = $noPermCheck;
     }
     
-    public static function getInstance(){
+    public static function getInstance($noPermCheck = false){
         if (!isset(self::$instance)){
-            self::$instance = new BasicAuthHandler();
+            self::$instance = new BasicAuthHandler($noPermCheck);
         }
         return self::$instance;
     }
@@ -61,29 +64,29 @@ class  BasicAuthHandler{
 		if(!isset($_SESSION['SILMPH']['MESSAGES'])){
 			$_SESSION['SILMPH']['MESSAGES'] = array();
 		}
-		
-		//check logout request
-		if ($_SESSION['SILMPH']['USER_ID'] !== 0 && ( isset($_GET['logout']) || strpos($_SERVER['REQUEST_URI'], '&logout=1') !== false || strpos($_SERVER['REQUEST_URI'], '?logout=1') !== false )){
-			session_destroy();
-			session_start();
-			header('Location: '.BASE_URL . $_SERVER['PHP_SELF']);
-			die();
-		}
-		
-		if (!isset($_SERVER['PHP_AUTH_USER'])){
+		if (!self::$noPermCheck && !isset($_SERVER['PHP_AUTH_USER'])){
 			$_SESSION['SILMPH']['USER_ID'] = 0;
 			header('WWW-Authenticate: Basic realm="basic_'.BASE_TITLE.'_realm"');
 			header('HTTP/1.0 401 Unauthorized');
 		} else {
-			$_SESSION['SILMPH']['USER_ID'] = 0;
-			if (isset(self::$usermap[$_SERVER['PHP_AUTH_USER']]) && 
-				self::$usermap[$_SERVER['PHP_AUTH_USER']]['password'] == $_SERVER['PHP_AUTH_PW']){
-				$this->attributes = array_slice(self::$usermap[$_SERVER['PHP_AUTH_USER']], 1 );
+			if (!self::$noPermCheck) {
+				$_SESSION['SILMPH']['USER_ID'] = 0;
+				if (isset(self::$usermap[$_SERVER['PHP_AUTH_USER']]) && 
+					self::$usermap[$_SERVER['PHP_AUTH_USER']]['password'] == $_SERVER['PHP_AUTH_PW']){
+					$this->attributes = array_slice(self::$usermap[$_SERVER['PHP_AUTH_USER']], 1 );
+				} else {
+					header('WWW-Authenticate: Basic realm="basic_'.BASE_TITLE.'_realm"');
+					header('HTTP/1.0 401 Unauthorized');
+					echo '<strong>You are not allowd to access this page. Please Login.</strong>';
+					die();
+				}
 			} else {
-				header('WWW-Authenticate: Basic realm="basic_'.BASE_TITLE.'_realm"');
-				header('HTTP/1.0 401 Unauthorized');
-				echo '<strong>You are not allowd to access this page. Please Login.</strong>';
-				die();
+				$this->attributes = [
+					'displayName' => 'Anonymous',
+					'mail' => '',
+					'groups' => ['anonymous'],
+					'eduPersonPrincipalName' => ['nologin'],
+				];
 			}
 		}
     }
@@ -120,11 +123,11 @@ class  BasicAuthHandler{
     }
     
     function getLogoutURL(){
-    	return BASE_URL . '?logout=1';
+    	return BASE_URL.BASE_SUBDIRECTORY . '?logout=1';
     }
     
     function logout($param = NULL){
-    	header('Location: '.BASE_URL . '?logout=1');
+    	header('Location: '.BASE_URL.BASE_SUBDIRECTORY . '?logout=1');
 		die();
     }
 }
