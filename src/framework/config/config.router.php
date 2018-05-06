@@ -46,7 +46,7 @@ $routes = [
 ];
 
 /**
- * cron routes only use basic auth
+ * cron routes only use basic auth and starts with 'cron'
  * also place routes with empty permissionentry here
  * REQUEST METHOD => ROUTE => [PERMISSION, CONTROLLER, ACTION, DESCRIPTION]
  * @var array

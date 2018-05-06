@@ -268,7 +268,7 @@
 	width: calc(100% - 40px);
 }
 .silmph_memberbox .member .membername::before{
-	content: attr(data-name);
+	content: attr(data-name) " " attr(data-job);
 }
 .silmph_memberbox .member .membername::after{
 	content: "(L: " attr(data-management) ") (P: " attr(data-protocol) ")";

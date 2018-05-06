@@ -536,15 +536,17 @@ class DatabaseModel extends Database
 	 * @return boolean|new id
 	 */
 	public function createMember($m){
-		$pattern = 'si';
+		$pattern = 'sis';
 		$data = [
 			$m['name'],
 			$m['gremium'],
+			$m['job'],
 		];
 		$sql = "INSERT INTO `".TABLE_PREFIX."current_member`
 			(	`name`,
-				`gremium`	)
-			VALUES(?,?) ";
+				`gremium`, 
+				`job` )
+			VALUES(?,?,?) ";
 		$this->protectedInsert($sql, $pattern, $data);
 		$result = $this->affectedRows();
 		if ($this->affectedRows() > 0){
@@ -552,6 +554,48 @@ class DatabaseModel extends Database
 		} else {
 			return false;
 		}
+	}
+	
+	/**
+	 * update current member by name
+	 * @param array $m member element array
+	 * @return boolean|new id
+	 */
+	public function updateMemberByName($m){
+		$pattern = 'iss';
+		$data = [
+			$m['gremium'],
+			$m['job'],
+			$m['name'],
+		];
+		$sql = "UPDATE `".TABLE_PREFIX."current_member` SET
+				`gremium` = ?,
+				`job` = ?
+				WHERE `name` = ?";
+		$this->protectedInsert($sql, $pattern, $data);
+		return !$this->isError();
+	}
+	
+	/**
+	 * update current member by name
+	 * @param array $m member element array
+	 * @return boolean|new id
+	 */
+	public function updateMemberById($m){
+		$pattern = 'sisi';
+		$data = [
+			$m['name'],
+			$m['gremium'],
+			$m['job'],
+			$m['id'],
+		];
+		$sql = "UPDATE `".TABLE_PREFIX."current_member` SET
+				`name` = ?,
+				`gremium` = ?,
+				`job` = ?
+				WHERE `id` = ?";
+		$this->protectedInsert($sql, $pattern, $data);
+		return !$this->isError();
 	}
 	
 	/**
