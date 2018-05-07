@@ -66,7 +66,7 @@ class  BasicAuthHandler{
 		}
 		if (!self::$noPermCheck && !isset($_SERVER['PHP_AUTH_USER'])){
 			$_SESSION['SILMPH']['USER_ID'] = 0;
-			header('WWW-Authenticate: Basic realm="basic_'.BASE_TITLE.'_realm"');
+			header('WWW-Authenticate: Basic realm="'.BASE_TITLE.' Please Login"');
 			header('HTTP/1.0 401 Unauthorized');
 			echo '<strong>You are not allowd to access this page. Please Login.</strong>';
 			die();
