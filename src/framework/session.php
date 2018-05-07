@@ -13,12 +13,6 @@
  * @requirements    PHP 7.0 or higher
  */
 
-if (DEBUG >= 1 && DEBUG_USE_DUMMY_LOGIN){
-	require_once (dirname(__FILE__)."/DummyAuthHandler.php");
-} else {
-	require_once (dirname(__FILE__)."/AuthHandler.php");
-}
-
 $auth = NULL;
 $hasAuth = false;
 
@@ -35,11 +29,14 @@ function setAuthHandler(){
 	
 	if (isset($cronRoutes[$method])
 		&& isset($cronRoutes[$method][$path])){
-		require_once (dirname(__FILE__)."/BasicAuthHandler.php");
+		require_once (dirname(__FILE__)."/AuthBasicHandler.php");
 		$auth = BasicAuthHandler::getInstance(empty($cronRoutes[$method][$path][0]));
 		$hasAuth = (empty($cronRoutes[$method][$path][0]))? true : $auth->requireGroup('cron');
 	} else {
-		if (!DEBUG || !DEBUG_USE_DUMMY_LOGIN){
+		if (DEBUG >= 1 && DEBUG_USE_DUMMY_LOGIN){
+			require_once (dirname(__FILE__)."/AuthDummyHandler.php");
+		} else {
+			require_once (dirname(__FILE__)."/AuthSamlHandler.php");
 			$conf = [
 				"AuthHandler" => [
 					"SIMPLESAMLDIR" => SAML_SIMPLESAMLDIR,
