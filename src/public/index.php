@@ -13,6 +13,9 @@
  * @requirements    PHP 7.0 or higher
  */
 // ===== load framework =====
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
 if (!file_exists ( realpath(dirname(__FILE__) . '/..').'/config.php' )){
 	echo "No configuration file found! Please create and edit 'config.php'";
 	die();

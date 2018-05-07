@@ -41,6 +41,7 @@ ini_set('session.cookie_lifetime', '0');
  * set php error settings
  */
 ini_set('display_errors', (DEBUG>=1)? 1:0);
+ini_set('display_startup_errors', (DEBUG>=1)? 1:0);
 ini_set("log_errors", 1);
 error_reporting(E_ALL);
 ini_set("error_log", realpath(dirname(__FILE__) . '/..')."/logs/error.log");

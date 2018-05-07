@@ -12,8 +12,6 @@
  * @platform        PHP
  * @requirements    PHP 7.0 or higher
  */
- 
-require_once (dirname(__FILE__)."/AuthHandler.php");
 
 $auth = NULL;
 $hasAuth = false;
@@ -31,22 +29,26 @@ function setAuthHandler(){
 	
 	if (isset($cronRoutes[$method])
 		&& isset($cronRoutes[$method][$path])){
-		require_once (dirname(__FILE__)."/BasicAuthHandler.php");
+		require_once (dirname(__FILE__)."/AuthBasicHandler.php");
 		$auth = BasicAuthHandler::getInstance(empty($cronRoutes[$method][$path][0]));
-		$hasAuth = (empty($cronRoutes[$method][$path][0]))? true : $auth->requireGroup('cron');
+		$hasAuth = (empty($cronRoutes[$method][$path][0]))? true : $auth->hasGroup('cron');
 	} else {
-		$conf = [
-			"AuthHandler" => [
-				"SIMPLESAMLDIR" => SAML_SIMPLESAMLDIR,
-				"SIMPLESAMLAUTHSOURCE" => SAML_SIMPLESAMLAUTHSOURCE,
-				"AUTHGROUP" => SAML_AUTHGROUP,
-				"ADMINGROUP" => SAML_ADMINGROUP,
-			],
-		];
-		Singleton::configureAll($conf);
-		
+		if (DEBUG >= 1 && DEBUG_USE_DUMMY_LOGIN){
+			require_once (dirname(__FILE__)."/AuthDummyHandler.php");
+		} else {
+			require_once (dirname(__FILE__)."/AuthSamlHandler.php");
+			$conf = [
+				"AuthHandler" => [
+					"SIMPLESAMLDIR" => SAML_SIMPLESAMLDIR,
+					"SIMPLESAMLAUTHSOURCE" => SAML_SIMPLESAMLAUTHSOURCE,
+					"AUTHGROUP" => SAML_AUTHGROUP,
+					"ADMINGROUP" => SAML_ADMINGROUP,
+				],
+			];
+			Singleton::configureAll($conf);
+		}
 		$auth = AuthHandler::getInstance();
-		$hasAuth = $auth->requireGroup(SIMPLESAML_ACCESS_GROUP);
+		$hasAuth = $auth->hasGroup(SIMPLESAML_ACCESS_GROUP);
 	}
 }
 setAuthHandler();

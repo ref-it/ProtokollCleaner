@@ -84,10 +84,10 @@ $navigation = [
 
 if (DEBUG >= 1) {
 	$routes['GET']['wiki'] = ['dev', 'dev',  'wiki'];
-	$navigation['wiki'] = ['dev', 'WikiTest', '&#xf266;', ''];
+	$navigation['wiki'] = ['dev', 'WikiTest', '&#xf1d1;', ''];
 
     $routes['GET']['wikiPut'] = ['dev', 'dev', 'putwiki'];
-    $navigation['wikiPut'] = ['dev', 'WikiTestPut', '&#xf266;', ''];
+    $navigation['wikiPut'] = ['dev', 'WikiTestPut', '&#xf1d1;', ''];
 }
 
 /**

@@ -1,12 +1,14 @@
 <?php
 /**
- * Created by PhpStorm.
- * User: lukas
- * Date: 04.03.18
- * Time: 01:53
+ * Simple Singleton Class Interface
+ * @package         Stura - Referat IT - ProtocolHelper
+ * @category        framework
+ * @author 			lukas staab
+ * @author 			Stura - Referat IT <ref-it@tu-ilmenau.de>
+ * @since 			04.03.2018
+ * @platform        PHP
+ * @requirements    PHP 7.0 or higher
  */
-
-
 abstract class Singleton{
     private static $hasCredentialsSet = [];
     private static $instances = [];
