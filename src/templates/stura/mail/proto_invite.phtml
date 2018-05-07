@@ -41,6 +41,40 @@
 			<li>Protokollkontrolle: <?= ($param['proto']['membernames']['p'])? $param['proto']['membernames']['p']['name'] : '-' ?></li>
 		</ul>
 	</p>
+	<?php if ($param['message']){ ?>
+	<hr>
+	<h3>Weitere Informationen</h3>
+	<p>
+	<?= str_replace(
+		[	"\n", 
+		 	'  ', 
+		 	'%b%',
+			'%bb%',
+			'%h1%',
+			'%hh1%',
+			'%h2%',
+			'%hh2%',
+			'%h3%',
+			'%hh3%',
+			'%h4%',
+			'%hh4%',
+		], 
+		[	'<br>', 
+			'&nbsp;&nbsp;', 
+			'<strong style="font-weight:bold;">', 
+			'</strong>',
+			'<h1>',
+			'</h1>',
+			'<h2>',
+			'</h2>',
+			'<h3>',
+			'</h3>',
+			'<h4>',
+			'</h4>'
+		], $param['message']) ;
+	?>
+	</p>
+	<?php } ?>
 	<hr>
 	<h3>Tagesordnung</h3>
 	<p>
@@ -94,13 +128,6 @@
 	}?>
 	</ul>
 	<p>Unter folgendem <a href="<?= $param['protoLink'] ?>">Link [<?php echo count($links); $links[] = $param['protoLink'] ?>]</a> können Protokolle ohne großen Aufwand veröffentlicht werden.</p>
-	<?php } ?>
-	<?php if ($param['message']){ ?>
-	<hr>
-	<h3>Weitere Informationen</h3>
-	<p>
-	<?= str_replace(["\n", '  '], ['<br>', '&nbsp;&nbsp;'], $param['message']) ?>
-	</p>
 	<?php } ?>
 	<hr>
 	<h3>Links</h3>

@@ -11,7 +11,26 @@ Voraussichtliche
   - Sitzungsleitung:    <?= ($param['proto']['membernames']['m'])? $param['proto']['membernames']['m']['name'] : '-' ?>
 
   - Protokollkontrolle: <?= ($param['proto']['membernames']['p'])? $param['proto']['membernames']['p']['name'] : '-' ?>
+<?php if ($param['message']){ ?>
 
+
+Weitere Informationen:
+----------------------
+<?= str_replace(
+		[	'%b%',
+			'%bb%',
+			'%h1%',
+			'%hh1%',
+			'%h2%',
+			'%hh2%',
+			'%h3%',
+			'%hh3%',
+			'%h4%',
+			'%hh4%',
+		], 
+		'', $param['message']) ?>
+
+<?php } ?>
 
 Tagesordnung
 ------------
@@ -69,12 +88,6 @@ foreach ($param['unreconciled_protocols']['draftState'] as $prot){
 
 
 Unter folgendem [<?php echo count($links); $links[] = $param['protoLink'] ?>] können Protokolle ohne großen Aufwand veröffentlicht werden.
-<?php } ?>
-<?php if ($param['message']){ ?>
-Weitere Informationen:
-----------------------
-<?= $param['message'] ?>
-
 <?php } ?>
 
 
