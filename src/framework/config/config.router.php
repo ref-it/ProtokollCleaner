@@ -153,7 +153,11 @@ if (BASE_SUBDIRECTORY != '/'){
 	$tmpf2 = function($a) {
 		$tmp1 = [];
 		foreach ($a as $k1 => $v1){
-			$tmp1[substr(BASE_SUBDIRECTORY,1).(($k1=='/')?'':$k1)]=$v1;
+			if (mb_substr($k1, 0, 7) == 'http://' || mb_substr($k1, 0, 8) == 'https://' || mb_substr($k1, 0, 2) == '//'){
+				$tmp1[$k1]=$v1;
+			} else {
+				$tmp1[substr(BASE_SUBDIRECTORY,1).(($k1=='/')?'':$k1)]=$v1;
+			}
 		}
 		return $tmp1;
 	};

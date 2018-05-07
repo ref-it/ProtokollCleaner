@@ -156,7 +156,7 @@ class Template
 				$this->appendJsInline("$(document).ready(function(){ silmph__add_message('".$this->_isLogout[0]."', MESSAGE_TYPE_".$this->_isLogout[1].", 3000); });");
 			}
 			//messages
-			if(count($_SESSION['SILMPH']['MESSAGES']) > 0){
+			if(isset($_SESSION['SILMPH']) && count($_SESSION['SILMPH']['MESSAGES']) > 0){
 				foreach ($_SESSION['SILMPH']['MESSAGES'] as $msg){
 					$this->appendJsInline("$(document).ready(function(){ silmph__add_message('".$msg[0]."', MESSAGE_TYPE_".$msg[1].", 3000); });");
 				}
