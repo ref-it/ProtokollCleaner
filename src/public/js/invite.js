@@ -254,6 +254,7 @@
 			cmEditor = CodeMirror.fromTextArea(textarea, {
 				mode: 'doku',
 				lineNumbers: true,
+				lineWrapping: true,
 				keyMap: 'sublime',
 				extraKeys: {
 					"F11": function(cm) {
@@ -906,6 +907,19 @@
 			// ----------------------------------
 			//codemirror
 			loadCodemirror($('.silmph_edit textarea.wikitext'), function(){}, null);
+			// ----------------------------------
+			// autocomplete
+			var availableTags = [];
+			$('.silmph_memberbox .membername').each(function(i, e){
+				availableTags.push({value: e.dataset.name, label: e.dataset.name+' '+e.dataset.job});
+			});
+			$('input#frmIpt03').autocomplete({
+				source: availableTags,
+				classes: {
+					"ui-autocomplete": "highlight silmph_npautoc list-group",
+					"ui-menu-item": "ui-menu-item"
+				}
+			});
 		});
 	};
 	// ===== NEW PROTOCOL ===============================================
