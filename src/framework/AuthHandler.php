@@ -40,6 +40,10 @@ class  AuthHandler extends Singleton{
     		header('HTTP/1.0 403 FORBIDDEN');
     		die("Du besitzt nicht die nötigen Rechte um diese Seite zu sehen.");
     	}
+    	//init Messagehandler
+    	if (!isset($_SESSION['SILMPH']['MESSAGES'])) {
+    		$_SESSION['SILMPH']['MESSAGES'] = [];
+    	}
     }
     
     function getAttributes(){
