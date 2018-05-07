@@ -31,7 +31,7 @@ function setAuthHandler(){
 		&& isset($cronRoutes[$method][$path])){
 		require_once (dirname(__FILE__)."/AuthBasicHandler.php");
 		$auth = BasicAuthHandler::getInstance(empty($cronRoutes[$method][$path][0]));
-		$hasAuth = (empty($cronRoutes[$method][$path][0]))? true : $auth->requireGroup('cron');
+		$hasAuth = (empty($cronRoutes[$method][$path][0]))? true : $auth->hasGroup('cron');
 	} else {
 		if (DEBUG >= 1 && DEBUG_USE_DUMMY_LOGIN){
 			require_once (dirname(__FILE__)."/AuthDummyHandler.php");
@@ -48,7 +48,7 @@ function setAuthHandler(){
 			Singleton::configureAll($conf);
 		}
 		$auth = AuthHandler::getInstance();
-		$hasAuth = $auth->requireGroup(SIMPLESAML_ACCESS_GROUP);
+		$hasAuth = $auth->hasGroup(SIMPLESAML_ACCESS_GROUP);
 	}
 }
 setAuthHandler();

@@ -23,7 +23,7 @@ if (!function_exists('checkUserPermission')){
 		if (isset($map[$requested_permission])){
 			$ri = Router::getInstance();
 			$auth = $ri->getAuth();
-			return $auth->requireGroup($map[$requested_permission]);
+			return $auth->hasGroup($map[$requested_permission]);
 		} else {
 			return false;
 		}

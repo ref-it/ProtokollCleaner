@@ -100,12 +100,14 @@ class  AuthHandler{
 	
     }
     
-	function requireGroup($group){
-        $this->requireAuth();
-        if (!$this->hasGroup($group)){
-           return false;
-        }
-        return true;
+    function requireGroup($group){
+    	$this->requireAuth();
+    	if (!$this->hasGroup($group)){
+    		header('HTTP/1.0 403 Unauthorized');
+    		echo 'You have no permission to access this page.';
+    		die();
+    	}
+    	return true;
     }
     
     /**

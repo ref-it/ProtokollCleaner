@@ -80,20 +80,15 @@ class  AuthHandler extends Singleton{
 		return $this->getAttributes()["mail"][0];
 	}
 	
-	/*
 	function requireGroup($group){
 		$this->requireAuth();
-		if (!$this->hasGroup($group)){
-			header('HTTP/1.0 401 Unauthorized');
-			include SYSBASE . "/template/permission-denied.tpl";
-			die();
-		}
-	}*/
-   
-	function requireGroup($group){
-		$this->requireAuth();
-		return $this->hasGroup($group);
-	}
+	    if (!$this->hasGroup($group)){
+	    	header('HTTP/1.0 403 Unauthorized');
+	    	echo 'You have no permission to access this page.';
+	    	die();
+	    }
+	    return true;
+    }
 	
 	/**
 	 * @param string $groups    String of groups
