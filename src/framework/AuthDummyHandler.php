@@ -60,7 +60,17 @@ class  AuthHandler{
 			$_SESSION['SILMPH']['USER_ID'] = 0;
 		}
 		
+		//session expire after 2 hours no action
 		if(!isset($_SESSION['SILMPH']['LAST_ACTION'])){
+			$_SESSION['SILMPH']['LAST_ACTION'] = time();
+		}
+		if (time() - $_SESSION['SILMPH']['LAST_ACTION'] > 3600*2){
+			session_destroy();
+			session_start();
+			$_SESSION['SILMPH']['MESSAGE'] = ['New Session Started!'];
+			header("Refresh: 0");
+			die();
+		} else {
 			$_SESSION['SILMPH']['LAST_ACTION'] = time();
 		}
 		
