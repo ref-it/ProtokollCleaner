@@ -16,6 +16,7 @@ class  AuthHandler extends Singleton{
 	protected function __construct(){
         require_once(self::$SIMPLESAMLDIR . '/lib/_autoload.php');
         $this->saml = new SimpleSAML_Auth_Simple(self::$SIMPLESAMLAUTHSOURCE);
+		session_start();
     }
     
     final static protected function static__set($name, $value){
@@ -40,7 +41,21 @@ class  AuthHandler extends Singleton{
     		header('HTTP/1.0 403 FORBIDDEN');
     		die("Du besitzt nicht die nötigen Rechte um diese Seite zu sehen.");
     	}
-    	//init Messagehandler
+        //session
+        if (!isset($_SESSION['SILMPH']['AUTH_INSTANT'])
+            || $_SESSION['SILMPH']['AUTH_INSTANT'] != $this->saml->getAuthData('AuthnInstant')){
+            session_destroy();
+            session_start();
+            $_SESSION['SILMPH']['AUTH_INSTANT'] = $this->saml->getAuthData('AuthnInstant');
+        }
+        //session client info
+        if(!isset($_SESSION['SILMPH'])
+            || (isset($_SESSION['SILMPH']['CLIENT_IP']) && $_SESSION['SILMPH']['CLIENT_IP'] != $_SERVER['REMOTE_ADDR'] )
+            || (isset($_SESSION['SILMPH']['CLIENT_AGENT']) && $_SESSION['SILMPH']['CLIENT_AGENT'] != $_SERVER['HTTP_USER_AGENT'] ) ){
+            $_SESSION['SILMPH']['CLIENT_IP'] = $_SERVER['REMOTE_ADDR'];
+            $_SESSION['SILMPH']['CLIENT_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
+        }
+    	//init messagehandler
     	if (!isset($_SESSION['SILMPH']['MESSAGES'])) {
     		$_SESSION['SILMPH']['MESSAGES'] = [];
     	}
