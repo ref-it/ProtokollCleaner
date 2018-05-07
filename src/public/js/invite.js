@@ -254,6 +254,7 @@
 			cmEditor = CodeMirror.fromTextArea(textarea, {
 				mode: 'doku',
 				lineNumbers: true,
+				lineWrapping: true,
 				keyMap: 'sublime',
 				extraKeys: {
 					"F11": function(cm) {
