@@ -44,7 +44,7 @@ class AuthHandler extends Singleton{
 	 * @param bool $noPermCheck
 	 * @return AuthHandler
 	 */
-	public static function getInstance(...$pars):AuthHandler{
+	public static function getInstance(...$pars){
 		return parent::getInstance(...$pars);
 	}
 

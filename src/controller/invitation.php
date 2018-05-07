@@ -817,9 +817,10 @@ class InvitationController extends MotherController {
 				}
 			}
 			
+			$stateLonMap = ['Geplant', 'Eingeladen', 'Erstellt'];
 			$out = [
 				'state' => 	$state,
-				'stateLong' => (['Geplant', 'Eingeladen', 'Erstellt'])[$state],
+				'stateLong' => $stateLonMap[$state],
 				'disableRestore' => 	$disable_restore,
 				'generatedUrl' => 		$nproto['generated_url'],
 				'inviteMailDone' =>	$nproto['invite_mail_done'],
