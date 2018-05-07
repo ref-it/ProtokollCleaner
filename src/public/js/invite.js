@@ -1142,7 +1142,6 @@
 			ul.append(refli);
 			ul.append($('<li/>', { html: 'Sonstiges' }));
 			out.push(ul);
-			console.log(ul);
 			return out;
 		})());
 		$.modaltools({
@@ -1255,16 +1254,38 @@
 	};
 	// create info/edit/create newproto modal content
 	var func_newproto_getbox = function (proposal) {
-		return '<div class="silmph_createnewproto card" data-npid="'+(proposal.hasOwnProperty('npid')?proposal.npid:0)+'" data-hash="'+(proposal.hasOwnProperty('hash')?proposal.hash:'')+'">'
-				+ '<div class="card-body">'
-					+ func_create_form_elem([
-					   {alias: 'date', placeholder: 'Datum', label:'Datum der Sitzung', type:'date', value: proposal.date},
-					   {alias: 'time', placeholder: 'Uhrzeit', label:'Uhrzeit der Uhrzeit', type:'time', value: proposal.time},
-					   {alias: 'mana', placeholder: (proposal.management.name!=''?'Vorschlag: '+proposal.management.name:''), label:'Wer leitet die Sitzung?', value: (proposal.hasOwnProperty('mana')?proposal.mana:'')},
-					   {alias: 'prot', placeholder: (proposal.protocol.name!=''?'Vorschlag: '+proposal.protocol.name:''), label:'Wer protokolliert?', value: (proposal.hasOwnProperty('prot')?proposal.prot:'')}
-					  ], {fieldIdPrefix: 'frmNpVal'})
-					+ '</div>'
-				+ '</div>';
+		var out = $('<div/>', {
+			'class': 'silmph_createnewproto card',
+			'data-npid': (proposal.hasOwnProperty('npid')?proposal.npid:0),
+			'data-hash': (proposal.hasOwnProperty('hash')?proposal.hash:''),
+			html: '<div class="card-body">'
+				+ func_create_form_elem([
+				   {alias: 'date', placeholder: 'Datum', label:'Datum der Sitzung', type:'date', value: proposal.date},
+				   {alias: 'time', placeholder: 'Uhrzeit', label:'Uhrzeit der Uhrzeit', type:'time', value: proposal.time},
+				   {alias: 'mana', placeholder: (proposal.management.name!=''?'Vorschlag: '+proposal.management.name:''), label:'Wer leitet die Sitzung?', value: (proposal.hasOwnProperty('mana')?proposal.mana:'')},
+				   {alias: 'prot', placeholder: (proposal.protocol.name!=''?'Vorschlag: '+proposal.protocol.name:''), label:'Wer protokolliert?', value: (proposal.hasOwnProperty('prot')?proposal.prot:'')}
+				  ], {fieldIdPrefix: 'frmNpVal'})
+				+ '</div>'
+		});
+		var availableTags = [];
+		$('.silmph_memberbox .membername').each(function(i, e){
+			availableTags.push({value: e.dataset.name, label: e.dataset.name+' '+e.dataset.job});
+		});
+		out.find('[id^=frmNpVal][data-alias=mana]').autocomplete({
+			source: availableTags,
+			classes: {
+				"ui-autocomplete": "highlight silmph_npautoc list-group",
+				"ui-menu-item": "ui-menu-item"
+			}
+		});
+		out.find('[id^=frmNpVal][data-alias=prot]').autocomplete({
+			source: availableTags,
+			classes: {
+				"ui-autocomplete": "highlight silmph_npautoc list-group",
+				"ui-menu-item": "ui-menu-item"
+			}
+		});
+		return out;
 	};
 	// open info/edit/create newproto modal + handle events
 	var func_newproto_editadd_modal = function(id) {
