@@ -510,6 +510,9 @@ class Validator {
 	 *  minlengh   2	maximum string length
 	 *  maxlengh   2	maximum string length
 	 *  noTagStrip 1	disable tag strip before validation
+	 *  noTrim	   1	disable trim whitespaces
+	 *  trimLeft   2	trim Text on left side, parameter trim characters
+	 *  trimRight  2	trim Text on right side, parameter trim characters
 	 *  empty	   1	allow empty string if not in regex
 	 * 
 	 * @param $value
@@ -521,7 +524,15 @@ class Validator {
 		if (!in_array('noTagStrip', $params)){
 			$v = strip_tags($v);
 		}
-		$v = trim($v);
+		if (!in_array('noTrim', $params)){
+			$v = trim($v);
+		}
+		if (isset($params['trimLeft'])){
+			$v = ltrim ( $v , $params['trimLeft'] );
+		}
+		if (isset($params['trimRight'])){
+			$v = rtrim ( $v , $params['trimRight'] );
+		}
 		if (in_array('empty', $params) && $v === ''){
 			$this->filtered = $v;
 			return !$this->setError(false);
