@@ -52,6 +52,7 @@ define('PW_PEPPER', 'XXXXX_PLEASECHANGE_TO_CRYPTIC_LETTERS_a-zA-Z0-9_MIN_LENGTH_
 define('RENAME_FILES_ON_UPLOAD', 'ph.*?,cgi,pl,pm,exe,com,bat,pif,cmd,src,asp,aspx,js,lnk,html,htm');
 define('ENABLE_ADMIN_INSTALL', false);
 define('DEBUG', false); //Level = false / 0 => disabled || 1 => Basic debug information || 2 => additional information || 3 => all
+define('DEBUG_USE_DUMMY_LOGIN', false);
 
 // ===== CRON SETTINGS =====
 define('CRON_USERMAP', [
