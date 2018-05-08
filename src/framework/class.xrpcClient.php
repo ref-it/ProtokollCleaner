@@ -212,7 +212,7 @@ class xrpcClient extends hServerClient
 			foreach($this->params as $value){
 				if (is_array($value)) {
 					//known type
-					if (in_array($value[0], ['int','i4','double','boolean','string','dateTime.iso8601','base64'])){
+					if (in_array($value[0], ['int','i4','double','boolean','string','dateTime.iso8601','base64'], true)){
 						$out.= "<param><value><{$value[0]}>{$value[1]}</{$value[0]}></value></param>";
 					// attr array
 					} else if ($value[0] == 'attr' && is_array($value[1]) && count($value[1]) > 0) {
@@ -221,7 +221,7 @@ class xrpcClient extends hServerClient
 							$out.= "<member><name>{$name}</name>";
 							if (is_array($attr)) {
 								//known type
-								if (in_array($value[0], ['int','i4','double','boolean','string','dateTime.iso8601','base64'])){
+								if (in_array($value[0], ['int','i4','double','boolean','string','dateTime.iso8601','base64'], true)){
 									$out.= "<value><{$attr[0]}>{$attr[1]}</{$attr[0]}></value>";
 									// attr array
 								} else {

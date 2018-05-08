@@ -236,24 +236,24 @@ class Validator {
 			return !$this->setError(true, 200, $msg, 'No Integer');
 		} else {
 			$v = filter_var($value, FILTER_VALIDATE_INT);
-			$this->filtered = $v;
-			if (in_array('even', $params) && $v%2 != 0){
+			$this->filtered = $v;		
+			if (in_array('even', $params, true) && $v%2 != 0){
 				$msg = (isset($params['error']))? $params['error'] : 'Integer have to be even' ; 
 				return !$this->setError(true, 200, $msg, 'integer not even');
 			}
-			if (in_array('odd', $params) && $v%2 == 0){
+			if (in_array('odd', $params, true) && $v%2 == 0){
 				$msg = (isset($params['error']))? $params['error'] : 'Integer have to be odd' ;
 				return !$this->setError(true, 200, $msg, 'integer not odd');
 			}
-			if (array_key_exists('min', $params) && $v < $params['min']){
+			if (isset($params['min']) && $v < $params['min']){
 				$msg = (isset($params['error']))? $params['error'] : "Integer out of range: smaller than {$params['min']}" ;
 				return !$this->setError(true, 200, $msg, 'integer to small');
 			}
-			if (array_key_exists('max', $params) && $v > $params['max']){
+			if (isset($params['max']) && $v > $params['max']){
 				$msg = (isset($params['error']))? $params['error'] : "Integer out of range: larger than {$params['max']}" ;
 				return !$this->setError(true, 200, $msg, 'integer to big');
 			}
-			if (array_key_exists('modulo', $params) && $v%$params['modulo'] != 0){
+			if (isset($params['modulo']) && $v%$params['modulo'] != 0){
 				$msg = (isset($params['error']))? $params['error'] : "Integer modulo failed" ;
 				return !$this->setError(true, 200, $msg, 'modulo failed');
 			}
@@ -287,10 +287,10 @@ class Validator {
 		} else {
 			$s = ''.$value;
 			
-			if (in_array('strip', $params) ){
+			if (in_array('strip', $params, true) ){
 				$s = strip_tags($s);
 			}
-			if (in_array('trim', $params)){
+			if (in_array('trim', $params, true)){
 				$s = trim($s);
 			}
 			$this->filtered = $s;
@@ -310,7 +310,7 @@ class Validator {
 	 */
 	public function V_mail ($value, $params = []) {
 		$email = filter_var($value, FILTER_SANITIZE_EMAIL);
-		if (in_array('empty', $params) && $email === ''){
+		if (in_array('empty', $params, true) && $email === ''){
 			$this->filtered = $email;
 			return !$this->setError(false);
 		}
@@ -356,7 +356,7 @@ class Validator {
 	 */
 	public function V_name($value, $params = NULL)  {
 		$name = trim(strip_tags(''.$value));
-		if (in_array('empty', $params) && $name === ''){
+		if (in_array('empty', $params, true) && $name === ''){
 			$this->filtered = '';
 			return !$this->setError(false);
 		}
@@ -472,7 +472,7 @@ class Validator {
 	 */
 	public function V_domain($value, $params = NULL){
 		$host = trim(strip_tags(''.$value));
-		if (in_array('empty', $params) && $host === ''){
+		if (in_array('empty', $params, true) && $host === ''){
 			$this->filtered = $host;
 			return !$this->setError(false);
 		}
@@ -521,10 +521,10 @@ class Validator {
 	 */
 	public function V_regex($value, $params = ['pattern' => '/.*/']) {
 		$v = ''.$value;
-		if (!in_array('noTagStrip', $params)){
+		if (!in_array('noTagStrip', $params, true)){
 			$v = strip_tags($v);
 		}
-		if (!in_array('noTrim', $params)){
+		if (!in_array('noTrim', $params, true)){
 			$v = trim($v);
 		}
 		if (isset($params['trimLeft'])){
@@ -533,17 +533,17 @@ class Validator {
 		if (isset($params['trimRight'])){
 			$v = rtrim ( $v , $params['trimRight'] );
 		}
-		if (in_array('empty', $params) && $v === ''){
+		if (in_array('empty', $params, true) && $v === ''){
 			$this->filtered = $v;
 			return !$this->setError(false);
 		}
 		if (isset($params['replace'])){
 			$v = str_replace($params['replace'][0], $params['replace'][1], $v);
 		}
-		if (in_array('upper', $params)){
+		if (in_array('upper', $params, true)){
 			$v = strtoupper($v);
 		}
-		if (in_array('lower', $params)){
+		if (in_array('lower', $params, true)){
 			$v = strtolower($v);
 		}
 		if (isset($params['maxlength']) && strlen($v) >= $params['maxlength']){
@@ -581,7 +581,7 @@ class Validator {
 	public function V_password($value, $params = []) {
 		$p = trim(strip_tags(''.$value));
 		
-		if (in_array('empty', $params) && $p === ''){
+		if (in_array('empty', $params, true) && $p === ''){
 			$this->filtered = $p;
 			return !$this->setError(false);
 		}
@@ -593,7 +593,7 @@ class Validator {
 			$msg = "The password is too short (Minimum length: {$params['minlength']})";
 			return !$this->setError(true, 200, $msg);
 		}
-		if (in_array('encrypt', $params)){
+		if (in_array('encrypt', $params, true)){
 			$p = silmph_encrypt_key ($p, SILMPH_KEY_SECRET);
 		}
 		$this->filtered=$p;
@@ -639,17 +639,23 @@ class Validator {
 	/**
 	 * filename validator
 	 *
+	 * $param
+	 *  error	2	overwrite error message
+	 *  
 	 * @param $value
 	 * @param $params
 	 * @return boolean
 	 */
 	public function V_filename($value, $params = NULL) {
 		$re = '/[^a-zA-Z0-9\-_(). äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]/';
-		$title = trim(preg_replace($re, '' ,strip_tags(''.$value)));
-		if (( strlen($title) >= 255) || ( $title === '' )){
-			return !$this->setError(true, 200, "filename validation failed", 'filename validation failed');
+		$fname = trim(preg_replace($re, '' ,strip_tags(''.$value)));
+		$fname = str_replace('..', '.', $fname);
+		$fname = str_replace('..', '.', $fname);
+		if (( strlen($fname) >= 255) || ( $fname === '' )){
+			$msg = (isset($params['error']))? $params['error'] : 'filename validation failed';
+			return !$this->setError(true, 200, $msg, 'filename validation failed');
 		} else {
-			$this->filtered=$title;
+			$this->filtered=$fname;
 		}
 		return !$this->setError(false);
 	}
@@ -670,10 +676,10 @@ class Validator {
 	public function V_time($value, $params = NULL) {
 		$time = trim(strip_tags(''.$value));
 		$fmt = (isset($params['format']))? $params['format'] : 'H:i';
-		if (in_array('empty', $params) && ($time === '0' || $time === 'false' || $time === ''||$time === false || $time == 0)){
+		if (in_array('empty', $params, true) && ($time === '0' || $time === 'false' || $time === ''||$time === false || $time == 0)){
 			$this->filtered = false;
 			return !$this->setError(false);
-		} elseif (!in_array('empty', $params) && ($time === '0' || $time === 'false' || $time === ''||$time === false || $time == 0)){
+		} elseif (!in_array('empty', $params, true) && ($time === '0' || $time === 'false' || $time === ''||$time === false || $time == 0)){
 			$msg = (isset($params['error']))? $params['error'] : 'time validation failed, format: "'.$fmt.'"';
 			return !$this->setError(true, 200, $msg, 'time validation failed, format: "'.$fmt.'"');
 		} else {
@@ -708,14 +714,14 @@ class Validator {
 	 */
 	public function V_array($a, $params){
 		if (!is_array($a)){
-			if ($a === '0' && in_array('false', $params)){
+			if ($a === '0' && in_array('false', $params, true)){
 				$a = [];
 			} else {
 				$msg = (isset($params['error']))? $params['error'] : 'Value is no array';
 				return !$this->setError(true, 200, $msg, 'array validator failed');
 			}
 		}
-		if ((!in_array('empty', $params) || count($a) > 0) && isset($params['minlength']) && count($a) < $params['minlength']){
+		if ((!in_array('empty', $params, true) || count($a) > 0) && isset($params['minlength']) && count($a) < $params['minlength']){
 			$msg = (isset($params['error']))? $params['error'] : 'Array to short: require minimal length of "'.$params['minlength'].'" elements';
 			return !$this->setError(true, 200, $msg, 'array validator failed: array to short');
 		}
@@ -723,7 +729,7 @@ class Validator {
 			$msg = (isset($params['error']))? $params['error'] : 'Array to long: maximal array length "'.$params['maxlength'].'"';
 			return !$this->setError(true, 200, $msg, 'array validator failed: array to long');
 		}
-		if (!in_array('empty', $params) && count($a) == 0){
+		if (!in_array('empty', $params, true) && count($a) == 0){
 			$msg = (isset($params['error']))? $params['error'] : 'Array to short: empty array is not permitted.';
 			return !$this->setError(true, 200, $msg, 'array validator failed: array is empty');
 		}

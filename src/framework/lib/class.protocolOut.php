@@ -307,7 +307,7 @@ class protocolOut
     			'</div>';
     	}
     	foreach($out as $type => $texts){
-    		if (!in_array($type, $print)) continue;
+    		if (!in_array($type, $print, true)) continue;
     		echo '<div class="'.$type.'list"><h3>'.$headlineMap[$type].'</h3>';
     		foreach ($texts as $html) echo $html;
     		echo '</div>';

@@ -45,7 +45,7 @@ abstract class Singleton{
         $visVars = get_class_vars(static::class); // gets all public and protected vars
         foreach ($confArray as $varName => $value){
             if (property_exists(static::class, $varName))
-                if (!in_array($varName, array_keys($visVars)))
+                if (!in_array($varName, array_keys($visVars), true))
                     static::static__set($varName, $value);
                 else
                     throw new Exception("static \$$varName ist nicht private in Klasse " . static::class);

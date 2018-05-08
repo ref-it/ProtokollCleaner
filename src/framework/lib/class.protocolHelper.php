@@ -402,7 +402,7 @@ class protocolHelper extends protocolOut
 					$m = trim(str_replace(['{{tag>', '  ', '}}'], ['',' ',''], $m));
 					$m = explode(' ', $m);
 					foreach ($m as $single_tag) { //handle multiple tags inside tag area
-						if (in_array($single_tag, self::$ignoreTags)){
+						if (in_array($single_tag, self::$ignoreTags, true)){
 							$p->tags[$single_tag] = 0; // mark tag used
 							continue; //but skip counting
 						}	

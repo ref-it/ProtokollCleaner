@@ -202,7 +202,7 @@ function checkIsValidIp(ipadr, recursive) {
 	}
 }
 function checkIsValidUsername(name){
-	if (/^[a-zA-Z0-9]+[a-zA-Z0-9\-_.]*[a-zA-Z0-9]+$/.test(name)) {
+	if (/^[a-zA-Z0-9]+[a-zA-Z0-9\-_.@]*[a-zA-Z0-9]+$/.test(name)) {
 		if (name.length < 64){
 			return true;
 		}
