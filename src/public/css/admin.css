@@ -95,6 +95,8 @@
 	width: 100%;
 	width: calc(100% - 15px);
 	max-width: 250px;
+	display: block;
+	float: right;
 }
 /* ======================== */
 .admin.legis_settings tr td button.legremove {
