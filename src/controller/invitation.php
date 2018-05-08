@@ -52,6 +52,8 @@ class InvitationController extends MotherController {
 			}
 		}
 		
+		$resorts = $this->db->getResorts($proto['gname']);
+		
 		if (is_string($mail_address)){
 			$mailer->mail->addAddress($mail_address);
 		} elseif (is_array($mail_address)) {
@@ -68,6 +70,7 @@ class InvitationController extends MotherController {
 			'committee' => $proto['gname'],
 			'tops' 		=> $tops,
 			'proto'		=> $proto, 
+			'resorts'	=> $resorts,
 			'protoInternLink' => WIKI_URL.'/'.parent::$protomap[$proto['gname']][0].'/',
 			'protoPublicLink' => WIKI_URL.'/'.parent::$protomap[$proto['gname']][1].'/',
 			'unreconciled_protocols' => $openProtos,
