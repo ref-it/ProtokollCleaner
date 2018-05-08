@@ -96,8 +96,8 @@
 							return false;
 						}
 						break;
-					case 'ssltls':
-						if(text == "SSL" || text == "TLS"){
+					case 'ssltlsstar':
+						if(text == "SSL" || text == "TLS" || text == "STARTLS"  ){
 							return true;
 						} else silmph__add_message('Üngültiger Sicherheitstyp.', MESSAGE_TYPE_WARNING, 5000);
 						break;
@@ -131,7 +131,7 @@
 				var validator = $elem[0].dataset.validator;
 				if (validator == "password"){
 					return '';
-				} else if (validator == "ssltls"){
+				} else if (validator == "ssltlsstar"){
 					$inputs.bind('keydown', function(e){
 						var $radiogroup = $inputs;
 						var code = (e.keyCode ? e.keyCode : e.which);
@@ -177,9 +177,12 @@
 					case 'password':
 						return $('<input type="password" minlength="5"></input>');
 						break;
-					case 'ssltls':
+					case 'ssltlsstar':
 						{
-							var $radiogroup = $('<div class="radiogroup radiotoggle2" tabindex="0"><input type="radio" id="toggle-ssl" name="togglesecure" value="ssl">'+
+							var $radiogroup = $('<div class="radiogroup radiotoggle2" tabindex="0">'+
+									'<input type="radio" id="toggle-startls" name="togglesecure" value="startls">'+
+										'<label class="noselect" for="toggle-startls">STARTLS</label>' +
+									'<input type="radio" id="toggle-ssl" name="togglesecure" value="ssl">'+
 										'<label class="noselect" for="toggle-ssl">SSL</label>' +
 									'<input type="radio" id="toggle-tls" name="togglesecure" value="tls">' + 
 										'<label class="noselect" for="toggle-tls">TLS</label>' +

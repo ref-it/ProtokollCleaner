@@ -4,6 +4,7 @@
 .admin.oset_settings button, .admin.oset_settings input{
 	border-radius: 0;
 }
+.adminbutton,
 .admin.mail_settings button,
 .admin.legis_settings .footerline button {
 	display: inline-block;
@@ -18,6 +19,9 @@
 	vertical-align: bottom;
 	transition: background-color .2s, border .2s;
 }
+.adminbutton:hover,
+.adminbutton:active,
+.adminbutton:focus,
 .admin.mail_settings button:hover,
 .admin.mail_settings button:active,
 .admin.mail_settings button:focus,
@@ -30,6 +34,8 @@
 	cursor: pointer;
 	border: 1px solid #314885;
 	background-color: #E5891A;
+	text-decoration:none;
+	color: #fff;
 }
 .admin.mail_settings input, .admin.mail_settings textarea,
 .admin.legis_settings input, .admin.legis_settings textarea,
@@ -83,6 +89,7 @@
 	text-align: right;
 	padding-right: 20px;
 }
+.adminbutton,
 .admin.mail_settings button.submit,
 .admin.legis_settings button.submit {
 	width: 100%;
@@ -136,10 +143,12 @@ div.radiogroup label {
 	cursor: pointer;
 }
 div.radiogroup.radiotoggle2 label {
-    width: 50%;
+	width: 33.3%;
+	width: calc( 100% / 3 );
 }
 div.radiogroup.radiotoggle2 div {
-    width: 50%;
+    width: 33.3%;
+	width: calc( 100% / 3 );
 	position: absolute;
 	top: 0;
 	bottom: 0;
@@ -151,14 +160,24 @@ div.radiogroup input:checked + label {
 	background-color: rgba(0,0,0,0.1);
 	color: #fff;
 }
+div.radiogroup label, 
+div.radiogroup label,
+div.radiogroup label {
+	font-size: 0.7em;
+}
 div.radiogroup label:hover, 
 div.radiogroup label:active,
 div.radiogroup label:focus {
 	background-color: rgba(0,0,0,0.2);
 }
-div.radiogroup.radiotoggle2 input:checked + label + input + label + div{
+div.radiogroup.radiotoggle2 input:checked + label + input + label + input + label + div{
 	left: 0%;
 }
-div.radiogroup.radiotoggle2 input + label + input:checked + label + div{
-	left: 50%;
+div.radiogroup.radiotoggle2 input + label + input:checked + label + input + label + div{
+	left: 33.3%;
+	left: calc( 100% / 3 );
+}
+div.radiogroup.radiotoggle2 input + label + input + label + input:checked + label + div{
+	left: 66.6%;
+	left: calc( 200% / 3 );
 }

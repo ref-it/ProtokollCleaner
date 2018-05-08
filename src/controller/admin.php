@@ -13,6 +13,7 @@
  */
  
 require_once (SYSBASE . '/framework/class._MotherController.php');
+use PHPMailer\PHPMailer\SMTP;
 
 class AdminController extends MotherController {
 	
@@ -50,9 +51,9 @@ class AdminController extends MotherController {
 			'minlength' => 4, 
 			'empty']],
 		'SMTP_SECURE' 	=> ['value' => ['regex', 
-			'pattern' => '/SSL|TLS/',
+			'pattern' => '/^(SSL|TLS|STARTLS)$/',
 			'upper',
-			'error' => 'Der Sicherheitstyp muss TLS oder SSL sein.' ]],
+			'error' => 'Der Sicherheitstyp muss SSL, TLS oder STARTLS sein.' ]],
 		'SMTP_PORT' 	=> ['value' => ['integer', 
 			'min' => 1, 
 			'max' => 65535,
@@ -151,7 +152,6 @@ class AdminController extends MotherController {
 		}
 		$this->print_json_result();
 	}
-	
 	
 	public function legislatur(){
 		//calculate accessmap

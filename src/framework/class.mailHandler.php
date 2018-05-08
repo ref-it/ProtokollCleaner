@@ -258,27 +258,32 @@ class MailHandler
 			if (file_exists(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".phtml")){
 				$this->mail->Body = self::renderPHTML(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".phtml", $this->templateVars);
 			}
-			if(!$this->mail->send()) {
-				if ($echo) {
-					echo 'Message could not be sent.'.(($showPhpmailError)? ' '.$this->mail->ErrorInfo : '');
+			try {
+				if(!$this->mail->send()) {
+					if ($echo) {
+						echo 'Message could not be sent.'.(($showPhpmailError)? ' '.$this->mail->ErrorInfo : '');
+					}
+					if ($toSessionMessage){
+						$_SESSION['SILMPH']['MESSAGES'][] = array('Die Nachricht konnte nicht gesendet werden.'.(($showPhpmailError)? ' '.$this->mail->ErrorInfo : ''), 'WARNING');
+					}
+					ob_start();
+					debug_print_backtrace(0, 5);
+					$error_trace = ob_get_clean();
+					error_log("Mail konnte nicht gesendet werden werden. FEHLER: ".$this->mail->ErrorInfo." \nStacktrace:\n" . sprintf($error_trace));
+					return false;
+				} else {
+					if ($echo) {
+						if (!$suppressOKMsg) echo 'Die E-Mail wurde erfolgreich verschickt.';
+					}
+					if ($toSessionMessage){
+						if (!$suppressOKMsg) $_SESSION['SILMPH']['MESSAGES'][] = array('Die E-Mail wurde erfolgreich verschickt.', 'SUCCESS');
+					}
+					return true;
 				}
-				if ($toSessionMessage){
-					$_SESSION['SILMPH']['MESSAGES'][] = array('Die Nachricht konnte nicht gesendet werden.'.(($showPhpmailError)? ' '.$this->mail->ErrorInfo : ''), 'WARNING');
-				}
-				ob_start();
-				debug_print_backtrace(0, 5);
-				$error_trace = ob_get_clean();
-				error_log("Mail konnte nicht gesendet werden werden. FEHLER: ".$this->mail->ErrorInfo." \nStacktrace:\n" . sprintf($error_trace));
+			} catch (Exception $e) {
+				error_log("Mail konnte nicht gesendet werden werden. ERROR: ".$e->getMessage()." \nStacktrace:\n" . sprintf($error_trace));
 				return false;
-			} else {
-				if ($echo) {
-					if (!$suppressOKMsg) echo 'Die E-Mail wurde erfolgreich verschickt.';
-				}
-				if ($toSessionMessage){
-					if (!$suppressOKMsg) $_SESSION['SILMPH']['MESSAGES'][] = array('Die E-Mail wurde erfolgreich verschickt.', 'SUCCESS');
-				}
-				return true;
-			}
+			} 
 		}
 	}
 }
