@@ -40,7 +40,7 @@ function setAuthHandler(){
 		} else {
 			require_once (dirname(__FILE__)."/class.AuthSamlHandler.php");
 			$conf = [
-				"AuthHandler" => [
+				"AuthSamlHandler" => [
 					"SIMPLESAMLDIR" => SAML_SIMPLESAMLDIR,
 					"SIMPLESAMLAUTHSOURCE" => SAML_SIMPLESAMLAUTHSOURCE,
 					"AUTHGROUP" => SAML_AUTHGROUP,
