@@ -107,6 +107,9 @@ class MailHandler
 		$this->mail->setLanguage('de', MAIL_LANGUAGE_PATH); //TODO set Language //from Session
 		$this->mail->CharSet = 'UTF-8';
 		
+		$settings['SMTP_SECURE'] = ($settings['SMTP_SECURE'] == 'STARTTLS')? 'TLS' : $settings['SMTP_SECURE'];
+		$settings['SMTP_SECURE'] = strtolower($settings['SMTP_SECURE']);
+		
 		$mail_pw = silmph_decrypt_key ($settings['MAIL_PASSWORD'], SILMPH_KEY_SECRET);
 		
 		$this->mail->isSMTP();								// Set mailer to use SMTP
