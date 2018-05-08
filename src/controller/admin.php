@@ -13,7 +13,6 @@
  */
  
 require_once (SYSBASE . '/framework/class._MotherController.php');
-use PHPMailer\PHPMailer\SMTP;
 
 class AdminController extends MotherController {
 	
@@ -151,6 +150,26 @@ class AdminController extends MotherController {
 			}
 		}
 		$this->print_json_result();
+	}
+	
+	public function smtpdebug(){
+		require_once (SYSBASE . '/controller/crawler.php');
+		
+		$this->t->setTitlePrefix('SMTP Debug');
+		$this->t->appendCssLink('logging.css', 'screen,projection');
+		$this->t->printPageHeader();
+		echo '<h3>SMTP Debugging</h3>';
+		echo '<div class="logging">';
+		
+		//get settings ----------------------------------
+		$settings=$this->db->getSettings();
+		
+		//run smtp test ----------------------------------
+		MailHandler::smtpdebug($settings, function($t, $e = false, $b = false, $s = 0){
+			CrawlerController::htmlLogLine($t, $e, $b, $s);
+		});
+		echo '</div>';
+		$this->t->printPageFooter();
 	}
 	
 	public function legislatur(){

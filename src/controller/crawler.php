@@ -39,7 +39,7 @@ class CrawlerController extends MotherController
 		$this->t->printPageFooter();
 	}
 	
-	private static function htmlLogLine($text, $extra_empty = false, $bold = false, $extra_tab_space = 0){
+	public static function htmlLogLine($text, $extra_empty = false, $bold = false, $extra_tab_space = 0){
 		if ($bold){ // add tab space before text
 			$text = '<strong>'.$text.'</strong>';
 		}
