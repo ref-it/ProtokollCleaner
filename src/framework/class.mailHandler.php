@@ -96,6 +96,7 @@ class MailHandler
 	
 	/**
 	 * initialize phpmailer object
+	 * @param $settings mail settings
 	 * @param array $settings
 	 */
 	public function init($settings) {
@@ -106,6 +107,9 @@ class MailHandler
 		$this->mail = new PHPMailer\PHPMailer\PHPMailer;
 		$this->mail->setLanguage('de', MAIL_LANGUAGE_PATH); //TODO set Language //from Session
 		$this->mail->CharSet = 'UTF-8';
+		
+		$settings['SMTP_SECURE'] = ($settings['SMTP_SECURE'] == 'STARTTLS')? 'TLS' : $settings['SMTP_SECURE'];
+		$settings['SMTP_SECURE'] = strtolower($settings['SMTP_SECURE']);
 		
 		$mail_pw = silmph_decrypt_key ($settings['MAIL_PASSWORD'], SILMPH_KEY_SECRET);
 		
@@ -258,29 +262,191 @@ class MailHandler
 			if (file_exists(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".phtml")){
 				$this->mail->Body = self::renderPHTML(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".phtml", $this->templateVars);
 			}
-			if(!$this->mail->send()) {
-				if ($echo) {
-					echo 'Message could not be sent.'.(($showPhpmailError)? ' '.$this->mail->ErrorInfo : '');
+			try {
+				if(!$this->mail->send()) {
+					if ($echo) {
+						echo 'Message could not be sent.'.(($showPhpmailError)? ' '.$this->mail->ErrorInfo : '');
+					}
+					if ($toSessionMessage){
+						$_SESSION['SILMPH']['MESSAGES'][] = array('Die Nachricht konnte nicht gesendet werden.'.(($showPhpmailError)? ' '.$this->mail->ErrorInfo : ''), 'WARNING');
+					}
+					ob_start();
+					debug_print_backtrace(0, 5);
+					$error_trace = ob_get_clean();
+					error_log("Mail konnte nicht gesendet werden werden. FEHLER: ".$this->mail->ErrorInfo." \nStacktrace:\n" . sprintf($error_trace));
+					return false;
+				} else {
+					if ($echo) {
+						if (!$suppressOKMsg) echo 'Die E-Mail wurde erfolgreich verschickt.';
+					}
+					if ($toSessionMessage){
+						if (!$suppressOKMsg) $_SESSION['SILMPH']['MESSAGES'][] = array('Die E-Mail wurde erfolgreich verschickt.', 'SUCCESS');
+					}
+					return true;
 				}
-				if ($toSessionMessage){
-					$_SESSION['SILMPH']['MESSAGES'][] = array('Die Nachricht konnte nicht gesendet werden.'.(($showPhpmailError)? ' '.$this->mail->ErrorInfo : ''), 'WARNING');
-				}
-				ob_start();
-				debug_print_backtrace(0, 5);
-				$error_trace = ob_get_clean();
-				error_log("Mail konnte nicht gesendet werden werden. FEHLER: ".$this->mail->ErrorInfo." \nStacktrace:\n" . sprintf($error_trace));
+			} catch (Exception $e) {
+				error_log("Mail konnte nicht gesendet werden werden. ERROR: ".$e->getMessage()." \nStacktrace:\n" . sprintf($error_trace));
 				return false;
-			} else {
-				if ($echo) {
-					if (!$suppressOKMsg) echo 'Die E-Mail wurde erfolgreich verschickt.';
-				}
-				if ($toSessionMessage){
-					if (!$suppressOKMsg) $_SESSION['SILMPH']['MESSAGES'][] = array('Die E-Mail wurde erfolgreich verschickt.', 'SUCCESS');
-				}
-				return true;
-			}
+			} 
 		}
 	}
+	
+	/**
+	 * debug SMTP settings
+	 * @param array $settings
+	 * @param function $out function($message, $add_emptyline_suffix = false, $bold = false, $add_extra_tab_space = 0)
+	 * @throws Exception
+	 */
+	public static function smtpdebug($settings, $out){
+		
+		//get settings ----------------------------------
+		$mail_pw = silmph_decrypt_key ($settings['MAIL_PASSWORD'], SILMPH_KEY_SECRET);
+		$settings['SMTP_SECURE'] = ($settings['SMTP_SECURE'] == 'STARTTLS')? 'TLS' : $settings['SMTP_SECURE'];
+		$settings['SMTP_SECURE'] = strtolower($settings['SMTP_SECURE']);
+		
+		$out('Current Settings:', 0, 1);
+		foreach ($settings as $k => $v){
+			$out($k.' -> '.$v, 0, 0, 1);
+		}
+		$out('PW[Decrypted] -> '.$mail_pw, 1, 0, 1);
+	
+		// ----------------------------------------------
+		$out('Create SMTP Connection', 0, 1, 0);
+		date_default_timezone_set('Etc/UTC');
+	
+		try {
+			$smtp = new PHPMailer\PHPMailer\SMTP;
+			$smtp->do_debug = PHPMailer\PHPMailer\SMTP::DEBUG_CONNECTION;
+				
+			//settimeout
+			$out('Set Timeout', 0, 0, 0);
+			set_time_limit(40); // set the time limit to 120 seconds
+			$smtp->Timeout       =   30; // set the timeout (seconds)
+			$smtp->Timelimit       =   10; // set the timelimit (seconds)
+			$out('-> done', 1, 0, 1);
+				
+			//Connect to an SMTP server
+			$out('Connect to '.(($settings['SMTP_SECURE'] == 'ssl')?'ssl://':'').$settings['SMTP_HOST'].':'.$settings['SMTP_PORT'].' ...', 0, 1, 0);
+			ob_start();
+			$ok = $smtp->connect((($settings['SMTP_SECURE'] == 'ssl')?'ssl://':'').$settings['SMTP_HOST'], $settings['SMTP_PORT']);
+			$message = ob_get_clean();
+			$out( htmlspecialchars($message) ,0, 0, 1);
+			if (!$ok) {
+				throw new Exception('-> failed');
+			} else {
+				$out('-> connected', 1, 0, 1);
+			}
+				
+			//Say hello
+			$out('say hello (own host: '.gethostname().')', 0, 1, 0);
+			ob_start();
+			$ok = $smtp->hello(gethostname());
+			$message = ob_get_clean();
+			$out( htmlspecialchars($message) ,0, 0, 1);
+			if (!$ok) {
+				throw new Exception('-> EHLO failed: ' . $smtp->getError()['error']);
+			} else {
+				$out('-> ok', 1, 0, 1);
+			}
+				
+			//Get the list of ESMTP services the server offers
+			$out('Get the list of ESMTP services the server offers...', 0, 1, 0);
+			$e = $smtp->getServerExtList();
+			foreach ($e as $k => $v){
+				if (is_string($v)) {
+					$out($k.' -> '.$v, 0, 0, 1);
+				} elseif (is_array($v)){
+					$out($k.' -> '.implode(', ' ,$v), 0, 0, 1);
+				} elseif (is_bool($v)) {
+					$out($k.' -> '.(($v)?'true':'false'), 0, 0, 1);
+				} else {
+					echo '<pre>'; var_dump($v); echo '</pre>';
+				}
+			}
+			$out('');
+				
+			//If server can do TLS encryption, use it
+			if ($settings['SMTP_SECURE'] == 'tls'){
+				$out('USE TLS ---------', 0, 1 , 0);
+				if (!is_array($e) || !array_key_exists('STARTTLS', $e) ){
+					$out('NO STARTTLS IN RESPONSE - TRY ANYWAY...', 0, 1 , 1);
+				}
+			} else {
+				$out('USE SSL ----------', 1, 1 , 0);
+			}
+				
+			if ($settings['SMTP_SECURE'] == 'tls') {
+				$out('STARTTLS...', 0, 0, 0);
+				ob_start();
+				$tlsok = $smtp->startTLS();
+				$message = ob_get_clean();
+				if ($message != ''){
+					$out( htmlspecialchars($message) ,0, 0, 1);
+				}
+				if (!$tlsok) {
+					throw new Exception('Failed to start encryption: ' . $smtp->getError()['error']);
+				} else {
+					$out('-> ok', 1, 0, 1);
+				}
+	
+				//Repeat EHLO after STARTTLS
+				$out('Repeat EHLO after STARTTLS', 0, 0, 0);
+				ob_start();
+				$ok = $smtp->hello(gethostname());
+				$message = ob_get_clean();
+				$out( htmlspecialchars($message) ,0, 0, 1);
+				if (!$ok) {
+					throw new Exception('EHLO (2) failed: ' . $smtp->getError()['error']);
+				} else {
+					$out('-> ok', 1, 0, 1);
+				}
+	
+				//Get new capabilities list, which will usually now include AUTH if it didn't before
+				$out('get capabilities again', 0, 0, 0);
+				$e = $smtp->getServerExtList();
+				foreach ($e as $k => $v){
+					if (is_string($v)) {
+						$out($k.' -> '.$v, 0, 0, 1);
+					} elseif (is_array($v)){
+						$out($k.' -> '.implode(', ' ,$v), 0, 0, 1);
+					} elseif (is_bool($v)) {
+						$out($k.' -> '.(($v)?'true':'false'), 0, 0, 1);
+					} else {
+						echo '<pre>'; var_dump($v); echo '</pre>';
+					}
+				}
+				$out('');
+			}
+				
+			//If server supports authentication, do it (even if no encryption)
+			$out('Login Posible?', 0, 1, 0);
+			if (is_array($e) && isset($e['AUTH'])) {
+				$out('-> yes, includes AUTH', 0, 1, 1);
+				$out('Login ...', 0, 1, 0);
+				error_log('SMTPdebug Login: '.$settings['SMTP_USER'].' ...' );
+	
+				ob_start();
+				$ok = $smtp->authenticate($settings['SMTP_USER'], $mail_pw);
+				$message = ob_get_clean();
+				$out( htmlspecialchars($message) ,0, 0, 1);
+				if ($ok) {
+					error_log('Connected -> OK');
+					$out('-> Connected  ok', 1, 1, 1);
+				} else {
+					error_log('NOT Connected -> FAILURE');
+					throw new Exception('Authentication failed: ' . $smtp->getError()['error']);
+				}
+			} else {
+				$out('-> no, includes no AUTH', 1, 1, 1);
+			}
+		} catch (Exception $e) {
+			$out($e->getMessage(), 0, 0, 1);
+		}
+		return true;
+	}
+	
+	
+	
 }
 
 ?>

@@ -21,7 +21,7 @@
 		</tr>
 		<tr>
 			<th>SMTP Sicherheit</th>
-			<td><div class="editable mail" tabindex="0" data-value="SMTP_SECURE" data-validator="ssltls"><?php echo $settings['SMTP_SECURE']; ?></div></td>
+			<td><div class="editable mail" style="min-width: 100%;" tabindex="0" data-value="SMTP_SECURE" data-validator="ssltlsstar"><?php echo $settings['SMTP_SECURE']; ?></div></td>
 		</tr>
 		<tr>
 			<th>SMTP Port</th>
@@ -36,9 +36,10 @@
 			<td><div class="editable mail" tabindex="0" data-value="MAIL_FROM_ALIAS" data-validator="user"><?php echo $settings['MAIL_FROM_ALIAS']; ?></div></td>
 		</tr>
 	</table>
-	<div class="addfooterspace"></div>
+	<div class="adddoublefooterspace"></div>
 	<div class="footerline">
-		<button type="button" class="submit" title="Einstellungen testen. Dabei wird eine E-Mail versendet.">Einstellungen testen</button>
+		<a class="adminbutton mb-1" href="<?= BASE_SUBDIRECTORY ?>admin/smtpdebug" title="Einstellungen testen. SMTP verbindung wird geprüft.">Einstellungen testen</a>
+		<button type="button" class="submit" title="Einstellungen testen. Dabei wird eine E-Mail versendet.">Testmail senden</button>
 	</div>
 </div>
 <div class="half_container oset_settings admin"><h3 class="noprint">Weitere Einstellungen</h3><h3 class="printonly">Weitere Einstellungen</h3>

@@ -13,6 +13,7 @@ $routes = [
 	'GET' => [
 		'/'					=> ['baseaccess',	'base' , 		'home'],
 		'admin'				=> ['admin',		'admin', 		'admin'],
+		'admin/smtpdebug'	=> ['admin',		'admin', 		'smtpdebug'],
 		'protolist'			=> ['protolist',	'protocol', 	'plist'],
 		'reso/list'			=> ['resolist',		'resolution', 	'rlist'],
 		'reso/towiki'		=> ['resotowiki',	'resolution', 	'resoToWiki'],

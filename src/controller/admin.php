@@ -50,9 +50,9 @@ class AdminController extends MotherController {
 			'minlength' => 4, 
 			'empty']],
 		'SMTP_SECURE' 	=> ['value' => ['regex', 
-			'pattern' => '/SSL|TLS/',
+			'pattern' => '/^(SSL|TLS|STARTTLS)$/',
 			'upper',
-			'error' => 'Der Sicherheitstyp muss TLS oder SSL sein.' ]],
+			'error' => 'Der Sicherheitstyp muss SSL, TLS oder STARTTLS sein.' ]],
 		'SMTP_PORT' 	=> ['value' => ['integer', 
 			'min' => 1, 
 			'max' => 65535,
@@ -152,6 +152,25 @@ class AdminController extends MotherController {
 		$this->print_json_result();
 	}
 	
+	public function smtpdebug(){
+		require_once (SYSBASE . '/controller/crawler.php');
+		
+		$this->t->setTitlePrefix('SMTP Debug');
+		$this->t->appendCssLink('logging.css', 'screen,projection');
+		$this->t->printPageHeader();
+		echo '<h3>SMTP Debugging</h3>';
+		echo '<div class="logging">';
+		
+		//get settings ----------------------------------
+		$settings=$this->db->getSettings();
+		
+		//run smtp test ----------------------------------
+		MailHandler::smtpdebug($settings, function($t, $e = false, $b = false, $s = 0){
+			CrawlerController::htmlLogLine($t, $e, $b, $s);
+		});
+		echo '</div>';
+		$this->t->printPageFooter();
+	}
 	
 	public function legislatur(){
 		//calculate accessmap

@@ -22,7 +22,7 @@ $.fn.extend({
 							param.editBox($el) : 
 							(param.editBox))
 			),
-			$edittextbox = $edittextbox.css('max-width', $el.width()),
+			$edittextbox = $edittextbox.css('width', $el.width()+20),
 			submitChanges = function () {
 				//set properties
 				var valide = true;

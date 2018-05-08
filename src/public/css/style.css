@@ -452,6 +452,11 @@ div.silmph__message_success {
 .button_container .addfooterspace {
 	height:50px;
 }
+.half_container .adddoublefooterspace,
+.full_container .adddoublefooterspace,
+.button_container .adddoublefooterspace {
+	height:72px;
+}
 .half_container .footerline, 
 .full_container .footerline,
 .button_container .footerline {
