@@ -320,9 +320,9 @@ class MailHandler
 				
 			//settimeout
 			$out('Set Timeout', 0, 0, 0);
-			set_time_limit(50); // set the time limit to 120 seconds
-			$smtp->Timeout       =   40; // set the timeout (seconds)
-			$smtp->Timelimit       =   30; // set the timelimit (seconds)
+			set_time_limit(40); // set the time limit to 120 seconds
+			$smtp->Timeout       =   30; // set the timeout (seconds)
+			$smtp->Timelimit       =   10; // set the timelimit (seconds)
 			$out('-> done', 1, 0, 1);
 				
 			//Connect to an SMTP server
