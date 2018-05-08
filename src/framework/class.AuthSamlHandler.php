@@ -15,6 +15,7 @@
  */
 
 require_once (dirname(__FILE__).'/Singleton.php');
+require_once (dirname(__FILE__).'/class.AuthHandler.php');
 
 /**
  * SimpleSAML Auth Handler
@@ -30,7 +31,7 @@ require_once (dirname(__FILE__).'/Singleton.php');
  * @platform        PHP
  * @requirements    PHP 7.0 or higher
  */
-class AuthHandler extends Singleton{
+class AuthSamlHandler extends Singleton implements AuthHandler{
 	private static $SIMPLESAMLDIR;
 	private static $SIMPLESAMLAUTHSOURCE;
 	private static $AUTHGROUP;
@@ -44,7 +45,7 @@ class AuthHandler extends Singleton{
 	 * @param bool $noPermCheck
 	 * @return AuthHandler
 	 */
-	public static function getInstance(...$pars):AuthHandler{
+	public static function getInstance(...$pars):AuthSamlHandler{
 		return parent::getInstance(...$pars);
 	}
 
@@ -158,6 +159,7 @@ class AuthHandler extends Singleton{
 	 * @return bool  true if the user has one or more groups from $group
 	 */
 	function hasGroup($groups, $delimiter = ","){
+		$this->requireAuth();
 		$attributes = $this->getAttributes();
 		if(!isset($attributes["groups"])){
 			return false;
@@ -213,8 +215,8 @@ class AuthHandler extends Singleton{
 	 * send html header to redirect to logout url
 	 * @param string $param
 	 */
-	function logout($param = NULL){
-		header('Location: ' . getLogoutURL());
+	function logout(){
+		header('Location: '. $this->getLogoutURL());
 		die();
 	}
 }

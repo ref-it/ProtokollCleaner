@@ -35,6 +35,8 @@ function setAuthHandler(){
 	} else {
 		if (DEBUG >= 1 && DEBUG_USE_DUMMY_LOGIN){
 			require_once (dirname(__FILE__)."/class.AuthDummyHandler.php");
+			$auth = AuthDummyHandler::getInstance();
+			$hasAuth = $auth->hasGroup(SIMPLESAML_ACCESS_GROUP);
 		} else {
 			require_once (dirname(__FILE__)."/class.AuthSamlHandler.php");
 			$conf = [
@@ -46,9 +48,9 @@ function setAuthHandler(){
 				],
 			];
 			Singleton::configureAll($conf);
+			$auth = AuthSamlHandler::getInstance();
+			$hasAuth = $auth->hasGroup(SIMPLESAML_ACCESS_GROUP);
 		}
-		$auth = AuthHandler::getInstance();
-		$hasAuth = $auth->hasGroup(SIMPLESAML_ACCESS_GROUP);
 	}
 }
 setAuthHandler();

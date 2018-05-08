@@ -13,6 +13,8 @@
  * @requirements    PHP 7.0 or higher
  */
  
+require_once (dirname(__FILE__).'/class.AuthHandler.php');
+
 /**
  * BasicAuth Handler
  * handles Basic Authentification
@@ -26,7 +28,7 @@
  * @platform        PHP
  * @requirements    PHP 7.0 or higher
  */
-class  BasicAuthHandler{
+class AuthBasicHandler implements AuthHandler{
 	
 	/**
 	 * reference to own instance
@@ -64,7 +66,7 @@ class  BasicAuthHandler{
 	 * private cause of singleton class
 	 * @param bool $noPermCheck
 	 */
-	private function __construct($noPermCheck = false){
+	protected function __construct($noPermCheck = false){
 		//create session
 		session_start();
 		self::$usermap = CRON_USERMAP;
@@ -80,7 +82,7 @@ class  BasicAuthHandler{
 	 */
 	public static function getInstance($noPermCheck = false){
 		if (!isset(self::$instance)){
-			self::$instance = new BasicAuthHandler($noPermCheck);
+			self::$instance = new AuthBasicHandler($noPermCheck);
 		}
 		return self::$instance;
 	}
@@ -186,8 +188,8 @@ class  BasicAuthHandler{
 	 * send html header to redirect to logout url
 	 * @param string $param
 	 */
-	function logout($param = NULL){
-		header('Location: '.BASE_URL.BASE_SUBDIRECTORY . '?logout=1');
+	function logout(){
+		header('Location: '. $this->getLogoutURL());
 		die();
 	}
 	

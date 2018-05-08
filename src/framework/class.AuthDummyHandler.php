@@ -12,6 +12,8 @@
  * @platform        PHP
  * @requirements    PHP 7.0 or higher
  */
+ 
+require_once (dirname(__FILE__).'/class.AuthHandler.php');
 
 /**
  * DummyAuth Handler
@@ -27,7 +29,7 @@
  * @platform        PHP
  * @requirements    PHP 7.0 or higher
  */
-class AuthHandler{
+class AuthDummyHandler implements AuthHandler{
 	
 	/**
 	 * reference to own instance
@@ -49,10 +51,10 @@ class AuthHandler{
 	
 	/**
 	 * class constructor
-	 * private cause of singleton class
+	 * protected cause of singleton class
 	 * @param bool $noPermCheck
 	 */
-	private function __construct($SIMPLESAML, $SIMPLESAMLAUTHSOURCE){
+	protected function __construct(){
 		//create session
 		session_start();
 		$this->attributes = [
@@ -73,7 +75,7 @@ class AuthHandler{
 	public static function getInstance(){
 		if (!isset(self::$instance)){
 			global $SIMPLESAML, $SIMPLESAMLAUTHSOURCE;
-			self::$instance = new AuthHandler($SIMPLESAML, $SIMPLESAMLAUTHSOURCE);
+			self::$instance = new AuthDummyHandler($SIMPLESAML, $SIMPLESAMLAUTHSOURCE);
 		}
 		return self::$instance;
 	}
@@ -183,8 +185,8 @@ class AuthHandler{
 	 * send html header to redirect to logout url
 	 * @param string $param
 	 */
-	function logout($param = NULL){
-		header('Location: ' . BASE_URL.BASE_SUBDIRECTORY . '?logout=1');
+	function logout(){
+		header('Location: '. $this->getLogoutURL());
 		die();
 	}
 	
