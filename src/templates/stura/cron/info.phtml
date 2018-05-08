@@ -18,7 +18,7 @@
     <ul class="list-group list-group-flush">
 		<?php 
 			foreach ($param['routes'] as $routeInfo){
-				echo "<li class=\"list-group-item\"><span class=\"d-inline-block\" style=\"min-width: 47px;\">{$routeInfo[0]}:</span> <a href=\"".BASE_URL.BASE_SUBDIRECTORY."{$routeInfo[1]}\">{$routeInfo[1]}</a><small class=\"form-text text-muted\">{$routeInfo[2]}</small></li>";
+				echo "<li class=\"list-group-item\"><span class=\"d-inline-block\" style=\"min-width: 47px;\">{$routeInfo[0]}:</span> <a href=\"".BASE_URL."/{$routeInfo[1]}\">{$routeInfo[1]}</a><small class=\"form-text text-muted\">{$routeInfo[2]}</small></li>";
 			}
 		?>
 	</ul>
