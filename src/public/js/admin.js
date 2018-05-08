@@ -180,12 +180,12 @@
 					case 'ssltlsstar':
 						{
 							var $radiogroup = $('<div class="radiogroup radiotoggle2" tabindex="0">'+
-									'<input type="radio" id="toggle-starttls" name="togglesecure" value="starttls">'+
-										'<label class="noselect" for="toggle-starttls">STARTTLS</label>' +
 									'<input type="radio" id="toggle-ssl" name="togglesecure" value="ssl">'+
 										'<label class="noselect" for="toggle-ssl">SSL</label>' +
 									'<input type="radio" id="toggle-tls" name="togglesecure" value="tls">' + 
 										'<label class="noselect" for="toggle-tls">TLS</label>' +
+									'<input type="radio" id="toggle-starttls" name="togglesecure" value="starttls">'+
+										'<label class="noselect" for="toggle-starttls">STARTTLS</label>' +
 									'<div class="radiomover"></div></div>');
 							var $radios = $radiogroup.find('input');
 							$radiogroup.bind('keydown', function (e) {
