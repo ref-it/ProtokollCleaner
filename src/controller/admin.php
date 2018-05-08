@@ -42,7 +42,7 @@ class AdminController extends MotherController {
 	private static $mail_validators = [
 		'SMTP_HOST' 	=> ['value' => ['domain', 'empty']],
 		'SMTP_USER' 	=> ['value' => ['regex', 
-			'pattern' => '/^[a-zA-Z0-9]+[a-zA-Z0-9\-_.]*[a-zA-Z0-9]+$/', 
+			'pattern' => '/^[a-zA-Z0-9]+[a-zA-Z0-9\-_.@]*[a-zA-Z0-9]+$/', 
 			'maxlength' => 64,
 			'error' => 'Kein gültiger Nutzername für den SMTP Server.']],
 		'MAIL_PASSWORD' => ['value' => ['password', 
@@ -54,7 +54,7 @@ class AdminController extends MotherController {
 			'upper',
 			'error' => 'Der Sicherheitstyp muss TLS oder SSL sein.' ]],
 		'SMTP_PORT' 	=> ['value' => ['integer', 
-			'min' => 0, 
+			'min' => 1, 
 			'max' => 65535,
 			'error' => 'Der SMTP Port muss eine ganze Zahl zwischen 1 und 65535 sein.']],
 		'MAIL_FROM' 	=> ['value' => ['mail', 'empty']],
