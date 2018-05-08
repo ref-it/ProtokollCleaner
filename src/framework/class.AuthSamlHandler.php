@@ -58,6 +58,7 @@ class AuthSamlHandler extends Singleton implements AuthHandler{
 		require_once(self::$SIMPLESAMLDIR . '/lib/_autoload.php');
 		$this->saml = new SimpleSAML_Auth_Simple(self::$SIMPLESAMLAUTHSOURCE);
 		session_start();
+		$this->requireAuth();
 	}
 	
 	final static protected function static__set($name, $value){
@@ -159,7 +160,6 @@ class AuthSamlHandler extends Singleton implements AuthHandler{
 	 * @return bool  true if the user has one or more groups from $group
 	 */
 	function hasGroup($groups, $delimiter = ","){
-		$this->requireAuth();
 		$attributes = $this->getAttributes();
 		if(!isset($attributes["groups"])){
 			return false;
