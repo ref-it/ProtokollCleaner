@@ -59,9 +59,11 @@
 		if ($m['stateName'] == 'J' && $m['flag_stuff']) $counter['stimmberechtigtAnwesend']++;
 		//job / resort reverse
 		if ($m['job'] != '' // member has job
-			&& $m['overwrite'] != '(ruhend)' // member is present (overwrite)
-			&& $m['overwrite'] != 'N' 		 // member is present (overwrite)
-			&& $m['stateName'] != 'N'){ 	 // member is present
+			&& $m['overwrite'] != '(ruhend)' // member is not present (overwrite)
+			&& $m['overwrite'] != 'N' 		 // member is not present (overwrite)
+			&& $m['overwrite'] != 'E' 		 // member is not present (overwrite)
+			&& $m['stateName'] != 'N'		 // member is not present
+			&& $m['stateName'] != 'E'){ 	 // member is not present
 			$jobs = (strpos($m['job'], ',')!== false)? explode(',', $m['job']) : [$m['job']];
 			foreach ($jobs as $k => $j){
 				$j = mb_strtolower(trim(strip_tags($j)));
