@@ -29,14 +29,14 @@ function setAuthHandler(){
 	
 	if (isset($cronRoutes[$method])
 		&& isset($cronRoutes[$method][$path])){
-		require_once (dirname(__FILE__)."/AuthBasicHandler.php");
+		require_once (dirname(__FILE__)."/class.AuthBasicHandler.php");
 		$auth = BasicAuthHandler::getInstance(empty($cronRoutes[$method][$path][0]));
 		$hasAuth = (empty($cronRoutes[$method][$path][0]))? true : $auth->hasGroup('cron');
 	} else {
 		if (DEBUG >= 1 && DEBUG_USE_DUMMY_LOGIN){
-			require_once (dirname(__FILE__)."/AuthDummyHandler.php");
+			require_once (dirname(__FILE__)."/class.AuthDummyHandler.php");
 		} else {
-			require_once (dirname(__FILE__)."/AuthSamlHandler.php");
+			require_once (dirname(__FILE__)."/class.AuthSamlHandler.php");
 			$conf = [
 				"AuthHandler" => [
 					"SIMPLESAMLDIR" => SAML_SIMPLESAMLDIR,
