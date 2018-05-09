@@ -1109,7 +1109,7 @@ class DatabaseModel extends Database
 		$data = [
 			$p->url,
 			$p->name,
-			$p->date->format('Y-m-d'),
+			($p->date)? ((is_string($p->date))? $p->date : ((is_a($p->date, 'DateTime'))? $p->date->format('Y-m-d H:i:s'): $p->date ))  : NULL,
 			$p->agreed_on,
 			$p->committee_id,
 			$p->legislatur,
