@@ -36,7 +36,7 @@ Tagesordnung
 ------------
 
 <?php if ($param['unreconciled_protocols']['notAgreed']){
-	echo 'Protokollkontrolle';
+	echo '  * Protokollkontrolle';
 	foreach ($param['unreconciled_protocols']['notAgreed'] as $prot){
 		$tmplink = (($prot['draft_url'])?
 			$param['protoPublicLink'] . $prot['draft_url'] :
@@ -45,18 +45,32 @@ Tagesordnung
 				$param['protoInternLink'] . $prot['name']));
 		$tmplink = str_replace(':', '/', $tmplink);
 		$tmplink = str_replace(['https///', 'http///'], ['https://', 'http://'], $tmplink);
-		echo "\n    - ".$prot['name'].' - ['.count($links).']';
+		echo "\n     - ".$prot['name'].' ['.count($links).']';
 		$links[] = $tmplink;
 	}
 }?>
 <?php 
+	$resortcounter = 0;
+	$topcounter = 1;
 	foreach ($param['tops'] as $top){
 		if (!$top['resort']){
-			echo "\n  * {$top['headline']}".(($top['goal'])?" ({$top['goal']})":'').(($top['guest'])?' (Gäste erwartet)':'');
+			echo "\n  * Top $topcounter: {$top['headline']}".(($top['goal'])?" ({$top['goal']})":'').(($top['guest'])?' (Gäste erwartet)':'');
+			$topcounter++;
+		} else {
+			$resortcounter++;
 		}
+		
 	} ?>
 
-  * Berichte aus Referaten/AGs und von Angestellten
+  * Berichte aus Referaten/AGs und von Angestellten<?php
+	if ($resortcounter > 0){
+		foreach ($param['tops'] as $top){
+			if ($top['resort']){
+				echo "\n     - {$param['resorts'][$top['resort']]['type']} {$param['resorts'][$top['resort']]['name']} - {$top['headline']}".(($top['goal'])?" ({$top['goal']})":'').(($top['guest'])?' (Gäste erwartet)':'');
+			}
+		}
+	}
+?> 
   * Sonstiges
 
 ___
@@ -82,7 +96,7 @@ foreach ($param['unreconciled_protocols']['draftState'] as $prot){
 			$param['protoInternLink'] . $prot['name']));
 	$tmplink = str_replace(':', '/', $tmplink);
 	$tmplink = str_replace(['https///', 'http///'], ['https://', 'http://'], $tmplink);
-	echo "\n    - ".$prot['name'].' - ['.count($links).']';
+	echo "\n    - ".$prot['name'].' ['.count($links).']';
 	$links[] = $tmplink;
 } ?>
 

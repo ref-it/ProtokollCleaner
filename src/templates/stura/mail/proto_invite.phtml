@@ -95,13 +95,29 @@
 				echo '</ul></li>';
 			}?>
 			<?php 
+				$resortcounter = 0;
+				$topcounter = 1;
 				foreach ($param['tops'] as $top){
 					if (!$top['resort']){
-						echo "<li>{$top['headline']}".(($top['goal'])?" ({$top['goal']})":'').(($top['guest'])?' (Gäste erwartet)':'')."</li>\n";
+						echo "<li>Top $topcounter: {$top['headline']}".(($top['goal'])?" ({$top['goal']})":'').(($top['guest'])?' (Gäste erwartet)':'')."</li>\n";
+						$topcounter++;
+					} else {
+						$resortcounter++;
 					}
 				}
 			?>
-			<li>Berichte aus Referaten/AGs und von Angestellten</li>
+			<li>Berichte aus Referaten/AGs und von Angestellten
+			<?php
+				if ($resortcounter > 0){
+					echo '<ul>';
+					foreach ($param['tops'] as $top){
+						if ($top['resort']){
+							echo "<li>{$param['resorts'][$top['resort']]['type']} {$param['resorts'][$top['resort']]['name']} - {$top['headline']}".(($top['goal'])?" ({$top['goal']})":'').(($top['guest'])?' (Gäste erwartet)':'')."</li>\n";
+						}
+					}
+					echo '</ul>';
+				}
+			?></li>
 			<li>Sonstiges</li>
 		</ul>
 	</p>
