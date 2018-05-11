@@ -1381,13 +1381,18 @@ class FileHandler extends MotherController {
 		}
 	}
 
+	/**
+	 * test if server supports xsendfile headers (mod_xsendfile)
+	 */
 	public static function hasModXSendfile() {
-		if (UPLOAD_HAS_MOD_XSENDFILE){
+		if (!UPLOAD_MOD_XSENDFILE){
+			return false;
+		} elseif (UPLOAD_MOD_XSENDFILE == 2){
 			return true;
 		}
 		if (function_exists ( 'apache_get_modules' )){
 			$modlist = apache_get_modules();
-			if (in_array('', $modlist, true)){
+			if (in_array('mod_xsendfile', $modlist, true)){
 				return true;
 			}
 		}

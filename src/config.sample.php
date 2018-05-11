@@ -81,8 +81,7 @@ define('UPLOAD_MAX_MULTIPLE_FILES', 1); // how many files can be uploaded at onc
 define('UPLOAD_DISK_PATH', dirname(__FILE__).'/filestorage'); // path to DATABASE filecache or FILESYSTEM storage - no '/' at the ends
 define('UPLOAD_MAX_SIZE', 41943215); //in bytes - also check DB BLOB max size and php upload size limit in php.ini
 define('UPLOAD_PROHIBITED_EXTENSIONS', 'ph.*?,cgi,pl,pm,exe,com,bat,pif,cmd,src,asp,aspx,js,lnk,html,htm,forbidden');
-define('UPLOAD_HAS_MOD_XSENDFILE', false); // if xmodsendfile detection fails, but it is installed on server, enable here
-
+define('UPLOAD_MOD_XSENDFILE', 1); //0 - dont use it, 1 - auto detect on apache modules, 2 force usage - if detection fails
 
 // ===== DO NOT CHANGE THIS =====
 require_once (dirname(__FILE__)."/framework/init.php");
