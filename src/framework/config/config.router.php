@@ -24,6 +24,7 @@ $routes = [
 		'crawl/legislatur'	=> ['crawler',		'crawler', 		'crawlLegislatur'],
 		'crawl/resoproto'	=> ['crawler',		'crawler', 		'crawlResoProto'],
 		'protoedit'			=> ['protoedit',	'protocol', 	'pedit_view'],
+		'files/npuploader'	=> ['filesnpuploader', 'file',		'npuploader'],
 	],
 	'POST' => [
 		'admin/savemail'	=> ['admin',		'admin', 		'mail_update_setting'],
@@ -130,6 +131,7 @@ $permission_map = [
 	'croninfo'		=> 'croninfo',
 	'cronmail'		=> 'cronmail',
 	'cronwiki'		=> 'cronwiki',
+	'filesnpuploader' => 'stura,konsul,admin',	//gui
 ];
 
 // handle BASE_SUBDIRECTORIES
