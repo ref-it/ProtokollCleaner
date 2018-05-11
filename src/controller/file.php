@@ -91,8 +91,10 @@ class FileController extends MotherController {
 			//show result
 			if ($filtered['gui']){
 				$this->t->appendCSSLink('dropzone.css');
+				$this->t->appendCSSLink('css.ilitePhoto.css');
 				$this->t->appendCSSLink('file.css');
 				$this->t->appendJsLink('libs/dropzone.js');
+				$this->t->appendJsLink('libs/iLitePhoto/jquery.iLitePhoto.js');
 				$this->t->appendJsLink('file.js');
 				$this->t->setTitlePrefix('Anhänge - '.$top['headline']);
 				$this->t->printPageHeader();

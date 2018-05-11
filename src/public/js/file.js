@@ -235,7 +235,16 @@
 			error: postError
 		});
 	}
-	
+	var func_append_iLitePhoto = function (i , link){
+		link.dataset.filename = link.innerHTML;
+		var $link = $(link);
+		link.dataset.mime = $link.parent().children('small').children('span')[2].innerText.split(':')[1];
+		if (link.dataset.hasOwnProperty('mime') && link.dataset.mime.indexOf('image') >= 0) link.dataset.type = 'image';
+		else if (link.dataset.hasOwnProperty('mime') && link.dataset.mime.indexOf('pdf') >= 0) link.dataset.type = 'pdf';
+		else if (link.dataset.hasOwnProperty('mime') && link.dataset.mime.indexOf('video') >= 0) link.dataset.type = 'video';
+		else return;
+		$(link).iLitePhoto({always_fullscreen: false, notexts: false, title_2_head: true, socials: false});
+	}
 	// ===== DOCUMENT READY ===============================================
 	$(document).ready(function(){
 		// ------------------------------------------------
@@ -287,7 +296,7 @@
 					var $ul = $('.silmph_file_list');
 					var $li = $('<li/>', {
 						'class': 'list-group-item silmph_file_line',
-						html: '<a href="'+GLOBAL_RELATIVE+'files/get?key='+pdata.hash+'">'+
+						html: '<a data-group="d1" href="'+GLOBAL_RELATIVE+'files/get?key='+pdata.hash+'">'+
 							pdata.name+'</a>'+
 							'<small class="form-text text-muted">'+
 								'<span class="d-inline-block ml-3"><strong>Added: </strong>'+pdata.added+'</span>'+
@@ -298,6 +307,7 @@
 					});
 					$li.find('button.remove').on('click', func_remove_file);
 					$ul.append($li);
+					$li.find('a').each(func_append_iLitePhoto);
 					silmph__add_message(pdata.msg, MESSAGE_TYPE_SUCCESS, 3000);
 				} else if (pdata.success != true) {
 					silmph__add_message(pdata.eMsg , MESSAGE_TYPE_WARNING, 5000);
@@ -322,5 +332,7 @@
 	    }
 		//-------------------------------
 		$('.silmph_file_line button.remove').on('click', func_remove_file);
+		
+		$('.silmph_file_line a:not([data-type="other"])').each(func_append_iLitePhoto);
 	});
 })();
