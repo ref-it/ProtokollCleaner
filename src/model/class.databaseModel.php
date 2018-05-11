@@ -1004,6 +1004,22 @@ class DatabaseModel extends Database
 	}
 	
 	/**
+	 * get tops which will be deleted by deleteTopsByMemberIdSoft
+	 * @see deleteTopsByMemberIdSoft
+	 * @param integer $id
+	 * @return array of tops
+	 */
+	function getDeleteTopsByMemberIdSoft($id){
+		$sql = "SELECT * FROM `".TABLE_PREFIX."tops` WHERE `used_on` IN (SELECT NP.id FROM `".TABLE_PREFIX."newproto` NP WHERE (NP.management = ? AND NP.protocol IS NULL) OR (NP.protocol = ? AND NP.management IS NULL) OR (NP.protocol = ? AND NP.management = ?) );";
+		$result = $this->getResultSet($sql, 'iiii', [$id, $id, $id, $id]);
+		$return = [];
+		foreach ($result as $line){
+			$return[$line['id']] = $line;
+		}
+		return $return;
+	}
+	
+	/**
 	 * delete tops by member id
 	 * but only removes entries if management and protocol are empty
 	 * @param integer $id

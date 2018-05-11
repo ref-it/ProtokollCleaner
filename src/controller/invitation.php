@@ -358,6 +358,15 @@ class InvitationController extends MotherController {
 				$tr = false;
 				$me = false;
 				
+				$deltops = $this->db->getDeleteTopsByMemberIdSoft($vali->getFiltered('mid'));
+				if (is_array($deltops) || count($deltops) > 0 ){
+					require (FRAMEWORK_PATH.'/class.fileHandler.php');
+					$fh = new FileHandler($this->db);
+					foreach ($deltops as $dtop){
+						$fh->deleteFilesByLinkId($dtop['id']);
+					}
+				}
+				
 				//remove member of not generated newprotocols
 				$npnc = $this->db->deleteMemberOfUncreatedNewprotoByMemberId($vali->getFiltered('mid'));
 				//delete tops
