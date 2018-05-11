@@ -863,6 +863,54 @@ class FileHandler extends MotherController {
 	}
 
 	/**
+	 * convert arrays (and other values) to text
+	 * @param array $a
+	 */
+	public static function array2text($a){
+		return json_encode($a);
+	}
+
+	/**
+	 * convert text to array
+	 * @param string $t
+	 */
+	public static function text2array($t){
+		return json_decode($t, true);
+	}
+
+	/**
+	 * convert text to binary data
+	 * @param string $t
+	 */
+	public static function text2binary($t){
+		return gzcompress($t);
+	}
+
+	/**
+	 * convert binary data to text
+	 * @param binary $b
+	 */
+	public static function binary2text($b){
+		return gzuncompress($b);
+	}
+
+	/**
+	 * convert array to binary data
+	 * @param array $a
+	 */
+	public static function array2binary($a){
+		return self::text2binary(self::array2text($a));
+	}
+
+	/**
+	 * convert binary data to array
+	 * @param binary $b
+	 */
+	public static function binary2array($b){
+		return self::text2array(self::binary2text($b));
+	}
+
+	/**
 	 * recursively delete directories and containing files
 	 * may echo error messages
 	 * @param string $dir directory path
