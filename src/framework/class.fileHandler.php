@@ -852,7 +852,7 @@ class FileHandler extends MotherController {
 	 * @param string $hash
 	 */
 	public function defleteFileByHash($hash){
-		$file = $this->db->getFileInfoByHash($$hash);
+		$file = $this->db->getFileInfoByHash($hash);
 		//delete from db
 		if ($file){
 			$this->db->deleteFiledataById($file->data);
