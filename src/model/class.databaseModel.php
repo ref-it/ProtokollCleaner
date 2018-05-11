@@ -1639,7 +1639,7 @@ class DatabaseModel extends Database
 	 * @return false|binary error -> false, binary data
 	 */
 	public function getFiledataBinary($id){
-		$this->_getFiledataBinary($id, $tablename = 'filedata' , $datacolname = 'data');
+		return $this->_getFiledataBinary($id, $tablename = 'filedata' , $datacolname = 'data');
 	}
 	
 }

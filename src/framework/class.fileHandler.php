@@ -944,8 +944,9 @@ class FileHandler extends MotherController {
 	 *   raw flag for display/download
 	 *   key hash value
 	 * @param File $file
+	 * @param boolean $noinline disposition: false -> 'inline'|true -> 'attachment' 
 	 */
-	public function deliverFileData($file){
+	public function deliverFileData($file, $noinline = false){
 		if (!UPLOAD_TARGET_DATABASE){ // disk FILESYSTEM storage ------------
 			if (!file_exists(self::getDiskpathOfFile($file))){
 				error_log("FILE Error: File not found on disk. File Id: {$file->id} File Path: ". self::getDiskpathOfFile($file) );
@@ -958,7 +959,7 @@ class FileHandler extends MotherController {
 					} else {
 						header("Content-Type: application/octet-stream");
 					}
-					die();
+					return;
 				} else {
 					//header
 					if ($file->mime){
@@ -967,9 +968,9 @@ class FileHandler extends MotherController {
 						header("Content-Type: application/octet-stream");
 					}
 					if ($file->size) header('Content-Length: ' . $file->size );
-					header('Content-Disposition: inline; filename="'.$file->filename.(($file->fileextension)?'.'.$file->fileextension:'').'"');
+					header('Content-Disposition: '.(!$noinline?'inline':'attachment').'; filename="'.$file->filename.(($file->fileextension)?'.'.$file->fileextension:'').'"');
 					echo file_get_contents(self::getDiskpathOfFile($file));
-					die();
+					return;
 				}
 			}
 		} else { // DATABASE storage ----------------
@@ -982,7 +983,7 @@ class FileHandler extends MotherController {
 					} else {
 						header("Content-Type: application/octet-stream");
 					}
-					die();
+					return;
 				} else {
 					//header
 					if ($file->mime){
@@ -991,14 +992,13 @@ class FileHandler extends MotherController {
 						header("Content-Type: application/octet-stream");
 					}
 					if ($file->size) header('Content-Length: ' . $file->size );
-					header('Content-Disposition: inline; filename="'.$file->filename.(($file->fileextension)?'.'.$file->fileextension:'').'"');
+					header('Content-Disposition: '.(!$noinline?'inline':'attachment').'; filename="'.$file->filename.(($file->fileextension)?'.'.$file->fileextension:'').'"');
 					echo file_get_contents(self::getDiskpathOfFile($file));
-					die();
+					return;
 				}
 			} else {
-				$data = '';
+				$data = $this->db->getFiledataBinary($file->data);
 				if (UPLOAD_USE_DISK_CACHE){
-					$data = $this->db->getFiledataBinary($file->data);
 					file_put_contents(self::getDiskpathOfFile($file), $data);
 					// apache deliver
 					if (self::hasModXSendfile()){
@@ -1010,7 +1010,7 @@ class FileHandler extends MotherController {
 						} else {
 							header("Content-Type: application/octet-stream");
 						}
-						die();
+						return;
 					}
 				}
 				if ($file->mime){
@@ -1019,10 +1019,10 @@ class FileHandler extends MotherController {
 					header("Content-Type: application/octet-stream");
 				}
 				if ($file->size) header('Content-Length: ' . $file->size );
-				header('Content-Disposition: inline; filename="'.$file->filename.(($file->fileextension)?'.'.$file->fileextension:'').'"');
+				header('Content-Disposition: '.(!$noinline?'inline':'attachment').'; filename="'.$file->filename.(($file->fileextension)?'.'.$file->fileextension:'').'"');
 				echo $data;
 				$this->close_db_file();
-				die();
+				return;
 			}
 		}
 	}
@@ -1261,9 +1261,6 @@ class FileHandler extends MotherController {
 							if ($continue) continue;
 						}
 						if ($ext2 && $ext1 != '' && !in_array($ext1, $ext2, true)){
-							echo '<pre>org e: '; var_dump($ext1); echo '</pre>';
-							echo '<pre>det e: '; var_dump($ext2); echo '</pre>';
-
 							$err = 'File extension does not match to your mime type.';
 							$result['error'][] = $err;
 							error_log($err . " --- Org Ext: '$ext1'; Mime: '$file->mime'; MimeExt: '$ext2[0]'");
