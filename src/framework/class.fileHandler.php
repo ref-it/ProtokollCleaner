@@ -847,8 +847,222 @@ class FileHandler extends MotherController {
 		parent::__construct($db, NULL, NULL);
 	}
 
-	//functions
-	
+	/**
+	 * delete file by hash
+	 * @param string $hash
+	 */
+	public function defleteFileByHash($hash){
+		$file = $this->db->getFileInfoByHash($$hash);
+		//delete from db
+		if ($file){
+			$this->db->deleteFiledataById($file->data);
+			$this->db->deleteFileinfoById($file->id);
+			//delete from harddisk
+			$path = self::getDiskpathOfFile($file);
+			if (file_exists ($path) && !is_dir($path)){
+				unlink($path);
+			}
+		}
+	}
+
+	/**
+	 * delete file by file id
+	 * @param int $id
+	 */
+	public function deleteFileById($id){
+		$file = $this->db->getFileinfoById($id);
+		//delete from db
+		if ($file){
+			$this->db->deleteFiledataById($file->data);
+			$this->db->deleteFileinfoById($file->id);
+			//delete from harddisk
+			$path = self::getDiskpathOfFile($file);
+			if (file_exists ($path) && !is_dir($path)){
+				unlink($path);
+			}
+		}
+	}
+
+	/**
+	 * delete all files by link id
+	 * @param int $link
+	 */
+	public function deleteFilesByLinkId($link){
+		$files = $this->db->getFilesByLinkId($link);
+		//delete from db
+		$this->db->deleteFiledataByLinkId($link);
+		$this->db->deleteFileinfoByLinkId($link);
+		//delete from harddisk
+		if (is_array($files)){
+			foreach ($files as $file){
+				$path = self::getDiskpathOfFile($file);
+				if (file_exists ($path) && !is_dir($path)){
+					unlink($path);
+				}
+			}
+		}
+	}
+
+	/**
+	 * clean up upload folder
+	 * delete all directories which are not in db
+	 */
+	public function cleanupDirectories(){
+		//get all directory names
+		$base = self::getBaseDirPath();
+		$files = array_diff(scandir($base), array('.','..'));
+		// get all link ids
+		$links = $this->db->getAllFileLinkIds();
+		$dirs = [];
+		//delete all directories not in links
+		foreach ($files as $file) {
+			if (is_dir("$base/$file") && !in_array($file, $links)){
+				self::delTree($base/$file);
+			}
+		}
+	}
+
+	/**
+	 * returns fileinfo by id
+	 * @return array <File>
+	 */
+	public function filelist($linkId){
+		return $this->db->getFilesByLinkId($linkId);
+	}
+
+	/**
+	 * load file to php and encode base64
+	 * @param File $file
+	 * @return string base64 encoded data
+	 */
+	public function fileToBase64($file){
+		return base64_encode($this->getFiledataBinary($file, true));
+	}
+
+	/**
+	 * deliver file to user
+	 *   raw flag for display/download
+	 *   key hash value
+	 * @param File $file
+	 */
+	public function deliverFileData($file){
+		if (!UPLOAD_TARGET_DATABASE){ // disk FILESYSTEM storage ------------
+			if (!file_exists(self::getDiskpathOfFile($file))){
+				error_log("FILE Error: File not found on disk. File Id: {$file->id} File Path: ". self::getDiskpathOfFile($file) );
+			} else {
+				// apache deliver
+				if (self::hasModXSendfile()){
+					header("X-Sendfile: ".self::getDiskpathOfFile($file));
+					if ($file->mime){
+						header("Content-Type: {$file->mime}");
+					} else {
+						header("Content-Type: application/octet-stream");
+					}
+					die();
+				} else {
+					//header
+					if ($file->mime){
+						header("Content-Type: {$file->mime}");
+					} else {
+						header("Content-Type: application/octet-stream");
+					}
+					if ($file->size) header('Content-Length: ' . $file->size );
+					header('Content-Disposition: inline; filename="'.$file->filename.(($file->fileextension)?'.'.$file->fileextension:'').'"');
+					echo file_get_contents(self::getDiskpathOfFile($file));
+					die();
+				}
+			}
+		} else { // DATABASE storage ----------------
+			if (UPLOAD_USE_DISK_CACHE && file_exists(self::getDiskpathOfFile($file))){
+				// apache deliver
+				if (self::hasModXSendfile()){
+					header("X-Sendfile: ".self::getDiskpathOfFile($file));
+					if ($file->mime){
+						header("Content-Type: {$file->mime}");
+					} else {
+						header("Content-Type: application/octet-stream");
+					}
+					die();
+				} else {
+					//header
+					if ($file->mime){
+						header("Content-Type: {$file->mime}");
+					} else {
+						header("Content-Type: application/octet-stream");
+					}
+					if ($file->size) header('Content-Length: ' . $file->size );
+					header('Content-Disposition: inline; filename="'.$file->filename.(($file->fileextension)?'.'.$file->fileextension:'').'"');
+					echo file_get_contents(self::getDiskpathOfFile($file));
+					die();
+				}
+			} else {
+				$data = '';
+				if (UPLOAD_USE_DISK_CACHE){
+					$data = $this->db->getFiledataBinary($file->data);
+					file_put_contents(self::getDiskpathOfFile($file), $data);
+					// apache deliver
+					if (self::hasModXSendfile()){
+						$this->close_db_file();
+						// apache deliver
+						header("X-Sendfile: ".self::getDiskpathOfFile($file));
+						if ($file->mime){
+							header("Content-Type: {$file->mime}");
+						} else {
+							header("Content-Type: application/octet-stream");
+						}
+						die();
+					}
+				}
+				if ($file->mime){
+					header("Content-Type: {$file->mime}");
+				} else {
+					header("Content-Type: application/octet-stream");
+				}
+				if ($file->size) header('Content-Length: ' . $file->size );
+				header('Content-Disposition: inline; filename="'.$file->filename.(($file->fileextension)?'.'.$file->fileextension:'').'"');
+				echo $data;
+				$this->close_db_file();
+				die();
+			}
+		}
+	}
+
+	/**
+	 * close db data file and free memory
+	 * call will be ignored if no file connection is open
+	 */
+	public function close_db_file(){
+		$this->db->fileCloseLastGet();
+	}
+
+	/**
+	 * return binary file data
+	 * Remember: trigger close DB file if DB storage is enabled
+	 *   function: close_db_file()
+	 * @param File $file
+	 * @param boolean $cache
+	 * @return false|binary
+	 */
+	public function getFiledataBinary($file, $cache = true){
+		if (!UPLOAD_TARGET_DATABASE){ // disk FILESYSTEM storage ------------
+			if (!file_exists(self::getDiskpathOfFile($file))){
+				error_log("FILE Error: File not found on disk. File Id: {$file->id} File Path: ". self::getDiskpathOfFile($file) );
+			} else {
+				return file_get_contents(self::getDiskpathOfFile($file));
+			}
+		} else { // DATABASE storage ----------------
+			if (UPLOAD_USE_DISK_CACHE && file_exists(self::getDiskpathOfFile($file))){
+				return file_get_contents(self::getDiskpathOfFile($file));
+			} else {
+				$data = $this->db->getFiledataBinary($file->data);
+				if ($cache){
+					file_put_contents(self::getDiskpathOfFile($file), $data);
+				}
+				return $data;
+			}
+		}
+	}
+
 	/**
 	 * return diskdirectory of given file
 	 * @param File $file
@@ -875,6 +1089,299 @@ class FileHandler extends MotherController {
 	public static function getDiskpathOfFile($file){
 		return self::getDirpathOfFile($file).'/'. $file->hashname;
 	}
+
+	/**
+	 * file db hash
+	 * check if file exists
+	 * run this and may check filepermissions after that
+	 * @param string $hash
+	 */
+	public function checkFileHash ($hash) {
+		//check hash only contains hey letters, length 64
+		$re = '/^[0-9a-f]{64}$/m';
+		if (!preg_match($re, $hash)){
+			return NULL;
+		}
+		return $this->db->getFileInfoByHash($hash);
+	}
+
+	/**
+	 * ACTION upload / store file
+	 * Notice: to do permission control, check permissions on seperat controller and call this cantroller if all went well
+	 *
+	 * @param $link link id
+	 * @return array keys: success:bool, errors:array of string, filecounter:int, fileinfo:array
+	 */
+	public function upload($link){
+		$result = [
+			'success' => true,
+			'error' => [],
+			'filecounter' => 0,
+			'fileinfo' =>[]
+		];
+		if (!is_int($link) && is_array($link)) {
+			$result['success'] = false;
+			error_log('No link id set');
+			$result['error'][] = 'No file link id set';
+			return $result;
+		}
+		if (!isset($_FILES)
+			|| count($_FILES) == 0
+			|| !isset($_FILES['file'])
+			|| !isset($_FILES['file']['error'])
+			|| !isset($_FILES['file']['name'])
+			|| count($_FILES['file']['name']) == 0){
+			return $result;
+		}
+
+		//handle fileupload === CHECK FILES ===================================
+		if (!isset($_POST['nofile']) && isset($_FILES) && count($_FILES) > 0 &&
+			isset($_FILES['file']) &&
+			isset($_FILES['file']['error']) &&
+			isset($_FILES['file']['name']) &&
+			count($_FILES['file']['name']) > 0 ){
+
+			$tmp_attach = NULL;
+			$files = array();
+			$forbidden_file_types = preg_replace( '/\s*[,;\|#]\s*/','|', UPLOAD_PROHIBITED_EXTENSIONS);
+
+			if (count($files) > UPLOAD_MAX_MULTIPLE_FILES){
+				$result['error'][] = 'Too many simultaneous Files on Upload.';
+			} else {
+				// check files
+				foreach ( $_FILES['file']['name'] as $id => $filename ){
+					// ERROR HANDLING ===========================================================
+					// is no uploaded file ---------------------------------------
+					if(!is_uploaded_file($_FILES['file']['tmp_name'][$id])){
+						error_log('SECURITY ALERT: Try to save nonuploaded file.');
+						$result['error'][] = 'Es wird versucht eine nicht hochgeladene Datei zu speichern.';
+						continue;
+					}
+					// file error ------------------------------------------------
+					if ($_FILES['file']['error'][$id] != UPLOAD_ERR_OK){
+						switch ($_FILES['file']['error'][$id]){
+							case UPLOAD_ERR_INI_SIZE:
+								$result['error'][] = "Die hochgeladene Datei überschreitet die in der Anweisung upload_max_filesize in php.ini festgelegte Größe.";
+								break;
+							case UPLOAD_ERR_FORM_SIZE:
+								$result['error'][] = "Die hochgeladene Datei überschreitet die in dem HTML Formular mittels der Anweisung MAX_FILE_SIZE angegebene maximale Dateigröße";
+								break;
+							case UPLOAD_ERR_PARTIAL:
+								$result['error'][] = "Die Datei wurde nur teilweise hochgeladen.";
+								break;
+							case UPLOAD_ERR_NO_FILE:
+								$result['error'][] = "Es wurde keine Datei hochgeladen. ";
+								break;
+							case UPLOAD_ERR_NO_TMP_DIR:
+								$result['error'][] = "Fehlender temporärer Ordner.";
+								break;
+							case UPLOAD_ERR_CANT_WRITE:
+								$result['error'][] = "Speichern der Datei auf die Festplatte ist fehlgeschlagen.";
+								break;
+							case UPLOAD_ERR_EXTENSION:
+								$result['error'][] = "Eine PHP Erweiterung hat den Upload der Datei gestoppt. ";
+								break;
+							default:
+								$result['error'][] = "Undefinierter upload Fehler. ID: ". $_FILES['file']['error'][$id];
+								break;
+						}
+						continue;
+					}
+					// file size -------------------------------------------------
+					if ($_FILES['file']['size'][$id] > UPLOAD_MAX_SIZE){
+						$result['error'][] = 'Datei ist zu groß';
+						continue;
+					}
+
+					$file = new File();
+					$vali = new Validator();
+					$pathinfo = pathinfo($_FILES['file']['name'][$id]);
+
+					// added on, set in database, or dbModel
+					$file->added_on = NULL;
+
+					// filename
+					$tmp_name = $_FILES['file']['tmp_name'][$id];
+					$vali->V_filename($pathinfo['filename']);
+					$pathinfo['filename'] = $vali->getIsError() ? $tmp_name : $vali->getFiltered();
+					$file->filename = $pathinfo['filename'];
+					$file->filename = str_replace('..', '.', $file->filename);
+					$file->filename = str_replace('..', '.', $file->filename);
+					if ($file->filename==''){
+						$result['error'][] = "empty or invalid filename";
+						continue;
+					}
+
+					// hashname
+					$file->hashname = strtolower(generateRandomString(32));
+
+					// link
+					if (is_int($link)){
+						$file->link = $link;
+					} elseif (is_array($link) && isset($link[$tmp_name]) && is_int($link[$tmp_name])){
+						$file->link = $link[$tmp_name];
+					} else {
+						$result['error'][] = "No link id found for '$tmp_name'";
+						continue;
+					}
+
+					// size
+					$file->size = $_FILES['file']['size'][$id];
+
+					// mime + fileextension
+					$ext1 = isset($pathinfo['extension']) ? $pathinfo['extension'] : '';
+					if (preg_match("/" . $forbidden_file_types . "$/i", $ext1)){
+						$result['error'][] = 'You are not allowed to upload files with this extension';
+						continue;
+					}
+					if ($ext1 != ''){
+						$vali->V_filename($ext1);
+						$ext1 = $vali->getIsError() ? '' : $vali->getFiltered();
+					}
+
+					$file->fileextension = $ext1;
+
+					$finfo = new finfo(FILEINFO_MIME_TYPE);
+					$mime = $finfo->file($_FILES['file']['tmp_name'][$id]);
+					if ($mime){
+						$file->mime = $mime;
+						$ext2 = self::extensionFromMime($mime);
+						if ($ext2){
+							if (!is_array($ext2)){
+								$ext2 = [$ext2];
+							}
+							$continue = false;
+							foreach($ext2 as $ex){
+								if (preg_match("/" . $forbidden_file_types . "$/i", $ex)){
+									$result['error'][] = 'You are not allowed to upload files with this extension (different mime detected)';
+									$continue = true;
+									break;
+								}
+							}
+							if ($continue) continue;
+						}
+						if ($ext2 && $ext1 != '' && !in_array($ext1, $ext2, true)){
+							echo '<pre>org e: '; var_dump($ext1); echo '</pre>';
+							echo '<pre>det e: '; var_dump($ext2); echo '</pre>';
+
+							$err = 'File extension does not match to your mime type.';
+							$result['error'][] = $err;
+							error_log($err . " --- Org Ext: '$ext1'; Mime: '$file->mime'; MimeExt: '$ext2[0]'");
+							continue;
+						}
+					}
+
+					// encoding
+					if ($file->mime && mb_substr($file->mime, 0, 5) == 'text/'){
+						$finfo2 = new finfo(FILEINFO_MIME_ENCODING);
+						$enc = $finfo->file($_FILES['file']['tmp_name'][$id]);
+						if ($enc){
+							$file->encoding = $enc;
+						}
+					}
+
+					// add file to upload list
+					$files[$tmp_name] = $file;
+				}
+			}
+			if (UPLOAD_MULTIFILE_BREAOK_ON_ERROR && count($result['error']) > 0){
+				$result['error'][] = 'Upload aborted due to an error.';
+			} else {
+				// check db for existing files
+				/** @var SILMPH\File $file */
+				foreach ($files as $tmp_name => $file){
+					if ($this->db->checkFileExists($file->link, $file->filename, $file->fileextension)){
+						$result['error'][] = "The File '$file->filename' already exists on this path.";
+						unset($files[$tmp_name]);
+					}
+				}
+				if (UPLOAD_MULTIFILE_BREAOK_ON_ERROR && count($result['error']) > 0){
+					$result['error'][] = 'Upload aborted due to an error.';
+					$result['success'] = false;
+				} else {
+					$result['fileinfo'] = $files;
+				}
+			}
+		}
+		// UPLOAD FILES ===============================================
+		if (count($result['fileinfo']) == 0){
+			return $result;
+		} else {
+			// FILESYSTEM storage ---------------
+			if (!UPLOAD_TARGET_DATABASE){
+				foreach ( $result['fileinfo'] as $tmp_name => $file ){
+					$dir = self::getDirpathOfFile($file);
+					// create directory if not extists
+					self::checkCreateDirectory($dir);
+					// upload file
+					$uploadfile = self::getDiskpathOfFile($file);
+					// move file to directory
+					if (move_uploaded_file($tmp_name, $uploadfile)) {
+						$dberror = false;
+						//create file entry
+						$file->id = $this->db->createFile($file);
+						$dberror = $this->db->isError();
+						//create data entry
+						if (!$dberror){
+							$fdid = $this->db->createFileDataPath($uploadfile);
+							$dberror = $this->db->isError();
+							$file->data = $fdid;
+						}
+						//update link data
+						if (!$dberror){
+							$dberror = !$this->db->updateFile_DataId($file);
+						}
+						//check for error
+						if ($dberror) {
+							unlink($uploadfile);
+							unset($result['fileinfo'][$tmp_name]);
+							$result['error'][] = "DB Error -> remove file";
+							if (UPLOAD_MULTIFILE_BREAOK_ON_ERROR){
+								$result['success'] = false;
+								break;
+							}
+						}
+					} else {
+						unset($result['fileinfo'][$tmp_name]);
+						$result['error'][] = "Couldn't move file";
+						if (UPLOAD_MULTIFILE_BREAOK_ON_ERROR){
+							$result['success'] = false;
+							break;
+						}
+					}
+				}
+			} else { // DATABASE storage -------------
+				foreach ( $result['fileinfo'] as $tmp_name => $file ){
+					$uploadfile = $tmp_name;
+					$dberror = false;
+					//create file entry
+					$file->id = $this->db->createFile($file);
+					$dberror = $this->db->isError();
+					//create data entry
+					if (!$dberror){
+						$fdid = $this->db->storeFile2Filedata($uploadfile, $file->size);
+						$dberror = $this->db->isError();
+						$file->data = $fdid;
+					}
+					//update link data
+					if (!$dberror){
+						$dberror = !$this->db->updateFile_DataId($file);
+					}
+					//check for error
+					if ($dberror) {
+						unset($result['fileinfo'][$tmp_name]);
+						$result['error'][] = "DB Error";
+						if (UPLOAD_MULTIFILE_BREAOK_ON_ERROR){
+							$result['success'] = false;
+							break;
+						}
+					}
+				}
+			}
+			return $result;
+		}
+	}
+
 	public static function hasModXSendfile() {
 		if (UPLOAD_HAS_MOD_XSENDFILE){
 			return true;

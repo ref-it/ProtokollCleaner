@@ -49,7 +49,6 @@ define('WIKI_PASSWORD', 'wikipassword_xxx');
 
 // ===== Security Settings =====
 define('PW_PEPPER', 'XXXXX_PLEASECHANGE_TO_CRYPTIC_LETTERS_a-zA-Z0-9_MIN_LENGTH_32_XXXXX');
-define('RENAME_FILES_ON_UPLOAD', 'ph.*?,cgi,pl,pm,exe,com,bat,pif,cmd,src,asp,aspx,js,lnk,html,htm');
 define('ENABLE_ADMIN_INSTALL', false);
 define('DEBUG', false); //Level = false / 0 => disabled || 1 => Basic debug information || 2 => additional information || 3 => all
 define('DEBUG_USE_DUMMY_LOGIN', false);
@@ -64,6 +63,26 @@ define('CRON_USERMAP', [
 		'eduPersonPrincipalName' => ['cronuser'],
 	]
 ]);
+
+// ===== UPLOAD SETTINGS =====
+// DATABASE or FILESYSTEM storage
+// Database Pros
+// - good if recoverability is critical | gut wenn Wiederherstellbarkeit kritisch
+// - backups with database, only new only need
+// Fileysystem Pros
+// - on defect systems restoring the online system is way faster if no files need to pushed back in database
+// - easily run separate processes that catalog document metadata, perform virus scanning, perform keyword indexing
+// - use storages wich uses compression, encryption, etc
+// - no need for interpreter (PHP) to load file into ram
+define('UPLOAD_TARGET_DATABASE', true); // true|false store into
+define('UPLOAD_USE_DISK_CACHE', true);  // if DATABASE storage enabled , use filesystem as cache
+define('UPLOAD_MULTIFILE_BREAOK_ON_ERROR', true); //if there are multiple files on Upload and an error occures: FALSE -> upload files with no errors, TRUE upload no file
+define('UPLOAD_MAX_MULTIPLE_FILES', 1); // how many files can be uploaded at once
+define('UPLOAD_DISK_PATH', dirname(__FILE__).'/filestorage'); // path to DATABASE filecache or FILESYSTEM storage - no '/' at the ends
+define('UPLOAD_MAX_SIZE', 41943215); //in bytes - also check DB BLOB max size and php upload size limit in php.ini
+define('UPLOAD_PROHIBITED_EXTENSIONS', 'ph.*?,cgi,pl,pm,exe,com,bat,pif,cmd,src,asp,aspx,js,lnk,html,htm,forbidden');
+define('UPLOAD_HAS_MOD_XSENDFILE', false); // if xmodsendfile detection fails, but it is installed on server, enable here
+
 
 // ===== DO NOT CHANGE THIS =====
 require_once (dirname(__FILE__)."/framework/init.php");

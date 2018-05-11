@@ -1,4 +1,5 @@
 <?php
+use SILMPH\File;
 /**
  * FRAMEWORK ProtocolHelper
  * database connection
@@ -1371,5 +1372,259 @@ class DatabaseModel extends Database
 			return false;
 		}
 	}
+	
+	/**
+	 * create filedata entry, set datablob null, set diskpath to file
+	 * @param string $uploadfile
+	 * @return false|int new inserted id or false
+	 */
+	public function createFileDataPath($filepath){
+		$pattern = 's';
+		if ($filepath == '') return false;
+		$data = [	$filepath	];
+		$sql = "INSERT INTO `".TABLE_PREFIX."filedata` ( `diskpath` ) VALUES(?) ";
+		$this->protectedInsert($sql, $pattern, $data);
+		$result = $this->affectedRows();
+		if ($this->affectedRows() > 0){
+			return $this->lastInsertId();
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * create fileentry on table fileinfo
+	 * @param File $f
+	 * @return false|int new inserted id or false
+	 */
+	public function createFile($f){
+		$pattern = 'ississsis';
+		$data = [
+			$f->link,
+			$f->hashname,
+			$f->filename,
+			$f->size,
+			$f->fileextension,
+			$f->mime,
+			$f->encoding,
+			$f->data,
+			($f->added_on)? $f->added_on : date_create()->format('Y--m-d H:i:s')
+		];
+		$sql = "INSERT INTO `".TABLE_PREFIX."fileinfo`
+			(	`link`,
+				`hashname`,
+				`filename`,
+				`size`,
+				`fileextension`,
+				`mime`,
+				`encoding`,
+				`data`,
+				`added_on` )
+			VALUES(?,?,?,?,?,?,?,?,?)";
+		$this->protectedInsert($sql, $pattern, $data);
+		$result = $this->affectedRows();
+		if ($this->affectedRows() > 0){
+			return $this->lastInsertId();
+		} else {
+			return false;
+		}
+	}
+	
+	/**
+	 * update file column 'data' of fileinfo entry
+	 * @param File $f
+	 * @return boolean success
+	 */
+	public function updateFile_DataId($f){
+		$pattern = 'ii';
+		$data = [
+			($f->data)? $f->data : NULL,
+			($f->id)
+		];
+		
+		$sql = "UPDATE `".TABLE_PREFIX."fileinfo` SET
+				`data` = ?
+				WHERE `id` = ?";
+		
+		$this->protectedInsert($sql, $pattern, $data);
+		$result = $this->affectedRows();
+		if (!$this->isError()){
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * 
+	 * @param int $linkId
+	 * @param string $filename
+	 * @param string $extension
+	 */
+	public function checkFileExists($linkId, $filename, $extension){
+		$sql = "SELECT F.* FROM `".TABLE_PREFIX."fileinfo` F WHERE F.link = ? AND F.filename = ? AND F.fileextension = ?";
+		$result = $this->getResultSet($sql, 'iss', [
+			$linkId, 
+			($filename)? $filename : '', 
+			($extension)? $extension : ''
+		]);
+		$return = [];
+		foreach ($result as $line){
+			$return[$line['id']] = $line;
+		}
+		return (count($return) == 1)? true : false;
+	}
+	
+	/**
+	 * return list of all existing links
+	 * @return array
+	 */
+	public function getAllFileLinkIds(){
+		$sql = "SELECT DISTINCT F.link FROM `".TABLE_PREFIX."fileinfo` F";
+		$result = $this->getResultSet($sql);
+		$return = [];
+		foreach ($result as $line){
+			$return[] = $line['link'];
+		}
+		return $return;
+	}
+	
+	/**
+	 * returns fileinfo by id
+	 * @return File|NULL
+	 */
+	public function getFileInfoById($id){
+		$sql = "SELECT F.* FROM `".TABLE_PREFIX."fileinfo` F WHERE F.id = ?";
+		$result = $this->getResultSet($sql, 'i', [$id]);
+		$f = NULL;
+		foreach ($result as $line){
+			$f = new File();
+			$f->id = $line['id'];
+			$f->link = $line['link'];
+			$f->data = $line['data'];
+			$f->size = $line['size'];
+			$f->added_on = $line['added_on'];
+			$f->hashname = $line['hashname'];
+			$f->encoding = $line['encoding'];
+			$f->mime = $line['mime'];
+			$f->fileextension = $line['fileextension'];
+			$f->filename = $line['filename'];
+			break;
+		}
+		return $f;
+	}
+	
+	/**
+	 * returns fileinfo by id
+	 * @return array <File>
+	 */
+	public function getFilesByLinkId($id){
+		$sql = "SELECT F.* FROM `".TABLE_PREFIX."fileinfo` F WHERE F.link = ?";
+		$result = $this->getResultSet($sql, 'i', [$id]);
+		$return = [];
+		foreach ($result as $line){
+			$f = new File();
+			$f->id = $line['id'];
+			$f->link = $line['link'];
+			$f->data = $line['data'];
+			$f->size = $line['size'];
+			$f->added_on = $line['added_on'];
+			$f->hashname = $line['hashname'];
+			$f->encoding = $line['encoding'];
+			$f->mime = $line['mime'];
+			$f->fileextension = $line['fileextension'];
+			$f->filename = $line['filename'];
+			$return[$line['id']] = $f;
+		}
+		return $return;
+	}
+	
+	/**
+	 * returns fileinfo by filehash
+	 * @return File|NULL
+	 */
+	public function getFileInfoByHash($hash){
+		$sql = "SELECT F.* FROM `".TABLE_PREFIX."fileinfo` F WHERE F.hashname = ?";
+		$result = $this->getResultSet($sql, 's', [$hash]);
+		$f = NULL;
+		foreach ($result as $line){
+			$f = new File();
+			$f->id = $line['id'];
+			$f->link = $line['link'];
+			$f->data = $line['data'];
+			$f->size = $line['size'];
+			$f->added_on = $line['added_on'];
+			$f->hashname = $line['hashname'];
+			$f->encoding = $line['encoding'];
+			$f->mime = $line['mime'];
+			$f->fileextension = $line['fileextension'];
+			$f->filename = $line['filename'];
+		}
+		return $f;
+	}
+	
+	/**
+	 * delete filedata by id
+	 * @param integer $id
+	 * @return integer affected rows
+	 */
+	public function deleteFiledataById($id){
+		$sql = "DELETE FROM `".TABLE_PREFIX."filedata` WHERE `id` = ?;";
+		$this->protectedInsert($sql, 'i', [$id]);
+		return !$this->isError();
+	}
+	
+	/**
+	 * delete filedata by link id
+	 * @param integer $id
+	 * @return integer affected rows
+	 */
+	public function deleteFiledataByLinkId($linkid){
+		$sql = "DELETE FROM `".TABLE_PREFIX."filedata` WHERE `id` IN ( SELECT F.data FROM `".TABLE_PREFIX."fileinfo` F WHERE F.link = ? );";
+		$this->protectedInsert($sql, 'i', [$linkid]);
+		return !$this->isError();
+	}
+	
+	/**
+	 * delete fileinfo by id
+	 * @param integer $id
+	 * @return integer affected rows
+	 */
+	public function deleteFileinfoById($id){
+		$sql = "DELETE FROM `".TABLE_PREFIX."fileinfo` WHERE `id` = ?;";
+		$this->protectedInsert($sql, 'i', [$id]);
+		return !$this->isError();
+	}
+	
+	/**
+	 * delete fileinfo by link id
+	 * @param integer $id
+	 * @return integer affected rows
+	 */
+	public function deleteFileinfoByLinkId($linkid){
+		$sql = "DELETE FROM `".TABLE_PREFIX."fileinfo` WHERE `link` = ?;";
+		$this->protectedInsert($sql, 'i', [$linkid]);
+		return !$this->isError();
+	}
+	
+	/**
+	 * writes file from filesystem to database
+	 * @param string $filename path to existing file
+	 * @param integer $filesize in bytes
+	 * @return false|int error -> false, last inserted id or
+	 */
+	public function storeFile2Filedata($filename, $filesize = null){
+		return $this->_storeFile2Filedata($filename, $filesize, 'filedata', 'data');
+	}
+	
+	/**
+	 * return binary data from database
+	 * @param integer $id filedata id
+	 * @return false|binary error -> false, binary data
+	 */
+	public function getFiledataBinary($id){
+		$this->_getFiledataBinary($id, $tablename = 'filedata' , $datacolname = 'data');
+	}
+	
 }
 ?>
