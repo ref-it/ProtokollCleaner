@@ -21,6 +21,22 @@ define('MAIL_TEST_TIMEOUT', 10); //prevent mailspam with testmails (in minutes)
 define('SYSBASE', dirname(__FILE__, 2));
 define('FRAMEWORK_PATH', dirname(__FILE__));
 
+//forbid some uploadpaths/directories
+function forbidden_uploadpaths(){
+	if (!defined('UPLOAD_DISK_PATH')){
+		echo '<p><b>Missing Config Variable: "'.UPLOAD_DISK_PATH.'"</b></p>';
+		die();
+	}
+	$blacklist = ['', 'controller', 'framework', 'logs', 'model', 'public', 'templates'];
+	foreach ($blacklist as $b){
+		if (UPLOAD_DISK_PATH == SYSBASE.$b || UPLOAD_DISK_PATH == SYSBASE.$b .'/' || mb_strpos(UPLOAD_DISK_PATH == SYSBASE.$b, UPLOAD_DISK_PATH) !== false){
+			echo '<p><b>CONFIG ERROR: UPLOAD_DISK_PATH have not to be "'.SYSBASE.$b.'" or has this prefix.</b></p>';
+			die();
+		}
+	}
+}
+forbidden_uploadpaths();
+
 /**
  * set php settings
  */
