@@ -70,8 +70,7 @@ class MotherController extends JsonController {
 	
 	/**
 	 * handles and show html error codes
-	 * @param $nav $navigation array
-	 * @param $code html error code
+	 * @param array $nav navigation array
 	 * @param integer $code HTML error code
 	 */
 	function renderErrorPage($code, $nav){
