@@ -925,7 +925,7 @@ class DatabaseModel extends Database
 	/**
 	 * delete member by id
 	 * @param integer $id
-	 * @return integer affected rows
+	 * @return boolean success
 	 */
 	function deleteMemberById($id){
 		$sql = "DELETE FROM `".TABLE_PREFIX."current_member` WHERE `id` = ?;";
@@ -936,7 +936,7 @@ class DatabaseModel extends Database
 	/**
 	 * delete newproto by member id
 	 * @param integer $id
-	 * @return integer affected rows
+	 * @return boolean success
 	 */
 	function deleteNewprotoByMemberId($id){
 		$sql = "DELETE FROM `".TABLE_PREFIX."newproto` WHERE `management` = ? OR `protocol` = ?;";
@@ -963,7 +963,7 @@ class DatabaseModel extends Database
 	 * delete newproto by member id
 	 * but only removes entries if management and protocol are empty, else update and remove id
 	 * @param integer $id
-	 * @return integer affected rows
+	 * @return boolean success
 	 */
 	function deleteNewprotoByMemberIdSoft($id){
 		$sql = "DELETE FROM `".TABLE_PREFIX."newproto` WHERE `generated_url` IS NOT NULL AND ((`management` = ? AND `protocol` IS NULL) OR (`protocol` = ? AND `management` IS NULL) OR (`protocol` = ? AND `management` = ?))";
@@ -994,7 +994,7 @@ class DatabaseModel extends Database
 	/**
 	 * delete tops by member id
 	 * @param integer $id
-	 * @return integer affected rows
+	 * @return boolean success
 	 */
 	function deleteTopsByMemberId($id){
 		$sql = "DELETE FROM `".TABLE_PREFIX."tops` WHERE `used_on` IN (SELECT NP.id FROM `".TABLE_PREFIX."newproto` NP WHERE NP.management = ? OR NP.protocol = ?);";
