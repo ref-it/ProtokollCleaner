@@ -124,6 +124,9 @@
 .silmph_top .topinfo span.goal::before{
 	content: "\f124";
 }
+.silmph_top .topinfo span.filecount::before{
+	content: "\f093";
+}
 /* ------- buttons ------- */
 .silmph_top .buttons > div{
 	width: 1.28571429em;

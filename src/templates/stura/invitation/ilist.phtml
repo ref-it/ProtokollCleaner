@@ -106,6 +106,7 @@ foreach($param['tops'] as $top){
 		echo '<span class="duration">'.$minutes.' min.</span>'."\n";
 		echo '<span class="person">'.((isset($top['person'])&&trim($top['person']))?$top['person']:'---').'</span>'."\n";
 		echo '<span class="goal">'.(isset($top['goal'])?$top['goal']:'').'</span>'."\n";
+		echo '<span class="filecount"><a href="'.(BASE_SUBDIRECTORY.'files/npuploader?committee='.$param['committee'].'&tid='.$top['id'].'&gui=1&hash='.$top['hash']).'">'.$top['filecounter'].'</a></span>'."\n";
 		echo '<span class="guest">Gast</span>'."\n";
 		echo '<span class="skipn">Auf nächste Woche verschoben</span>'."\n";
 	echo "\t</div>\n";

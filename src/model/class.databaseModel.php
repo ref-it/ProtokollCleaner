@@ -762,11 +762,14 @@ class DatabaseModel extends Database
 	
 	/**
 	 * returns tops
-	 * @param $gremium committee|gremium name
+	 * @param string $gremium committee|gremium name
+	 * @param boolean $countFiles
 	 * @return array
 	 */
-	public function getTopsOpen($gremium){
-		$sql = "SELECT T.* FROM `".TABLE_PREFIX."tops` T, `".TABLE_PREFIX."gremium` G WHERE T.gremium = G.id AND G.name = ? AND T.used_on IS NULL ORDER BY T.skip_next, T.resort ASC, T.order, T.added_on ASC";
+	public function getTopsOpen($gremium, $countFiles = false){
+		$sql = '';
+		if (!$countFiles) $sql = "SELECT T.* FROM `".TABLE_PREFIX."tops` T, `".TABLE_PREFIX."gremium` G WHERE T.gremium = G.id AND G.name = ? AND T.used_on IS NULL ORDER BY T.skip_next, T.resort ASC, T.order, T.added_on ASC";
+		else $sql = "SELECT T.*, COUNT(FI.id) as 'filecounter' FROM `".TABLE_PREFIX."tops` T LEFT JOIN `".TABLE_PREFIX."gremium` G ON T.gremium = G.id LEFT JOIN `".TABLE_PREFIX."fileinfo` FI ON T.id = FI.link WHERE G.name = ? AND T.used_on IS NULL GROUP BY T.id ORDER BY  T.skip_next, T.resort ASC, T.order, T.added_on ASC";
 		$result = $this->getResultSet($sql, 's', [$gremium]);
 		$return = [];
 		foreach ($result as $line){
@@ -792,10 +795,14 @@ class DatabaseModel extends Database
 	
 	/**
 	 * returns top by id
+	 * @param int $id Top id
+	 * @param boolean $countFiles
 	 * @return array
 	 */
-	public function getTopById($id){
-		$sql = "SELECT T.*, G.name as 'gname' FROM `".TABLE_PREFIX."tops` T, `".TABLE_PREFIX."gremium` G WHERE T.gremium = G.id AND T.id = ?";
+	public function getTopById($id, $countFiles = false){
+		$sql = '';
+		if (!$countFiles) $sql = "SELECT T.*, G.name as 'gname' FROM `".TABLE_PREFIX."tops` T, `".TABLE_PREFIX."gremium` G WHERE T.gremium = G.id AND T.id = ?";
+		else $sql = "SELECT T.*, G.name as 'gname', COUNT(FI.id) as 'filecounter' FROM `".TABLE_PREFIX."tops` T LEFT JOIN `".TABLE_PREFIX."gremium` G ON T.gremium = G.id LEFT JOIN `".TABLE_PREFIX."fileinfo` FI ON T.id = FI.link WHERE T.id = ?";
 		$result = $this->getResultSet($sql, 'i', [$id]);
 		$return = NULL;
 		foreach ($result as $line){

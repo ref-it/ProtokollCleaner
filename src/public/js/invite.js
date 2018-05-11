@@ -775,6 +775,7 @@
 				+ '<span class="duration">'+top.expected_duration+' min.</span>'
 				+ '<span class="person">'+top.person+'</span>'
 				+ '<span class="goal">'+top.goal+'</span>'
+				+ '<span class="filecount"><a href="'+GLOBAL_RELATIVE+'files/npuploader?committee='+top.gname+'&tid='+top.id+'&gui=1&hash='+top.hash+'">'+top.filecounter+'</a></span>'
 				+ '<span class="guest">Gast</span>'
 				+ '<span class="internal">Intern</span>'
 				+ '<span class="skipn">Auf nächste Woche verschoben</span>'	

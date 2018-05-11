@@ -102,7 +102,7 @@ class InvitationController extends MotherController {
 		$this->t->appendJsLink('libs/jquery_ui_widget_combobox.js');
 		$this->t->appendJsLink('wiki2html.js');
 		$this->t->appendJsLink('invite.js');
-		$tops = $this->db->getTopsOpen($perm);
+		$tops = $this->db->getTopsOpen($perm, true);
 		$resorts = $this->db->getResorts($perm);
 		$member = $this->db->getMembersCounting($perm);
 		$committee = $this->db->getCommitteebyName($perm);
@@ -119,6 +119,7 @@ class InvitationController extends MotherController {
 			'tops' => $tops,
 			'resorts' => $resorts,
 			'member' => $member,
+			'committee' => $perm,
 			'newproto' => $newproto,
 			'settings' => $sett,
 			'legislatur' => $legis,
@@ -683,7 +684,7 @@ class InvitationController extends MotherController {
 					return;
 				}
 			}
-			$top = $this->db->getTopById($top['id']);
+			$top = $this->db->getTopById($top['id'], true);
 			$top['addedOn'] = date_create($top['added_on'])->format('d.m.Y H:i');
 			if ($resort) {
 				$top['resort'] = $resort;
