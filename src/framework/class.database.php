@@ -254,6 +254,24 @@ class Database
 			$this->affectedRows = -1;
 			return false;
 		} else {
+	
+	/**
+	 * executes prepared mysqli statement
+	 * sets internal error variables
+	 * @param unknown $stmt
+	 */
+	protected function executeStmt($stmt){
+		$result = $stmt->execute();
+		$this->affectedRows = $stmt->affected_rows;
+		if ($result === false){
+			$this->_isError = true;
+			$this->msgError = 'Execute Failed: ' . htmlspecialchars($this->db->error);
+			error_log('DB Error: "'. $this->msgError . '"' . " ==> SQL: " . $sql );
+			$this->affectedRows = -1;
+			$stmt->close();
+			return false;
+		} else {
+			$stmt->close();
 			$this->_isError = false;
 		}
 		return;
@@ -323,6 +341,97 @@ class Database
 			$this->_isClose = true;
 			if ($this->db) $this->db->close();
 		}
+	}
+	
+	/**
+	 * writes file from filesystem to database
+	 * @param string $filename path to existing file
+	 * @param integer $filesize in bytes
+	 * @param string $tablename database table name
+	 * @param string $datacolname database data table column name
+	 * @return false|int error -> false, last inserted id or
+	 */
+	protected function _storeFile2Filedata( $filename, $filesize = null, $tablename = 'filedata' , $datacolname = 'data'){
+		$stmt = $this->db->prepare("INSERT INTO `".TABLE_PREFIX."$tablename` ($datacolname) VALUES(?)");
+		if ($stmt === false){ //yntax errors, missing privileges, ...
+			$this->_isError = true;
+			$this->msgError = 'Prepare Failed: ' . htmlspecialchars($this->db->error);
+			error_log('DB Error: "'. $this->msgError . '"' . " ==> SQL: " . $sql );
+			$this->affectedRows = -1;
+			return false;
+		}
+		$null = NULL;
+		$stmt->bind_param("b", $null);
+		if ($filesize == null || $filesize > 16776192){
+			$fp = fopen($filename, "r");
+			while (!feof($fp))
+			{
+				$stmt->send_long_data(0, fread($fp, 16776192));
+			}
+		} else {
+			$stmt->send_long_data(0, file_get_contents($filename));
+		}
+		$this->executeStmt($stmt);
+		if ($this->isError()){
+			return false;
+		} else {
+			return $this->lastInsertId();
+		}
+	}
+	
+	/**
+	 * last file get statement
+	 * @var mysqli_stmt
+	 */
+	private $lastFileStmt;
+	
+	/**
+	 * close last stmt of getFiledataBinary
+	 */
+	public function fileCloseLastGet(){
+		if ($this->lastFileStmt != NULL){
+			$this->lastFileStmt->free_result();
+			$this->lastFileStmt->close();
+			$this->lastFileStmt = NULL;
+		}
+	}
+	
+	/**
+	 * return binary data from database
+	 * @param integer $id filedata id
+	 * @param string $tablename database table name
+	 * @param string $datacolname database data table column name
+	 * @return false|binary error -> false, binary data
+	 */
+	protected function _getFiledataBinary($id, $tablename = 'filedata' , $datacolname = 'data'){
+		$stmt = $this->db->prepare("SELECT FD.$datacolname FROM `".TABLE_PREFIX."$tablename` FD WHERE id=?");
+		if ($stmt === false){ //yntax errors, missing privileges, ...
+			$this->_isError = true;
+			$this->msgError = 'Prepare Failed: ' . htmlspecialchars($this->db->error);
+			error_log('DB Error: "'. $this->msgError . '"' . " ==> SQL: " . $sql );
+			$this->affectedRows = -1;
+			return false;
+		}
+		$stmt->bind_param("i", $id);
+	
+		$result = $stmt->execute();
+		$this->affectedRows = $stmt->affected_rows;
+		if ($result === false){
+			$this->_isError = true;
+			$this->msgError = 'Execute Failed: ' . htmlspecialchars($this->db->error);
+			error_log('DB Error: "'. $this->msgError . '"' . " ==> SQL: " . $sql );
+			$this->affectedRows = -1;
+			$stmt->close();
+			return false;
+		}
+		$stmt->store_result();
+		$stmt->bind_result($data);
+		$stmt->fetch();
+	
+		$this->fileCloseLastGet();
+		$this->lastFileStmt = $stmt;
+	
+		return $data;
 	}
 }
 ?>
