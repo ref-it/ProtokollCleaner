@@ -78,7 +78,7 @@ define('UPLOAD_TARGET_DATABASE', true); // true|false store into
 define('UPLOAD_USE_DISK_CACHE', true);  // if DATABASE storage enabled , use filesystem as cache
 define('UPLOAD_MULTIFILE_BREAOK_ON_ERROR', true); //if there are multiple files on Upload and an error occures: FALSE -> upload files with no errors, TRUE upload no file
 define('UPLOAD_MAX_MULTIPLE_FILES', 1); // how many files can be uploaded at once
-define('UPLOAD_DISK_PATH', dirname(__FILE__).'/filestorage'); // path to DATABASE filecache or FILESYSTEM storage - no '/' at the ends
+define('UPLOAD_DISK_PATH', dirname(__FILE__).'/public/files/get/filestorage'); // path to DATABASE filecache or FILESYSTEM storage - no '/' at the ends
 define('UPLOAD_MAX_SIZE', 41943215); //in bytes - also check DB BLOB max size and php upload size limit in php.ini
 define('UPLOAD_PROHIBITED_EXTENSIONS', 'ph.*?,cgi,pl,pm,exe,com,bat,pif,cmd,src,asp,aspx,js,lnk,html,htm,forbidden');
 define('UPLOAD_MOD_XSENDFILE', 1); //0 - dont use it, 1 - auto detect on apache modules, 2 force usage - if detection fails
