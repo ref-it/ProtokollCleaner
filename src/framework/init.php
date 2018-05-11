@@ -27,9 +27,9 @@ function forbidden_uploadpaths(){
 		echo '<p><b>Missing Config Variable: "'.UPLOAD_DISK_PATH.'"</b></p>';
 		die();
 	}
-	$blacklist = ['', 'controller', 'framework', 'logs', 'model', 'public', 'templates'];
+	$blacklist = ['', 'controller', 'framework', 'logs', 'model', 'public/files/get','templates'];
 	foreach ($blacklist as $b){
-		if (UPLOAD_DISK_PATH == SYSBASE.$b || UPLOAD_DISK_PATH == SYSBASE.$b .'/' || mb_strpos(UPLOAD_DISK_PATH == SYSBASE.$b, UPLOAD_DISK_PATH) !== false){
+		if (mb_strpos(SYSBASE.'/'.$b, UPLOAD_DISK_PATH) !== false){
 			echo '<p><b>CONFIG ERROR: UPLOAD_DISK_PATH have not to be "'.SYSBASE.$b.'" or has this prefix.</b></p>';
 			die();
 		}
