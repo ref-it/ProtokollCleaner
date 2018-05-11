@@ -194,4 +194,59 @@ class FileController extends MotherController {
 		return;
 	}
 	
+	/**
+	 * ACTION get
+	 * handle file delivery
+	 */
+	public function get(){
+		$validator_map = [
+			'key' => ['regex',
+				'pattern' => '/^([0-9a-f]{64})$/',
+				'empty',
+				'error' => 'Protokollkennung hat das falsche Format.'
+			],
+			'fdl' => ['integer', //force download
+				'min' => '0',
+				'max' => '1',
+				'error' => 'Ungültige Sitzungsid'
+			],
+		];
+		$vali = new Validator();
+		if (!isset($_GET['fdl'])) $_GET['fdl'] = 0;
+		$vali->validateMap($_GET, $validator_map, true);
+		if ($vali->getIsError()){
+			if($vali->getLastErrorCode() == 403){
+				$this->renderErrorPage(403, NULL);
+				return;
+			} else if($vali->getLastErrorCode() == 404){
+				$this->renderErrorPage(404, NULL);
+				return;
+			} else {
+				$this->renderErrorPage($vali->getLastErrorCode(), NULL);
+				return;
+			}
+		} else {
+			require_once (FRAMEWORK_PATH.'/class.fileHandler.php');
+			$fh = new FileHandler($this->db);
+			//get file
+			$file = $fh->checkFileHash($vali->getFiltered('key'));
+			if (!$file){
+				$this->renderErrorPage(404, NULL);
+				return;
+			}
+			//check matching top
+			$top = $this->db->getTopById($file->link);
+			if (!$top
+				|| $top['used_on'] != NULL ){ //top editable -> not linked to newproto
+				$this->renderErrorPage(404, NULL);
+				return;
+			} else if (!checkUserPermission($top['gname'])) {
+				$this->renderErrorPage(403, NULL);
+				return;
+			}
+			$fh->deliverFileData($file, $vali->getFiltered('fdl'));
+			return;
+		}
+	}
+	
 }

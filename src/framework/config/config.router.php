@@ -25,6 +25,7 @@ $routes = [
 		'crawl/resoproto'	=> ['crawler',		'crawler', 		'crawlResoProto'],
 		'protoedit'			=> ['protoedit',	'protocol', 	'pedit_view'],
 		'files/npuploader'	=> ['filesnpuploader', 'file',		'npuploader'],
+		'files/get'			=> ['filesget',		 'file',		'get'],
 	],
 	'POST' => [
 		'admin/savemail'	=> ['admin',		'admin', 		'mail_update_setting'],
@@ -44,7 +45,7 @@ $routes = [
 		'invite/nprestore'	=> ['inprestore',	'invitation', 	'nprestore'],
 		'invite/mdelete'	=> ['imemberdelete','invitation', 	'mdelete'],
 		'invite/madd'		=> ['imemberadd',	'invitation', 	'madd'],
-		'files/npupload'	=> ['filesnpupload', 	'file',			'npupload'],
+		'files/npupload'	=> ['filesnpupload', 'file',		'npupload'],
 	]
 ];
 
@@ -134,6 +135,7 @@ $permission_map = [
 	'cronwiki'		=> 'cronwiki',
 	'filesnpuploader' => 'stura,konsul,admin',	//gui
 	'filesnpupload' => 'stura,konsul,admin',	//file transfer
+	'filesget' 		=> 'stura,konsul,admin',	//file transfer
 ];
 
 // handle BASE_SUBDIRECTORIES
