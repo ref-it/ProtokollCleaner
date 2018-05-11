@@ -849,6 +849,32 @@ class FileHandler extends MotherController {
 
 	//functions
 	
+	/**
+	 * return diskdirectory of given file
+	 * @param File $file
+	 * @return string
+	 */
+	public static function getBaseDirPath(){
+		return UPLOAD_DISK_PATH;
+	}
+
+	/**
+	 * return diskdirectory of given file
+	 * @param File $file
+	 * @return string
+	 */
+	public static function getDirpathOfFile($file){
+		return self::getBaseDirPath().'/'.$file->link;
+	}
+
+	/**
+	 * return filepath to given file
+	 * @param File $file
+	 * @return string
+	 */
+	public static function getDiskpathOfFile($file){
+		return self::getDirpathOfFile($file).'/'. $file->hashname;
+	}
 	public static function hasModXSendfile() {
 		if (UPLOAD_HAS_MOD_XSENDFILE){
 			return true;
