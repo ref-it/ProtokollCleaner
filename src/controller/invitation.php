@@ -171,6 +171,11 @@ class InvitationController extends MotherController {
 				|| $top['hash'] != $vali->getFiltered('hash')){
 				$this->json_not_found('Top nicht gefunden');
 			} else {
+				//delete files/attachements
+				require_once (FRAMEWORK_PATH.'/class.fileHandler.php');
+				$fh = new FileHandler($this->db);
+				$fh->deleteFilesByLinkId($top['id']);
+				//remove top
 				$ok = $this->db->deleteTopById($top['id']);
 				if ($ok){
 					$this->json_result = [
