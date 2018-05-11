@@ -951,23 +951,18 @@ class FileHandler extends MotherController {
 			if (!file_exists(self::getDiskpathOfFile($file))){
 				error_log("FILE Error: File not found on disk. File Id: {$file->id} File Path: ". self::getDiskpathOfFile($file) );
 			} else {
+				header('Last-Modified: '.$file->getAddedOnDate()->format('D, d M Y H:i:s').' GMT', true);
+				if ($file->size) header('Content-Length: ' . $file->size );
+				if ($file->mime){
+					header("Content-Type: {$file->mime}");
+				} else {
+					header("Content-Type: application/octet-stream");
+				}
 				// apache deliver
 				if (self::hasModXSendfile()){
 					header("X-Sendfile: ".self::getDiskpathOfFile($file));
-					if ($file->mime){
-						header("Content-Type: {$file->mime}");
-					} else {
-						header("Content-Type: application/octet-stream");
-					}
 					return;
 				} else {
-					//header
-					if ($file->mime){
-						header("Content-Type: {$file->mime}");
-					} else {
-						header("Content-Type: application/octet-stream");
-					}
-					if ($file->size) header('Content-Length: ' . $file->size );
 					header('Content-Disposition: '.(!$noinline?'inline':'attachment').'; filename="'.$file->filename.(($file->fileextension)?'.'.$file->fileextension:'').'"');
 					echo file_get_contents(self::getDiskpathOfFile($file));
 					return;
@@ -975,29 +970,31 @@ class FileHandler extends MotherController {
 			}
 		} else { // DATABASE storage ----------------
 			if (UPLOAD_USE_DISK_CACHE && file_exists(self::getDiskpathOfFile($file))){
+				header('Last-Modified: '.$file->getAddedOnDate()->format('D, d M Y H:i:s').' GMT', true);
+				if ($file->size) header('Content-Length: ' . $file->size );
+				if ($file->mime){
+					header("Content-Type: {$file->mime}");
+				} else {
+					header("Content-Type: application/octet-stream");
+				}
 				// apache deliver
 				if (self::hasModXSendfile()){
 					header("X-Sendfile: ".self::getDiskpathOfFile($file));
-					if ($file->mime){
-						header("Content-Type: {$file->mime}");
-					} else {
-						header("Content-Type: application/octet-stream");
-					}
 					return;
 				} else {
-					//header
-					if ($file->mime){
-						header("Content-Type: {$file->mime}");
-					} else {
-						header("Content-Type: application/octet-stream");
-					}
-					if ($file->size) header('Content-Length: ' . $file->size );
 					header('Content-Disposition: '.(!$noinline?'inline':'attachment').'; filename="'.$file->filename.(($file->fileextension)?'.'.$file->fileextension:'').'"');
 					echo file_get_contents(self::getDiskpathOfFile($file));
 					return;
 				}
 			} else {
 				$data = $this->db->getFiledataBinary($file->data);
+				header('Last-Modified: '.$file->getAddedOnDate()->format('D, d M Y H:i:s').' GMT', true);
+				if ($file->size) header('Content-Length: ' . $file->size );
+				if ($file->mime){
+					header("Content-Type: {$file->mime}");
+				} else {
+					header("Content-Type: application/octet-stream");
+				}
 				if (UPLOAD_USE_DISK_CACHE){
 					self::checkCreateDirectory(self::getDirpathOfFile($file));
 					file_put_contents(self::getDiskpathOfFile($file), $data);
@@ -1006,20 +1003,9 @@ class FileHandler extends MotherController {
 						$this->close_db_file();
 						// apache deliver
 						header("X-Sendfile: ".self::getDiskpathOfFile($file));
-						if ($file->mime){
-							header("Content-Type: {$file->mime}");
-						} else {
-							header("Content-Type: application/octet-stream");
-						}
 						return;
 					}
 				}
-				if ($file->mime){
-					header("Content-Type: {$file->mime}");
-				} else {
-					header("Content-Type: application/octet-stream");
-				}
-				if ($file->size) header('Content-Length: ' . $file->size );
 				header('Content-Disposition: '.(!$noinline?'inline':'attachment').'; filename="'.$file->filename.(($file->fileextension)?'.'.$file->fileextension:'').'"');
 				echo $data;
 				$this->close_db_file();
