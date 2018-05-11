@@ -464,7 +464,7 @@
 						mid: $e[0].dataset.id,
 						committee: 'stura'
 					};
-					fchal = document.getElementById('fchal');
+					var fchal = document.getElementById('fchal');
 					dataset[fchal.getAttribute("name")] = fchal.value;
 					
 					$.ajax({
@@ -509,7 +509,7 @@
 				mjob: val_job,
 				committee: 'stura'
 			};
-			fchal = document.getElementById('fchal');
+			var fchal = document.getElementById('fchal');
 			dataset[fchal.getAttribute("name")] = fchal.value;
 			
 			$.ajax({
@@ -562,7 +562,7 @@
 			list: list,
 			committee: 'stura'
 		};
-		fchal = document.getElementById('fchal');
+		var fchal = document.getElementById('fchal');
 		dataset[fchal.getAttribute("name")] = fchal.value;
 		
 		//do ajax post request
@@ -611,7 +611,7 @@
 						hash: $e[0].dataset.hash,
 						committee: 'stura'
 					};
-					fchal = document.getElementById('fchal');
+					var fchal = document.getElementById('fchal');
 					dataset[fchal.getAttribute("name")] = fchal.value;
 					//do ajax post request
 					$.ajax({
@@ -643,7 +643,7 @@
 			hash: $e[0].dataset.hash,
 			committee: 'stura'
 		};
-		fchal = document.getElementById('fchal');
+		var fchal = document.getElementById('fchal');
 		dataset[fchal.getAttribute("name")] = fchal.value;
 		
 		//do ajax post request
@@ -842,7 +842,7 @@
 					} else {
 						dataset_put['tid'] = 0;
 					}
-					fchal = document.getElementById('fchal');
+					var fchal = document.getElementById('fchal');
 					dataset_put[fchal.getAttribute("name")] = fchal.value;
 					
 					//do ajax post request

@@ -58,7 +58,7 @@
 				value: ($e[0].checked)? 0 : 1,
 				committee: 'stura'
 			};
-			fchal = document.getElementById('fchal');
+			var fchal = document.getElementById('fchal');
 			dataset[fchal.getAttribute("name")] = fchal.value;
 			
 			//do ajax post request

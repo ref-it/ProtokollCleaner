@@ -121,7 +121,7 @@
 					proto: $('.protostatus .date > span').last().data('name'),
 					committee: $('.protostatus .committee > span').last().text(),
 				};
-				fchal = document.getElementById('fchal');
+				var fchal = document.getElementById('fchal');
 				dataset[fchal.getAttribute("name")] = fchal.value;
 				//show info
 				var modal = $.modaltools({
@@ -175,7 +175,7 @@
 				proto: $('.protostatus .date > span').last().data('name'),
 				committee: $('.protostatus .committee > span').last().text(),
 			};
-			fchal = document.getElementById('fchal');
+			var fchal = document.getElementById('fchal');
 			dataset[fchal.getAttribute("name")] = fchal.value;
 			//show info
 			var modal = $.modaltools({

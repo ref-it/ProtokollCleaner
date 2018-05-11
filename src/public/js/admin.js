@@ -21,7 +21,7 @@
 								data: $elem.data('value'),
 								mfunction: function_name,
 								};
-				fchal = document.getElementById('fchal');
+				var fchal = document.getElementById('fchal');
 				dataset[fchal.getAttribute("name")] = fchal.value;
 
 				$.ajax({
@@ -222,7 +222,7 @@
 		var r = confirm("Es wird eine E-Mail an das angegebene Postfach gesendet. Prüfen Sie anschließend Ihren Posteingang.\n\nMöchten Sie Fortfahren?");
 		if (r == true) {
 			var dataset = { mfunction: "test_mailer" };
-			fchal = document.getElementById('fchal');
+			var fchal = document.getElementById('fchal');
 			dataset[fchal.getAttribute("name")] = fchal.value;
 			$.ajax({
 				type: "POST",
@@ -284,7 +284,7 @@
 			silmph__add_message('Bitte Enddatum angeben.', MESSAGE_TYPE_WARNING, 5000);
 			return;
 		}
-		fchal = document.getElementById('fchal');
+		var fchal = document.getElementById('fchal');
 		dataset[fchal.getAttribute("name")] = fchal.value;
 		dataset['mfunction'] = 'create';
 		$.ajax({
@@ -329,7 +329,7 @@
 		$e = $(this);
 		var dataset = {};
 		dataset.pk = $e.closest('tr').data('id');
-		fchal = document.getElementById('fchal');
+		var fchal = document.getElementById('fchal');
 		dataset[fchal.getAttribute("name")] = fchal.value;
 		dataset['mfunction'] = 'remove';
 		
@@ -383,7 +383,7 @@
 								modify: $elem.data('value'),
 								mfunction: 'update',
 								};
-				fchal = document.getElementById('fchal');
+				var fchal = document.getElementById('fchal');
 				dataset[fchal.getAttribute("name")] = fchal.value;
 				
 				console.log(dataset);
