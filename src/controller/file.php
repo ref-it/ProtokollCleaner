@@ -249,4 +249,78 @@ class FileController extends MotherController {
 		}
 	}
 	
+	/**
+	 * POST ACTION remove
+	 * remove file from top
+	 */
+	public function npremove(){
+		$validator_map = [
+			'committee' => ['regex',
+				'pattern' => '/'.implode('|', array_keys(PROTOMAP)).'/',
+				'maxlength' => 10,
+				'error' => 'Du hast nicht die benötigten Berechtigungen, um dieses Protokoll zu bearbeiten.'
+			],
+			'hash' => ['regex',
+				'pattern' => '/^([0-9a-f]{32})$/',
+				'empty',
+				'error' => 'Protokollkennung hat das falsche Format.'
+			],
+			'tid' => ['integer',
+				'min' => '1',
+				'error' => 'Ungültige Sitzungsid'
+			],
+			'key' => ['regex',
+				'pattern' => '/^([0-9a-f]{64})$/',
+				'empty',
+				'error' => 'Protokollkennung hat das falsche Format.'
+			],
+		];
+		$vali = new Validator();
+		$vali->validateMap($_POST, $validator_map, true);
+		if ($vali->getIsError()){
+			if($vali->getLastErrorCode() == 403){
+				$this->json_access_denied();
+				return;
+			} else if($vali->getLastErrorCode() == 404){
+				$this->json_not_found();
+				return;
+			} else {
+				http_response_code ($vali->getLastErrorCode());
+				$this->json_result = ['success' => false, 'eMsg' => $vali->getLastErrorMsg()];
+				$this->print_json_result();
+				return;
+			}
+		} else if (!checkUserPermission($vali->getFiltered('committee'))) {
+			$this->json_access_denied();
+			return;
+		} else {
+			//get top
+			$filtered = $vali->getFiltered();
+			$top = $this->db->getTopById($filtered['tid']);
+			if (!$top
+				|| $top['gname'] != $filtered['committee']
+				|| $top['hash'] != $filtered['hash']
+				|| $top['used_on'] != NULL ){ //top editable -> not linked to newproto
+				$this->json_not_found();
+				return;
+			}
+			
+			require_once (FRAMEWORK_PATH.'/class.fileHandler.php');
+			$fh = new FileHandler($this->db);
+			//get file
+			$file = $fh->checkFileHash($vali->getFiltered('key'));
+			if (!$file){
+				$this->json_not_found();
+				return;
+			}
+			$fh->defleteFileByHash($file->hashname);
+			$this->json_result = [
+				'success' => true,
+				'msg' => 'Anhang entfernt.',
+			];
+			$this->print_json_result();
+			return;
+		}
+	}
+	
 }

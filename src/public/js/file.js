@@ -200,7 +200,41 @@
 	
 	// ===== FILE FUNCTIONS ===============================================
 	// ------------------------------------------------
-	
+	var func_remove_file = function(){
+		var $e = $(this);
+		var key = $e.parent().children('a').attr('href').split('key=')[1];
+		var dataset = {
+			'key': key
+		};
+		$('.dz-dropupload input[type="hidden"]').each(function(i,e){
+			dataset[e.name]=e.value;
+		});		
+		var fchal = document.getElementById('fchal');
+		dataset[fchal.getAttribute("name")] = fchal.value;
+		
+		//do ajax post request
+		$.ajax({
+			type: "POST",
+			url: GLOBAL_RELATIVE+'files/delete',
+			data: dataset,
+			success: function(data){
+				pdata = {};
+				pdata = parseData(data);
+				if(pdata.success == true){
+					//add/update top
+					var $p = $e.parent();
+					console.log($p);
+					$p.css({overflow: 'hidden'}).animate({ height: '0', padding: '0', opacity: 'toggle' }, 500, function(){
+						$p.remove();
+					});
+					silmph__add_message(pdata.msg, MESSAGE_TYPE_SUCCESS, 3000);
+				} else {
+					silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
+				}
+			},
+			error: postError
+		});
+	}
 	
 	// ===== DOCUMENT READY ===============================================
 	$(document).ready(function(){
@@ -252,16 +286,19 @@
 					$('.silmph_nofile').remove();
 					var $ul = $('.silmph_file_list');
 					var $li = $('<li/>', {
-						'class': 'list-group-item',
+						'class': 'list-group-item silmph_file_line',
 						html: '<a href="'+GLOBAL_RELATIVE+'files/get?key='+pdata.hash+'">'+
 							pdata.name+'</a>'+
 							'<small class="form-text text-muted">'+
 								'<span class="d-inline-block ml-3"><strong>Added: </strong>'+pdata.added+'</span>'+
 								'<span class="d-inline-block ml-3" style="min-width: 90px;"><strong>Size: </strong>'+pdata.size+'</span>'+
 								'<span class="d-inline-block ml-3"><strong>Mime: </strong>'+pdata.mime+'</span>'+
-							'</small>'
+							'</small>'+
+							'<button class="btn btn-outline-danger remove" type="button"></button>'
 					});
+					$li.find('button.remove').on('click', func_remove_file);
 					$ul.append($li);
+					silmph__add_message(pdata.msg, MESSAGE_TYPE_SUCCESS, 3000);
 				} else if (pdata.success != true) {
 					silmph__add_message(pdata.eMsg , MESSAGE_TYPE_WARNING, 5000);
 				}
@@ -283,5 +320,7 @@
 				}
 			});
 	    }
+		//-------------------------------
+		$('.silmph_file_line button.remove').on('click', func_remove_file);
 	});
 })();

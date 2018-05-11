@@ -46,6 +46,7 @@ $routes = [
 		'invite/mdelete'	=> ['imemberdelete','invitation', 	'mdelete'],
 		'invite/madd'		=> ['imemberadd',	'invitation', 	'madd'],
 		'files/npupload'	=> ['filesnpupload', 'file',		'npupload'],
+		'files/delete'		=> ['filesdelete',	 'file',		'npremove'],
 	]
 ];
 
@@ -135,7 +136,8 @@ $permission_map = [
 	'cronwiki'		=> 'cronwiki',
 	'filesnpuploader' => 'stura,konsul,admin',	//gui
 	'filesnpupload' => 'stura,konsul,admin',	//file transfer
-	'filesget' 		=> 'stura,konsul,admin',	//file transfer
+	'filesget' 		=> 'stura,konsul,admin',	//file get
+	'filesdelete' 	=> 'stura,konsul,admin',	//file delete
 ];
 
 // handle BASE_SUBDIRECTORIES
