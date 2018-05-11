@@ -252,8 +252,14 @@ class Database
 			$this->msgError = 'Execute Failed: ' . htmlspecialchars($this->db->error);
 			error_log('DB Error: "'. $this->msgError . '"' . " ==> SQL: " . $sql );
 			$this->affectedRows = -1;
+			$stmt->close();
 			return false;
 		} else {
+			$stmt->close();
+			$this->_isError = false;
+		}
+		return;
+	}
 	
 	/**
 	 * executes prepared mysqli statement
