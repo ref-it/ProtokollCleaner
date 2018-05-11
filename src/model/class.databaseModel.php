@@ -945,6 +945,21 @@ class DatabaseModel extends Database
 	}
 	
 	/**
+	 * delete memberid from newproto if newproto generated_url is null
+	 * @param integer $id
+	 * @return boolean success
+	 */
+	function deleteMemberOfUncreatedNewprotoByMemberId($id){
+		$sql = "UPDATE `".TABLE_PREFIX."newproto` SET `management` = NULL WHERE `management` = ? AND `generated_url` IS NULL";
+		$this->protectedInsert($sql, 'i', [$id]);
+		if (!$this->isError()){
+			$sql = "UPDATE `".TABLE_PREFIX."newproto` SET `protocol` = NULL WHERE `protocol` = ? AND `generated_url` IS NULL";
+			$this->protectedInsert($sql, 'i', [$id]);
+		}
+		return !$this->isError();
+	}
+	
+	/**
 	 * delete newproto by member id
 	 * but only removes entries if management and protocol are empty, else update and remove id
 	 * @param integer $id

@@ -357,6 +357,9 @@ class InvitationController extends MotherController {
 				$np = false;
 				$tr = false;
 				$me = false;
+				
+				//remove member of not generated newprotocols
+				$npnc = $this->db->deleteMemberOfUncreatedNewprotoByMemberId($vali->getFiltered('mid'));
 				//delete tops
 				$tr = $this->db->deleteTopsByMemberIdSoft($vali->getFiltered('mid'));
 				//delete newprotocol
