@@ -999,6 +999,7 @@ class FileHandler extends MotherController {
 			} else {
 				$data = $this->db->getFiledataBinary($file->data);
 				if (UPLOAD_USE_DISK_CACHE){
+					self::checkCreateDirectory(self::getDirpathOfFile($file));
 					file_put_contents(self::getDiskpathOfFile($file), $data);
 					// apache deliver
 					if (self::hasModXSendfile()){
@@ -1056,6 +1057,7 @@ class FileHandler extends MotherController {
 			} else {
 				$data = $this->db->getFiledataBinary($file->data);
 				if ($cache){
+					self::checkCreateDirectory(self::getDirpathOfFile($file));
 					file_put_contents(self::getDiskpathOfFile($file), $data);
 				}
 				return $data;
