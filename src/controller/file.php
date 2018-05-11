@@ -313,7 +313,7 @@ class FileController extends MotherController {
 				$this->json_not_found();
 				return;
 			}
-			$fh->defleteFileByHash($file->hashname);
+			$fh->deleteFileByHash($file->hashname);
 			$this->json_result = [
 				'success' => true,
 				'msg' => 'Anhang entfernt.',

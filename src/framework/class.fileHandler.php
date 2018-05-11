@@ -851,7 +851,7 @@ class FileHandler extends MotherController {
 	 * delete file by hash
 	 * @param string $hash
 	 */
-	public function defleteFileByHash($hash){
+	public function deleteFileByHash($hash){
 		$file = $this->db->getFileInfoByHash($hash);
 		//delete from db
 		if ($file){
