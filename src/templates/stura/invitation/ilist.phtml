@@ -90,7 +90,7 @@
 
 foreach($param['tops'] as $top){
 	if (isset($top['used_on'])) continue;
-	echo '<div class="card border-secondary silmph_top'.(($top['skip_next'])?' skipnext':'').(($top['guest'])?' guest':'').(($top['intern'])?' internal':'').(isset($top['resort'])?' resort':'').'" data-tid="'.$top['id'].'" data-hash="'.$top['hash'].'">';
+	echo '<div id="top_'.substr($top['hash'], 0, 10).'" class="card border-secondary silmph_top'.(($top['skip_next'])?' skipnext':'').(($top['guest'])?' guest':'').(($top['intern'])?' internal':'').(isset($top['resort'])?' resort':'').'" data-tid="'.$top['id'].'" data-hash="'.$top['hash'].'">';
 	echo "\t".'<div class="card-header headline" data-resort="'.($top['resort']?$top['resort']:'').'" data-level="'.$top['level']."\" data-headline='".json_encode([$top['headline']])."'>".
 					((!$top['resort'])?
 						'<span class="top_counter"></span>'

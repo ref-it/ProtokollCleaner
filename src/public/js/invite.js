@@ -755,6 +755,7 @@
 	var func_top_create_update = function(top) {
 		var box = $('<div/>',{
 			'class': 'card border-secondary silmph_top'+((top.skip_next > 0)?' skipnext':'')+((top.guest > 0)?' guest':'')+((top.intern > 0)?' internal':'')+((top.resort != null && top.resort.id > 0)?' resort':''),
+			id: 'top_'+ top['hash'].substr(0, 10),
 			'data-tid': top.id,
 			'data-hash': top.hash,
 		});
@@ -1403,4 +1404,20 @@
 			createTEdit(0);
 		});
 	});
+	//top highlight==========================================
+	$(window).on('load',function(){
+		setTimeout(function(){
+			//highlight id tag
+			if(window.location.hash && window.location.href.indexOf('invite#top_') > -1) {
+				// Fragment exists
+				if(window.location.hash.lastIndexOf('#top_', 0) === 0){
+					$(window.location.hash).addClass("bg_highlight");
+					$('html, body').animate({
+						scrollTop: $(window.location.hash).offset().top-100
+					}, 50);
+				}
+			} 
+		}, 200);
+	});
+	
 })();

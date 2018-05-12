@@ -62,6 +62,49 @@ button, input{
 .bar_placeholder{
 	height: 60px;	
 }
+/* ------- highlighting ---------------------------- */
+.bg_highlight {
+  animation: highlight_yellow linear 2s;
+  animation-iteration-count: 1;
+  -webkit-animation: highlight_yellow linear 2s;
+  -webkit-animation-iteration-count: 1;
+  -moz-animation: highlight_yellow linear 2s;
+  -moz-animation-iteration-count: 1;
+  -o-animation: highlight_yellow linear 2s;
+  -o-animation-iteration-count: 1;
+  -ms-animation: highlight_yellow linear 2s;
+  -ms-animation-iteration-count: 1;
+}
+@-moz-keyframes highlight_yellow {
+ 	0% { background-color: #F8FFA6; }
+ 	30% { background-color: #effe3f; }
+ 	70% { background-color: #effe3f; }
+ 	100% { background-color: none; }
+}
+@-webkit-keyframes highlight_yellow {
+ 	0% { background-color: #F8FFA6; }
+ 	30% { background-color: #effe3f; }
+ 	70% { background-color: #effe3f; }
+ 	100% { background-color: none; }
+}
+@-webkit-keyframes highlight_yellow {
+ 	0% { background-color: #F8FFA6; }
+ 	30% { background-color: #effe3f; }
+ 	70% { background-color: #effe3f; }
+ 	100% { background-color: none; }
+}
+@-ms-keyframes highlight_yellow {
+ 	0% { background-color: #F8FFA6; }
+ 	30% { background-color: #effe3f; }
+ 	70% { background-color: #effe3f; }
+ 	100% { background-color: none; }
+}
+@keyframes highlight_yellow {
+ 	0% { background-color: #F8FFA6; }
+ 	30% { background-color: #effe3f; }
+ 	70% { background-color: #effe3f; }
+ 	100% { background-color: none; }
+}
 /* BOOTSTRAP MENU ================================= */
 /* Profile sidebar */
 .profile-sidebar {
