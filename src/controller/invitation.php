@@ -1167,9 +1167,12 @@ class InvitationController extends MotherController {
 			//tops
 			$tops_tmp = $this->db->getTopsOpen($nproto['gname']);
 			$tops = [];
+			$skipped = [];
 			foreach ($tops_tmp as $id => $top){
 				if (!$top['skip_next']){
 					$tops[$id] = $top;
+				} else {
+					$skipped[$id] = $top;
 				}
 			}
 			//resortalias
@@ -1215,6 +1218,11 @@ class InvitationController extends MotherController {
 			// update tops
 			foreach ($tops as $top){
 				$top['used_on'] = $nproto['id'];
+				$this->db->updateTop($top);
+			}
+			// unskip skipped for next week
+			foreach ($tops as $top){
+				$top['skip_next'] = 0;
 				$this->db->updateTop($top);
 			}
 			
