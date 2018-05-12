@@ -1,4 +1,5 @@
 <?php
+use SILMPH\File;
 /**
  * CONTROLLER Invitation Controller
  *
@@ -1164,13 +1165,17 @@ class InvitationController extends MotherController {
 			foreach ($newprotoProtocols_tmp as $np) {
 				$newprotoProtocols[ date_create($np['date'])->format('Y-m-d') ] = $np;
 			}
-			//tops
-			$tops_tmp = $this->db->getTopsOpen($nproto['gname']);
+			//tops and gather file ids
+			$files = [];
+			require_once (FRAMEWORK_PATH.'/class.fileHandler.php');
+			$fh = new FileHandler($this->db);
+			$tops_tmp = $this->db->getTopsOpen($nproto['gname'], true);
 			$tops = [];
 			$skipped = [];
 			foreach ($tops_tmp as $id => $top){
 				if (!$top['skip_next']){
 					$tops[$id] = $top;
+					if ($top['filecounter'] > 0) $files[$top['id']] = $fh->filelist($top['id']);
 				} else {
 					$skipped[$id] = $top;
 				}
@@ -1190,6 +1195,7 @@ class InvitationController extends MotherController {
 				'protoPublicLink' => WIKI_URL.'/'.parent::$protomap[$vali->getFiltered('committee')][1].'/',
 				'openProtocols' => ['notAgreed' => $notAgreedProtocols, 'draftState' => $draftStateProtocols, 'newproto' => $newprotoProtocols ],
 				'protoAttachBasePath' => parent::$protomap[$vali->getFiltered('committee')][0],
+				'files' => $files,
 				'tops' => $tops,
 				'resorts' => $resorts,
 			]);
@@ -1215,6 +1221,25 @@ class InvitationController extends MotherController {
 				error_log('NewProto -> WIKI: Could not write. Request: Put Page - '.parent::$protomap[$vali->getFiltered('committee')][0].':'.$nproto['name'].' - Wiki respond: '.$x->getStatusCode().' - '.(($x->isError())?$x->getError():''));
 				$this->print_json_result();
 				return;
+			}
+			//upload files
+			$attach_base = parent::$protomap[$vali->getFiltered('committee')][0].':'.$nproto['name'];
+			foreach ($files as $tid => $filelist){
+				/* @var $file File */
+				foreach ($filelist as $file){
+					$ok = false;
+					$wikipath = $attach_base.':'.str_replace(' ', '_', $file->filename).(($file->fileextension)?'.'.$file->fileextension:'');
+					$ok = $x->putAttachement($wikipath,$fh->fileToBase64($file),['ow' => true]);
+					if ($ok == false){
+						$this->json_result = [
+							'success' => false,
+							'eMsg' => 'Fehler beim Dateiupload. (Code: '.$x->getStatusCode().')'
+						];
+						error_log('NewProto -> WIKI: Could not write. Request: Put Page - '.parent::$protomap[$vali->getFiltered('committee')][0].':'.$nproto['name'].' - Wiki respond: '.$x->getStatusCode().' - '.(($x->isError())?$x->getError():''));
+						$this->print_json_result();
+						return;
+					}
+				}
 			}
 			// update tops
 			foreach ($tops as $top){
