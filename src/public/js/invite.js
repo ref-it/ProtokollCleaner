@@ -1184,13 +1184,17 @@
 				dataset[fchal.getAttribute("name")] = fchal.value;
 				
 				console.log(dataset);//TODO
-				
+				var modal = $.modaltools({
+					text: '<strong>Anfrage wird verarbeitet. Bitte warten.</strong></p><p><div class="multifa center"><span class="fa fa-cog sym-spin"></span><span class="fa fa-cog sym-spin-reverse"></span></div>', 
+					buttons: {}
+				}).open();
 				//do ajax post request
 				$.ajax({
 					type: "POST",
 					url: GLOBAL_RELATIVE+'invite/nptowiki',
 					data: dataset,
 					success: function(data){
+						modal.close();
 						pdata = {};
 						pdata = parseData(data);
 						console.log(pdata);
@@ -1208,7 +1212,7 @@
 							silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
 						}
 					},
-					error: postError
+					error: function (data){ modal.close(); postError(data); }
 				});
 			}, 'abort': function(obj){ obj.close(); }}
 		}).open();
