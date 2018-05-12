@@ -26,7 +26,7 @@ if ($param['gui']){
 	<?php }?>
 		<ul class="silmph_file_list list-group list-group-flush">
 			<?php 
-				/** @var File $file */
+				/* @var $file SILMPH\File */
 				foreach ($param['files'] as $file ){ ?>
 				<li class="list-group-item silmph_file_line"><?php 
 					?><a data-group="d1" href="<?= BASE_URL.'/files/get?key='.$file->hashname ?>"><?= 
