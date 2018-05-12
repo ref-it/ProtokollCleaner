@@ -127,6 +127,10 @@
 	    	var _code = function (line){
 	    		return line.replace(/('')([^']+)('')/mg, '<code>$2</code>');
 	    	}
+	    	// boxed ====================================================
+	    	var _boxed = function (line){
+	    		return line.replace(/^(  )(.*)/mg, '<span class="boxed">$2</span>');
+	    	}
 	    	// external link ====================================================
 	    	var _extLink = function (line){
 	    		var tmp = line.replace(/(\[\[)((http(s)?:\/\/)?(([a-zA-Z0-9\.\-\/_])+))((\|)([^\]\|]*)\]\])/mg, '<a href="$2">$9</a>');
@@ -155,6 +159,7 @@
 				lines[i] = _italic(lines[i]);
 				lines[i] = _strong(lines[i]);
 				lines[i] = _code(lines[i]);
+				lines[i] = _boxed(lines[i]);
 				lines[i] = _extLink(lines[i]);
 				lines[i] = _hrLine(lines[i]);
 				if (lastNewline) lines[i] = '<br>' + lines[i];
