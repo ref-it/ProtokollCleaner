@@ -1182,8 +1182,6 @@
 				});
 				var fchal = document.getElementById('fchal');
 				dataset[fchal.getAttribute("name")] = fchal.value;
-				
-				console.log(dataset);//TODO
 				var modal = $.modaltools({
 					text: '<strong>Anfrage wird verarbeitet. Bitte warten.</strong></p><p><div class="multifa center"><span class="fa fa-cog sym-spin"></span><span class="fa fa-cog sym-spin-reverse"></span></div>', 
 					buttons: {}
