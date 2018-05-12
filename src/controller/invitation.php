@@ -1247,7 +1247,7 @@ class InvitationController extends MotherController {
 				$this->db->updateTop($top);
 			}
 			// unskip skipped for next week
-			foreach ($tops as $top){
+			foreach ($skipped as $top){
 				$top['skip_next'] = 0;
 				$this->db->updateTop($top);
 			}
