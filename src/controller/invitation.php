@@ -1189,6 +1189,7 @@ class InvitationController extends MotherController {
 				'protoInternLink' => WIKI_URL.'/'.parent::$protomap[$vali->getFiltered('committee')][0].'/',
 				'protoPublicLink' => WIKI_URL.'/'.parent::$protomap[$vali->getFiltered('committee')][1].'/',
 				'openProtocols' => ['notAgreed' => $notAgreedProtocols, 'draftState' => $draftStateProtocols, 'newproto' => $newprotoProtocols ],
+				'protoAttachBasePath' => parent::$protomap[$vali->getFiltered('committee')][0],
 				'tops' => $tops,
 				'resorts' => $resorts,
 			]);
