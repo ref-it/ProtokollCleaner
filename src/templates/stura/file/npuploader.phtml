@@ -6,7 +6,7 @@ echo $this->getChallenge();
 if ($param['gui']){
 	echo '<h2>Datei Informationen</h2>';
 	$r = (($param['top']['resort'] && isset($param['resort'][$param['top']['resort']]) )?$param['resort'][$param['top']['resort']]:NULL);
-	echo '<h3 class="font-italic">Top '.(($r)? "({$r['type']} {$r['name']}) :" :' :')." {$param['top']['headline']}</h3>";
+	echo '<h3 class="font-italic"><a href="'.BASE_SUBDIRECTORY.'invite#top_'.substr($param['top']['hash'],0,10).'"><i class="fa fa-fw fa-long-arrow-left"></i>Top</a> '.(($r)? "({$r['type']} {$r['name']}) :" :' :')." {$param['top']['headline']}</h3>";
 } ?>
 <div class="card mt-3">
 	<div class="card-header">Dateien hochladen</div>
