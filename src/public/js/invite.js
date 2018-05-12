@@ -464,7 +464,7 @@
 						mid: $e[0].dataset.id,
 						committee: 'stura'
 					};
-					fchal = document.getElementById('fchal');
+					var fchal = document.getElementById('fchal');
 					dataset[fchal.getAttribute("name")] = fchal.value;
 					
 					$.ajax({
@@ -509,7 +509,7 @@
 				mjob: val_job,
 				committee: 'stura'
 			};
-			fchal = document.getElementById('fchal');
+			var fchal = document.getElementById('fchal');
 			dataset[fchal.getAttribute("name")] = fchal.value;
 			
 			$.ajax({
@@ -562,7 +562,7 @@
 			list: list,
 			committee: 'stura'
 		};
-		fchal = document.getElementById('fchal');
+		var fchal = document.getElementById('fchal');
 		dataset[fchal.getAttribute("name")] = fchal.value;
 		
 		//do ajax post request
@@ -611,7 +611,7 @@
 						hash: $e[0].dataset.hash,
 						committee: 'stura'
 					};
-					fchal = document.getElementById('fchal');
+					var fchal = document.getElementById('fchal');
 					dataset[fchal.getAttribute("name")] = fchal.value;
 					//do ajax post request
 					$.ajax({
@@ -643,7 +643,7 @@
 			hash: $e[0].dataset.hash,
 			committee: 'stura'
 		};
-		fchal = document.getElementById('fchal');
+		var fchal = document.getElementById('fchal');
 		dataset[fchal.getAttribute("name")] = fchal.value;
 		
 		//do ajax post request
@@ -755,6 +755,7 @@
 	var func_top_create_update = function(top) {
 		var box = $('<div/>',{
 			'class': 'card border-secondary silmph_top'+((top.skip_next > 0)?' skipnext':'')+((top.guest > 0)?' guest':'')+((top.intern > 0)?' internal':'')+((top.resort != null && top.resort.id > 0)?' resort':''),
+			id: 'top_'+ top['hash'].substr(0, 10),
 			'data-tid': top.id,
 			'data-hash': top.hash,
 		});
@@ -775,6 +776,7 @@
 				+ '<span class="duration">'+top.expected_duration+' min.</span>'
 				+ '<span class="person">'+top.person+'</span>'
 				+ '<span class="goal">'+top.goal+'</span>'
+				+ '<span class="filecount"><a href="'+GLOBAL_RELATIVE+'files/npuploader?committee='+top.gname+'&tid='+top.id+'&gui=1&hash='+top.hash+'">'+top.filecounter+'</a></span>'
 				+ '<span class="guest">Gast</span>'
 				+ '<span class="internal">Intern</span>'
 				+ '<span class="skipn">Auf nächste Woche verschoben</span>'	
@@ -842,7 +844,7 @@
 					} else {
 						dataset_put['tid'] = 0;
 					}
-					fchal = document.getElementById('fchal');
+					var fchal = document.getElementById('fchal');
 					dataset_put[fchal.getAttribute("name")] = fchal.value;
 					
 					//do ajax post request
@@ -1181,15 +1183,17 @@
 				});
 				var fchal = document.getElementById('fchal');
 				dataset[fchal.getAttribute("name")] = fchal.value;
-				
-				console.log(dataset);//TODO
-				
+				var modal = $.modaltools({
+					text: '<strong>Anfrage wird verarbeitet. Bitte warten.</strong></p><p><div class="multifa center"><span class="fa fa-cog sym-spin"></span><span class="fa fa-cog sym-spin-reverse"></span></div>', 
+					buttons: {}
+				}).open();
 				//do ajax post request
 				$.ajax({
 					type: "POST",
 					url: GLOBAL_RELATIVE+'invite/nptowiki',
 					data: dataset,
 					success: function(data){
+						modal.close();
 						pdata = {};
 						pdata = parseData(data);
 						console.log(pdata);
@@ -1207,7 +1211,7 @@
 							silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
 						}
 					},
-					error: postError
+					error: function (data){ modal.close(); postError(data); }
 				});
 			}, 'abort': function(obj){ obj.close(); }}
 		}).open();
@@ -1400,4 +1404,20 @@
 			createTEdit(0);
 		});
 	});
+	//top highlight==========================================
+	$(window).on('load',function(){
+		setTimeout(function(){
+			//highlight id tag
+			if(window.location.hash && window.location.href.indexOf('invite#top_') > -1) {
+				// Fragment exists
+				if(window.location.hash.lastIndexOf('#top_', 0) === 0){
+					$(window.location.hash).addClass("bg_highlight");
+					$('html, body').animate({
+						scrollTop: $(window.location.hash).offset().top-100
+					}, 50);
+				}
+			} 
+		}, 200);
+	});
+	
 })();

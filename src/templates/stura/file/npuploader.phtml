@@ -1,0 +1,41 @@
+<?php
+$param = $param;
+echo $this->getChallenge();
+
+?><?php
+if ($param['gui']){
+	echo '<h2>Datei Informationen</h2>';
+	$r = (($param['top']['resort'] && isset($param['resort'][$param['top']['resort']]) )?$param['resort'][$param['top']['resort']]:NULL);
+	echo '<h3 class="font-italic"><a href="'.BASE_SUBDIRECTORY.'invite#top_'.substr($param['top']['hash'],0,10).'"><i class="fa fa-fw fa-long-arrow-left"></i>Top</a> '.(($r)? "({$r['type']} {$r['name']}) :" :' :')." {$param['top']['headline']}</h3>";
+} ?>
+<div class="card mt-3">
+	<div class="card-header">Dateien hochladen</div>
+	<div class="card-body">
+		<form class="dz-dropupload btn btn-outline-info d-block text-left"><?php 
+			?><input type="hidden" name="tid" value="<?= $param['top']['id'] ?>"><?php
+			?><input type="hidden" name="hash" value="<?= $param['top']['hash'] ?>"><?php 
+			?><input type="hidden" name="committee" value="<?= $param['committee'] ?>"><?php 
+		?></form>
+	</div>
+</div>
+<div class="card">
+	<div class="card-header">Vorhandene Dateianhänge</div>
+	<div class="card-body">
+	<?php if(!$param['files'] || count($param['files']) == 0) { ?>
+		<strong class="silmph_nofile"><i>Keine</i></strong>
+	<?php }?>
+		<ul class="silmph_file_list list-group list-group-flush">
+			<?php 
+				/* @var $file SILMPH\File */
+				foreach ($param['files'] as $file ){ ?>
+				<li class="list-group-item silmph_file_line"><?php 
+					?><a data-group="d1" href="<?= BASE_URL.'/files/get?key='.$file->hashname ?>"><?= 
+						$file->filename.($file->fileextension?'.'.$file->fileextension:'') ?></a><?php 
+					?><small class="form-text text-muted"><span class="d-inline-block ml-3"><strong>Added: </strong><?= date_create($file->added_on)->format('Y-m-d H:i'); ?></span><span class="d-inline-block ml-3" style="min-width: 90px;"><strong>Size: </strong><?= FileHandler::formatFilesize($file->size); 
+					?></span><span class="d-inline-block ml-3"><strong>Mime: </strong><?= $file->mime; ?></span></small><?php
+					?><button class="btn btn-outline-danger remove" type="button"></button><?php 
+				?></li>
+			<?php } ?>
+		</ul>
+	</div>
+</div>

@@ -30,7 +30,7 @@ function setAuthHandler(){
 	if (isset($cronRoutes[$method])
 		&& isset($cronRoutes[$method][$path])){
 		require_once (dirname(__FILE__)."/class.AuthBasicHandler.php");
-		$auth = BasicAuthHandler::getInstance(empty($cronRoutes[$method][$path][0]));
+		$auth = AuthBasicHandler::getInstance(empty($cronRoutes[$method][$path][0]));
 		$hasAuth = (empty($cronRoutes[$method][$path][0]))? true : $auth->hasGroup('cron');
 	} else {
 		if (DEBUG >= 1 && DEBUG_USE_DUMMY_LOGIN){

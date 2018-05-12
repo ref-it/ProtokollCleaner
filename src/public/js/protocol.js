@@ -2,7 +2,7 @@
 	//highlight id tag -------------------------------
 	$(window).on('load',function(){
 		setTimeout(function(){
-			//highlight id tag if it belongs to gallery
+			//highlight id tag
 			if(window.location.hash && window.location.href.indexOf(GLOBAL_RELATIVE+'protolist#proto-2') > -1) {
 				// Fragment exists
 				if(window.location.hash.lastIndexOf('#proto-', 0) === 0){
@@ -121,7 +121,7 @@
 					proto: $('.protostatus .date > span').last().data('name'),
 					committee: $('.protostatus .committee > span').last().text(),
 				};
-				fchal = document.getElementById('fchal');
+				var fchal = document.getElementById('fchal');
 				dataset[fchal.getAttribute("name")] = fchal.value;
 				//show info
 				var modal = $.modaltools({
@@ -175,7 +175,7 @@
 				proto: $('.protostatus .date > span').last().data('name'),
 				committee: $('.protostatus .committee > span').last().text(),
 			};
-			fchal = document.getElementById('fchal');
+			var fchal = document.getElementById('fchal');
 			dataset[fchal.getAttribute("name")] = fchal.value;
 			//show info
 			var modal = $.modaltools({

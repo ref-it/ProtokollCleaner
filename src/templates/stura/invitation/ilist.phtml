@@ -90,7 +90,7 @@
 
 foreach($param['tops'] as $top){
 	if (isset($top['used_on'])) continue;
-	echo '<div class="card border-secondary silmph_top'.(($top['skip_next'])?' skipnext':'').(($top['guest'])?' guest':'').(($top['intern'])?' internal':'').(isset($top['resort'])?' resort':'').'" data-tid="'.$top['id'].'" data-hash="'.$top['hash'].'">';
+	echo '<div id="top_'.substr($top['hash'], 0, 10).'" class="card border-secondary silmph_top'.(($top['skip_next'])?' skipnext':'').(($top['guest'])?' guest':'').(($top['intern'])?' internal':'').(isset($top['resort'])?' resort':'').'" data-tid="'.$top['id'].'" data-hash="'.$top['hash'].'">';
 	echo "\t".'<div class="card-header headline" data-resort="'.($top['resort']?$top['resort']:'').'" data-level="'.$top['level']."\" data-headline='".json_encode([$top['headline']])."'>".
 					((!$top['resort'])?
 						'<span class="top_counter"></span>'
@@ -106,6 +106,7 @@ foreach($param['tops'] as $top){
 		echo '<span class="duration">'.$minutes.' min.</span>'."\n";
 		echo '<span class="person">'.((isset($top['person'])&&trim($top['person']))?$top['person']:'---').'</span>'."\n";
 		echo '<span class="goal">'.(isset($top['goal'])?$top['goal']:'').'</span>'."\n";
+		echo '<span class="filecount"><a href="'.(BASE_SUBDIRECTORY.'files/npuploader?committee='.$param['committee'].'&tid='.$top['id'].'&gui=1&hash='.$top['hash']).'">'.$top['filecounter'].'</a></span>'."\n";
 		echo '<span class="guest">Gast</span>'."\n";
 		echo '<span class="skipn">Auf nächste Woche verschoben</span>'."\n";
 	echo "\t</div>\n";

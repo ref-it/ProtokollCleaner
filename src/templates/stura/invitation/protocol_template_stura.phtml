@@ -242,6 +242,12 @@ foreach ($tops as $id => $top){
 		echo "\n".str_repeat('=', $top['level']).' Top '.$tcount.': '.$top['headline'].' '.str_repeat('=', $top['level']);
 		$tcount++;
 		echo "\n".'//[[:person:'.($top['person']?$top['person']:'').']] berichtet, geschätzte benötigte Zeit: '.($top['expected_duration']?$top['expected_duration']:'XX').' min, real benötigte Zeit: XX min, Zielsetzung: '.($top['goal']?$top['goal']:'XXX').'//';
+		if ($top['filecounter']>0){
+			/* @var $file SILMPH\File */
+			foreach ($param['files'][$top['id']] as $file){
+				echo "\n{{:". $param['protoAttachBasePath'] .':'. $param['date']->format('Y-m-d').':'. $file->filename. ($file->fileextension?'.'.$file->fileextension:'') . '}}';
+			}
+		}
 		echo "\n\n".$top['text']."\n";
 		unset($tops[$id]);
 	}
@@ -312,4 +318,4 @@ foreach ($resorts as $job => $resortList){
 
 ===== Anlagen =====
 
-{{medialist>protokoll:stura:<?= $param['date']->format('Y-m-d') ?>}}
+{{medialist><?= $param['protoAttachBasePath'] ?>:<?= $param['date']->format('Y-m-d') ?>}}

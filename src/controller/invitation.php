@@ -1,4 +1,5 @@
 <?php
+use SILMPH\File;
 /**
  * CONTROLLER Invitation Controller
  *
@@ -102,7 +103,7 @@ class InvitationController extends MotherController {
 		$this->t->appendJsLink('libs/jquery_ui_widget_combobox.js');
 		$this->t->appendJsLink('wiki2html.js');
 		$this->t->appendJsLink('invite.js');
-		$tops = $this->db->getTopsOpen($perm);
+		$tops = $this->db->getTopsOpen($perm, true);
 		$resorts = $this->db->getResorts($perm);
 		$member = $this->db->getMembersCounting($perm);
 		$committee = $this->db->getCommitteebyName($perm);
@@ -119,6 +120,7 @@ class InvitationController extends MotherController {
 			'tops' => $tops,
 			'resorts' => $resorts,
 			'member' => $member,
+			'committee' => $perm,
 			'newproto' => $newproto,
 			'settings' => $sett,
 			'legislatur' => $legis,
@@ -171,6 +173,11 @@ class InvitationController extends MotherController {
 				|| $top['hash'] != $vali->getFiltered('hash')){
 				$this->json_not_found('Top nicht gefunden');
 			} else {
+				//delete files/attachements
+				require_once (FRAMEWORK_PATH.'/class.fileHandler.php');
+				$fh = new FileHandler($this->db);
+				$fh->deleteFilesByLinkId($top['id']);
+				//remove top
 				$ok = $this->db->deleteTopById($top['id']);
 				if ($ok){
 					$this->json_result = [
@@ -357,6 +364,18 @@ class InvitationController extends MotherController {
 				$np = false;
 				$tr = false;
 				$me = false;
+				
+				$deltops = $this->db->getDeleteTopsByMemberIdSoft($vali->getFiltered('mid'));
+				if (is_array($deltops) || count($deltops) > 0 ){
+					require (FRAMEWORK_PATH.'/class.fileHandler.php');
+					$fh = new FileHandler($this->db);
+					foreach ($deltops as $dtop){
+						$fh->deleteFilesByLinkId($dtop['id']);
+					}
+				}
+				
+				//remove member of not generated newprotocols
+				$npnc = $this->db->deleteMemberOfUncreatedNewprotoByMemberId($vali->getFiltered('mid'));
 				//delete tops
 				$tr = $this->db->deleteTopsByMemberIdSoft($vali->getFiltered('mid'));
 				//delete newprotocol
@@ -666,7 +685,7 @@ class InvitationController extends MotherController {
 					return;
 				}
 			}
-			$top = $this->db->getTopById($top['id']);
+			$top = $this->db->getTopById($top['id'], true);
 			$top['addedOn'] = date_create($top['added_on'])->format('d.m.Y H:i');
 			if ($resort) {
 				$top['resort'] = $resort;
@@ -1147,12 +1166,19 @@ class InvitationController extends MotherController {
 			foreach ($newprotoProtocols_tmp as $np) {
 				$newprotoProtocols[ date_create($np['date'])->format('Y-m-d') ] = $np;
 			}
-			//tops
-			$tops_tmp = $this->db->getTopsOpen($nproto['gname']);
+			//tops and gather file ids
+			$files = [];
+			require_once (FRAMEWORK_PATH.'/class.fileHandler.php');
+			$fh = new FileHandler($this->db);
+			$tops_tmp = $this->db->getTopsOpen($nproto['gname'], true);
 			$tops = [];
+			$skipped = [];
 			foreach ($tops_tmp as $id => $top){
 				if (!$top['skip_next']){
 					$tops[$id] = $top;
+					if ($top['filecounter'] > 0) $files[$top['id']] = $fh->filelist($top['id']);
+				} else {
+					$skipped[$id] = $top;
 				}
 			}
 			//resortalias
@@ -1169,6 +1195,8 @@ class InvitationController extends MotherController {
 				'protoInternLink' => WIKI_URL.'/'.parent::$protomap[$vali->getFiltered('committee')][0].'/',
 				'protoPublicLink' => WIKI_URL.'/'.parent::$protomap[$vali->getFiltered('committee')][1].'/',
 				'openProtocols' => ['notAgreed' => $notAgreedProtocols, 'draftState' => $draftStateProtocols, 'newproto' => $newprotoProtocols ],
+				'protoAttachBasePath' => parent::$protomap[$vali->getFiltered('committee')][0],
+				'files' => $files,
 				'tops' => $tops,
 				'resorts' => $resorts,
 			]);
@@ -1195,9 +1223,33 @@ class InvitationController extends MotherController {
 				$this->print_json_result();
 				return;
 			}
+			//upload files
+			$attach_base = parent::$protomap[$vali->getFiltered('committee')][0].':'.$nproto['name'];
+			foreach ($files as $tid => $filelist){
+				/* @var $file File */
+				foreach ($filelist as $file){
+					$ok = false;
+					$wikipath = $attach_base.':'.str_replace(' ', '_', $file->filename).(($file->fileextension)?'.'.$file->fileextension:'');
+					$ok = $x->putAttachement($wikipath,$fh->fileToBase64($file),['ow' => true]);
+					if ($ok == false){
+						$this->json_result = [
+							'success' => false,
+							'eMsg' => 'Fehler beim Dateiupload. (Code: '.$x->getStatusCode().')'
+						];
+						error_log('NewProto -> WIKI: Could not write. Request: Put Page - '.parent::$protomap[$vali->getFiltered('committee')][0].':'.$nproto['name'].' - Wiki respond: '.$x->getStatusCode().' - '.(($x->isError())?$x->getError():''));
+						$this->print_json_result();
+						return;
+					}
+				}
+			}
 			// update tops
 			foreach ($tops as $top){
 				$top['used_on'] = $nproto['id'];
+				$this->db->updateTop($top);
+			}
+			// unskip skipped for next week
+			foreach ($skipped as $top){
+				$top['skip_next'] = 0;
 				$this->db->updateTop($top);
 			}
 			

@@ -46,7 +46,7 @@ function prof_flag($str){
 /**
  * Print all Profiling Flags from prof_flag()
  */
-function prof_print($echo = true){
+function prof_print($echo = true, $memory_usage = false){
 	global $prof_timing, $prof_names, $prof_last_count, $prof_last_data;
 	$sum = 0;
 	$size = count($prof_timing);
@@ -59,6 +59,10 @@ function prof_print($echo = true){
 		}
 		$out .= "<b>{$prof_names[$size-1]}</b><br>";
 		$out = '<div class="profiling-output noprint"><h3><i class="fa fw fa-angle-toggle"></i> Ladezeit: ' . sprintf("%f", $sum) . '</h3>' . $out;
+		if ($memory_usage){
+			require_once (FRAMEWORK_PATH.'/class.fileHandler.php');
+			$out.= '<br><b>Memory Usage</b><p>'.FileHandler::formatFilesize(memory_get_usage()).'</p>';
+		}
 		$out .= "</div>";
 		
 		$prof_last_data = ['sum'=>$sum,'size'=>$size,'html'=>$out,'raw'=>['timing'=>$prof_timing,'names'=>$prof_names] ];

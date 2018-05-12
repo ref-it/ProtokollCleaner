@@ -1,0 +1,26 @@
+.dz-dropupload {
+	white-space: pre-line;
+	white-space: pre-line;       /* css-3 */
+	white-space: -moz-pre-line;;  /* Mozilla, since 1999 */
+	white-space: -pre-line;;      /* Opera 4-6 */
+	white-space: -o-pre-line;;    /* Opera 7 */
+	word-wrap: break-word;
+}
+.btn.remove {
+    right: 13px;
+    top: 7px;
+    width: 35px;
+    height: 35px;
+    line-height: 20px;
+    border-radius: 50%;
+    border-color: transparent;
+    padding-left: 11px;
+	text-align: center;
+	font: normal normal normal 14px/1 FontAwesome;
+    line-height: 1;
+	cursor: pointer;
+	position: absolute;
+}
+.btn.remove::before {
+    content: "\f00d";
+}
