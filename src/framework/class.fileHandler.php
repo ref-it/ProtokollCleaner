@@ -1218,6 +1218,7 @@ class FileHandler extends MotherController {
 
 					// mime + fileextension
 					$ext1 = isset($pathinfo['extension']) ? $pathinfo['extension'] : '';
+					$ext1 = substr($ext1, 0, 44);
 					if (preg_match("/" . $forbidden_file_types . "$/i", $ext1)){
 						$result['error'][] = 'You are not allowed to upload files with this extension';
 						continue;
