@@ -41,7 +41,7 @@ class TodoController extends MotherController {
 		$this->t->appendMeta(['name' => 'apple-mobile-web-app-title', 'content' => 'Todoliste - '. ucfirst(strtolower($perm))]);
 		$this->t->appendMeta(['name' => 'msapplication-navbutton-color', 'content' => '#173d92']);
 		$this->t->appendMeta(['name' => 'apple-mobile-web-app-status-bar-style', 'content' => 'black-translucent']);
-		$this->t->appendMeta(['name' => 'msapplication-starturl', 'content' => BASE_URL.BASE_SUBDIRECTORY.'todolist?gremium='.$perm]);
+		$this->t->appendMeta(['name' => 'msapplication-starturl', 'content' => BASE_URL.BASE_SUBDIRECTORY.'todo/list?gremium='.$perm]);
 		$this->t->appendOtherHeadTag('<link rel="shortcut icon" href="'.BASE_SUBDIRECTORY.'images/todo.ico" type="image/x-icon">');
 		$this->t->appendOtherHeadTag('<link rel="apple-touch-icon" href="'.BASE_SUBDIRECTORY.'images/todo.ico">');
 		
