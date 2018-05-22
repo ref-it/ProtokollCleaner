@@ -1113,7 +1113,7 @@ class InvitationController extends MotherController {
 			$now = date_create();
 			$diff = $now->getTimestamp() - $validateDate->getTimestamp();
 				
-			if ($diff > 3600) { //one hour
+			if ($diff > 3600 * 4) { //4 hours ---> extend this time for Geko, if still not enought adjust time of protocol
 				$this->json_result = [
 					'success' => false,
 					'eMsg' => 'Vergangene Sitzungen können nicht im Wiki erzeugt werden.'
