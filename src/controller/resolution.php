@@ -33,7 +33,7 @@ class ResolutionController extends MotherController
 	 * @param string $gremium
 	 * @param false|integer $pid protocol id
 	 */
-	private function loadDBReso($gremium, $pid = false, $order = 'DESC'){
+	private function loadDBReso($gremium, $pid = false, $order = 'DESC', $year = NULL){
 		//permission - edit this to add add other committee
 		prof_flag('db read');
 		if ($pid !== false){
@@ -44,6 +44,10 @@ class ResolutionController extends MotherController
 		prof_flag('db read done');
 		//parse resolutions: categorize, and split to array
 		foreach ($resos as $pos => $rawres){
+			if ($year != NULL && $year.'' != substr($rawres['date'], 0,4)){
+				unset($resos[$pos]);
+				continue;
+			}
 			if ($rawres['noraw'] == 0){
 				$tmp = protocolHelper::parseResolution($rawres['text'], NULL, NULL, $gremium);
 				$resos[$pos] = array_merge( $tmp, $resos[$pos]);
@@ -127,11 +131,26 @@ class ResolutionController extends MotherController
 
 		//permission - edit this to add add other committee
 		$perm = 'stura';
+		$y = (isset($_GET) && isset($_GET['y']) && intval($_GET['y'], 10))? intval($_GET['y'], 10): NULL;
+		if ($y){
+			if ($y < 1990 || $y > 2999){
+				$y = NULL;
+			}
+		}
+		$order = (isset($_GET) && isset($_GET['order']) && ($_GET['order'] === 'ASC' || $_GET['order'] === 'asc'))? 'ASC' : 'DESC';
+		if ($y){
+			if ($y < 1990 || $y > 2999){
+				$y = NULL;
+			}
+		}
 		$resos = $this->loadDBReso(
 			$perm, 
 			(isset($vali->getFiltered()['pid']))? 
 				$vali->getFiltered('pid'): 
-				false);
+				false,
+			$order,
+			($y)? $y: NULL
+			);
 		
 		$this->t->setTitlePrefix('Beschlussliste - '.ucwords( $perm, " \t\r\n\f\v-"));
 		$this->t->appendCssLink('reso.css', 'screen,projection');

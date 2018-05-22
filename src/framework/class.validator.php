@@ -352,6 +352,8 @@ class Validator {
 	 *  maxlengh 2	maximum string length - default 127, set -1 for unlimited value
 	 *  error	 2  replace whole error message on error case
 	 *  empty	 1 	allow empty value
+	 *  multi	 2  allow multiple names seperated with this seperator, length 1
+	 *  multi_add_space  1 adds space after seperator to prettify list
 	 * @return boolean
 	 */
 	public function V_name($value, $params = NULL)  {
@@ -360,7 +362,17 @@ class Validator {
 			$this->filtered = '';
 			return !$this->setError(false);
 		}
-		$re = '/^[a-zA-Z0-9äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]+[a-zA-Z0-9\-_ .äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]*[a-zA-Z0-9äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]+$/';
+		$re = '';
+		$re_no_sep = '/^[a-zA-Z0-9äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]+[a-zA-Z0-9\-_ .äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]*[a-zA-Z0-9äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]+$/';
+		if (!isset($params['multi']) || strlen($params['multi']) != 1 ){
+			$re = $re_no_sep;
+			$params['multi'] = NULL;
+			unset($params['multi']);
+		} else {
+			$sep = $params['multi'];
+			if (mb_strpos("/\\[]()-", $sep) !== false) $sep = "\\".$sep;
+			$re = '/^[a-zA-Z0-9äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]+[a-zA-Z0-9\-_ '.$sep.'.äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]*[a-zA-Z0-9äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]+$/';
+		}
 		if ( $name !== '' && (!preg_match($re, $name))){
 			$msg = ((isset($params['error']) )?$params['error']:'name validation failed');
 			return !$this->setError(true, 200, $msg, 'name validation failed');
@@ -378,7 +390,19 @@ class Validator {
 			if (isset($params['error'])) $msg = $params['error'];
 			return !$this->setError(true, 200, $msg, 'name validation failed - too short');
 		}
-		$this->filtered=$name;
+		if (!isset($params['multi']) || !mb_strpos($name, $params['multi'])){
+			$this->filtered=$name;
+		} elseif(mb_strpos($name, $params['multi'])) {
+			$tmp_list = explode($params['multi'], $name);
+			$tmp_names = [];
+			foreach ($tmp_list as $tmp_name){
+				$tmp_name = trim($tmp_name);
+				if (preg_match($re_no_sep, $tmp_name) && $tmp_name){
+					$tmp_names[] = $tmp_name;
+				}
+			}
+			$this->filtered=implode($params['multi'].((in_array('multi_add_space', $params, true))?' ':''), $tmp_names);
+		}
 		return !$this->setError(false);
 	}
 	

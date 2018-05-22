@@ -561,7 +561,9 @@ class InvitationController extends MotherController {
 			'person' => ['name',
 				'minlength' => '3',
 				'error' => 'Ungültige Zeichen im Namen.',
-				'empty'
+				'empty',
+				'multi' => ',',
+				'multi_add_space'
 			],
 			'duration' => ['integer',
 				'min' => '0',

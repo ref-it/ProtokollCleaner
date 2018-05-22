@@ -915,8 +915,28 @@
 			$('.silmph_memberbox .membername').each(function(i, e){
 				availableTags.push({value: e.dataset.name, label: e.dataset.name+' '+e.dataset.job});
 			});
+			var auto_split = function ( val ) {
+				return val.split( /,\s*/ );
+			};
+			var auto_getlast = function ( term ) {
+				return auto_split( term ).pop();
+			};
 			$('input#frmIpt03').autocomplete({
-				source: availableTags,
+				minLength: 0,
+				source: function(request, response) {
+					response( $.ui.autocomplete.filter( availableTags, auto_getlast( request.term ) ) );
+				},
+				focus: function() {
+					return false;
+				},
+				select: function( event, ui ) {
+	                var terms = auto_split( this.value );
+	                terms.pop();
+	                terms.push( ui.item.value );
+	                terms.push( "" );
+	                this.value = terms.join( ", " );
+	                return false;
+	            },
 				classes: {
 					"ui-autocomplete": "highlight silmph_npautoc list-group",
 					"ui-menu-item": "ui-menu-item"
