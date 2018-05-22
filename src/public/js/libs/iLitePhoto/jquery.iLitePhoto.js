@@ -302,9 +302,10 @@ if(!jQuery().iLitePhoto) {
 						markup = $.fn.iLitePhoto.types[ex.type].markup;
 						markup = markup.replace('{TITLE}', ex.title)
 							.replace('{DESC}', ex.description)
-							.replace('{URL}', ex.url)
 							.replace('{AUTOPLAY}', (settings.autoplay && $.fn.iLitePhoto.types[ex.type].hasOwnProperty('autoplay'))? $.fn.iLitePhoto.types[ex.type].autoplay : "" )
-							.replace('{FALLBACK}', $.fn.iLitePhoto.language[settings.language].unsupported_format);
+							.replace('{FALLBACK}', $.fn.iLitePhoto.language[settings.language].unsupported_format)
+							.replace(/\{URL\}/g, ex.url);
+						
 					}
 
 					$next.html(markup);
@@ -434,8 +435,8 @@ if(!jQuery().iLitePhoto) {
 		}
 
 		$.fn.iLitePhoto.language = {
-			de: {unsupported_format: "Das gewählte Element kann in Ihrem Broser nicht dargestellt werden. Nutzen Sie bitte einen anderen/neueren Browser."},
-			en: {unsupported_format: "Your browser dont't support this fileformat. Please try the latest version of your browser or use a different one."}
+			de: {unsupported_format: "Das gewählte Element kann in Ihrem Broser nicht dargestellt werden. Nutzen Sie bitte einen anderen/neueren Browser. Link zur Originaldatei: "+'<a href="{URL}">{URL}</a>'},
+			en: {unsupported_format: "Your browser dont't support this fileformat. Please try the latest version of your browser or use a different one. Link to original: "+'<a href="{URL}">{URL}</a>'}
 		}
 
 		$.fn.iLitePhoto.types = {
