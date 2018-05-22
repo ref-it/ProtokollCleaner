@@ -13,13 +13,27 @@
 				}
 			} 
 		}, 200);
-		//filter table
-		var last_val_length = 0;
+		//filter resolution table ---------------------------
+		var last_value = '';
+		var last_search_type = '';
+		var $searchbase = $("#resotable .resolution");
+		var $resocounter = $('.resocounter');
+		var headline_timeout = null;
+		$newweek = $('#resotable tr.newweek');
+		//init searchset - do not convert element text on every letter, only do it once
+		setTimeout(function(){
+			var text = '';
+			for (var i = 0; i < $searchbase.length; i++){
+				text = $searchbase.eq(i).clone().find('.togglebox').remove().end().text().toLowerCase();
+				$searchbase.eq(i).data('search', text+'');
+			}
+			$("#resofilter").fadeIn();
+		}, 500);
 		$("#resofilter").on("keyup", function() {
+			//current seach value
 			var value = $(this).val().toLowerCase();
-			var l = (value.length >= last_val_length)? false: true; 
-			last_val_length = value.length;
 			var search_type = false;
+			//filter resolution type
 			if (value.length > 0 && value.charAt(0) == '#'){
 				var tmp_type = '';
 				var split_pos = value.indexOf(' ');
@@ -32,36 +46,40 @@
 				}
 				search_type = search_type.charAt(0).toUpperCase() + search_type.slice(1);
 			}
+			//reset searchset needed?
+			var l = (value.indexOf(last_value) == -1 || last_search_type != search_type)? true : false; 
+			//remember last search arguments
+			last_value = value;
+			last_search_type = search_type;
+			//filter elements
 			var $searchon;
 			if (search_type != false){
-				$searchon = $("#resotable .resolution");
+				$searchon = $searchbase;
 				$searchon.filter('.resotype-'+search_type+'').show();
 				$searchon.filter(':not(.resotype-'+search_type+')').hide();
-				$searchon = $("#resotable .resolution:visible");
+				$searchon = $searchbase.filter(':visible');
 			} else {
-				$searchon = (l)? $("#resotable .resolution") : $("#resotable .resolution:visible");
+				$searchon = (l)? $searchbase : $searchbase.filter(':visible');
 			}
+			//filter results
 			$searchon.filter(function() {
-				//remove text from togglebox, then search text
-				$(this).toggle($(this).clone().find('.togglebox').remove().end().text().toLowerCase().indexOf(value) > -1)
+				// search text
+				$(this).toggle($(this).data('search').indexOf(value) > -1)
 			});
-			if (l) $('#resotable .resolution:visible').prevUntil('tr.newweek:visible', '.newweek').show();
-			/*if (l){
-				$('#resotable .resolution:visible').each(function(i, e){
-					$l = $(e);
-					while(true){
-						$l = $l.prev();
-						if ($l.is(':visible')) return;
-						if ($l.hasClass('newweek')){
-							$l.show();
-							return;
-						}
-					}
-				});
-			}*/
-			if (!l) $('#resotable tr.newweek:visible').prevUntil('tr.resolution:visible', '.newweek').hide();
-			//
-			/**/
+			//debounce headline and counter update
+			if (headline_timeout != null) {
+				clearTimeout(headline_timeout);
+				headline_timeout = null;
+			}
+			headline_timeout = setTimeout( function(){
+				var $visible = $searchbase.filter(':visible');
+				//update protocol date + link headlines
+				$newweek.hide();
+				$visible.prevUntil('.newweek').prev('.newweek').show();
+				$visible.prev('.newweek').show();
+				//update counter
+				$resocounter.text($visible.length);
+			}, 500)
 		});
 	});
 	

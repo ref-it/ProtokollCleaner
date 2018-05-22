@@ -1,5 +1,5 @@
 <h3><?php $committee = ucwords( $param['committee'], " \t\r\n\f\v-"); echo $committee; ?> - Beschlussliste</h3>
-<p><strong>(Gesammt: <?= count($param['reso']) ?>)</strong></p>
+<p><strong>(Gesammt: <span class="resocounter"><?= count($param['reso']) ?></span>)</strong></p>
 
 <?php
 
@@ -7,7 +7,7 @@ $this->t->appendFloatingLink(WIKI_URL."/".str_replace(':', '/', self::$protomap[
 
 ?>
 <p class="noprint">Zum Filtern hier Suchwort eingeben.</p>  
-<input class="form-control noprint" id="resofilter" type="text" placeholder="Suche..">
+<input class="form-control noprint" id="resofilter" type="text" style="display: none;" placeholder="Suche..">
 <br>
 
 <div id="resotable" class="resolist-table">
