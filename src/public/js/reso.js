@@ -19,8 +19,28 @@
 			var value = $(this).val().toLowerCase();
 			var l = (value.length >= last_val_length)? false: true; 
 			last_val_length = value.length;
-			
-			var $searchon = (l)? $("#resotable .resolution") : $("#resotable .resolution:visible");
+			var search_type = false;
+			if (value.length > 0 && value.charAt(0) == '#'){
+				var tmp_type = '';
+				var split_pos = value.indexOf(' ');
+				if (split_pos >= 0){
+					search_type = value.substr(1, split_pos);
+					value = value.substr(split_pos + 1);
+				} else {
+					search_type = value.substr(1);
+					value = '';
+				}
+				search_type = search_type.charAt(0).toUpperCase() + search_type.slice(1);
+			}
+			var $searchon;
+			if (search_type != false){
+				$searchon = $("#resotable .resolution");
+				$searchon.filter('.resotype-'+search_type+'').show();
+				$searchon.filter(':not(.resotype-'+search_type+')').hide();
+				$searchon = $("#resotable .resolution:visible");
+			} else {
+				$searchon = (l)? $("#resotable .resolution") : $("#resotable .resolution:visible");
+			}
 			$searchon.filter(function() {
 				//remove text from togglebox, then search text
 				$(this).toggle($(this).clone().find('.togglebox').remove().end().text().toLowerCase().indexOf(value) > -1)
