@@ -113,6 +113,15 @@ class AuthBasicHandler implements AuthHandler{
 			$_SESSION['SILMPH']['LAST_ACTION'] = time();
 		}
 		
+		if ( isset($_GET['logout']) && (strpos($_SERVER['REQUEST_URI'], '?logout=1') !== false || strpos($_SERVER['REQUEST_URI'], '&logout=1') !== false )){
+			session_destroy();
+			session_start();
+			header('WWW-Authenticate: Basic realm="'.BASE_TITLE.' Please Login"');
+			header('HTTP/1.0 401 Unauthorized');
+			echo 'You have no permission to access this page.';
+			die();
+		}
+		
 		if(!isset($_SESSION['SILMPH']['MESSAGES'])){
 			$_SESSION['SILMPH']['MESSAGES'] = array();
 		}
@@ -154,7 +163,8 @@ class AuthBasicHandler implements AuthHandler{
 	function requireGroup($group){
 		$this->requireAuth();
 		if (!$this->hasGroup($group)){
-			header('HTTP/1.0 403 Unauthorized');
+			header('WWW-Authenticate: Basic realm="'.BASE_TITLE.' Please Login"');
+			header('HTTP/1.0 401 Unauthorized');
 			echo 'You have no permission to access this page.';
 			die();
 		}
@@ -181,7 +191,7 @@ class AuthBasicHandler implements AuthHandler{
 	 * @return string
 	 */
 	function getLogoutURL(){
-		return BASE_URL.BASE_SUBDIRECTORY . '?logout=1';
+		return BASE_URL.$_SERVER['REQUEST_URI'] . '?logout=1';
 	}
 	
 	/**
