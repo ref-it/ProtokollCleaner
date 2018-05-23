@@ -279,7 +279,11 @@ foreach ($resorts as $job => $resortList){
 	echo "\n\n===== {$resortHeadlines[$job]} =====\n";
 	
 	foreach ($resortList as $resortName => $who){
-		echo "\n==== $job $resortName ====";
+		if ($resortName == 'Konferenz Thüringer Studierendenschaften (KTS)'){
+			echo "\n==== $resortName ====";
+		} else {
+			echo "\n==== $job $resortName ====";
+		}
 		$found = false;
 		foreach ($tops as $id => $top){
 			if (isset($top['resort']) // is resort top
