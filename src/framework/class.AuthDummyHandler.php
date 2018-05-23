@@ -134,10 +134,22 @@ class AuthDummyHandler implements AuthHandler{
 		if ($_SESSION['SILMPH']['USER_ID'] === 0 && ( isset($_GET['login']) || strpos($_SERVER['REQUEST_URI'], '&login=1') !== false || strpos($_SERVER['REQUEST_URI'], '?login=1') !== false )){
 			$_SESSION['SILMPH']['MESSAGES'][] = ["Sie haben sich erfolgreich angemeldet.", 'INFO'];
 			$_SESSION['SILMPH']['USER_ID'] = 1;
+			if (isset($_GET['request'])){
+				$requested = trim(strip_tags($_GET['request']));
+				$requested = str_replace($_SERVER['PHP_SELF'], '', $requested);
+				if (mb_strpos($requested, 'login')===false){
+					header('Location: '.BASE_URL . $requested);
+					die();
+				}
+			}
 		}
 		
 		if ($_SESSION['SILMPH']['USER_ID'] === 0){
-			echo 'Please Login: <a href="'.BASE_URL.BASE_SUBDIRECTORY.'?login=1'.'">Use THIS LINK</a>';
+			$request = $_SERVER['REQUEST_URI'];
+			if ($request === '/') $request = '';
+			if ($request === $_SERVER['PHP_SELF']) $request = '';
+			if ($request) $request = '&request='.urlencode($request);
+			echo 'Please Login: <a href="'.BASE_URL.BASE_SUBDIRECTORY.'?login=1'.$request.'">Use THIS LINK</a>';
 			die();
 		}
 	}
