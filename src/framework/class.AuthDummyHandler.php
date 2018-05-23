@@ -86,7 +86,7 @@ class AuthDummyHandler implements AuthHandler{
 	function requireAuth(){
 		//check IP and user agent
 		if(isset($_SESSION['SILMPH']) && isset($_SESSION['SILMPH']['CLIENT_IP']) && isset($_SESSION['SILMPH']['CLIENT_AGENT'])){
-			if ($_SESSION['SILMPH']['CLIENT_IP'] != $_SERVER['REMOTE_ADDR'] || $_SESSION['SILMPH']['CLIENT_AGENT'] != $_SERVER ['HTTP_USER_AGENT']){
+			if ($_SESSION['SILMPH']['CLIENT_IP'] != $_SERVER['REMOTE_ADDR'] || $_SESSION['SILMPH']['CLIENT_AGENT'] != ((isset($_SERVER ['HTTP_USER_AGENT']))? $_SERVER['HTTP_USER_AGENT']: 'Unknown-IP:'.$_SERVER['REMOTE_ADDR'])){
 				//die or reload page is IP isn't the same when session was created -> need new login
 				session_destroy();
 				session_start();
@@ -96,7 +96,7 @@ class AuthDummyHandler implements AuthHandler{
 			}
 		} else {
 			$_SESSION['SILMPH']['CLIENT_IP'] = $_SERVER['REMOTE_ADDR'];
-			$_SESSION['SILMPH']['CLIENT_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
+			$_SESSION['SILMPH']['CLIENT_AGENT'] = ((isset($_SERVER ['HTTP_USER_AGENT']))? $_SERVER['HTTP_USER_AGENT']: 'Unknown-IP:'.$_SERVER['REMOTE_ADDR']);
 		}
 		
 		if(!isset($_SESSION['SILMPH']['USER_ID'])){

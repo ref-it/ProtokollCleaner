@@ -100,9 +100,9 @@ class AuthSamlHandler extends Singleton implements AuthHandler{
 		//session client info
 		if(!isset($_SESSION['SILMPH'])
 			|| (isset($_SESSION['SILMPH']['CLIENT_IP']) && $_SESSION['SILMPH']['CLIENT_IP'] != $_SERVER['REMOTE_ADDR'] )
-			|| (isset($_SESSION['SILMPH']['CLIENT_AGENT']) && $_SESSION['SILMPH']['CLIENT_AGENT'] != $_SERVER['HTTP_USER_AGENT'] ) ){
+			|| (isset($_SESSION['SILMPH']['CLIENT_AGENT']) && $_SESSION['SILMPH']['CLIENT_AGENT'] != ((isset($_SERVER ['HTTP_USER_AGENT']))? $_SERVER['HTTP_USER_AGENT']: 'Unknown-IP:'.$_SERVER['REMOTE_ADDR']) ) ){
 			$_SESSION['SILMPH']['CLIENT_IP'] = $_SERVER['REMOTE_ADDR'];
-			$_SESSION['SILMPH']['CLIENT_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
+			$_SESSION['SILMPH']['CLIENT_AGENT'] = ((isset($_SERVER ['HTTP_USER_AGENT']))? $_SERVER['HTTP_USER_AGENT']: 'Unknown-IP:'.$_SERVER['REMOTE_ADDR']);
 		}
 		//init messagehandler
 		if (!isset($_SESSION['SILMPH']['MESSAGES'])) {
