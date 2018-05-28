@@ -280,7 +280,7 @@ class protocolOut
 	    			echo '<div class="attachementlist alert alert-info">';
 	    			$opened = true;
 	    		}
-	    		echo '<div class="line"><input type="checkbox" value="1" id="attach_check_'.$pos.'" checked>';
+	    		echo '<div class="line"><input type="checkbox" value="1" id="attach_check_'.$pos.'">';
 	    		$split = explode(':', $attach);
 	    		echo '<label class="resolution noselect" for="attach_check_'.$pos.'"><span>'.end($split).'</span>';
 	    		echo '<a href="'.WIKI_URL.'/_media/'.str_replace(':', '/', $attach).'" target="_blank">';
