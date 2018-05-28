@@ -40,7 +40,7 @@ class protocolHelper extends protocolOut
 			'deleteme' => '/(?<!alte )deleteme/i',
 		],
 		'no_multimatch' => [
-			'resolution' => '/^{{template>:vorlagen:stimmen.*(angenommen)(?!.*abgelehnt).*$/i',
+			'resolution' => '/{{template>:vorlagen:stimmen.*(angenommen)(?!.*abgelehnt).*$/i',
 			'sitzung' => '/=(=)+( )*(\d+).?( )*StuRa-Sitzung.*=(=)+/i'
 		]
 	];
@@ -279,7 +279,7 @@ class protocolHelper extends protocolOut
 	 * @return array parsed resolution [title, type_short, type_long, p_tag, text|raw]
 	 */
 	public static function parseResolution($resolution, $p, $overwriteType = NULL, $committee = NULL){
-		$esolution = htmlspecialchars($resolution);
+		//$resolution = htmlspecialchars($resolution);
 		$result = ['text' => $resolution];
 		$parts = array_map('trim', explode('|', $resolution));
 		foreach ($parts as $pos => $text){
