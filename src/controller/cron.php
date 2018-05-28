@@ -36,6 +36,14 @@ class CronController extends MotherController {
 		$users = CRON_USERMAP;
 		$u = [];
 		foreach ($users as $userName => $d){
+			$found = false;
+			foreach ($d['groups'] as $perm){
+				if (strpos($perm, 'cron') !== false){
+					$found = true;
+					break;
+				}
+			}
+			if (!$found) continue;
 			$u[] = [$userName, $d['groups']];
 		}
 		// cron routes

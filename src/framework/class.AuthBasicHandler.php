@@ -93,7 +93,7 @@ class AuthBasicHandler implements AuthHandler{
 	function requireAuth(){
 		//check IP and user agent
 		if(isset($_SESSION['SILMPH']) && isset($_SESSION['SILMPH']['CLIENT_IP']) && isset($_SESSION['SILMPH']['CLIENT_AGENT'])){
-			if ($_SESSION['SILMPH']['CLIENT_IP'] != $_SERVER['REMOTE_ADDR'] || $_SESSION['SILMPH']['CLIENT_AGENT'] != $_SERVER ['HTTP_USER_AGENT']){
+			if ($_SESSION['SILMPH']['CLIENT_IP'] != $_SERVER['REMOTE_ADDR'] || $_SESSION['SILMPH']['CLIENT_AGENT'] != ((isset($_SERVER ['HTTP_USER_AGENT']))? $_SERVER['HTTP_USER_AGENT']: 'Unknown-IP:'.$_SERVER['REMOTE_ADDR'])){
 				//die or reload page is IP isn't the same when session was created -> need new login
 				session_destroy();
 				session_start();
@@ -102,7 +102,7 @@ class AuthBasicHandler implements AuthHandler{
 			}
 		} else {
 			$_SESSION['SILMPH']['CLIENT_IP'] = $_SERVER['REMOTE_ADDR'];
-			$_SESSION['SILMPH']['CLIENT_AGENT'] = $_SERVER ['HTTP_USER_AGENT'];
+			$_SESSION['SILMPH']['CLIENT_AGENT'] = ((isset($_SERVER ['HTTP_USER_AGENT']))? $_SERVER['HTTP_USER_AGENT']: 'Unknown-IP:'.$_SERVER['REMOTE_ADDR']);
 		}
 		
 		if(!isset($_SESSION['SILMPH']['USER_ID'])){
@@ -111,6 +111,15 @@ class AuthBasicHandler implements AuthHandler{
 		
 		if(!isset($_SESSION['SILMPH']['LAST_ACTION'])){
 			$_SESSION['SILMPH']['LAST_ACTION'] = time();
+		}
+		
+		if ( isset($_GET['logout']) && (strpos($_SERVER['REQUEST_URI'], '?logout=1') !== false || strpos($_SERVER['REQUEST_URI'], '&logout=1') !== false )){
+			session_destroy();
+			session_start();
+			header('WWW-Authenticate: Basic realm="'.BASE_TITLE.' Please Login"');
+			header('HTTP/1.0 401 Unauthorized');
+			echo 'You have no permission to access this page.';
+			die();
 		}
 		
 		if(!isset($_SESSION['SILMPH']['MESSAGES'])){
@@ -154,7 +163,8 @@ class AuthBasicHandler implements AuthHandler{
 	function requireGroup($group){
 		$this->requireAuth();
 		if (!$this->hasGroup($group)){
-			header('HTTP/1.0 403 Unauthorized');
+			header('WWW-Authenticate: Basic realm="'.BASE_TITLE.' Please Login"');
+			header('HTTP/1.0 401 Unauthorized');
 			echo 'You have no permission to access this page.';
 			die();
 		}
@@ -181,7 +191,7 @@ class AuthBasicHandler implements AuthHandler{
 	 * @return string
 	 */
 	function getLogoutURL(){
-		return BASE_URL.BASE_SUBDIRECTORY . '?logout=1';
+		return BASE_URL.$_SERVER['REQUEST_URI'] . '?logout=1';
 	}
 	
 	/**
