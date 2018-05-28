@@ -59,7 +59,8 @@ class JsonController {
 	/**
 	 * echo json result  stored in $this->json_result
 	 */
-	protected function print_json_result(){
+	protected function print_json_result($setJsonHeader = false){
+		if ($setJsonHeader) header("Content-Type: application/json");
 		echo json_encode($this->json_result, JSON_HEX_QUOT | JSON_HEX_TAG);
 	}
 }
