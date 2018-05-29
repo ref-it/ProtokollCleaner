@@ -83,7 +83,7 @@
 	    				if ((openedLists[openedLists.length-1] == '</ul>' && type == 'ol')
 	    					|| (openedLists[openedLists.length-1] == '</ol>' && type == 'ul')){
 	    					out += _closeList(1);
-	    					out += _openList($type);
+	    					out += _openList(type);
 	    				}
 	    			}
 	    			out += __list(line, type, level);
