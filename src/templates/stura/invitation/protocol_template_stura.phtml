@@ -9,8 +9,8 @@
 |Tag=<?= $param['date']->format('d'); ?> 
 |von=<?= ($now->getTimestamp() - $param['date']->getTimestamp() > 0 )? $now->format('H:i'): $param['date']->format('H:i'); ?> 
 |bis=FIXME
-|Sitzungsleitung=<?= ($param['proto']['management'])? $param['members'][$param['proto']['management']] : 'FIXME' ?> 
-|Protokollierung=<?= ($param['proto']['protocol'])? $param['members'][$param['proto']['protocol']] : 'FIXME' ?> 
+|Sitzungsleitung=<?= ($param['proto']['management'])? $param['members'][$param['proto']['management']]['name'] : 'FIXME' ?> 
+|Protokollierung=<?= ($param['proto']['protocol'])? $param['members'][$param['proto']['protocol']]['name'] : 'FIXME' ?> 
 }}
 
 ====== <?= ($param['nthproto'])? str_pad($param['nthproto'], 2, "0", STR_PAD_LEFT): 'XX'; ?>. StuRa-Sitzung ======
