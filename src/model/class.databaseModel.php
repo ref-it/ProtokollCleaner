@@ -1431,7 +1431,7 @@ class DatabaseModel extends Database
 			$f->mime,
 			$f->encoding,
 			$f->data,
-			($f->added_on)? $f->added_on : date_create()->format('Y--m-d H:i:s')
+			($f->added_on)? $f->added_on : date_create()->format('Y-m-d H:i:s')
 		];
 		$sql = "INSERT INTO `".TABLE_PREFIX."fileinfo`
 			(	`link`,
