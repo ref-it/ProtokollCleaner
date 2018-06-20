@@ -667,7 +667,7 @@ class DatabaseModel extends Database
 			$n['created_by'],
 			$n['hash'],
 			$n['gremium'],
-			date_create()->format('Y-m-d H:i:s')
+			date_create()->format('Y-m-d H:i:s'),
 			isset($n['mail_info_state'])? $n['mail_info_state']: 0,
 			isset($n['mail_proto_remember'])? $n['mail_proto_remember']: NULL,
 		];
