@@ -18,7 +18,7 @@
  */
 define('SILMPH', true);
 define('MAIL_TEST_TIMEOUT', 10); //prevent mailspam with testmails (in minutes)
-define('SYSBASE', dirname(__FILE__, 2));
+define('SYSBASE', realpath(dirname(__FILE__) . '/..'));
 define('FRAMEWORK_PATH', dirname(__FILE__));
 
 //forbid some uploadpaths/directories
@@ -78,7 +78,7 @@ prof_flag('app_start');
  * generate app secret key
  */
 if (defined('ENABLE_ADMIN_INSTALL') && ENABLE_ADMIN_INSTALL) {
-	if (!file_exists(SYSBASE.'/secret.php')){
+  if (!file_exists(SYSBASE.'/secret.php')){
 		//generate secret key - include external library: defuse-crypto
 		require_once(dirname(__FILE__).'/external_libraries/crypto/defuse-crypto.phar');
 		$key = Defuse\Crypto\Key::createNewRandomKey();

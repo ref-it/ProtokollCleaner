@@ -13,4 +13,4 @@
  * @requirements    PHP 7.0 or higher
  */
 // ===== load framework =====
-include (dirname(__FILE__, 3).'/index.php');
+include (realpath(dirname(__FILE__) . '/../..').'/index.php');

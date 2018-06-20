@@ -36,7 +36,7 @@ define('TEMPLATE', 'stura');
 
 // ===== SimpleSAML Settings & Konstants
 define('SIMPLESAML_ACCESS_GROUP', 'stura');
-define("SAML_SIMPLESAMLDIR" , dirname(__FILE__,4) . "/simplesamlphp");
+define("SAML_SIMPLESAMLDIR" , realpath(dirname(__FILE__) . '/../../../..') . "/simplesamlphp");
 define("SAML_SIMPLESAMLAUTHSOURCE" , "");
 define("SAML_AUTHGROUP" , "");
 define("SAML_ADMINGROUP" , "");
@@ -54,7 +54,7 @@ define('DEBUG', false); //Level = false / 0 => disabled || 1 => Basic debug info
 define('DEBUG_USE_DUMMY_LOGIN', false);
 
 // ===== CRON SETTINGS =====
-define('CRON_USERMAP', [
+const CRON_USERMAP = [
 	'cronuser' => [
 		'password' => '1234', //
 		'displayName' => 'Cron User',
@@ -62,7 +62,7 @@ define('CRON_USERMAP', [
 		'groups' => [ 'basic', 'cron', 'croninfo', 'cronmail', 'cronwiki'],
 		'eduPersonPrincipalName' => ['cronuser'],
 	]
-]);
+];
 
 // ===== UPLOAD SETTINGS =====
 // DATABASE or FILESYSTEM storage

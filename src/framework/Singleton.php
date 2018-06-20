@@ -54,6 +54,8 @@ abstract class Singleton{
         }
     }
     
+    //produces log warning 
+    // see https://stackoverflow.com/questions/41611058/why-does-php-allow-abstract-static-functions#41611876 for mor details
     abstract static protected function static__set($name, $value);
     
     /**

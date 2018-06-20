@@ -390,7 +390,7 @@ class Template
 	 */
 	public function printPageHeader(){
 		$this->header_printed = true;
-		include (SYSBASE."/templates/".TEMPLATE."/header.phtml");
+    include (SYSBASE."/templates/".TEMPLATE."/header.phtml");
 	}
 
 	/**
@@ -398,7 +398,7 @@ class Template
 	 */
 	public function printPageFooter(){
 		prof_flag('template_footer');
-		include (SYSBASE."/templates/".TEMPLATE."/footer.phtml");
+    include (SYSBASE."/templates/".TEMPLATE."/footer.phtml");
 	}
 
 	/**
