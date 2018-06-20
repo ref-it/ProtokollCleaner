@@ -60,7 +60,7 @@ ini_set('display_errors', (DEBUG>=1)? 1:0);
 ini_set('display_startup_errors', (DEBUG>=1)? 1:0);
 ini_set("log_errors", 1);
 error_reporting(E_ALL);
-ini_set("error_log", realpath(dirname(__FILE__) . '/..')."/logs/error.log");
+ini_set("error_log", SYSBASE."/logs/error.log");
 
 /**
  * set server timezone
@@ -78,7 +78,7 @@ prof_flag('app_start');
  * generate app secret key
  */
 if (defined('ENABLE_ADMIN_INSTALL') && ENABLE_ADMIN_INSTALL) {
-	if (!file_exists(realpath(dirname(__FILE__) . '/..').'/secret.php')){
+	if (!file_exists(SYSBASE.'/secret.php')){
 		//generate secret key - include external library: defuse-crypto
 		require_once(dirname(__FILE__).'/external_libraries/crypto/defuse-crypto.phar');
 		$key = Defuse\Crypto\Key::createNewRandomKey();
@@ -92,29 +92,29 @@ if (defined('ENABLE_ADMIN_INSTALL') && ENABLE_ADMIN_INSTALL) {
 		$key_file_content .= "define('SILMPH_KEY_SECRET', '".$pass_key."');\n ?>";
 		
 		//create file
-		$handle = fopen (realpath(dirname(__FILE__) . '/..').'/secret.php', w);
+		$handle = fopen (SYSBASE.'/secret.php', w);
 		fwrite ($handle, $key_file_content);
 		fclose ($handle);
-		chmod(realpath(dirname(__FILE__) . '/..').'/secret.php', 0400);
+		chmod(SYSBASE.'/secret.php', 0400);
 	}
 }
 /**
  * load app secret or die with error
  */
-if (!file_exists(realpath(dirname(__FILE__) . '/..').'/secret.php')){
+if (!file_exists(SYSBASE.'/secret.php')){
 	echo 'Initialisation failed.<br>';
 	echo "Activate 'ENABLE_ADMIN_INSTALL' in 'config.php' at least one time.";
 	error_log("Initialisation failed. Activate 'ENABLE_ADMIN_INSTALL' in 'config.php' at least one time.");
 	die();
 } else {
-	require_once (realpath(dirname(__FILE__) . '/..')."/secret.php");
+	require_once (SYSBASE."/secret.php");
 }
 
 /**
  * include database
  */
 require_once (dirname(__FILE__)."/class.database.php");
-require_once (realpath(dirname(__FILE__) . '/..')."/model/class.databaseModel.php");
+require_once (SYSBASE."/model/class.databaseModel.php");
 $db = NULL; //set in session
 
 /**
