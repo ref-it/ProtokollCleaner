@@ -61,9 +61,31 @@
 		<div class="silmph_memberbox<?= (checkUserPermission('admin'))?' editmember':''; ?>">
 			<button class="btn btn-secondary col-md-4  showtoggle" type="button" data-texttoggle="Verstecken">Anzeigen</button>
 			<ul class="list-group mt-1 mb-1">
-			<?php 
-				foreach ($param['member'] as $member){
-					echo '<li class="member p-2 list-group-item"><span class="membername" data-id="'.$member['id'].'" data-job="'.(($member['job'])?'('.$member['job'].')':'').'" data-name="'.$member['name'].'" data-management="'.$member['management'].'" data-protocol="'.$member['protocol'].'"></span><span class="delete btn btn-outline-danger"></span></li>';
+			<?php
+				$memberOut = [
+					'Gewählt' => [],
+					'Angestellt' => [],
+					'AG/Referat' => [],
+					'Aktiv' => [],
+				];
+				foreach ($param['member'] as $m){
+					if ($m['flag_elected']){
+						$memberOut['Gewählt'][] = $m;
+					} elseif($m['flag_stuff']) {
+						$memberOut['Angestellt'][] = $m;
+					} elseif($m['flag_ref']) {
+						$memberOut['AG/Referat'][] = $m;
+					} elseif($m['flag_active']) {
+						$memberOut['Aktiv'][] = $m;
+					}
+				}
+				foreach ($memberOut as $group => $members){
+					if (count($members) > 0){
+						echo '<li class="membergroup p-2 list-group-item bg-dark text-white font-weight-bold">'.$group.'</li>';
+						foreach ($members as $m){
+							echo '<li class="member p-2 list-group-item"><span class="membername" data-group="'.$group.'" data-id="'.$m['id'].'" data-job="'.(($m['job'])?'('.$m['job'].')':'').'" data-name="'.$m['name'].'" data-management="'.$m['management'].'" data-protocol="'.$m['protocol'].'"></span><span class="delete btn btn-outline-danger"></span></li>';
+						}
+					}
 				}
 			?>
 				</ul>

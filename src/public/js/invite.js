@@ -1132,7 +1132,17 @@
 			out.push($('<p/>'));
 			out.push($('<h4/>', {html: '<strong>Anwesenheit</strong>'}));
 			var memberboxbody = $('<div/>', {'class': 'card-body'});
+			var lastMemberGroup = '';
 			$('.silmph_memberbox .member .membername').each(function (i, elm){
+				var currentMemberGroup = elm.dataset.group;
+				if (currentMemberGroup != lastMemberGroup){
+					lastMemberGroup = currentMemberGroup;
+					memberboxbody.append( $( '<div/>', {
+						'class': 'form-row text-white font-weight-bold bg-dark p-3 mt-1',
+						'text': lastMemberGroup
+					}));
+				}
+				console.log(currentMemberGroup);
 				var chk = (dset && dataset_.member.hasOwnProperty(''+elm.dataset.id))? dataset_.member[(''+elm.dataset.id)] : 0;
 				var radioOptions = ['Fixme', 'J', 'E', 'N'];
 				var opts = [];
@@ -1150,7 +1160,7 @@
 							attr: {'data-id': elm.dataset.id,'data-pos': i}, 
 							options: opts
 						}],
-						{fieldIdPrefix: 'frmMember_'+i+'_', innerClass: 'form-row mt-3 w-100 hover-bg-gray', labelDefaultClass: 'col-md-4 control-label mt-1', fieldDefaultClass: 'form-control col-md-8 onelineRadios hover-bg-transparent'}) );
+						{fieldIdPrefix: 'frmMember_'+i+'_', innerClass: 'form-row mt-2 w-100 hover-bg-gray', labelDefaultClass: 'col-md-4 control-label mt-1', fieldDefaultClass: 'form-control col-md-8 onelineRadios hover-bg-transparent'}) );
 			});
 			var memberbox = $('<div/>', {'class': 'card'});
 			memberbox.append(memberboxbody);
