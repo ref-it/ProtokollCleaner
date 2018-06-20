@@ -831,7 +831,7 @@
 						committee: 'stura',
 						headline: obj.modal.find('#frmIpt01').val(),
 						resort: obj.modal.find('#frmIpt02').val(),
-						person: obj.modal.find('#frmIpt03').val(),
+						person: (obj.modal.find('#frmIpt03').val()+'').replace(/(^(\s|,)+|\s\s|(\s|,)+$)/gm, ''),
 						duration: obj.modal.find('#frmIpt04').val(),
 						goal: obj.modal.find('#frmIpt05').val(),
 						guest: obj.modal.find('#frmIpt06')[0].checked? '1': '0',
