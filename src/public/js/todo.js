@@ -12,35 +12,6 @@
  */
 
 (function(){
-	function setGetParameter(inp, paramName, paramValue)
-	{
-	    var url = inp;
-	    var hash = location.hash;
-	    url = url.replace(hash, '');
-	    if (url.indexOf("?") < 0){
-	    	if (paramValue != '' && paramValue!=null) url += "?" + paramName + "=" + paramValue;
-	    } else if (url.indexOf('?' + paramName + "=") >= 0 || url.indexOf('&' + paramName + "=") >= 0) {
-	    	var identer;
-	    	if (url.indexOf('&' + paramName + "=") >= 0){
-	    		identer = '&' + paramName + "="; 
-	    	} else {
-	    		identer = '?' + paramName + "="; 
-	    	}
-	    	var paramPos = url.indexOf(identer);
-	    	var prefix = url.substring(0, paramPos);
-	    	var suffix = url.substring(paramPos + identer.length);
-	    	suffix = (suffix.indexOf("&") >= 0) ? suffix.substring(suffix.indexOf("&")) : "";
-	    	
-	    	if (paramValue != '' && paramValue!=null) url = prefix + identer + paramValue + suffix;
-	    	else {
-	    		if (suffix.length > 0 && identer.charAt(0) == '?') suffix = '?' + suffix.substring(1);
-	    		url = prefix + suffix;
-	    	}
-	    } else {
-	    	if (paramValue != '' && paramValue!=null) url += "&" + paramName + "=" + paramValue;
-	    }
-	    return url + hash;
-	}
 	// calendar filter clicks
 	$(document).ready(function(){
 		$('.todo_legend .legendelem').on('click', function(){
