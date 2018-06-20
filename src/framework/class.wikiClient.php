@@ -16,7 +16,7 @@
  * 
  */
  
-require_once(dirname(__FILE__, 1).'/class.xrpcClient.php');
+require_once(dirname(__FILE__).'/class.xrpcClient.php');
 
 class wikiClient extends xrpcClient
 {

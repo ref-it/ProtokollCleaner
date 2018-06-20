@@ -13,7 +13,7 @@
  * @requirements    PHP 7.0 or higher
  */
  
-require_once(dirname(__FILE__, 1).'/class.hServerClient.php');
+require_once(dirname(__FILE__).'/class.hServerClient.php');
 
 class xrpcClient extends hServerClient
 {
