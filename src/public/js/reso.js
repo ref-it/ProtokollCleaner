@@ -13,6 +13,28 @@
 				}
 			} 
 		}, 200);
+		//get parameter filter ------------------------------
+		$('.resol_legend .legend-order').on('click', function(){
+			this.dataset.filter = (this.dataset.filter=='1')? '0': '1';
+			//chevron
+			$chevron = $(this).children('.color').children('i');
+			if ($chevron.hasClass($chevron.data('class0'))) $chevron.removeClass($chevron.data('class0'));
+			if ($chevron.hasClass($chevron.data('class1'))) $chevron.removeClass($chevron.data('class1'));
+			$chevron.addClass($chevron.data('class'+this.dataset.filter));
+			//text
+			$name = $(this).children('.name');
+			$name.text($name.data('text'+this.dataset.filter));
+			//get parameter
+			var newvalue = this.dataset.filter == 1 ? 'ASC':'';
+			var key = this.dataset.type;
+			window.location.href = setGetParameter(window.location.href, key, newvalue);
+		});
+		$('.resol_legend .legend-year select').on('change', function(){
+			//get parameter
+			var newvalue = this.value;
+			var key = this.parentNode.dataset.type;
+			window.location.href = setGetParameter(window.location.href, key, newvalue);
+		});
 		//filter resolution table ---------------------------
 		var last_value = '';
 		var last_search_type = '';

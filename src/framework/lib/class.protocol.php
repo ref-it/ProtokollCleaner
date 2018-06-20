@@ -53,7 +53,7 @@ class Protocol
 	public $agreed_on;
 	
 	/**
-	 * commitee id
+	 * committee id
 	 * @var int
 	 */
 	public $committee_id;

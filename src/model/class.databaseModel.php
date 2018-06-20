@@ -285,9 +285,9 @@ class DatabaseModel extends Database
 	}
 	
 	/**
-	 * return commitee array if exists
+	 * return committee array if exists
 	 * @param string $committeeName committee (gremium) name
-	 * @return array commitee element
+	 * @return array committee element
 	 */
 	public function getCommitteebyName( $committeeName ){
 		$sql = "SELECT * FROM `".TABLE_PREFIX."gremium` G WHERE G.name = ?;";
@@ -301,10 +301,10 @@ class DatabaseModel extends Database
 	}
 	
 	/**
-	 * return commitee array
+	 * return committee array
 	 * if committee does not exist create it
 	 * @param string $committeeName committee (gremium) name
-	 * @return array|false commitee element
+	 * @return array|false committee element
 	 */
 	public function getCreateCommitteebyName( $committeeName ){
 		$g = $this->getCommitteebyName($committeeName);
@@ -1124,9 +1124,9 @@ class DatabaseModel extends Database
 	// --------- CREATE FUCNTIONS -----------------------------------------
 	
 	/**
-	 * return create committe in database and return commitee array
+	 * return create committe in database and return committee array
 	 * @param string $committeeName committee (gremium) name
-	 * @return array|false commitee element
+	 * @return array|false committee element
 	 */
 	public function createCommitteeByName( $committeeName ){
 		$sql = "INSERT INTO `".TABLE_PREFIX."gremium` (`name`) VALUES (?);";
@@ -1435,7 +1435,7 @@ class DatabaseModel extends Database
 			$f->mime,
 			$f->encoding,
 			$f->data,
-			($f->added_on)? $f->added_on : date_create()->format('Y--m-d H:i:s')
+			($f->added_on)? $f->added_on : date_create()->format('Y-m-d H:i:s')
 		];
 		$sql = "INSERT INTO `".TABLE_PREFIX."fileinfo`
 			(	`link`,

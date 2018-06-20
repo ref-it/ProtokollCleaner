@@ -81,6 +81,22 @@ class protocolHelper extends protocolOut
 			'long' => 'Finanzen',
 			'short' => 'F'
 		], [
+			'match' => ['beschließt', 'EUR '], 
+			'long' => 'Finanzen',
+			'short' => 'F'
+		], [
+			'match' => ['beschließt', 'Risikofinanzierung'], 
+			'long' => 'Finanzen',
+			'short' => 'F'
+		],[
+			'match' => ['beschließt', 'Kredit'], 
+			'long' => 'Finanzen',
+			'short' => 'F'
+		],[
+			'match' => ['beschließt', 'Finanzplan'], 
+			'long' => 'Finanzen',
+			'short' => 'F'
+		], [
 			'match' => ['Ordnung'], 
 			'long' => 'Ordnung',
 			'short' => 'O'

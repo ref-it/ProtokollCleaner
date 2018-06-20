@@ -251,6 +251,11 @@ class Database
 			$this->_isError = true;
 			$this->msgError = 'Execute Failed: ' . htmlspecialchars($this->db->error);
 			error_log('DB Error: "'. $this->msgError . '"' . " ==> SQL: " . $sql );
+			ob_start();
+			debug_print_backtrace();
+			$stack = ob_get_clean();
+			error_log("\t".'DB data:'. print_r($bind_params, true) );
+			error_log("\t".'DB Stacktrace:'. $stack );
 			$this->affectedRows = -1;
 			$stmt->close();
 			return false;

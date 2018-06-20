@@ -414,7 +414,7 @@ class ProtocolController extends MotherController {
 					$this->db->deleteResolutionById($reso['id']);
 				}
 			}
-			$gremium = $this->db->getCreateCommitteebyName($vali->getFiltered('commitee'));
+			$gremium = $this->db->getCreateCommitteebyName($vali->getFiltered('committee'));
 			//create new protocoll resolutions now
 			foreach ($proto_reso_new as $reso){
 				$newresoid = $this->db->createResolution($reso);

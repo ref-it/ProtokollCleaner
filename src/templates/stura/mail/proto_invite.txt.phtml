@@ -5,7 +5,7 @@
 
 =================================================
 
-Der <?=  ucfirst(strtolower($param['committee'])) ?> der TU Ilmenau läd am <?= date_create($param['proto']['date'])->format('d.m.d') ?> um <?= date_create($param['proto']['date'])->format('H:i') ?> Uhr zur nächsten Sitzung ein.
+Der <?=  ucfirst(strtolower($param['committee'])) ?> der TU Ilmenau läd am <?= date_create($param['proto']['date'])->format('d.m.d') ?> um <?= date_create($param['proto']['date'])->format('H:i') ?> Uhr zur nächsten Sitzung im EAZ 1337 ein.
 
 Voraussichtliche 
   - Sitzungsleitung:    <?= ($param['proto']['membernames']['m'])? $param['proto']['membernames']['m']['name'] : '-' ?>
@@ -80,6 +80,8 @@ Weitere Tops können unter folgendem Link [<?php echo count($links); $links[] = 
 Desweiteren können Referate, AGs und Angestellte ihre Berichte hier [<?php echo count($links); $links[] = $param['topLink'] ?>] noch bis zur Sitzung vortragen.  Dort befinden sich auch vorgetragene Referatberichte.
 	
 Solltet Ihr zum Zeitpunkt der Sitzung verhindert sein, meldet euch bitte rechtzeitig ab und hinterlegt gegebenenfalls für geplante Abstimmungen eine schriftliche Stimme.
+
+Solltet Ihr zum Zeitpunkt der Sitzung verhindert sein und eine AG, ein Referat leiten oder einen FSR vertreten, tragt bitte eure Berichte aus diesen Gremien vor.
 
 <?php if (count($param['unreconciled_protocols']['draftState'])){ ?>
 ___

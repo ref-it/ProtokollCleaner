@@ -1,11 +1,30 @@
 <h3><?php $committee = ucwords( $param['committee'], " \t\r\n\f\v-"); echo $committee; ?> - Beschlussliste</h3>
-<p><strong>(Gesammt: <span class="resocounter"><?= count($param['reso']) ?></span>)</strong></p>
+<p class="mb-2"><strong>(Gesammt: <span class="resocounter"><?= count($param['reso']) ?></span>)</strong></p>
 
 <?php
-
 $this->t->appendFloatingLink(WIKI_URL."/".str_replace(':', '/', self::$protomap[$param['committee']][2]), "Wiki Beschlussliste", '&#xf266;');
-
 ?>
+
+<div class="resol_legend noselect mb-1">
+	<div class="legendelem legend-order" data-filter="<?= $param['order']=='DESC'?'0':'1' ?>" data-type="order">
+		<span class="color" style="background-color:#ff5000;"><i data-class0="fa-chevron-up" data-class1="fa-chevron-down" class="fa <?= $param['order']=='DESC'?'fa-chevron-up':'fa-chevron-down' ?> align-top pl-1 mt-4p text-white fonts-half"></i></span>
+		<span class="name" data-text0="Sortierung: Neuste zuerst" data-text1="Sortierung: Älteste zuerst"><?= $param['order']=='DESC'?'Sortierung: Neuste zuerst':'Sortierung: Älteste zuerst' ?></span>
+	</div>
+	<div class="legendelem legend-year relative" data-type=y>
+		<span class="name">Nach Jahr filtern:</span>
+		<select class="filter_select" id="year-filter">
+			<option value="">Nichts ausgewählt</option>
+			<?php 
+				$now = date_create();
+				$cy = intval($now->format('Y'));
+				for ($i = 2009; $i <= $cy; $i++){
+					echo "\n\t<option value=\"$i\"".((isset($param['year'])&& $i == $param['year'])?' selected':'').">$i</option>";
+				}
+			?>
+		</select><i class="filter_select_arrow fa fa-chevron-down"></i>
+	</div>
+</div>
+
 <p class="noprint">Zum Filtern hier Suchwort eingeben.</p>  
 <input class="form-control noprint" id="resofilter" type="text" style="display: none;" placeholder="Suche..">
 <br>

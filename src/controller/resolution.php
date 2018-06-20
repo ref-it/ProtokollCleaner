@@ -138,11 +138,6 @@ class ResolutionController extends MotherController
 			}
 		}
 		$order = (isset($_GET) && isset($_GET['order']) && ($_GET['order'] === 'ASC' || $_GET['order'] === 'asc'))? 'ASC' : 'DESC';
-		if ($y){
-			if ($y < 1990 || $y > 2999){
-				$y = NULL;
-			}
-		}
 		$resos = $this->loadDBReso(
 			$perm, 
 			(isset($vali->getFiltered()['pid']))? 
@@ -159,6 +154,8 @@ class ResolutionController extends MotherController
 		$this->includeTemplate(__FUNCTION__, [
 			'reso' => &$resos,
 			'committee' => $perm,
+			'year' => $y,
+			'order' => $order,
 			'pid' => (isset($vali->getFiltered()['pid']))? $vali->getFiltered()['pid'] : NULL,
 		]);
 		$this->t->printPageFooter();
