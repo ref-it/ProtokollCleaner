@@ -34,7 +34,7 @@
 <body class="half-padding" style="margin: 0;padding: 10px;-webkit-text-size-adjust: 100%;, height: 90%; width: 90%;">
 	<img style="display: block;height: auto;width: 100%;border: 0;max-width: 242px;" src="cid:logoattach" alt="Logo" width="242" />
 	<h2>Sitzungseinladung - <?=  ucfirst(strtolower($param['committee'])) ?></h2>
-	<p>Der <?= ucfirst(strtolower($param['committee'])) ?> der TU Ilmenau läd am <strong style="font-weight: bold;"><?= date_create($param['proto']['date'])->format('d.m.d') ?></strong> um <strong style="font-weight: bold;"><?= date_create($param['proto']['date'])->format('H:i') ?> Uhr</strong> zur nächsten Sitzung ein.</p>
+	<p>Der <?= ucfirst(strtolower($param['committee'])) ?> der TU Ilmenau läd am <strong style="font-weight: bold;"><?= date_create($param['proto']['date'])->format('d.m.d') ?></strong> um <strong style="font-weight: bold;"><?= date_create($param['proto']['date'])->format('H:i') ?> Uhr</strong> zur nächsten Sitzung im EAZ 1337 ein.</p>
 	<p>Voraussichtliche 
 		<ul>
 			<li>Sitzungsleitung:    <?= ($param['proto']['membernames']['m'])? $param['proto']['membernames']['m']['name'] : '-' ?></li>
