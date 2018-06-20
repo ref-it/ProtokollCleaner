@@ -43,7 +43,7 @@ class JsonController {
 	function json_access_denied($message = false){
 		http_response_code (403);
 		$this->json_result = array('success' => false, 'eMsg' => $this->translate( ($message)? $message : 'Access Denied.'));
-		$this->print_json_result();
+		$this->print_json_result(true);
 	}
 	
 	/**
@@ -53,14 +53,14 @@ class JsonController {
 	function json_not_found($message = false){
 		http_response_code (404);
 		$this->json_result = array('success' => false, 'eMsg' => $this->translate( ($message)? $message : 'Page not Found.'));
-		$this->print_json_result();
+		$this->print_json_result(true);
 	}
 	
 	/**
 	 * echo json result  stored in $this->json_result
 	 */
 	protected function print_json_result($setJsonHeader = false){
-		if ($setJsonHeader) header("Content-Type: application/json");
+		if ($setJsonHeader) header("Content-Type: application/json; charset=UTF-8");
 		echo json_encode($this->json_result, JSON_HEX_QUOT | JSON_HEX_TAG);
 	}
 }
