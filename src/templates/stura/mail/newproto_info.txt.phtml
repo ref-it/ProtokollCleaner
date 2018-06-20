@@ -1,0 +1,29 @@
+<?php 
+	$param = $param; 
+	$links = [];
+?>Informationen zur Nächsten Sitzung - <?=  ucfirst(strtolower($param['committee'])) ?>
+
+=================================================
+
+Sitzungsdatum:   <?= $param['date']->format('d.m.Y'); ?>
+Uhrzeit:         <?= $param['date']->format('H:i'); ?>Uhr
+Sitzungsleitung: <?= ($param['leitung'])? $param['leitung'] : '--- nicht vergeben ---'; ?>
+Protokollierung: <?= ($param['leitung'])? $param['protokoll'] : '--- nicht vergeben ---'; ?>
+
+
+Weitere Informationen können im vergangenen Protokoll, oder im Protokolltool [<?php echo count($links); $links[] = $param['toolLink'] ?>] gefunden werden.
+Solltet die oben genannten Personen zum Zeitpunkt der Sitzung verhindert sein, meldet euch bitte rechtzeitig ab __und__ sucht eine Person, welche die Aufgabe übernimmt.
+
+
+Links
+----------------------
+
+<?php 
+	$c = strlen(''.count($links));
+	foreach ($links as $pos => $link){
+		echo '['.str_pad($pos, $c, "0", STR_PAD_LEFT).'] - '.$link."\n";
+	}
+?>
+
+
+(Diese Nachricht wurde automatisch vom <?= BASE_TITLE ?> generiert.)

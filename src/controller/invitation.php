@@ -88,6 +88,56 @@ class InvitationController extends MotherController {
 		}
 	}
 	
+	/**
+	 * send
+	 * @param array $newproto
+	 * @param string $gremium
+	 */
+	public function send_management_info_mail($newproto, $gremium){
+		$settings=$this->db->getSettings();
+		$mailer = new MailHandler();
+		$mailer->setLogoImagePath('/../public/images/logo_f.png');
+		$initOk = $mailer->init($settings);
+		// mail initialisation failed
+		if (!$initOk) return false;
+		
+		$mail_address = parent::$protomap[$gremium][3];
+		
+		//mail data
+		//$newproto
+		$pdate = date_create($newproto['date']);
+		$members = $this->db->getMembers($gremium);
+		$leitung = (isset($newproto['management']) && isset($members[$newproto['management']]['name']) )? $members[$newproto['management']]['name'] : '';
+		$protokollv = (isset($newproto['protocol']) && isset($members[$newproto['protocol']]['name']) )? $members[$newproto['protocol']]['name'] : '';
+		
+		if (is_string($mail_address)){
+			$mailer->mail->addAddress($mail_address);
+		} elseif (is_array($mail_address)) {
+			foreach ($mail_address as $mail_addr){
+				$mailer->mail->addAddress($mail_addr);
+			}
+		}
+		
+		$mailer->mail->Subject = 'Info: Nächste '.ucfirst(strtolower($gremium)).' Sitzung: Leitung und Protokollierung';
+		
+		$mailer->bindVariables([
+			'committee' => $gremium,
+			'date' => $pdate,
+			'leitung' => $leitung,
+			'protokoll' => $protokollv,
+			'newproto' => $newproto,
+			'toolLink' => BASE_URL.BASE_SUBDIRECTORY
+		]);
+		
+		$mailer->setTemplate('newproto_info');
+		if($mailer->send(false, false, true, true)){
+			return true;
+		} else {
+			error_log('Es konnte keine Mail versendet werden. Prüfen Sie bitte die Konfiguration. '.((isset($mailer->mail) && isset($mailer->mail->ErrorInfo))? $mailer->mail->ErrorInfo: '' ));
+			return false;
+		}
+	}
+	
 	// ACTIONS =========================================================================
 	
 	/**
@@ -802,8 +852,16 @@ class InvitationController extends MotherController {
 				}
 			}
 			
+			$send_infomail = false;
+			
 			$nproto['gremium'] = $gremium['id'];
 			$nproto['date'] = $vali->getFiltered('date').' '.$vali->getFiltered('time').':00';
+			if (isset($nproto['management']) && $nproto['management'] != $memberLink['manag'] || (!isset($nproto['management']) || !$nproto['management']) && $memberLink['manag'] ){
+				$send_infomail = true;
+			}
+			if (isset($nproto['protocol']) && $nproto['protocol'] != $memberLink['proto'] || (!isset($nproto['protocol']) || !$nproto['protocol']) && $memberLink['proto'] ){
+				$send_infomail = true;
+			}
 			$nproto['management'] = $memberLink['manag'];
 			$nproto['protocol'] = $memberLink['proto'];
 			$nproto['hash'] = (isset($nproto['hash']) && $nproto['hash'])? $nproto['hash'] : md5($nproto['date'].date_create()->getTimestamp().$vali->getFiltered('committee').mt_rand(0, 640000));
@@ -842,6 +900,12 @@ class InvitationController extends MotherController {
 			}
 			
 			$stateLonMap = ['Geplant', 'Eingeladen', 'Erstellt'];
+
+			//send mail information
+			if($send_infomail){
+				$this->send_management_info_mail($nproto, $nproto['gname']);
+			}
+			
 			$out = [
 				'state' => 	$state,
 				'stateLong' => $stateLonMap[$state],
