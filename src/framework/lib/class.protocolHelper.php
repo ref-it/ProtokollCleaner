@@ -369,6 +369,8 @@ class protocolHelper extends protocolOut
 		//only fill preview or output
 		if (!$nopreview) $p->preview = self::generateDiffHeader();
 		
+		//
+		$lastEnumerationSpace = 0;
 		// parser main loop - loop throught $protocol lines
 		// create internal <==> external diff
 		foreach($p->text_a as $linenumber => $line){
@@ -397,7 +399,19 @@ class protocolHelper extends protocolOut
 					$writeUserText++;
 				}
 			}
-
+			//detect list && enummeration
+			$enumRe = '/^( *(\*|-))/';
+			$enumMatch = [];
+			preg_match($enumRe, $line, $enumMatch);
+			if (count($enumMatch) > 0 && !(strlen($enumMatch[0] -1 ) > (4 + $lastEnumerationSpace) ) && (strlen($enumMatch[0]) == 1 || strlen($enumMatch[0])%2==0) ){
+				$this->isLineError = true;
+				$this->lineError = "Wrong number of spaces on list or enumeration";
+				$p->parse_errors['f'][] = $this->lineError;
+				if (!$nopreview) $p->preview .= self::generateDiffErrorLine($line);
+				break;
+			}
+			$lastEnumerationSpace = (count($enumMatch) > 0)? strlen($enumMatch[0]) - 1 : 0;
+			
 			// detect nonpublic/internal parts
 			$matches = [];
 			$match = preg_match(self::$tagRegex, $line, $matches, PREG_OFFSET_CAPTURE, 0);

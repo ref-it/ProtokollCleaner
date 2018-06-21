@@ -1,0 +1,27 @@
+<?php 
+	$param = $param; 
+	$links = [];
+?>Protokollerinnerung - <?=  ucfirst(strtolower($param['gremium'])) . ' - ' . $param['date'] ?>
+
+=================================================
+
+Das Protokoll der Sitzung vom __<?= $param['date'] ?>__ wurde noch nicht<?= $param['group'] == 'not_handled'? ' als Entwurf':'' ?> veröffentlicht<?= $param['group'] == 'agreed_but_draft'? ', aber bereits abgestimmt':'' ?>.
+<?php if($param['member']) { ?> 
+Protokoll-Verantwortlicher: __<?php $param['member']['name']; ?>__
+<?php } ?>
+
+
+Unter diesem Link [<?php echo count($links); $links[] = $param['protoLink'] ?>] kann das schnell und einfach erledigt werden.
+
+Links
+----------------------
+
+<?php 
+	$c = strlen(''.count($links));
+	foreach ($links as $pos => $link){
+		echo '['.str_pad($pos, $c, "0", STR_PAD_LEFT).'] - '.$link."\n";
+	}
+?>
+
+
+(Diese Nachricht wurde automatisch vom <?= BASE_TITLE ?> generiert.)
