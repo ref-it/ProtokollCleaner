@@ -58,7 +58,7 @@
 		</div>
 		<div class="silmph_create_np btn btn-success mb-2">Neue Sitzung planen</div>
 		<h4>Stura - Mitglieder</h4>
-		<div class="silmph_memberbox<?= (checkUserPermission('admin'))?' editmember':''; ?>">
+		<div class="silmph_memberbox<?= (checkUserPermission('admin'))?' editmember':' viewmember'; ?>">
 			<button class="btn btn-secondary col-md-4  showtoggle" type="button" data-texttoggle="Verstecken">Anzeigen</button>
 			<ul class="list-group mt-1 mb-1">
 			<?php

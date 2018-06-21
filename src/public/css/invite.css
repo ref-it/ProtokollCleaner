@@ -321,6 +321,9 @@
 .silmph_memberbox:not(.editmember) {
 	display: none;
 }
+.silmph_memberbox.viewmember {
+	display: block;
+}
 .silmph_memberbox:not(.showlist) > ul,
 .silmph_memberbox:not(.showlist) > div {
 	display: none;
