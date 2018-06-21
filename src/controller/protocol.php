@@ -420,9 +420,13 @@ class ProtocolController extends MotherController {
 				$newresoid = $this->db->createResolution($reso);
 				//Update protocols -> set agreed on resolution
 				if ($newresoid){
-					foreach ($reso['p_link_date'] as $resoDate){
-						$this->db->updateProtocolSetAgreed($newresoid, $gremium['id'], $resoDate);
+					if (isset($reso['p_link_date']) && is_array($reso['p_link_date'])){
+						foreach ($reso['p_link_date'] as $resoDate){
+							$this->db->updateProtocolSetAgreed($newresoid, $gremium['id'], $resoDate);
+						}
 					}
+				} else {
+					error_log('429: protocol.php --- undefined index: p_link_date'."\n\t".print_r($reso));
 				}
 			}
 			//---------------------------------
