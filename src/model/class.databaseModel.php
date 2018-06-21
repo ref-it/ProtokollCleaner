@@ -285,6 +285,21 @@ class DatabaseModel extends Database
 	}
 	
 	/**
+	 * return committee array of all committees
+	 * @return array committee list
+	 */
+	public function getCommitteeList( ){
+		$sql = "SELECT * FROM `".TABLE_PREFIX."gremium` G";
+		$result = $this->getResultSet($sql);
+	
+		$g = [];
+		foreach ($result as $grm){
+			$g[] = $grm;
+		}
+		return $g;
+	}
+	
+	/**
 	 * return committee array if exists
 	 * @param string $committeeName committee (gremium) name
 	 * @return array committee element
