@@ -58,11 +58,11 @@ $routes = [
  */
 $cronRoutes = [
 	'GET' => [
-		'todo/manifest'	=> ['',				'todo', 		'manifest'],
-		'cron'			=> ['croninfo',		'cron', 		'info' , 'This Page'],
+		'todo/manifest'			=> 	['',				'todo', 		'manifest', ''],
+		'cron'					=> 	['croninfo',		'cron', 		'info' , 	'This Page'],
 	],
 	'POST' => [
-		'cron/mail'		=> ['cronmail',		'cron', 		'mail' , 'Trigger auto mail creation.<br><strong>Suggestion: hourly</strong>'],
+		'cron/mail'		=> ['cronmail',		'cron', 		'mail' , 'Trigger auto mail creation. (Invitation + Remember)<br><strong>Suggestion: hourly</strong>'],
 		'cron/wiki'		=> ['cronwiki',		'cron', 		'wiki' , 'Writes resolution list to wiki.<br><strong>Suggestion: daily 2:00am</strong>' ],
 	]
 ];
@@ -105,7 +105,7 @@ $permission_map = [
 	'baseaccess' 	=> SIMPLESAML_ACCESS_GROUP,
 	'admin' 		=> 'konsul,admin',
 	'crawler' 		=> 'konsul,admin',
-	'dev' 			=> 'ref-it,konsul,admin',
+	'dev' 			=> 'ref-it,konsul,admin,dev',
 	'protolist' 	=> 'sgis',
 	'resolist' 		=> 'sgis',
 	'resotowiki' 	=> 'konsul,admin',
