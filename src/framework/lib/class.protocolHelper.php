@@ -405,7 +405,7 @@ class protocolHelper extends protocolOut
 			preg_match($enumRe, $line, $enumMatch);
 			if (count($enumMatch) > 0 && !(strlen($enumMatch[0] -1 ) > (4 + $lastEnumerationSpace) ) && (strlen($enumMatch[0]) == 1 || strlen($enumMatch[0])%2==0) ){
 				$this->isLineError = true;
-				$this->lineError = "Wrong number of spaces on list or enumeration";
+				$this->lineError = "Ungültige Anzahl an Leerzeichen in Liste oder Aufzählung. Beachte die Anzahl muss durch 2 teilbar sein.";
 				$p->parse_errors['f'][] = $this->lineError;
 				if (!$nopreview) $p->preview .= self::generateDiffErrorLine($line);
 				break;
