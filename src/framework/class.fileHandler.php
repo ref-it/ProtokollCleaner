@@ -1095,12 +1095,13 @@ class FileHandler extends MotherController {
 
 	/**
 	 * ACTION upload / store file
-	 * Notice: to do permission control, check permissions on seperat controller and call this cantroller if all went well
+	 * Notice: to do permission control, check permissions on seperat controller and call this controller if all went well
 	 *
-	 * @param $link link id
+	 * @param integer $link link id
+	 * @param string $base_key $_FILES key default: file
 	 * @return array keys: success:bool, errors:array of string, filecounter:int, fileinfo:array
 	 */
-	public function upload($link){
+	public function upload($link, $base_key = 'file'){
 		$result = [
 			'success' => true,
 			'error' => [],
@@ -1115,19 +1116,19 @@ class FileHandler extends MotherController {
 		}
 		if (!isset($_FILES)
 			|| count($_FILES) == 0
-			|| !isset($_FILES['file'])
-			|| !isset($_FILES['file']['error'])
-			|| !isset($_FILES['file']['name'])
-			|| count($_FILES['file']['name']) == 0){
+			|| !isset($_FILES[$base_key])
+			|| !isset($_FILES[$base_key]['error'])
+			|| !isset($_FILES[$base_key]['name'])
+			|| count($_FILES[$base_key]['name']) == 0){
 			return $result;
 		}
 
 		//handle fileupload === CHECK FILES ===================================
 		if (!isset($_POST['nofile']) && isset($_FILES) && count($_FILES) > 0 &&
-			isset($_FILES['file']) &&
-			isset($_FILES['file']['error']) &&
-			isset($_FILES['file']['name']) &&
-			count($_FILES['file']['name']) > 0 ){
+			isset($_FILES[$base_key]) &&
+			isset($_FILES[$base_key]['error']) &&
+			isset($_FILES[$base_key]['name']) &&
+			count($_FILES[$base_key]['name']) > 0 ){
 
 			$tmp_attach = NULL;
 			$files = array();
@@ -1137,17 +1138,17 @@ class FileHandler extends MotherController {
 				$result['error'][] = 'Too many simultaneous Files on Upload.';
 			} else {
 				// check files
-				foreach ( $_FILES['file']['name'] as $id => $filename ){
+				foreach ( $_FILES[$base_key]['name'] as $id => $filename ){
 					// ERROR HANDLING ===========================================================
 					// is no uploaded file ---------------------------------------
-					if(!is_uploaded_file($_FILES['file']['tmp_name'][$id])){
+					if(!is_uploaded_file($_FILES[$base_key]['tmp_name'][$id])){
 						error_log('SECURITY ALERT: Try to save nonuploaded file.');
 						$result['error'][] = 'Es wird versucht eine nicht hochgeladene Datei zu speichern.';
 						continue;
 					}
 					// file error ------------------------------------------------
-					if ($_FILES['file']['error'][$id] != UPLOAD_ERR_OK){
-						switch ($_FILES['file']['error'][$id]){
+					if ($_FILES[$base_key]['error'][$id] != UPLOAD_ERR_OK){
+						switch ($_FILES[$base_key]['error'][$id]){
 							case UPLOAD_ERR_INI_SIZE:
 								$result['error'][] = "Die hochgeladene Datei überschreitet die in der Anweisung upload_max_filesize in php.ini festgelegte Größe.";
 								break;
@@ -1170,26 +1171,26 @@ class FileHandler extends MotherController {
 								$result['error'][] = "Eine PHP Erweiterung hat den Upload der Datei gestoppt. ";
 								break;
 							default:
-								$result['error'][] = "Undefinierter upload Fehler. ID: ". $_FILES['file']['error'][$id];
+								$result['error'][] = "Undefinierter upload Fehler. ID: ". $_FILES[$base_key]['error'][$id];
 								break;
 						}
 						continue;
 					}
 					// file size -------------------------------------------------
-					if ($_FILES['file']['size'][$id] > UPLOAD_MAX_SIZE){
+					if ($_FILES[$base_key]['size'][$id] > UPLOAD_MAX_SIZE){
 						$result['error'][] = 'Datei ist zu groß';
 						continue;
 					}
 
 					$file = new File();
 					$vali = new Validator();
-					$pathinfo = pathinfo($_FILES['file']['name'][$id]);
+					$pathinfo = pathinfo($_FILES[$base_key]['name'][$id]);
 
 					// added on, set in database, or dbModel
 					$file->added_on = NULL;
 
 					// filename
-					$tmp_name = $_FILES['file']['tmp_name'][$id];
+					$tmp_name = $_FILES[$base_key]['tmp_name'][$id];
 					$vali->V_filename($pathinfo['filename']);
 					$pathinfo['filename'] = $vali->getIsError() ? $tmp_name : $vali->getFiltered();
 					$file->filename = $pathinfo['filename'];
@@ -1214,7 +1215,7 @@ class FileHandler extends MotherController {
 					}
 
 					// size
-					$file->size = $_FILES['file']['size'][$id];
+					$file->size = $_FILES[$base_key]['size'][$id];
 
 					// mime + fileextension
 					$ext1 = isset($pathinfo['extension']) ? $pathinfo['extension'] : '';
@@ -1231,7 +1232,7 @@ class FileHandler extends MotherController {
 					$file->fileextension = $ext1;
 
 					$finfo = new finfo(FILEINFO_MIME_TYPE);
-					$mime = $finfo->file($_FILES['file']['tmp_name'][$id]);
+					$mime = $finfo->file($_FILES[$base_key]['tmp_name'][$id]);
 					if ($mime){
 						$file->mime = $mime;
 						$ext2 = self::extensionFromMime($mime);
@@ -1260,7 +1261,7 @@ class FileHandler extends MotherController {
 					// encoding
 					if ($file->mime && mb_substr($file->mime, 0, 5) == 'text/'){
 						$finfo2 = new finfo(FILEINFO_MIME_ENCODING);
-						$enc = $finfo->file($_FILES['file']['tmp_name'][$id]);
+						$enc = $finfo->file($_FILES[$base_key]['tmp_name'][$id]);
 						if ($enc){
 							$file->encoding = $enc;
 						}
