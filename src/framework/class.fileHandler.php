@@ -1127,6 +1127,7 @@ class FileHandler extends MotherController {
 		if (!isset($_POST['nofile']) && isset($_FILES) && count($_FILES) > 0 &&
 			isset($_FILES[$base_key]) &&
 			isset($_FILES[$base_key]['error']) &&
+			is_array($_FILES[$base_key]['error']) &&
 			isset($_FILES[$base_key]['name']) &&
 			count($_FILES[$base_key]['name']) > 0 ){
 
