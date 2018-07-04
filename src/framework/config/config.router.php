@@ -62,8 +62,8 @@ $cronRoutes = [
 		'cron'					=> 	['croninfo',		'cron', 		'info' , 	'This Page'],
 	],
 	'POST' => [
-		'cron/mail'		=> ['cronmail',		'cron', 		'mail' , 'Trigger auto mail creation. (Invitation + Remember)<br><strong>Suggestion: hourly</strong>'],
-		'cron/wiki'		=> ['cronwiki',		'cron', 		'wiki' , 'Writes resolution list to wiki.<br><strong>Suggestion: daily 2:00am</strong>' ],
+		'cron/mail'		=> ['cronmail',		'cron', 		'mail' , 'Trigger auto mail creation. (Invitation + Remember)<br><strong>Suggestion: hourly</strong><br><strong>Example: </strong><span>curl --netrc-file cron_protocol_tool.netrc -X POST '.BASE_URL.BASE_SUBDIRECTORY.'cron/mail'],
+		'cron/wiki'		=> ['cronwiki',		'cron', 		'wiki' , 'Writes resolution list to wiki.<br><strong>Suggestion: daily 2:00am</strong><br><strong>Example: </strong><span>curl --netrc-file cron_protocol_tool.netrc -X POST '.BASE_URL.BASE_SUBDIRECTORY.'cron/wiki' ],
 	]
 ];
 
@@ -80,7 +80,7 @@ $navigation = [
 	'protolist' => ['protolist', 	'Protokolle', 		'&#xf266;',		''],
 	'reso/list' => ['resolist', 	'Beschlussliste', 	'&#xf0cb;',		''],
 	'todo/list' => ['todolist', 	'Todos', 			'&#xf046;',		''],
-	'invite'	=> ['invitebase', 	'Sitzungseinladung', '&#xf0e0;',	''],
+	'invite'	=> ['invitebase', 	'Sitzung',			'&#xf0e0;',		''],
 	'https://stura.tu-ilmenau.de/impressum' => ['baseaccess', 'Impressum', '&#xf129;', NULL],
 	'https://www.tu-ilmenau.de/impressum/datenschutz/' => ['baseaccess', 'Datenschutz', '&#xf1c0;', NULL],
 ];
