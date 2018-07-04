@@ -128,7 +128,7 @@ class protocolOut
 		echo '<span class="date"><span>Protokoll vom:</span><span data-name="'.$p->name.'">'.$p->date->format('d.m.Y').'</span></span>';
 		echo '<span class="state"><span>Status:</span><span>'.
 			(($p->id == NULL)? 'Nicht öffentlich': 
-			(($p->draft_url!=NULL)?'Entwurf öffentlicht':
+			(($p->draft_url!=NULL)?'Entwurf öffentlich':
 			(($p->public_url!=NULL)?'Veröffentlicht':'Unbekannt'))).'</span></span>';
 		if ($p->ignore) echo '<span class="state2"><span>IGNORIERT</span><span>(Nicht beschlussfähig)</span></span>';
 		echo '<span class="legislatur"><span>Legislatur:</span><span>'.
