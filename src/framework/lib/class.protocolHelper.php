@@ -122,8 +122,8 @@ class protocolHelper extends protocolOut
 	private $isLineError = false;
 	private $lineError = '';
 	
-	private static $tagRegex = '/(({{tag>[a-zA-Z0-9]+(_[a-zA-Z0-9]+)*([ ]*[a-zA-Z0-9]+(_[a-zA-Z0-9]+)*)*( )*}}|=(=)+( )*geschlossen(d?)er( *)Teil( )*=(=)+|=(=)+( )*Nicht( *)(ö|Ö)ffentlich(t?)er( *)Teil( )*=(=)+|=(=)+( )*interner( *)Teil( )*=(=)+|=(=)+( )*(ö|Ö)ffentlicher( *)Teil( )*=(=)+)+)/i';
-	private static $oldTags = ['/^(=(=)+( )*geschlossen(d?)er( *)Teil( )*=(=)+|=(=)+( )*interner( *)Teil( )*=(=)+|=(=)+( )*Nicht( *)(ö|Ö)ffentlich(t?)er( *)Teil( )*=(=)+)$/i', '/^=(=)+( )*(ö|Ö)ffentlicher Teil( )*=(=)+$/i'];
+	private static $tagRegex = '/(({{tag>[a-zA-Z0-9]+(_[a-zA-Z0-9]+)*([ ]*[a-zA-Z0-9]+(_[a-zA-Z0-9]+)*)*( )*}}|=(=)+( )*geschlossen(d?)er( *)Teil( )*=(=)+|=(=)+( )*Nicht(( |-)*)(ö|Ö)ffentlich(t?)er( *)Teil( )*=(=)+|=(=)+( )*interner( *)Teil( )*=(=)+|=(=)+( )*(ö|Ö)ffentlicher( *)Teil( )*=(=)+)+)/i';
+	private static $oldTags = ['/^(=(=)+( )*geschlossen(d?)er( *)Teil( )*=(=)+|=(=)+( )*interner( *)Teil( )*=(=)+|=(=)+( )*Nicht(( |-)*)(ö|Ö)ffentlich(t?)er( *)Teil( )*=(=)+)$/i', '/^=(=)+( )*(ö|Ö)ffentlicher Teil( )*=(=)+$/i'];
 	private static $ignoreTags = [];
 	
 	private static $monthReplaceMap = [
