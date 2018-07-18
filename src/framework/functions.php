@@ -82,7 +82,7 @@ if (!function_exists('generateRandomString')){
 	 */
 	function generateRandomString($length) {
 		if (!is_int($length)){
-			throwException('Invalid argument type. Integer expected.');
+			throw new Exception('Invalid argument type. Integer expected.');
 			return null;
 		}
 		if (version_compare(PHP_VERSION, '7.0.0') >= 0){
