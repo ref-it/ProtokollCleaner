@@ -308,16 +308,17 @@ class Validator {
 				return !$this->setError(true, 200, $msg, 'float to big');
 			}
 			if (isset($params['step'])){
-				$mod = $params['step'];
+			$mod = $params['step'];
 				$cv = $v;
+				$ex = '';
 				if (($p = strpos($mod , '.'))!== false){
 					$ex = strlen(substr($params['step'], $p + 1));
 					$ex = (pow(10, $ex));
 					$mod = $mod * $ex;
 					$cv = $cv * $ex;
 				}
-				
-				if ((is_numeric( $cv ) && floor( $cv ).'' != $cv.'') || $cv % $mod != 0){
+				$k = strlen($ex);
+				if ((is_numeric( $cv ) && mb_strpos($value, '.') + ($k) < mb_strlen($value)) || $cv % $mod != 0){
 					$msg = (isset($params['error']))? $params['error'] : "float invalid step" ;
 					return !$this->setError(true, 200, $msg, 'float invalid step');
 				}
@@ -344,8 +345,14 @@ class Validator {
 	 *
 	 * params:
 	 *  KEY  1-> single value, 2-> key value pair
-	 * 	strip 	1
-	 * 	trim 	1
+	 * 	strip 				1
+	 * 	trim 				1
+	 *  htmlspecialchars	1
+	 *  htmlentities 		1
+	 *  minlength 2		minimum string length
+	 *  maxlength 2		maximum string length - default 127, set -1 for unlimited value
+	 *  error	  2 	replace whole error message on error case
+	 *  empty	  1 	allow empty value
 	 *
 	 * @param $value
 	 * @param $params
@@ -353,15 +360,36 @@ class Validator {
 	 */
 	public function V_text($value, $params = []) {
 		if (!is_string($value)){
-			return !$this->setError(true, 200, 'No Text', 'No Text');
+			$msg = "No Text";
+			if (isset($params['error'])) $msg = $params['error'];
+			return !$this->setError(true, 200, $msg, 'No Text');
 		} else {
+			if (in_array('empty', $params, true) && $value === ''){
+				$this->filtered = '';
+				return !$this->setError(false);
+			}
 			$s = ''.$value;
-	
 			if (in_array('strip', $params, true) ){
 				$s = strip_tags($s);
 			}
+			if (in_array('htmlspecialchars', $params, true)){
+				$s = htmlspecialchars($s);
+			}
+			if (in_array('htmlentities', $params, true)){
+				$s = htmlentities($s);
+			}
 			if (in_array('trim', $params, true)){
 				$s = trim($s);
+			}
+			if (isset($params['minlength']) && strlen($s) < $params['minlength']){
+				$msg = "The text is too short (Minimum length: {$params['minlength']})";
+				if (isset($params['error'])) $msg = $params['error'];
+				return !$this->setError(true, 200, $msg, 'text validation failed - too short');
+			}
+			if (isset($params['maxlength']) && $params['maxlength'] != -1 && strlen($s) > $params['maxlength']){
+				$msg = "The text is too long (Maximum length: {$params['maxlength']})";
+				if (isset($params['error'])) $msg = $params['error'];
+				return !$this->setError(true, 200, $msg, 'text validation failed - too long');
 			}
 			$this->filtered = $s;
 			return !$this->setError(false);
@@ -932,7 +960,7 @@ class Validator {
 	public function V_iban($value, $params){
 		$iban = trim(strip_tags(''.$value));
 		$iban = strtoupper($iban); // to upper
-		$iban = str_replace(' ', '', $iban); //remove spaces
+		$iban = preg_replace('/(\s|\n|\r)/', '', $iban); //remove white spaces
 		//empty
 		if (in_array('empty', $params, true) && $iban === ''){
 			$this->filtered = $iban;

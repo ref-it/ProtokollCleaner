@@ -166,7 +166,7 @@ class ResolutionController extends MotherController
 		$perm = 'stura';
 		
 		//access permission
-		if (!checkUserPermission($perm)) {
+		if (!checkUserPermission($perm)&&!checkUserPermission('cronwiki')) {
 			$this->json_access_denied();
 		}
 		

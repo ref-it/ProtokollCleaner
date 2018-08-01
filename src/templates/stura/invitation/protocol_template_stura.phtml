@@ -218,7 +218,7 @@
 <?php 
 	foreach ($param['openProtocols']['notAgreed'] as $prot){
 		$newproto = (isset($param['openProtocols']['newproto'][$prot['date']]))?$param['openProtocols']['newproto'][$prot['date']]: NULL;
-		echo "\n  * [[".$param['protoInternLink'] . $prot['name']."|Protokoll vom ".$prot['name']."]] Protokollverantwortliche*r: [[:person:".((isset($newproto['management']))?$param['members'][$newproto['management']]['name']:'XXX')."]]";
+		echo "\n  * [[".$param['protoInternLink'] . $prot['name']."|Protokoll vom ".$prot['name']."]] Protokollverantwortliche*r: [[:person:".((isset($newproto['protocol']))?$param['members'][$newproto['protocol']]['name']:'XXX')."]]";
 	}
 	echo "\n";
 	foreach ($param['openProtocols']['notAgreed'] as $prot){

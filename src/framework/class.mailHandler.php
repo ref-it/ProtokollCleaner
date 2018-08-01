@@ -124,7 +124,11 @@ class MailHandler
 		$this->mail->setFrom($settings['MAIL_FROM'], $settings['MAIL_FROM_ALIAS']);
 		
 		if ($this->logoImagePath){
-			$this->mail->AddEmbeddedImage(FRAMEWORK_PATH.$this->logoImagePath, "logoattach", "mailLogo.png");
+			$ext = '.png';
+			if (pathinfo($this->logoImagePath, PATHINFO_EXTENSION)){
+				$ext = '.'.pathinfo($this->logoImagePath, PATHINFO_EXTENSION);
+			}
+			$this->mail->AddEmbeddedImage(FRAMEWORK_PATH.$this->logoImagePath, "logoattach", "mailLogo".$ext);
 		}
 		
 		$this->mail->isHTML(true);							// Set email format to HTML	
