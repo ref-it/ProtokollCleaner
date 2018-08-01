@@ -46,6 +46,7 @@ $last_proto_id = 0;
 $week_reso_reset = false;
 
 foreach ($param['reso'] as $pos => $reso){
+	$week_reso_reset = false;
 	$legislatur = substr($reso['r_tag'], 0, strpos($reso['r_tag'], '/'));
 	$week = substr($reso['r_tag'], strpos($reso['r_tag'], '/') + 1);
 	$week = substr($week, 0, strpos($week, '-'));
