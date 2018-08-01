@@ -3,8 +3,8 @@ XSendFile On
 
 RewriteEngine on
 RewriteCond %{REQUEST_URI} ^/files/get/filestorage/.*$
-RewriteRule . index.php [L]
+RewriteRule (.*)$ index.php [L]
 
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule (.*)$  index.php/$1 [L]
+RewriteRule (.*)$ index.php/$1 [L]
