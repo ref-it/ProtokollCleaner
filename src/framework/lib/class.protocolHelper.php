@@ -343,7 +343,9 @@ class protocolHelper extends protocolOut
 		$count = [];
 		foreach ($p->resolutions as $pos => $reso){
 			$count[$reso['type_short']] = (isset($count[$reso['type_short']])? $count[$reso['type_short']]+1: 1);
-			$p->resolutions[$pos]['r_tag'] = "$legislatur/{$p->legislatur_week}-{$reso['type_short']}".str_pad($count[$reso['type_short']], 2, '0', STR_PAD_LEFT);
+			$extra1 = (intval($p->date->format('w'))-3);
+			$extra2 = ($p->date->format('w')!='3')? '-'.(($extra1>=0)?'X':'X-').$extra1 : '';
+			$p->resolutions[$pos]['r_tag'] = "$legislatur/{$p->legislatur_week}{$extra2}-{$reso['type_short']}".str_pad($count[$reso['type_short']], 2, '0', STR_PAD_LEFT);
 		}
 	}
 	
