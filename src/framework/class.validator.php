@@ -308,16 +308,17 @@ class Validator {
 				return !$this->setError(true, 200, $msg, 'float to big');
 			}
 			if (isset($params['step'])){
-				$mod = $params['step'];
+			$mod = $params['step'];
 				$cv = $v;
+				$ex = '';
 				if (($p = strpos($mod , '.'))!== false){
 					$ex = strlen(substr($params['step'], $p + 1));
 					$ex = (pow(10, $ex));
 					$mod = $mod * $ex;
 					$cv = $cv * $ex;
 				}
-				
-				if ((is_numeric( $cv ) && floor( $cv ).'' != $cv.'') || $cv % $mod != 0){
+				$k = strlen($ex);
+				if ((is_numeric( $cv ) && mb_strpos($value, '.') + ($k) < mb_strlen($value)) || $cv % $mod != 0){
 					$msg = (isset($params['error']))? $params['error'] : "float invalid step" ;
 					return !$this->setError(true, 200, $msg, 'float invalid step');
 				}
@@ -959,7 +960,7 @@ class Validator {
 	public function V_iban($value, $params){
 		$iban = trim(strip_tags(''.$value));
 		$iban = strtoupper($iban); // to upper
-		$iban = str_replace(' ', '', $iban); //remove spaces
+		$iban = preg_replace('/(\s|\n|\r)/', '', $iban); //remove white spaces
 		//empty
 		if (in_array('empty', $params, true) && $iban === ''){
 			$this->filtered = $iban;
