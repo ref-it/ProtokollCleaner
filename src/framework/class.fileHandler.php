@@ -1284,12 +1284,6 @@ class FileHandler extends MotherController {
 				// check files
 				foreach ( $_FILES[$base_key]['name'] as $id => $filename ){
 					// ERROR HANDLING ===========================================================
-					// is no uploaded file ---------------------------------------
-					if(!is_uploaded_file($_FILES[$base_key]['tmp_name'][$id])){
-						error_log('SECURITY ALERT: Try to save nonuploaded file.');
-						$result['error'][] = 'Es wird versucht eine nicht hochgeladene Datei zu speichern.';
-						continue;
-					}
 					// file error ------------------------------------------------
 					if ($_FILES[$base_key]['error'][$id] != UPLOAD_ERR_OK){
 						switch ($_FILES[$base_key]['error'][$id]){
@@ -1318,6 +1312,12 @@ class FileHandler extends MotherController {
 								$result['error'][] = "Undefinierter upload Fehler. ID: ". $_FILES[$base_key]['error'][$id];
 								break;
 						}
+						continue;
+					}
+					// is no uploaded file ---------------------------------------
+					if(!is_uploaded_file($_FILES[$base_key]['tmp_name'][$id])){
+						error_log('SECURITY ALERT: Try to save nonuploaded file.');
+						$result['error'][] = 'Es wird versucht eine nicht hochgeladene Datei zu speichern.';
 						continue;
 					}
 					// file size -------------------------------------------------
@@ -1526,7 +1526,7 @@ class FileHandler extends MotherController {
 	 * test if server supports xsendfile headers (mod_xsendfile)
 	 */
 	public static function hasModXSendfile() {
-		if (!UPLOAD_MOD_XSENDFILE){
+		if (!defined('UPLOAD_MOD_XSENDFILE')||!UPLOAD_MOD_XSENDFILE){
 			return false;
 		} elseif (UPLOAD_MOD_XSENDFILE == 2){
 			return true;
