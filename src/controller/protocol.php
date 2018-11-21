@@ -424,6 +424,8 @@ class ProtocolController extends MotherController {
 						foreach ($reso['p_link_date'] as $resoDate){
 							$this->db->updateProtocolSetAgreed($newresoid, $gremium['id'], $resoDate);
 						}
+					} else {
+						error_log('429_1: protocol.php --- undefined index: p_link_date, skip setAgreed'."\n\t".print_r($reso));
 					}
 				} else {
 					error_log('429: protocol.php --- undefined index: p_link_date'."\n\t".print_r($reso));
