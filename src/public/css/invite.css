@@ -352,6 +352,7 @@
 .silmph_edit .silmph_texteditor > textarea,
 .silmph_edit .silmph_texteditor div > .CodeMirror{
 	border: 1px solid #777;
+	z-index: 1;
 }
 .silmph_edit .silmph_texteditor .CodeMirror-fullscreen{
 	z-index: 10;
