@@ -420,7 +420,7 @@
 		              label: '<i class="fa fa-fw fa-users" title="Stura Extern"></i>E',
 		              callback: function (cm) {
 		                  var selection = cm.getSelection();
-		                  cm.replaceSelection("{{template>:vorlagen:stimmen|Titel=Der StuRa beschließt eine Risikofinanzierung in Höhe von XXX EUR für das Projekt YYY entsprechend der Förderrichtlinie und der Kreditrichtlinie des Studierendenrates sowie dem vorliegenden Finanzplan. Davon werden ZZZ EUR als Vorkasse ausgezahlt.|J=|N=|E=|S=angenommen oder abgelehnt}}" + selection);
+		                  cm.replaceSelection("{{template>:vorlagen:stimmen|Titel=Der StuRa beschließt eine Risikofinanzierung in Höhe von XXX EUR für das Projekt YYY vom DD.MM.YYYY bis zum DD.MM.YYYY entsprechend der Förderrichtlinie und der Kreditrichtlinie des Studierendenrates sowie dem vorliegenden Finanzplan. Davon werden ZZZ EUR als Vorkasse ausgezahlt.|J=|N=|E=|S=angenommen oder abgelehnt}}" + selection);
 		                  if (!selection) {
 		                      var cursorPos = cm.getCursor();
 		                      cm.setCursor(cursorPos.line, cursorPos.ch - 285);
