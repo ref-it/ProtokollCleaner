@@ -35,7 +35,7 @@ Weitere Informationen:
 Tagesordnung
 ------------
 
-<?php if ($param['unreconciled_protocols']['notAgreed']){
+<?php if (is_array($param['unreconciled_protocols']) && isset($param['unreconciled_protocols']['notAgreed']) && $param['unreconciled_protocols']['notAgreed']){
 	echo '  * Protokollkontrolle';
 	foreach ($param['unreconciled_protocols']['notAgreed'] as $prot){
 		$tmplink = (($prot['draft_url'])?
@@ -83,7 +83,7 @@ Solltet Ihr zum Zeitpunkt der Sitzung verhindert sein, meldet euch bitte rechtze
 
 Solltet Ihr zum Zeitpunkt der Sitzung verhindert sein und eine AG, ein Referat leiten oder einen FSR vertreten, tragt bitte eure Berichte aus diesen Gremien vor.
 
-<?php if (count($param['unreconciled_protocols']['draftState'])){ ?>
+<?php if (is_array($param['unreconciled_protocols']) && isset($param['unreconciled_protocols']['draftState']) && count($param['unreconciled_protocols']['draftState'])){ ?>
 ___
 
 Erinnerung

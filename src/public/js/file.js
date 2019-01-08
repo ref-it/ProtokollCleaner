@@ -268,7 +268,7 @@
 				ignoreHiddenFiles: true,
 				maxFiles: 20,
 				parallelUploads: 1,
-				acceptedFiles: 'image/*,application/pdf,application/gzip,.doc,.xls,.docx,.xlsx,.txt,.odt,.csv,.css,.rtx,.xml,.tsv,.conf,.c,.h,.cpp,.hpp,.mp3,.wma,.acc,.wmv,.mp4,.tar,.zip,.css,.gtar,.ustar,.README',
+				acceptedFiles: 'image/*,application/pdf,application/gzip,.doc,.xls,.docx,.xlsx,.txt,.odt,.ods,.csv,.css,.rtx,.xml,.tsv,.conf,.c,.h,.cpp,.hpp,.mp3,.wma,.acc,.wmv,.mp4,.tar,.zip,.css,.gtar,.ustar,.README',
 				autoProcessQueue: true,
 				addRemoveLinks: true,
 				hiddenInputContainer: 'body',

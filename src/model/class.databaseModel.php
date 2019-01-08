@@ -1620,8 +1620,14 @@ class DatabaseModel extends Database
 	 * @return integer affected rows
 	 */
 	public function deleteFiledataById($id){
-		$sql = "DELETE FROM `".TABLE_PREFIX."filedata` WHERE `id` = ?;";
-		$this->protectedInsert($sql, 'i', [$id]);
+		$sql = "UPDATE `".TABLE_PREFIX."fileinfo` SET
+			`data` = NULL
+		WHERE `data` = ?";
+		$this->protectedInsert($sql, 'i', [id]);
+		if (!$this->isError()) {
+			$sql = "DELETE FROM `" . TABLE_PREFIX . "filedata` WHERE `id` = ?;";
+			$this->protectedInsert($sql, 'i', [$id]);
+		}
 		return !$this->isError();
 	}
 	

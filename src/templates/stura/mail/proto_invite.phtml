@@ -1,4 +1,4 @@
-<?php 
+<?php
 	$param = $param;
 	$links = [];
 ?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional //EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><!--[if IE]><html xmlns="http://www.w3.org/1999/xhtml" class="ie"><![endif]--><!--[if !IE]><!--><html style="margin: 0;padding: 0;" xmlns="http://www.w3.org/1999/xhtml"><!--<![endif]--><head>
@@ -79,7 +79,7 @@
 	<h3>Tagesordnung</h3>
 	<p>
 		<ul>
-			<?php if ($param['unreconciled_protocols']['notAgreed']){
+			<?php if (is_array($param['unreconciled_protocols']) && isset($param['unreconciled_protocols']['notAgreed']) && $param['unreconciled_protocols']['notAgreed']){
 				echo '<li>Protokollkontrolle<ul>';
 				foreach ($param['unreconciled_protocols']['notAgreed'] as $prot){
 					$tmplink = (($prot['draft_url'])? 
@@ -94,7 +94,7 @@
 				}
 				echo '</ul></li>';
 			}?>
-			<?php 
+			<?php
 				$resortcounter = 0;
 				$topcounter = 1;
 				foreach ($param['tops'] as $top){
@@ -126,12 +126,12 @@
 	<p>Desweiteren können Referate, AGs und Angestellte ihre Berichte <a href="<?= $param['topLink'] ?>">hier [<?php echo count($links); $links[] = $param['topLink'] ?>]</a> noch bis zur Sitzung vortragen. Dort befinden sich auch vorgetragene Referatberichte.</p>
 	<p>Solltet Ihr zum Zeitpunkt der Sitzung verhindert sein, meldet euch bitte rechtzeitig ab und hinterlegt gegebenenfalls für geplante Abstimmungen eine schriftliche Stimme.</p>
 	<p>Solltet Ihr zum Zeitpunkt der Sitzung verhindert sein und eine AG, ein Referat leiten oder einen FSR vertreten, tragt bitte eure Berichte aus diesen Gremien vor.</p>
-	<?php if (count($param['unreconciled_protocols']['draftState'])){ ?>
+	<?php if (is_array($param['unreconciled_protocols']) && isset($param['unreconciled_protocols']['draftState']) && count($param['unreconciled_protocols']['draftState'])){ ?>
 	<p>&#8212;</p>
 	<h4>Erinnerung</h4>
 	<p>Folgende Protokolle wurden noch nicht (endgültig) veröffentlicht, wurden aber bereits abgestimmt:</p>
 	<ul>
-	<?php 
+	<?php
 	foreach ($param['unreconciled_protocols']['draftState'] as $prot){
 		$tmplink = (($prot['draft_url'])?
 			$param['protoPublicLink'] . $prot['draft_url'] :
@@ -149,7 +149,7 @@
 	<hr>
 	<h3>Links</h3>
 	<p>
-	<?php 
+	<?php
 		$c = strlen(''.count($links));
 		foreach ($links as $pos => $link){
 			echo '['.str_pad($pos, $c, "0", STR_PAD_LEFT).'] - <a href="'.$link.'">'.$link.'</a><br>';
