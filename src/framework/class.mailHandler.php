@@ -296,6 +296,46 @@ class MailHandler
 	}
 	
 	/**
+	 * send mail with phpmailer
+	 * load mailtemplate, bind variables, and send mail with them
+	 * @param string $echo echo mail status messages
+	 * @param string $toSessionMessage store mail statusmessages to session (messagesystem)
+	 * @param string $suppressOKMsg if $toSesstionMessage isset, suppress messages on success
+	 * @param string $showPhpmailError show phpmailer errormessages in echo/SessionMessage/error_log
+	 */
+	public function debugRender(){
+		$out = [
+			'txt' => NULL,
+			'html' => NULL,
+			'errors' => [],
+		];
+
+		if (!$this->initOk){
+			$out['errors'] = 'Mailinitialisierung fehlgeschlagen. Bitte Informieren Sie den Webseitenbetreiber über diesen Fehler.';
+			return $out;
+		} else if ($this->templateName == ''){
+			$out['errors'] = 'Kein Mail-Template gewählt. Bitte Informieren Sie den Webseitenbetreiber über diesen Fehler.';
+			return $out;
+		} else if (!file_exists(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".txt") &&
+				   !file_exists(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".phtml") &&
+				   !file_exists(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".txt.phtml")){
+			$out['errors'] = 'Mail-Template konnte nicht gefunden werden. Bitte Informieren Sie den Webseitenbetreiber über diesen Fehler.';
+			return $out;
+		} else {
+			//bind template
+			if (file_exists(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".txt")){
+				$out['txt'] = self::renderTXT(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".txt", $this->templateVars);
+			} elseif (file_exists(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".txt.phtml")){
+				$out['txt'] = self::renderPHTML(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".txt.phtml", $this->templateVars);
+			}
+			if (file_exists(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".phtml")){
+				$out['html'] = self::renderPHTML(dirname(__FILE__)."/../templates/".TEMPLATE."/mail/".$this->templateName.".phtml", $this->templateVars);
+			}
+			return $out;
+		}
+	}
+	
+	/**
 	 * debug SMTP settings
 	 * @param array $settings
 	 * @param function $out function($message, $add_emptyline_suffix = false, $bold = false, $add_extra_tab_space = 0)

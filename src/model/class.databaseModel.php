@@ -617,10 +617,12 @@ class DatabaseModel extends Database
 	/**
 	 * return list of newproto
 	 * @param $gremium committee|gremium name
+	 * @param $key use table col as return array key 
+	 * @param $generated_only ignore protos dont created in wiki
 	 * @return array
 	 */
-	public function getNewprotos($gremium, $key = 'id'){
-		$sql = "SELECT NP.* FROM `".TABLE_PREFIX."newproto` NP, `".TABLE_PREFIX."gremium` G WHERE NP.gremium = G.id AND G.name = ? ORDER BY NP.date DESC";
+	public function getNewprotos($gremium, $key = 'id', $generated_only = false){
+		$sql = "SELECT NP.* FROM `".TABLE_PREFIX."newproto` NP, `".TABLE_PREFIX."gremium` G WHERE NP.gremium = G.id AND G.name = ?".(($generated_only)?' AND NP.generated_url IS NOT NULL':'')." ORDER BY NP.date DESC";
 		$result = $this->getResultSet($sql, 's', [$gremium]);
 		$return = [];
 		foreach ($result as $line){

@@ -15,7 +15,7 @@
 require_once (SYSBASE . '/framework/class._MotherController.php');
 
 class CronController extends MotherController {
-	
+
 	/**
 	 * 
 	 * @param Database $db
@@ -25,7 +25,7 @@ class CronController extends MotherController {
 	function __construct($db, $auth, $template){
 		parent::__construct($db, $auth, $template);
 	}
-	
+
 	/**
 	 * ACTION croninfo
 	 */
@@ -61,7 +61,7 @@ class CronController extends MotherController {
 		]);
 		$this->t->printPageFooter();
 	}
-	
+
 	/**
 	 * ACTION cronmail
 	 */
@@ -69,7 +69,7 @@ class CronController extends MotherController {
 		$this->invite_mail();
 		$this->remember_proto_mail();
 	}
-	
+
 	/**
 	 * send protocol remember mails
 	 */
@@ -79,7 +79,7 @@ class CronController extends MotherController {
 		$committees = $this->db->getCommitteeList();
 		foreach ($committees as $committee){
 			$gremium = $committee['name'];
-			
+
 			//1 get db protocols ----------------------------
 			$protocols_db_tmp = $this->db->getProtocols($gremium, false , false, false, false, 'AND (P.public_url IS NOT NULL OR P.ignore=1 OR P.draft_url IS NOT NULL)');
 			$protocols_db = ['draft_state' => [], 'ignore' => [], 'all' => []];
@@ -94,16 +94,17 @@ class CronController extends MotherController {
 				$protocols_db['all'][$p['date']] = $p;
 			}
 			//2 get ready newproto protocols -----------------
-			$protocols_newproto = $this->db->getNewprotos($gremium, 'generated_url');
+			$protocols_newproto = $this->db->getNewprotos($gremium, 'generated_url', true);
 			//3 get current members
 			$members = $this->db->getMembers($gremium);
 			//remember protos
 			$handleProtos = ['agreed_but_draft' => [], 'not_handled' => []];
 			//4=check 2 not in 1 and protocol member set && member exists in 3
 			foreach ($protocols_newproto as $nk => $np){
+				if (!$nk) continue;
 				$pdate = date_create($np['date']);
 				if (!isset($protocols_db['all'][$nk]) ){
-					if ($now->getTimestamp() > $pdate->getTimestamp() + 86400 * 3) {					
+					if ($now->getTimestamp() > $pdate->getTimestamp() + 86400 * 3) {
 						$handleProtos['not_handled'][$nk]=$np;
 					} else {
 						continue;
@@ -113,7 +114,7 @@ class CronController extends MotherController {
 				} elseif(isset($protocols_db['draft_state'][$nk])){
 					if ($protocols_db['draft_state'][$nk]['agreed'] &&
 						$now->getTimestamp() > $pdate->getTimestamp() + 86400 * 7) {
-						$handleProtos['agreed_but_draft'][]=$np;
+						$handleProtos['agreed_but_draft'][$nk]=$np;
 					} else {
 						continue;
 					}
@@ -146,7 +147,7 @@ class CronController extends MotherController {
 						//mail to group
 						$mail_address = parent::$protomap[$gremium][3];
 					}
-					
+
 					if (is_string($mail_address)){
 						$mailer->mail->addAddress($mail_address);
 					} elseif (is_array($mail_address)) {
@@ -154,9 +155,9 @@ class CronController extends MotherController {
 							$mailer->mail->addAddress($mail_addr);
 						}
 					}
-					
+
 					$mailer->mail->Subject = 'Protokollerinnerung - '.$date.' - '.(($group=='not_handled')?'Entwurf nicht veröffentlicht': 'Abgestimmt, aber nicht veröffentlicht');
-					
+
 					$mailer->bindVariables([
 						'newproto' => $np,
 						'date' => $date,
@@ -167,7 +168,7 @@ class CronController extends MotherController {
 						'toolLink' 	=> BASE_URL.BASE_SUBDIRECTORY
 					]);
 					$mailer->setTemplate('proto_remember');
-					
+
 					if($mailer->send(false, false, true, true)){
 						//update last mail send on newproto -> test to prevent spamming
 						$np['mail_proto_remember'] = $now->format('Y-m-d H:i:s');
