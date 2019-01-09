@@ -636,6 +636,7 @@ class InvitationController extends MotherController {
 			],
 			'text' => ['regex',
 				'pattern' => '/^(.|\r|\n)*$/',
+				'strsplit' => 2040,
 				'empty',
 				'noTagStrip',
 				'noTrim',

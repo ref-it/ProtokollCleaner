@@ -623,19 +623,23 @@ class Validator {
 	 * regex validator
 	 *
 	 * $param
-	 *  regex	   2	match pattern
-	 *  errorkey   2	replace 'regex' with errorkey on error case
-	 *  error	   2	replace whole error message on error case
-	 *  upper	   1	string to uppercase
-	 *  lower	   1	string to lower case
-	 *  replace    2	touple [search, replace] replace string
-	 *  minlength  2	minimum string length
-	 *  maxlength  2	maximum string length
-	 *  noTagStrip 1	disable tag strip before validation
-	 *  noTrim	   1	disable trim whitespaces
-	 *  trimLeft   2	trim Text on left side, parameter trim characters
-	 *  trimRight  2	trim Text on right side, parameter trim characters
-	 *  empty	   1	allow empty string if not in regex
+	 *  regex			2	match pattern
+	 *  strsplit		2	split string into parts and run regex on each part, here specify split length (integer), you may require this on large texts
+	 *  errorkey		2	replace 'regex' with errorkey on error case
+	 *  error			2	replace whole error message on error case
+	 *  upper			1	string to uppercase
+	 *  specialchars	1	add htmlspecialchar filter
+	 *  addslashes		1	add addslashes filter
+	 *  stripslashes	1	add stripslashes filter
+	 *  lower			1	string to lower case
+	 *  replace			2	touple [search, replace] replace string
+	 *  minlength		2	minimum string length
+	 *  maxlength		2	maximum string length
+	 *  noTagStrip		1	disable tag strip before validation
+	 *  noTrim			1	disable trim whitespaces
+	 *  trimLeft		2	trim Text on left side, parameter trim characters
+	 *  trimRight		2	trim Text on right side, parameter trim characters
+	 *  empty			1	allow empty string if not in regex
 	 *
 	 * @param $value
 	 * @param $params
@@ -643,6 +647,15 @@ class Validator {
 	 */
 	public function V_regex($value, $params = ['pattern' => '/.*/']) {
 		$v = ''.$value;
+		if (in_array('specialchars', $params, true)){
+			$v = htmlspecialchars($v);
+		}
+		if (in_array('addslashes', $params, true)){
+			$v = addslashes($v);
+		}
+		if (in_array('stripslashes', $params, true)){
+			$v = stripslashes($v);
+		}
 		if (!in_array('noTagStrip', $params, true)){
 			$v = strip_tags($v);
 		}
@@ -668,20 +681,30 @@ class Validator {
 		if (in_array('lower', $params, true)){
 			$v = strtolower($v);
 		}
-		if (isset($params['maxlength']) && strlen($v) >= $params['maxlength']){
+		if (isset($params['maxlength']) && strlen($v) > $params['maxlength']){
 			$msg = "String is too long (Maximum length: {$params['maxlength']})";
-			return !$this->setError(true, 200, $msg);
+			return !$this->setError(true, 200, (isset($params['error']))? $params['error']: $msg, $msg);
 		}
 		if (isset($params['minlength']) && strlen($v) < $params['minlength']){
 			$msg = "String is too short (Minimum length: {$params['minlength']})";
-			return !$this->setError(true, 200, $msg);
+			return !$this->setError(true, 200, (isset($params['error']))? $params['error']: $msg, $msg);
 		}
 		$re = $params['pattern'];
-		if (!preg_match($re, $v) || (isset($params['maxlength']) && strlen($v) >= $params['maxlength'])) {
-			$msg = ((isset($params['errorkey']) )?$params['errorkey']:'regex').' validation failed';
-			if (isset($params['error'])) $msg = $params['error'];
-			return !$this->setError(true, 200, $msg, $msg);
+		if (!isset($params['strsplit'])){
+			if (!preg_match($re, $v)) {
+				$msg = ((isset($params['errorkey']) )?$params['errorkey']:'regex').' validation failed';
+				return !$this->setError(true, 200, (isset($params['error']))? $params['error']: $msg, $msg);
+			} else {
+				$this->filtered=$v;
+			}
 		} else {
+			$split = str_split($v, $params['strsplit']);
+			foreach($split as $part){
+				if (!preg_match($re, $part)) {
+					$msg = ((isset($params['errorkey']) )?$params['errorkey']:'regex').' validation failed';
+					return !$this->setError(true, 200, (isset($params['error']))? $params['error']: $msg, $msg);
+				}
+			}
 			$this->filtered=$v;
 		}
 		return !$this->setError(false);
