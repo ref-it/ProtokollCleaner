@@ -82,12 +82,10 @@ $navigation = [
 	'reso/list' => ['resolist', 	'Beschlussliste', 	'&#xf0cb;',		''],
 	'todo/list' => ['todolist', 	'Todos', 			'&#xf046;',		''],
 	'invite'	=> ['invitebase', 	'Sitzung',			'&#xf0e0;',		''],
-	'invitestuds'	=> ['ipublic', 	'Öffentlich',		'&#xf0e0;',		''],
+	'invitestuds'	=> ['ipublic', 	'Tagesordnung',		'&#xf0e0;',		''],
 	'https://stura.tu-ilmenau.de/impressum' => ['baseaccess', 'Impressum', '&#xf129;', NULL],
 	'https://www.tu-ilmenau.de/impressum/datenschutz/' => ['baseaccess', 'Datenschutz', '&#xf1c0;', NULL],
 ];
-
-
 
 if (DEBUG >= 1) {
 	$routes['GET']['wiki'] = ['dev', 'dev',  'wiki'];
