@@ -243,9 +243,6 @@ body.invite .silmph_top > .card-header > span:not(.top_counter) {
 body.invite .silmph_top .topinfo {
 	padding-left: 16px;
 }
-body.invite .silmph_top > .card-header .top_counter:before{
-	content: 'Top';
-}
 body.invite .silmph_top > .card-header .placeholder {
 	padding-left: 25px;
 }
@@ -270,4 +267,53 @@ body.invite .silmph_top {
 }
 body.invite img.stura-head {
 	width: 100%;
+}
+/*Sitzungseinladung Druckvorschau*/
+body.invitestuds .silmph_top {
+	display: block;
+	position: relative;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+body.invitestuds .silmph_top:before {
+	content: '';
+	display: block;
+	position: absolute;
+	height: 5px;
+	width: 5px;
+	left: 10px;
+	top: 8px;
+	background: black;
+	border-radius: 50%;
+}
+body.invitestuds .silmph_top > .card-header .top_counter {
+	font-size: 18px;
+	padding-left: 26px;
+}
+body.invitestuds .silmph_top > .card-header > span:not(.top_counter) {
+	font-size: 18px;
+}
+body.invitestuds .silmph_top .topinfo {
+	padding-left: 16px;
+}
+body.invitestuds .silmph_top > .card-header .placeholder {
+	padding-left: 25px;
+}
+body.invitestuds .silmph_top:before {
+	content: '';
+	display: block;
+	position: absolute;
+	height: 5px;
+	width: 5px;
+	left: 10px;
+	top: 8px;
+	background: black;
+	border-radius: 50%;
+}
+body.invitestuds .silmph_toplist {
+	display: block;
+	background-color: #bfbfbf;
+	border-top: 1px solid #6c7074;
+	border-bottom: 1px solid #6c7074;
+	padding: 4px 50px;
 }
