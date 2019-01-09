@@ -308,6 +308,7 @@ div.message_relative{
 	display: inline-block;
 	position: absolute;
 	right: 10px;
+	top: 10px;
 	cursor: pointer;
 	-webkit-touch-callout: none; /* iOS Safari */
 	-webkit-user-select: none;   /* Chrome/Safari/Opera */

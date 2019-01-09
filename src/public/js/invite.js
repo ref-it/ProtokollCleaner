@@ -32,7 +32,8 @@
 				r = JSON.parse(data);
 			} catch(e) {
 				r.success=false;
-				r.eMsg = ('Unerwarteter Fehler (Code: "'+data.status+'"). Seite wird neu geladen...');
+				//r.eMsg = ('Unerwarteter Fehler (Code: "'+data.status+'"). Seite wird neu geladen...');
+				r.eMsg = "Parsing Error. Response Code: " + data.status + "<br>" + data;
 				if (typeof (reload) == 'undefined' || reload == true){
 					auto_page_reload(5000);
 				}
@@ -854,7 +855,7 @@
 						data: dataset_put,
 						success: function(data){
 							pdata = {};
-							pdata = parseData(data);
+							pdata = parseData(data, false);
 							if(pdata.success == true){
 								//add/update top
 								func_top_create_update(pdata.top);
@@ -862,10 +863,10 @@
 								silmph__add_message(pdata.msg, MESSAGE_TYPE_SUCCESS, 3000);
 								obj.close();
 							} else {
-								silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
+								silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 0);
 							}
 						},
-						error: postError
+						error: postError,
 					});
 					
 				}, 'abort': function(obj){ obj.close(); }}

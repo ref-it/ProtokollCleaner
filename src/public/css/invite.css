@@ -216,7 +216,7 @@
 	border-bottom-style: dotted;
 }
 .silmph_top input:checked + .text_rendered {
-	max-height: 1200px;
+	max-height: 4800px;
 }
 .silmph_top label.texttoggle {
 	width: 1.28571429em;
