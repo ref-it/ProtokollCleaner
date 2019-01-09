@@ -82,6 +82,7 @@ define('UPLOAD_DISK_PATH', dirname(__FILE__).'/public/files/get/filestorage'); /
 define('UPLOAD_MAX_SIZE', 41943215); //in bytes - also check DB BLOB max size and php upload size limit in php.ini
 define('UPLOAD_PROHIBITED_EXTENSIONS', 'ph.*?,cgi,pl,pm,exe,com,bat,pif,cmd,src,asp,aspx,js,lnk,html,htm,forbidden');
 define('UPLOAD_MOD_XSENDFILE', 1); //0 - dont use it, 1 - auto detect on apache modules, 2 force usage - if detection fails
+define('UPLOAD_WHITELIST', 'bmp,jpeg,jpg,png,tiff,svg,gif,pdf,doc,xls,docx,xlsx,txt,odt,ods,csv,css,rtx,xml,tsv,conf,c,h,cpp,hpp,mp3,wma,acc,wmv,mp4,tar,rar,gzip,gz,iso,epub,zip,css,gtar,ustar,README');
 
 // ===== DO NOT CHANGE THIS =====
 require_once (dirname(__FILE__)."/framework/init.php");
