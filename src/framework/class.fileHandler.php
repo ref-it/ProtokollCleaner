@@ -987,6 +987,10 @@ class FileHandler extends MotherController {
 	function __construct($db, $settings = NULL){
 		parent::__construct($db, NULL, NULL);
 		$this->initSettings($settings);
+		if (!function_exists('finfo')){
+			error_log('Server function finfo does not exist. Pleas install the plugin');
+			die('Server function finfo does not exist. Pleas install the plugin');
+		}
 	}
 
 	/**
@@ -1340,6 +1344,7 @@ class FileHandler extends MotherController {
 					$file->filename = $pathinfo['filename'];
 					$file->filename = str_replace('..', '.', $file->filename);
 					$file->filename = str_replace('..', '.', $file->filename);
+					$file->filename = str_replace('file://', '', $file->filename);
 					if ($file->filename==''){
 						$result['error'][] = "empty or invalid filename";
 						continue;
@@ -1526,16 +1531,13 @@ class FileHandler extends MotherController {
 	 * test if server supports xsendfile headers (mod_xsendfile)
 	 */
 	public static function hasModXSendfile() {
-		if (!defined('UPLOAD_MOD_XSENDFILE')||!UPLOAD_MOD_XSENDFILE){
+		if (!UPLOAD_MOD_XSENDFILE){
 			return false;
 		} elseif (UPLOAD_MOD_XSENDFILE == 2){
 			return true;
 		}
-		if (function_exists ( 'apache_get_modules' )){
-			$modlist = apache_get_modules();
-			if (in_array('mod_xsendfile', $modlist, true)){
+		if (function_exists ( 'apache_get_modules' ) && in_array('mod_xsendfile', apache_get_modules(), true)){
 				return true;
-			}
 		}
 		return false;
 	}
