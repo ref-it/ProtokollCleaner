@@ -153,6 +153,8 @@ class InvitationController extends MotherController {
 		$this->t->appendJsLink('libs/jquery_ui_widget_combobox.js');
 		$this->t->appendJsLink('wiki2html.js');
 		$this->t->appendJsLink('invite.js');
+		$this->t->setTitlePrefix('Einladung');
+		$this->t->setExtraBodyClass('invite');
 		$tops = $this->db->getTopsOpen($perm, true);
 		$resorts = $this->db->getResorts($perm);
 		$member = $this->db->getMembersCounting($perm);
