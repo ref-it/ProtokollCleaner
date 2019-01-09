@@ -122,6 +122,7 @@ header,
 	font-size: 20px;
 	font-weight: bold;
 	position: relative !important;
+	line-height: 40px;
 }
 #page_header img.logo{
 	width: 180px;
@@ -144,4 +145,129 @@ header,
 }
 #resotable {
 	font-size: 0.8em;
+}
+.printheader.printonly img.logo {
+	display: inline-block;
+	vertical-align: middle;
+}
+/*Sitzungseinladung Druckvorschau*/
+body.invite .printheader.printonly span{
+	color: #fff;
+	display: none;
+}
+body.invite .printheader.printonly img.logo {
+	display: none;
+}
+body.invite h2.headline {
+	font-size: 40px;
+	padding-left: 160px;
+}
+body.invite .main > .card .card-body > h3 {
+	display: none;
+}
+body.invite .silmph_nprotolist .npheadline,
+body.invite .silmph_nprotolist .npbody .nprotoelm,
+body.invite .silmph_nprotolist .npbody .nprotoelm .col-3:nth-child(2),
+body.invite .silmph_create_np,
+body.invite .silmph_create_np + h4,
+body.invite .main > .card:nth-child(7) + h3,
+body.invite .silmph_tcreate_btn,
+body.invite .silmph_memberbox,
+body.invite .silmph_top .topinfo .added,
+body.invite .silmph_top .topinfo .filecount,
+body.invite .silmph_top .topinfo .person,
+body.invite .silmph_top .topinfo .skipn,
+body.invite .silmph_top .topinfo span.guest,
+body.invite .silmph_top,
+body.invite .silmph_top > .card-body,
+body.invite .silmph_top > .buttons{
+	display: none;
+}
+body.invite .silmph_nprotolist .npbody .nprotoelm:first-child {
+	display:block;
+}
+body.invite .silmph_nprotolist .npbody {
+	height: auto;
+	overflow: hidden;
+}
+body.invite .silmph_nprotolist .npbody .nprotoelm:first-child .col-3:nth-child(1) {
+	line-height: 26px;
+	font-weight: bold;
+	font-size: 20px;
+	padding: 10px 50px;
+}
+body.invite .silmph_themenhead {
+	padding: 15px 8px 0;
+	font-weight: bold;
+	font-size: 18px;
+	display: block;
+}
+body.invite .silmph_where,
+body.invite .silmph_when{
+}
+body.invite .silmph_nprotolist .npbody .nprotoelm:first-child .col-3:nth-child(1),
+body.invite .silmph_where > span{
+	display: block;
+	background-color: #bfbfbf;
+	border-top: 1px solid #6c7074;
+	border-bottom: 1px solid #6c7074;
+	padding: 10px 50px;
+	font-weight: bold;
+	font-size: 18px;
+}
+body.invite .silmph_nprotolist .npbody .nprotoelm:first-child .col-3:nth-child(1) {
+	padding: 8px 50px;
+}
+body.invite .silmph_top:not(.skipnext)[data-resort=""]:not([data-intern="1"]) {
+	display: block;
+	posion: relative;
+}
+body.invite .silmph_top:before {
+	content: '';
+	display: block;
+	position: absolute;
+	height: 5px;
+	width: 5px;
+	left: 10px;
+	top: 8px;
+	background: black;
+	border-radius: 50%;
+}
+body.invite .silmph_top > .card-header .top_counter {
+	font-size: 18px;
+	padding-left: 26px;
+}
+body.invite .silmph_top > .card-header > span:not(.top_counter) {
+	font-size: 18px;
+}
+body.invite .silmph_top .topinfo {
+	padding-left: 16px;
+}
+body.invite .silmph_top > .card-header .top_counter:before{
+	content: 'Top';
+}
+body.invite .silmph_top > .card-header .placeholder {
+	padding-left: 25px;
+}
+body.invite .silmph_invitetext {
+	margin-top: 20px;
+	font-size: 14px;
+	font-weight: bold;
+	font-style: italic;
+	line-height: 18px;
+	color: #484848;
+}
+body.invite .silmph_toplist {
+	display: block;
+	background-color: #bfbfbf;
+	border-top: 1px solid #6c7074;
+	border-bottom: 1px solid #6c7074;
+	padding: 4px 50px;
+}
+body.invite .silmph_top {
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+body.invite img.stura-head {
+	width: 100%;
 }

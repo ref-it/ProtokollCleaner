@@ -1,9 +1,14 @@
 <?php $param = $param; echo $this->getChallenge(); ?>
-<h2>Sitzungseinladung</h2>
+<img src="/images/stura_head.svg" class="printonly stura-head">
+<h2 class="headline printonly">Geplante Sitzung</h2>
+<h2 class="headline noprint">Sitzungseinladung</h2>
 
 <div class="card mb-3">
 	<div class="card-body">
 		<h3>Geplante Sitzung</h3>
+        <div class="silmph_themenhead silmph_when printonly">
+            <span>Wann?</span>
+        </div>
 		<div class="silmph_nprotolist mb-1 border border-secondary" data-meetinghour="<?= $param['settings']['meeting_hour'];?>" data-legislatur="<?= $param['legislatur']['number']; ?>" data-nthproto="<?= $param['nth-proto']; ?>">
 			<div class="bg-warning npheadline">
 	  			<div class="row p-2">
@@ -107,12 +112,19 @@
 <h3>Eingereichte Tops</h3>
 <div class="btn btn-success silmph_tcreate_btn">Top/Bericht erstellen</div>
 <div class="silmph_top_counter_reset"></div>
+<div class="silmph_themenhead printonly">
+    <span>Wo?</span>
+</div>
+<div class="silmph_where printonly">
+    <span>EAZ1337</span>
+</div>
+<div class="silmph_themenhead printonly">Themen</div>
 <div class="silmph_toplist">
 <?php
 
 foreach($param['tops'] as $top){
 	if (isset($top['used_on'])) continue;
-	echo '<div id="top_'.substr($top['hash'], 0, 10).'" class="card border-secondary silmph_top'.(($top['skip_next'])?' skipnext':'').(($top['guest'])?' guest':'').(($top['intern'])?' internal':'').(isset($top['resort'])?' resort':'').'" data-tid="'.$top['id'].'" data-hash="'.$top['hash'].'">';
+	echo '<div id="top_'.substr($top['hash'], 0, 10).'" data-resort="'.($top['resort']?$top['resort']:'').'" data-intern="'.($top['intern']?1:'').'" class="card border-secondary silmph_top'.(($top['skip_next'])?' skipnext':'').(($top['guest'])?' guest':'').(($top['intern'])?' internal':'').(isset($top['resort'])?' resort':'').'" data-tid="'.$top['id'].'" data-hash="'.$top['hash'].'">';
 	echo "\t".'<div class="card-header headline" data-resort="'.($top['resort']?$top['resort']:'').'" data-level="'.$top['level']."\" data-headline='".json_encode([$top['headline']])."'>".
 					((!$top['resort'])?
 						'<span class="top_counter"></span>'
@@ -143,4 +155,13 @@ foreach($param['tops'] as $top){
 }
 
 ?>
+    <div data-resort="" data-intern="" class="silmph_top printonly">
+        <div class="card-header headline ui-sortable-handle"><span class="placeholder"></span><span>Berichte aus den Referaten und Fachschaftsräten</span></div>
+    </div>
+    <div data-resort="" data-intern="" class="silmph_top printonly">
+        <div class="card-header headline ui-sortable-handle"><span class="placeholder"></span><span>Termine und Sonstiges</span></div>
+    </div>
+</div>
+<div class="silmph_invitetext printonly">
+    Der StuRa läd alle interessierten Studierenden ein, an den Treffen teilzunehmen. Die Sitzungen finden in der Regel hochschulöffentlich jeden Mittwoch um 19:00 Uhr im EAZ 1337/1338 statt.
 </div>
