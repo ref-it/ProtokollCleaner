@@ -987,9 +987,9 @@ class FileHandler extends MotherController {
 	function __construct($db, $settings = NULL){
 		parent::__construct($db, NULL, NULL);
 		$this->initSettings($settings);
-		if (!function_exists('finfo')){
-			error_log('Server function finfo does not exist. Pleas install the plugin');
-			die('Server function finfo does not exist. Pleas install the plugin');
+		if (!class_exists('finfo')){
+			error_log('Server class finfo does not exist. Please install the plugin');
+			die('Server class finfo does not exist. Please install the plugin');
 		}
 	}
 
