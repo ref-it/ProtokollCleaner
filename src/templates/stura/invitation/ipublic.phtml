@@ -1,0 +1,79 @@
+<?php $param = $param; echo $this->getChallenge(); ?>
+<h2 class="headline printonly">Geplante Sitzung</h2>
+<h2 class="headline noprint">Stura</h2>
+
+<div class="card mb-3">
+	<div class="card-body">
+        <div class="invite-info">
+            Der StuRa läd alle interessierten Studierenden ein, an den Treffen teilzunehmen. Die Sitzungen finden in der Regel hochschulöffentlich jeden Mittwoch um 19:00 Uhr im EAZ 1337/1338 statt.
+        </div>
+		<h3>Nächste geplante Sitzung</h3>
+		<div class="silmph_nprotolist mb-1 border border-secondary" data-meetinghour="<?= $param['settings']['meeting_hour'];?>" data-legislatur="<?= $param['legislatur']['number']; ?>" data-nthproto="<?= $param['nth-proto']; ?>">
+			<div class="bg-warning npheadline">
+	  			<div class="row p-2">
+	    			<div class="col-3">Datum</div>
+				</div>
+			</div>
+			<div class="npbody">
+				<?php
+					// state:
+					// 0 - geplant 		- generated_url==null && invite_mail_done == 0
+					// 1 - eingeladen	- generated_url==null && invite_mail_done == 1
+					// 2 - erstellt 	- generated_url!=null
+					$statelist = ['Geplant', 'Eingeladen', 'Erstellt'];
+					foreach($param['newproto'] as $nproto){
+						$state = ($nproto['generated_url'] != null)? 2 : (($nproto['invite_mail_done'])? 1 : 0);
+						$disable_restore = false;
+						if ($state == 2){
+							$today = date_create();
+							$npdate = date_create($nproto['date']);
+							$npdate->setTime(0, 0);
+							$diff1 = $today->getTimestamp() - $npdate->getTimestamp();
+							if ( $diff1 > 3600 * 24 * $param['settings']['disable_restore'] ){
+								$disable_restore = true;
+							}
+						} ?>
+						<div class="nprotoelm row p-2" data-id="<?= $nproto['id'] ?>" data-hash="<?= (!$disable_restore)?$nproto['hash']:'' ?>" data-m="<?= $nproto['management']?$nproto['management']:'' ?>" data-p="<?= $nproto['protocol']?$nproto['protocol']:'' ?>">
+							<div class="col-3"><?= date_create($nproto['date'])->format('d.m.Y H:i') ?></div>
+						</div>
+				<?php break; } ?>
+			</div>
+		</div>
+	</div>
+</div>
+
+<h3>Geplante Themen</h3>
+<div class="silmph_top_counter_reset"></div>
+<div class="silmph_toplist">
+<?php
+
+foreach($param['tops'] as $top){
+	if (isset($top['used_on'])) continue;
+	if (isset($top['intern'])&&$top['intern']) continue;
+	if (isset($top['skip_next'])&&$top['skip_next']) continue;
+	if (isset($top['resort'])&&$top['resort']) continue;
+	?>
+    <div data-resort="" data-intern="" class="silmph_top">
+        <div class="card-header headline ui-sortable-handle"><span class="top_counter"></span><span><?= $top['headline']; ?></span>
+        <?php
+            echo "\t<div class=\"topinfo text-secondary\">\n";
+            $minutes = 0;
+            if (isset($top['expected_duration'])){
+                $minutes = $top['expected_duration'];
+            }
+            echo '<span class="duration">'.$minutes.' min.</span>'."\n";
+            echo '<span class="goal">'.(isset($top['goal'])?$top['goal']:'').'</span>'."\n";
+            echo "\t</div>\n";
+        ?>
+        </div>
+    </div>
+    <?php
+}
+?>
+    <div data-resort="" data-intern="" class="silmph_top">
+        <div class="card-header headline ui-sortable-handle"><span class="placeholder"></span><span>Berichte aus den Referaten und Fachschaftsräten</span></div>
+    </div>
+    <div data-resort="" data-intern="" class="silmph_top">
+        <div class="card-header headline ui-sortable-handle"><span class="placeholder"></span><span>Termine und Sonstiges</span></div>
+    </div>
+</div>

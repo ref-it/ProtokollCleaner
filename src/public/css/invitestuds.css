@@ -1,0 +1,44 @@
+.invite-info {
+	padding: 5px;
+	margin-bottom: 10px;
+	color: #777;
+	font-style: italic;
+	font-weight: bold;
+	border-radius: 3px;
+	border: 1px solid black;
+}
+.silmph_top .topinfo span::before{
+	font: normal normal normal 14px/1 FontAwesome;
+	width: 1.28571429em;
+	text-align: center;
+	font-size: inherit;
+	display: inline-block;
+}
+.silmph_top .topinfo span.duration::before{
+	content: "\f017";
+}
+.silmph_top .topinfo span.goal::before{
+	content: "\f124";
+}
+.silmph_top {
+	margin-top: 1px;
+}
+.silmph_top_counter_reset {
+	counter-reset: topcount;
+}
+.silmph_top:not(.skipnext) .top_counter{
+	counter-increment: topcount;
+	margin-right: 20px;
+	font-weight: bold;
+}
+.silmph_top:not(.skipnext) .top_counter::before{
+	content: "Top ";
+	display:inline-block;
+}
+.silmph_top:not(.skipnext) .top_counter::after{
+	content: counter(topcount) ":";
+	display:inline-block;
+	min-width: 25px;
+	margin-left: 4px;
+	text-align: right;
+}

@@ -139,7 +139,7 @@ class InvitationController extends MotherController {
 	}
 	
 	// ACTIONS =========================================================================
-	
+
 	/**
 	 * ACTION home
 	 */
@@ -155,6 +155,44 @@ class InvitationController extends MotherController {
 		$this->t->appendJsLink('invite.js');
 		$this->t->setTitlePrefix('Einladung');
 		$this->t->setExtraBodyClass('invite');
+		$tops = $this->db->getTopsOpen($perm, true);
+		$resorts = $this->db->getResorts($perm);
+		$member = $this->db->getMembersCounting($perm);
+		$committee = $this->db->getCommitteebyName($perm);
+		$newproto = $this->db->getNewprotos($perm);
+		$settings = $this->db->getSettings();
+		$legis = $this->db->getCurrentLegislatur();
+		$oldproto = $this->db->getProtocolsByLegislatur($perm, $legis['number']);
+		$sett = [];
+		$sett['auto_invite'] = intval($settings['AUTO_INVITE_N_HOURS']);
+		$sett['disable_restore'] = intval($settings['DISABLE_RESTORE_OLDER_DAYS']);
+		$sett['meeting_hour'] = intval($committee['default_meeting_hour']);
+		$this->t->printPageHeader();
+		$this->includeTemplate(__FUNCTION__, [
+			'tops' => $tops,
+			'resorts' => $resorts,
+			'member' => $member,
+			'committee' => $perm,
+			'newproto' => $newproto,
+			'settings' => $sett,
+			'legislatur' => $legis,
+			'protomap' => self::$protomap[$perm],
+			'nth-proto' => (count($oldproto)+1)
+		]);
+		$this->t->printPageFooter();
+	}
+
+	/**
+	 * ACTION public invition
+	 */
+	public function ipublic(){
+		$perm = 'stura';
+		$this->t->appendCSSLink('invitestuds.css');
+		$this->t->appendJsLink('libs/jquery-ui.min.js');
+		$s = $this->t->getJsLinks();
+		$this->t->setJsLinks([$s[0], $s[3], $s[1], $s[2]]);
+		$this->t->setTitlePrefix('Einladung');
+		$this->t->setExtraBodyClass('invitestuds');
 		$tops = $this->db->getTopsOpen($perm, true);
 		$resorts = $this->db->getResorts($perm);
 		$member = $this->db->getMembersCounting($perm);
