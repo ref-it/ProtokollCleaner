@@ -1001,8 +1001,8 @@ class FileHandler extends MotherController {
 		$file = $this->db->getFileInfoByHash($hash);
 		//delete from db
 		if ($file){
-			$this->db->deleteFiledataById($file->data);
 			$this->db->deleteFileinfoById($file->id);
+			$this->db->deleteFiledataById($file->data);
 			//delete from harddisk
 			$path = self::getDiskpathOfFile($file);
 			if (file_exists ($path) && !is_dir($path)){
@@ -1019,8 +1019,8 @@ class FileHandler extends MotherController {
 		$file = $this->db->getFileinfoById($id);
 		//delete from db
 		if ($file){
-			$this->db->deleteFiledataById($file->data);
 			$this->db->deleteFileinfoById($file->id);
+			$this->db->deleteFiledataById($file->data);
 			//delete from harddisk
 			$path = self::getDiskpathOfFile($file);
 			if (file_exists ($path) && !is_dir($path)){
@@ -1036,8 +1036,8 @@ class FileHandler extends MotherController {
 	public function deleteFilesByLinkId($link){
 		$files = $this->db->getFilesByLinkId($link);
 		//delete from db
-		$this->db->deleteFiledataByLinkId($link);
 		$this->db->deleteFileinfoByLinkId($link);
+		$this->db->deleteFiledataByLinkId($link);
 		//delete from harddisk
 		if (is_array($files)){
 			foreach ($files as $file){

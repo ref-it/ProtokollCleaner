@@ -1625,7 +1625,7 @@ class DatabaseModel extends Database
 		$sql = "UPDATE `".TABLE_PREFIX."fileinfo` SET
 			`data` = NULL
 		WHERE `data` = ?";
-		$this->protectedInsert($sql, 'i', [id]);
+		$this->protectedInsert($sql, 'i', [$id]);
 		if (!$this->isError()) {
 			$sql = "DELETE FROM `" . TABLE_PREFIX . "filedata` WHERE `id` = ?;";
 			$this->protectedInsert($sql, 'i', [$id]);
