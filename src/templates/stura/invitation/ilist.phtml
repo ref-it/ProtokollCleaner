@@ -52,7 +52,8 @@
 								<?php } else { ?>
 									<a target="_blank" class="link btn btn-outline-secondary" href="<?= ($nproto['generated_url']? WIKI_URL.'/'.str_replace(':', '/', $param['protomap'][0]).'/'.$nproto['generated_url']: '#')?>" title="Zum Protokoll" type="button"><i class="fa fa-fw fa-link"></i></a>
 									<?php if ( !$disable_restore ){ ?>
-										<button class="restore btn btn-outline-secondary" title="Wiederherstellen" type="button"><i class="fa fa-fw fa-refresh"></i></button>
+                                        <button class="restore_one btn btn-outline-secondary" title="Ausgewählte Tops Wiederherstellen" type="button"><i class="fa fa-fw fa-recycle"></i></button>
+										<button class="restore btn btn-outline-secondary" title="Alle Tops Wiederherstellen" type="button"><i class="fa fa-fw fa-stack-overflow"></i></button>
 									<?php } ?>
 								<?php } ?>
 									

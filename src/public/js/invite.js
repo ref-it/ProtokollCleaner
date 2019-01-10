@@ -622,7 +622,7 @@
 						success: function(data){
 							pdata = parseData(data);
 							if(pdata.success == true){
-								$e.animate({ height: 'toggle', opacity: 'toggle' }, 1400, function(){
+								$e.animate({ height: 'toggle', opacity: 'toggle' }, 600, function(){
 									$e.remove();
 								});
 								silmph__add_message(pdata.msg + ((typeof(pdata.timing) == 'number')? ' (In '+pdata.timing.toFixed(2)+' Sekunden)' : ''), MESSAGE_TYPE_SUCCESS, 3000);
@@ -964,8 +964,8 @@
 						'</button>'+
 						' <button class="cancel btn btn-outline-secondary" title="Planung entfernen" type="button"><i class="fa fa-fw fa-times"></i></button>'
 					:
-						' <button class="restore btn btn-outline-secondary" data-href="'+data.generatedUrl+'" title="Zum Protokoll" type="button"><i class="fa fa-fw fa-link"></i></button>'+
-						((!data.disableRestore)?' <button class="restore btn btn-outline-secondary" title="Wiederherstellen" type="button"><i class="fa fa-fw fa-refresh"></i></button>':'')
+						' <a target="_blank" class="link btn btn-outline-secondary" href="'+data.generatedUrl+'" title="Zum Protokoll" type="button"><i class="fa fa-fw fa-link"></i></a>'+
+						((!data.disableRestore)?' <button class="restore_one btn btn-outline-secondary" title="Ausgewählte Tops Wiederherstellen" type="button"><i class="fa fa-fw fa-recycle"></i></button> <button class="restore btn btn-outline-secondary" title="Alle Tops Wiederherstellen" type="button"><i class="fa fa-fw fa-stack-overflow"></i></button>':'')
 					)+
 					'</div>'
 		});
@@ -1013,12 +1013,103 @@
 			}, 'abort': function(obj){ obj.close(); }}
 		}).open();
 	}
-	// delete newproto entry
+	//
+	var func_newproto_restorelist = function (){
+		var $e = $(this).closest('.nprotoelm');
+		//get ajax data
+		var dataset = {
+			committee: 'stura',
+			hash: 		$e[0].dataset.hash,
+			npid: 		$e[0].dataset.id,
+		};
+		var fchal = document.getElementById('fchal');
+		dataset[fchal.getAttribute("name")] = fchal.value;
+		//show overlay
+		var create_overlaymodal = function(pdata){
+			var $div = $('<div/>', {
+				html: '<p class="silmph_recreate_headline">Wiederherzustellende Tops wählen</p>',
+			});
+			var $ul = $('<ul/>', {
+				'class': 'recreate_ul',
+			});
+			var topcount = 0;
+			for (var i = 0; i < pdata.list.length; i++) {
+				var top = pdata.list[i];
+				if (top.resort==null) topcount++;
+				$ul.append($('<li/>', {
+					html: '<input class="recreate_cb" id="modal_toprecreate_in'+i+'" type="checkbox"><label class="noselect" for="modal_toprecreate_in'+i+'"><span class="topname"><span class="topcount">'+((top.resort==null)?'Top '+topcount+': ':'')+'</span>'+top.headline+'</span></label><span class="info"><span class="by">'+top.person+'</span>' + ((top.text!='')? '<span class="text">'+top.text+'</span>' : '') + '</span>',
+					'data-id': top.id,
+					'data-hash': top.hash,
+				}));
+			}
+
+			$div.append($ul);
+
+			$.modaltools({
+				headerClass: 'bg-warning',
+				text: $div,
+				ptag: false,
+				headlineText: 'Gespeicherte Tops der Sitzung am <strong>'+$e.children('div').eq(0).text()+'</strong>',
+				buttons: {'abort': 'Abbrechen', 'ok': 'Wiederherstellen'},
+				callback: {'ok':function(obj){
+					var $inp = $div.find('input:checked');
+					var closeobj = $inp.length;
+					$inp.each(function(i, elm){
+						var dataset2 = $.extend({}, dataset);
+						var pp = $(elm).parent()[0];
+						dataset2.thash = pp.dataset.hash;
+						dataset2.tid = pp.dataset.id;
+
+						//do ajax post request
+						$.ajax({
+							type: "POST",
+							url: GLOBAL_RELATIVE+'invite/itoprecreate',
+							data: dataset2,
+							success: function(ddata){
+								ppdata = {};
+								ppdata = parseData(ddata);
+								if(ppdata.success == true){
+									closeobj--;
+									//add top
+									func_top_create_update(ppdata.top);
+								} else {
+									silmph__add_message(ppdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
+								}
+								if (closeobj>=0){ obj.close(); }
+							},
+							error: function(pd){ closeobj--; if (closeobj>=0){ obj.close(); }; postError(pd); }
+						});
+					});
+					if (closeobj == 0){
+						obj.close();
+					}
+				}, 'abort': function(obj){ obj.close(); }}
+			}).open();
+		};
+
+		//do ajax post request - get list
+		$.ajax({
+			type: "POST",
+			url: GLOBAL_RELATIVE+'invite/itopnplist',
+			data: dataset,
+			success: function(data){
+				pdata = {};
+				pdata = parseData(data, false);
+				if(pdata.success == true){
+					create_overlaymodal(pdata);
+				} else {
+					silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
+				}
+			},
+			error: postError
+		});
+	}
+	// restore all tops from newproto and undo creation (not in wiki)
 	var func_newproto_restore = function (){
 		var $e = $(this).closest('.nprotoelm');
 		$.modaltools({
 			headerClass: 'bg-warning',
-			text: 'Soll die Sitzung(splanung) am <strong>'+$e.children('div').eq(0).text()+'</strong> wiederhergestellt?', 
+			text: 'Sollen die Tops der Sitzung am <strong>'+$e.children('div').eq(0).text()+'</strong> wiederhergestellt werden. Diese Zeile wird dabei wieder als "nicht ins Wiki geschrieben" markiert?',
 			ptag: false,	
 			headlineText: 'Wiederherstellen',
 			buttons: {'abort': 'Abbrechen', 'ok': 'Wiederherstellen'},
@@ -1040,7 +1131,7 @@
 						pdata = {};
 						pdata = parseData(data);
 						if(pdata.success == true){
-							//delete newprotocol
+							//reload and refresh toplist newprotocol
 							silmph__add_message(pdata.msg, MESSAGE_TYPE_SUCCESS, 3000);
 							obj.close();
 							auto_page_reload(3000);
@@ -1262,8 +1353,9 @@
 			func_newproto_towiki(this, false);
 		});
 		// link to wiki
-		// restore TODO js + php
+		// restore
 		$e.find('.restore').on('click', func_newproto_restore);
+		$e.find('.restore_one').on('click', func_newproto_restorelist);
 	}
 	// create /or update newProto list entry
 	var func_np_create_update = function (data){
