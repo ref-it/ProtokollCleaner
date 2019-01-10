@@ -48,8 +48,8 @@ $routes = [
 		'invite/nprestore'	=> ['inprestore',	'invitation', 	'nprestore'],
 		'invite/mdelete'	=> ['imemberdelete','invitation', 	'mdelete'],
 		'invite/madd'		=> ['imemberadd',	'invitation', 	'madd'],
-		'files/npupload'	=> ['filesnpupload', 'file',		'npupload'],
-		'files/delete'		=> ['filesdelete',	 'file',		'npremove'],
+		'files/npupload'	=> ['filesnpupload', 'file',		'tfupload'],
+		'files/delete'		=> ['filesdelete',	 'file',		'tfremove'],
 	]
 ];
 

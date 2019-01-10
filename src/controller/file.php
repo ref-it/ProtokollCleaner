@@ -116,7 +116,7 @@ class FileController extends MotherController {
 	 * POST ACTION upload
 	 * handle file upload
 	 */
-	public function npupload(){
+	public function tfupload(){
 		$validator_map = [
 			'committee' => ['regex',
 				'pattern' => '/'.implode('|', array_keys(PROTOMAP)).'/',
@@ -255,7 +255,7 @@ class FileController extends MotherController {
 	 * POST ACTION remove
 	 * remove file from top
 	 */
-	public function npremove(){
+	public function tfremove(){
 		$validator_map = [
 			'committee' => ['regex',
 				'pattern' => '/'.implode('|', array_keys(PROTOMAP)).'/',
