@@ -35,10 +35,10 @@ define('TIMEZONE', 'Europe/Berlin'); //Mögliche Werte: http://php.net/manual/de
 define('TEMPLATE', 'stura');
 
 // ===== SimpleSAML Settings & Konstants
-define('SIMPLESAML_ACCESS_GROUP', 'stura');
+define('SIMPLESAML_ACCESS_GROUP', 'sgis,student');
 define("SAML_SIMPLESAMLDIR" , dirname(__FILE__,4) . "/simplesamlphp");
 define("SAML_SIMPLESAMLAUTHSOURCE" , "");
-define("SAML_AUTHGROUP" , "");
+define("SAML_AUTHGROUP" , "sgis,student");
 define("SAML_ADMINGROUP" , "");
 
 // ===== Sgis API =====
