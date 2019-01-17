@@ -89,23 +89,12 @@
 					if (count($members) > 0){
 						echo '<li class="membergroup p-2 list-group-item bg-dark text-white font-weight-bold">'.$group.'</li>';
 						foreach ($members as $m){
-							echo '<li class="member p-2 list-group-item"><span class="membername" data-group="'.$group.'" data-id="'.$m['id'].'" data-job="'.(($m['job'])?'('.$m['job'].')':'').'" data-name="'.$m['name'].'" data-management="'.$m['management'].'" data-protocol="'.$m['protocol'].'"></span><span class="delete btn btn-outline-danger"></span></li>';
+							echo '<li class="member p-2 list-group-item"><span class="membername" data-group="'.$group.'" data-id="'.$m['id'].'" data-job="'.(($m['job'])?'('.$m['job'].')':'').'" data-name="'.$m['name'].'" data-management="'.$m['management'].'" data-protocol="'.$m['protocol'].'"></span></li>';
 						}
 					}
 				}
 			?>
 				</ul>
-			<?php 
-			if(checkUserPermission('admin')){
-				echo '<div class="form-row">';
-				echo '<div class="form-group col-md-5 mb-0">';
-				echo '<input class="newmember_name form-control" type="text" value="" placeholder="Neues Mitglied"></div>';
-				echo '<div class="form-group col-md-3 mb-0">';
-				echo '<input class="newmember_job form-control" type="text" value="" placeholder="Tätigkeit"></div>';
-				echo '<div class="form-group col-md-4 mb-0">';
-				echo '<button class="newmemberbtn btn btn-success w-100" type="button">Hinzufügen</button></div>';
-				echo '</div>';
-			} ?>
 		</div>
 	</div>
 </div>

@@ -453,106 +453,6 @@
 		callback(param);
 	}
 	// ===== MEMBER FUNCTIONS ===============================================
-	// ------------------------------------------------
-	var func_deleteMember = function(){
-		var $e = $(this).prev();
-		$.modaltools({
-			headerClass: 'bg-danger',
-			text: 'Soll das Mitglied: <strong>"'+ $e[0].dataset.name+'"</strong> wirklich gelöscht werden? Alle verknüpften Protokolle werden gelöscht.', 
-			single_callback: function(key, obj){
-				if (key == 'ok'){
-					var dataset = {
-						mid: $e[0].dataset.id,
-						committee: 'stura'
-					};
-					var fchal = document.getElementById('fchal');
-					dataset[fchal.getAttribute("name")] = fchal.value;
-					
-					$.ajax({
-						type: "POST",
-						url: GLOBAL_RELATIVE+'invite/mdelete',
-						data: dataset,
-						success: function(data){
-							pdata = parseData(data);
-							if(pdata.success == true){
-								var $p = $e.parent();
-								$p.css({overflow: 'hidden'}).animate({ height: '0', padding: '0', opacity: 'toggle' }, 500, function(){
-									$p.remove();
-								});
-								silmph__add_message(pdata.msg + ((typeof(pdata.timing) == 'number')? ' (In '+pdata.timing.toFixed(2)+' Sekunden)' : ''), MESSAGE_TYPE_SUCCESS, 3000);
-							} else {
-								silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
-							}
-						},
-						error: postError
-					});
-				}
-			}
-		}).open();
-	};
-	// ------------------------------------------------
-	var func_add_member_btn = function(){
-		var $e = $(this).parent().prev().prev().children('input');
-		var $ej = $(this).parent().prev().children('input');
-		var val_name = $e.val().trim();
-		var val_job = $ej.val().trim();
-		
-		var error = false;
-		if (val_name.length != 0 && val_name.length < 3){
-			silmph__add_message('Der Name muss mindestens 3 Zeichen lang sein.', MESSAGE_TYPE_WARNING, 5000);
-			error = true;
-		}
-		formError($e, error);
-		
-		if(!error && val_name.length > 0){
-			var dataset = {
-				mname: val_name,
-				mjob: val_job,
-				committee: 'stura'
-			};
-			var fchal = document.getElementById('fchal');
-			dataset[fchal.getAttribute("name")] = fchal.value;
-			
-			$.ajax({
-				type: "POST",
-				url: GLOBAL_RELATIVE+'invite/madd',
-				data: dataset,
-				success: function(data){
-					pdata = parseData(data);
-					formError($e, !pdata.success);
-					if(pdata.success == true){
-						//append new element
-						var newli = $('<li/>', {
-							'class':'member p-2 list-group-item',
-							html: '<span class="membername"'+
-									' data-id="'+pdata.newmember.id+
-									'" data-name="'+pdata.newmember.name+
-									'" data-job="'+(pdata.newmember.job!=''?'('+pdata.newmember.job+')':'')+
-									'" data-management="0" data-protocol="0"></span>'
-						});
-						if ($e.closest('.silmph_memberbox').hasClass('editmember')){
-							newli.append('<span class="delete btn btn-outline-danger"></span>');
-							newli.children('.delete').on('click', func_deleteMember);
-						}
-						var $list = $e.closest('.silmph_memberbox').children('ul');
-						$list.append(newli);
-						//sort member list by name
-						var sort_member = function(a, b){
-							 return ($(b).children('.membername').data('name')) < ($(a).children('.membername').data('name')) ? 1 : -1;    
-						}
-						$list.children('li').sort(sort_member) // sort elements
-						                  .appendTo($list); // append again to the list
-						silmph__add_message(pdata.msg + ((typeof(pdata.timing) == 'number')? ' (In '+pdata.timing.toFixed(2)+' Sekunden)' : ''), MESSAGE_TYPE_SUCCESS, 3000);
-						$e.val('');
-						$e.focus();
-					} else {
-						silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
-					}
-				},
-				error: postError
-			});
-		}
-	};
 	// ===== TOP FUNCTIONS  ===============================================
 	// ------------------------------------------------
 	function sortCallback(evt, ui) {
@@ -1498,11 +1398,9 @@
 	// ===== DOCUMENT READY ===============================================
 	$(document).ready(function(){
 		// member func ----------
-		$('.silmph_memberbox.editmember .delete').on('click', func_deleteMember);
 		$('.silmph_memberbox.editmember .newmember_name').keypress(function(e){
 			if(e.keyCode==13) $('.silmph_memberbox.editmember .newmemberbtn').click();
 		});
-		$('.silmph_memberbox.editmember .newmemberbtn').on('click', func_add_member_btn);
 		$('.silmph_memberbox .showtoggle').on('click', func_top_showtoggle);
 		// top func -------------
 		$('.silmph_toplist').sortable({

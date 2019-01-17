@@ -417,80 +417,12 @@ class InvitationController extends MotherController {
 	 * delete committee member
 	 */
 	public function mdelete(){
-		//calculate accessmap
-		$validator_map = [
-			'committee' => ['regex',
-				'pattern' => '/'.implode('|', array_keys(PROTOMAP)).'/',
-				'maxlength' => 10,
-				'error' => 'Du hast nicht die benötigten Berechtigungen, um dieses Protokoll zu bearbeiten.'
-			],
-			'mid' => ['integer',
-				'min' => '1',
-				'error' => 'Ungültige Id.'
-			],
+		$this->json_result = [
+			'success' => false,
+			'eMsg' => 'Fehler beim Löschen. - Disabled'
 		];
-		$vali = new Validator();
-		$vali->validateMap($_POST, $validator_map, true);
-		if ($vali->getIsError()){
-			if($vali->getLastErrorCode() == 403){
-				$this->json_access_denied();
-			} else if($vali->getLastErrorCode() == 404){
-				$this->json_not_found();
-			} else {
-				http_response_code ($vali->getLastErrorCode());
-				$this->json_result = ['success' => false, 'eMsg' => $vali->getLastErrorMsg()];
-				$this->print_json_result();
-			}
-		} else if (!checkUserPermission($vali->getFiltered('committee'))) {
-			$this->json_access_denied();
-		} else {
-			$member = $this->db->getMemberById($vali->getFiltered('mid'));
-			if (!$member || $member['gname'] != $vali->getFiltered('committee')){
-				$this->json_result = [
-					'success' => false,
-					'eMsg' => 'Mitglied nicht gefunden nicht gefunden.'
-				];
-			} else {
-				$np = false;
-				$tr = false;
-				$me = false;
-				
-				$deltops = $this->db->getDeleteTopsByMemberIdSoft($vali->getFiltered('mid'));
-				if (is_array($deltops) || count($deltops) > 0 ){
-					require (FRAMEWORK_PATH.'/class.fileHandler.php');
-					$fh = new FileHandler($this->db);
-					foreach ($deltops as $dtop){
-						$fh->deleteFilesByLinkId($dtop['id']);
-					}
-				}
-				
-				//remove member of not generated newprotocols
-				$npnc = $this->db->deleteMemberOfUncreatedNewprotoByMemberId($vali->getFiltered('mid'));
-				//delete tops
-				$tr = $this->db->deleteTopsByMemberIdSoft($vali->getFiltered('mid'));
-				//delete newprotocol
-				if ($tr){
-					$np = $this->db->deleteNewprotoByMemberIdSoft($vali->getFiltered('mid'));
-				}
-				//delete member
-				if ($np){
-					$me = $this->db->deleteMemberById($vali->getFiltered('mid'));
-				}
-				//return result
-				if ($me){
-					$this->json_result = [
-						'success' => true,
-						'msg' => 'Mitglied erfolgreich gelöscht.'
-					];
-				} else {
-					$this->json_result = [
-						'success' => false,
-						'eMsg' => 'Fehler beim Löschen.'
-					];
-				}
-			}
-			$this->print_json_result();
-		}
+		$this->print_json_result();
+		die();
 	}
 	
 	/**
@@ -498,82 +430,12 @@ class InvitationController extends MotherController {
 	 * add committee member
 	 */
 	public function madd(){
-		//calculate accessmap
-		$validator_map = [
-			'committee' => ['regex',
-				'pattern' => '/'.implode('|', array_keys(PROTOMAP)).'/',
-				'maxlength' => 10,
-				'error' => 'Du hast nicht die benötigten Berechtigungen, um dieses Protokoll zu bearbeiten.'
-			],
-			'mname' => ['name',
-				'minlength' => '3',
-				'error' => 'Ungültige Zeichen im Namen.'
-			],
-			'mjob' => ['regex',
-				'empty',
-				'pattern' => '/^[a-zA-Z0-9\-_ .,äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]*$/',
-				'error' => 'Fehler bei der Tätigkeitsangabe. Kommaseparierte Liste.'
-			],
+		$this->json_result = [
+			'success' => false,
+			'eMsg' => 'Fehler beim Erstellen. - Disabled'
 		];
-		$vali = new Validator();
-		$vali->validateMap($_POST, $validator_map, true);
-		if ($vali->getIsError()){
-			if($vali->getLastErrorCode() == 403){
-				$this->json_access_denied();
-			} else if($vali->getLastErrorCode() == 404){
-				$this->json_not_found();
-			} else {
-				http_response_code ($vali->getLastErrorCode());
-				$this->json_result = ['success' => false, 'eMsg' => $vali->getLastErrorMsg()];
-				$this->print_json_result();
-			}
-		} else if (!checkUserPermission($vali->getFiltered('committee'))) {
-			$this->json_access_denied();
-		} else {
-			$members = $this->db->getMembers($vali->getFiltered('committee'));
-			$found = false;
-			foreach ($members as $mem){
-				if ($mem['name']==$vali->getFiltered('mname')){
-					$found = true;
-					break;
-				}
-			}
-			if ($found){
-				$this->json_result = [
-					'success' => false,
-					'eMsg' => 'Mitgliedsname bereits vorhanden.'
-				];
-			} else {
-				$grem = $this->db->getCreateCommitteebyName($vali->getFiltered('committee'));
-				$joblist_tmp = explode(',', $vali->getFiltered('mjob'));
-				$joblist = [];
-				foreach ($joblist_tmp as $job){
-					$job = trim($job, "-.,_ \t\n\r\0\x0B");
-					if ($job != '') $joblist[] = $job;
-				}
-				
-				$newmem = [
-					'name' => $vali->getFiltered('mname'),
-					'gremium' => $grem['id'],
-					'job' => implode(', ', $joblist)
-				];
-				$res = $this->db->createMember($newmem);
-				if ($res){
-					$newmem['id'] = $res;
-					$this->json_result = [
-						'newmember' => $newmem,
-						'success' => true,
-						'msg' => 'Mitglied erfolgreich hinzugefügt.'
-					];
-				} else {
-					$this->json_result = [
-						'success' => false,
-						'eMsg' => 'Fehler beim Erstellen.'
-					];
-				}
-			}
-			$this->print_json_result();
-		}
+		$this->print_json_result();
+		die();
 	}
 	
 	/**
@@ -1322,9 +1184,9 @@ class InvitationController extends MotherController {
 			if ($ok == false){
 				$this->json_result = [
 					'success' => false,
-					'eMsg' => 'Fehler beim Schreiben. (Code: '.$x->getStatusCode().')'
+					'eMsg' => 'Fehler beim Schreiben des Protokolls im Wiki. (Code: '.$x->getStatusCode().') (Blockiert bereits ein anderer Nutzer das Protokoll?)'
 				];
-				error_log('NewProto -> WIKI: Could not write. Request: Put Page - '.parent::$protomap[$vali->getFiltered('committee')][0].':'.$nproto['name'].' - Wiki respond: '.$x->getStatusCode().' - '.(($x->isError())?$x->getError():''));
+				error_log('NewProto -> WIKI: Could not write. (Protocol may be blocked by other user?) Request: Put Page - '.parent::$protomap[$vali->getFiltered('committee')][0].':'.$nproto['name'].' - Wiki respond: '.$x->getStatusCode().' - '.(($x->isError())?$x->getError():''));
 				$this->print_json_result();
 				return;
 			}
