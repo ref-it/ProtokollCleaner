@@ -46,6 +46,11 @@ define('SGISAPI_URL', 'https://helfer.stura.tu-ilmenau.de/sgis/rest.php');
 define('SGISAPI_KEY', '');
 define('SGISAPI_HEADER', '');
 
+// ===== PDF API =====
+define('FUI2PDF_APIKEY', 'SECRET_API_KEY');
+define('FUI2PDF_AUTH', 'SECRET_API_AUTH');
+define('FUI2PDF_URL', 'pdfui_api_url');
+
 // ===== Wiki Settings =====
 define('WIKI_URL', 'https://wiki.stura.tu-ilmenau.de');
 define('WIKI_XMLRPX_PATH', '/lib/exe/xmlrpc.php');

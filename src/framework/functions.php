@@ -144,6 +144,7 @@ if (!function_exists('mb_str_pad')) {
 	 * @param string $pad_string
 	 * @param int $pad_type
 	 * @param string $encoding
+	 * @return string
 	 */
 	function mb_str_pad ($input, $pad_length, $pad_string, $pad_type, $encoding="UTF-8") {
 		return str_pad(
@@ -152,5 +153,66 @@ if (!function_exists('mb_str_pad')) {
 			$pad_string, 
 			$pad_type
 		);
+	}
+}
+
+if (!function_exists('do_post_request2')) {
+	/**
+	 * do curl post request
+	 * @param $url
+	 * @param array $data
+	 * @param string $auth
+	 * @param bool $auth_encode
+	 * @return array
+	 */
+	function do_post_request2($url, $data = NULL, $auth = NULL, $auth_encode = false)
+	{
+		$result = [
+			'success' => false,
+			'code' => (-1),
+			'data' => '',
+		];
+
+		//connection
+		$ch = curl_init();
+
+		$header = [
+			"Content-type: application/x-www-form-urlencoded; charset=UTF-8"
+		];
+		if ($auth) {
+			curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+			curl_setopt($ch, CURLOPT_USERPWD, (($auth_encode) ? $auth : base64_decode($auth)));
+		}
+
+		//set curl options
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_POST, true);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
+		if ($data) {
+			$tmp_data = http_build_query($data);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $tmp_data);
+		}
+
+		//run post
+		$postresult = curl_exec($ch);
+
+		//handle result
+		$result['code'] = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+		//close connection
+		curl_close($ch);
+
+		if ($result['code'] === 200 && $postresult) {
+			$result['data'] = json_decode($postresult, true);
+			if ($result['data'] === NULL) {
+				$result['data'] = $postresult;
+			}
+			$result['success'] = true;
+		} elseif ($postresult) {
+			$result['data'] = strip_tags($postresult);
+		}
+
+		return $result;
 	}
 }

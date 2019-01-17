@@ -949,6 +949,142 @@ class InvitationController extends MotherController {
 			$this->print_json_result();
 		}
 	}
+
+	/**
+	 * POST action
+	 * pdf member list
+	 */
+	public function npmemberpdf(){
+		$perm = 'stura';
+		//calculate accessmap
+		$validator_map = [
+			'committee' => ['regex',
+				'pattern' => '/'.implode('|', array_keys(PROTOMAP)).'/',
+				'maxlength' => 10,
+				'error' => 'Du hast nicht die benötigten Berechtigungen, um dieses Protokoll zu bearbeiten.'
+			],
+			'hash' => ['regex',
+				'pattern' => '/^([0-9a-f]{32})$/',
+				'empty',
+				'error' => 'Protokollkennung hat das falsche Format.'
+			],
+			'npid' => ['integer',
+				'min' => '1',
+				'error' => 'Ungültige Top Id.'
+			],
+			'd' => ['integer', 'optional',
+				'min' => '0',
+				'max' => '1',
+				'error' => 'Ungültige Parameter.'
+			],
+		];
+		$vali = new Validator();
+		$vali->validateMap($_POST, $validator_map, true);
+		$this->handleValidatorError($vali);
+		$filtered = $vali->getFiltered();
+
+		$nproto = $this->db->getNewprotoById($vali->getFiltered('npid'));
+		if (!$nproto
+			|| $nproto['gname'] != $vali->getFiltered('committee')
+			|| $nproto['hash'] != $vali->getFiltered('hash')){
+			$this->json_not_found('Protokoll nicht gefunden');
+			return;
+		}
+
+		$date = date_create($nproto['date']);
+		$members = $this->db->getMembers($perm);
+		$members_elected = [];
+		$members_active = [];
+		$members_stuff = [];
+		$members_ref = [];
+
+		foreach($members as $m) {
+			$name = $m['name'];
+			$job = $m['job'];
+			if (!empty($member['overwrite']) && false !== strpos($member['overwrite'], '(ruhend)')) {
+				$name .= ' (ruhend)';
+			}
+			if ($m['flag_stuff']) {
+				$members_stuff[$name] = $job;
+			} else if ($m['flag_elected']) {
+				$members_elected[$name] = $job;
+			} else if ($m['flag_active']) {
+				$members_active[$name] = $job;
+			} else if ($m['flag_ref']) {
+				$members_ref[$name] = $job;
+			}
+		}
+		//do pdf api call
+		$pdfout = [
+			'APIKEY' => FUI2PDF_APIKEY,
+			'action' => 'protocolmemberlist',
+			'date' => $date->format('Y-m-d'),
+			'member_elected' => $members_elected,
+			'member_stuff' => $members_stuff,
+			'member_ref' => $members_ref,
+			'member_active' => $members_active
+		];
+
+		$result = do_post_request2(FUI2PDF_URL . '/pdfbuilder', $pdfout, FUI2PDF_AUTH);
+
+		// return result to user
+		if ($result['success'] && !isset($filtered['d']) || isset($filtered['d']) && $filtered['d'] == 0){
+			if (isset($result['data']['success']) && $result['data']['success']){
+				$this->json_result = [
+					'success' => true,
+					'container' => 'object',
+					'headline' =>
+					//direct link
+						'<form method="POST" action="' . BASE_SUBDIRECTORY . 'invite/npmemberlist">' .
+						'<a href="#" class="modal-form-fallback-submit text-white">' .
+						"Sitzungsliste_" . $date->format('Y-m-d') . 	'.pdf' .
+						'</a>' .
+						'<input type="hidden" name="committee" value="' . $filtered['committee'] . '">' .
+						'<input type="hidden" name="hash" value="' . $filtered['hash'] . '">' .
+						'<input type="hidden" name="npid" value="' . $filtered['npid'] . '">' .
+						'<input type="hidden" name="d" value="1">' . '</form>',
+					'attr' => [
+						'type' => 'application/pdf',
+						'download' =>
+							"Sitzungsliste_" . $date->format('Y-m-d') . 	'.pdf' ,
+					],
+					'fallback' => '<form method="POST" action="' . BASE_SUBDIRECTORY . 'invite/npmemberlist">Die Datei kann leider nicht angezeigt werden, kann aber unter diesem ' .
+						'<a href="#" class="modal-form-fallback-submit">Link</a> heruntergeladen werden.' .
+						'<input type="hidden" name="committee" value="' . $filtered['committee'] . '">' .
+						'<input type="hidden" name="hash" value="' . $filtered['hash'] . '">' .
+						'<input type="hidden" name="npid" value="' . $filtered['npid'] . '">' .
+						'<input type="hidden" name="d" value="1">' .
+						'</form>',
+					'datapre' => 'data:application/pdf;base64,',
+					'data' => $result['data']['data'],
+				];
+			}else{
+				$this->json_result = [
+					'success' => false,
+					'type' => 'modal',
+					'subtype' => 'server-error',
+					'status' => '200',
+					'msg' => '<div style="white-space:pre-wrap;">' . print_r((isset($result['data']['error'])) ? $result['data']['error'] : $result['data'], true) . '</div>',
+				];
+			}
+		}else if ($result['success'] && isset($filtered['d']) && $filtered['d'] == 1){
+			header("Content-Type: application/pdf");
+			header('Content-Disposition: attachment; filename="' . 'Sitzungsliste_' . $date->format('Y-m-d') . '.pdf'.'"');
+			echo base64_decode($result['data']['data']);
+			die();
+		}else{
+			$this->json_result = [
+				'success' => false,
+				'status' => '200',
+				'eMsg' => 'Error during PDF creation.',
+				'type' => 'modal',
+				'subtype' => 'server-error',
+				'reload' => false
+			];
+			error_log('ERROR: npmemberpdf: [PDF-Creation]:'. print_r($result, true));
+		}
+		$this->print_json_result();
+	}
 	
 	/**
 	 * POST action

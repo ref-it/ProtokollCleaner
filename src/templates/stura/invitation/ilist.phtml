@@ -42,7 +42,8 @@
 							<div class="col-6">
 								<?php if($state < 2){ ?>
 									<button class="infoedit btn btn-outline-secondary" title="Info | Bearbeiten" type="button"><i class="fa fa-fw fa-info"></i></button>
-									<button class="send<?= ($nproto['invite_mail_done'])? ' resend':'' ?> btn btn-outline-secondary" title="Einladung<?= ($nproto['invite_mail_done'])? ' erneut':'' ?> versenden" type="button"><i class="fa fa-fw fa-envelope"></i></button>
+                                    <button class="memberpdf btn btn-outline-secondary" title="Anwesenheitsliste" type="button"><i class="fa fa-fw fa-file-text-o"></i></button>
+                                    <button class="send<?= ($nproto['invite_mail_done'])? ' resend':'' ?> btn btn-outline-secondary" title="Einladung<?= ($nproto['invite_mail_done'])? ' erneut':'' ?> versenden" type="button"><i class="fa fa-fw fa-envelope"></i></button>
 									<button class="createp btn btn-outline-secondary" title="Protokoll erstellen" type="button">
 										<span class="fa-stack2 fa-fw">
 											<i class="fa fa-wikipedia-w fa-stack-1x"></i>
@@ -51,7 +52,8 @@
 									<button class="cancel btn btn-outline-secondary" title="Planung entfernen" type="button"><i class="fa fa-fw fa-times"></i></button>
 								<?php } else { ?>
 									<a target="_blank" class="link btn btn-outline-secondary" href="<?= ($nproto['generated_url']? WIKI_URL.'/'.str_replace(':', '/', $param['protomap'][0]).'/'.$nproto['generated_url']: '#')?>" title="Zum Protokoll" type="button"><i class="fa fa-fw fa-link"></i></a>
-									<?php if ( !$disable_restore ){ ?>
+                                    <button class="memberpdf btn btn-outline-secondary" title="Anwesenheitsliste" type="button"><i class="fa fa-fw fa-file-text-o"></i></button>
+                                    <?php if ( !$disable_restore ){ ?>
                                         <button class="restore_one btn btn-outline-secondary" title="Ausgewählte Tops Wiederherstellen" type="button"><i class="fa fa-fw fa-recycle"></i></button>
 										<button class="restore btn btn-outline-secondary" title="Alle Tops Wiederherstellen" type="button"><i class="fa fa-fw fa-stack-overflow"></i></button>
 									<?php } ?>
