@@ -26,7 +26,7 @@
 	];
 	
 	//anwesenheit =================================================
-	$stuff = ['Konsul', 'Angestellte'];
+	$stuff = ['Konsul', 'Angestellt'];
 	$anwesenheit = [
 		'overwrite' => [],
 		'base' => [],
@@ -261,7 +261,7 @@ foreach ($anwesenheit['angestellt'] as $name => $job){
 	echo "\n==== $job ====";
 	$found = false;
 	foreach ($tops as $id => $top){
-		if (isset($top['resort']) && $param['resorts'][$top['resort']]['type'] == 'Angestellte' && $param['resorts'][$top['resort']]['name'] == $job){
+		if (isset($top['resort']) && $param['resorts'][$top['resort']]['type'] == 'Angestellt' && $param['resorts'][$top['resort']]['name'] == $job){
 			echo "\n".'//[[:person:'.($top['person']?$top['person']:((isset($trr[mb_strtolower($job)]))?$trr[mb_strtolower($job)]:'')).']] berichtet, geschätzte benötigte Zeit: '.($top['expected_duration']?$top['expected_duration']:'XX').' min, real benötigte Zeit: XX min, Zielsetzung: '.($top['goal']?$top['goal']:'XXX').'//';
 			echo "\n\n".$top['text']."\n";
 			unset($tops[$id]);

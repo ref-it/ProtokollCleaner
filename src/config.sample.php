@@ -41,6 +41,11 @@ define("SAML_SIMPLESAMLAUTHSOURCE" , "");
 define("SAML_AUTHGROUP" , "");
 define("SAML_ADMINGROUP" , "");
 
+// ===== Sgis API =====
+define('SGISAPI_URL', 'https://helfer.stura.tu-ilmenau.de/sgis/rest.php');
+define('SGISAPI_KEY', '');
+define('SGISAPI_HEADER', '');
+
 // ===== Wiki Settings =====
 define('WIKI_URL', 'https://wiki.stura.tu-ilmenau.de');
 define('WIKI_XMLRPX_PATH', '/lib/exe/xmlrpc.php');
@@ -56,10 +61,10 @@ define('DEBUG_USE_DUMMY_LOGIN', false);
 // ===== CRON SETTINGS =====
 define('CRON_USERMAP', [
 	'cronuser' => [
-		'password' => '1234', //
+		'password' => '1234', //FIXME
 		'displayName' => 'Cron User',
 		'mail' => 'ref-it@tu-ilmenau.de',
-		'groups' => [ 'basic', 'cron', 'croninfo', 'cronmail', 'cronwiki'],
+		'groups' => [ 'basic', 'cron', 'croninfo', 'cronmail', 'cronwiki', 'cronsgis'],
 		'eduPersonPrincipalName' => ['cronuser'],
 	]
 ]);

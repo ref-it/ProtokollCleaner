@@ -67,6 +67,7 @@ $cronRoutes = [
 	'POST' => [
 		'cron/mail'		=> ['cronmail',		'cron', 		'mail' , 'Trigger auto mail creation. (Invitation + Remember)<br><strong>Suggestion: hourly</strong><br><strong>Example: </strong><span>curl --netrc-file cron_protocol_tool.netrc -X POST '.BASE_URL.BASE_SUBDIRECTORY.'cron/mail'],
 		'cron/wiki'		=> ['cronwiki',		'cron', 		'wiki' , 'Writes resolution list to wiki.<br><strong>Suggestion: daily 2:00am</strong><br><strong>Example: </strong><span>curl --netrc-file cron_protocol_tool.netrc -X POST '.BASE_URL.BASE_SUBDIRECTORY.'cron/wiki' ],
+		'cron/sgis'		=> ['cronsgis',		'cron', 		'sgis' , 'Sync memberlist from sgis.<br><strong>Suggestion: daily 3:00am</strong><br><strong>Example: </strong><span>curl --netrc-file cron_protocol_tool.netrc -X POST '.BASE_URL.BASE_SUBDIRECTORY.'cron/sgis' ],
 	]
 ];
 
@@ -139,6 +140,7 @@ $permission_map = [
 	'croninfo'		=> 'croninfo',
 	'cronmail'		=> 'cronmail',
 	'cronwiki'		=> 'cronwiki',
+	'cronsgis'		=> 'cronsgis',
 	'filesnpuploader' => 'stura,konsul,admin',	//gui
 	'filesnpupload' => 'stura,konsul,admin',	//file transfer
 	'filesget' 		=> 'stura,konsul,admin',	//file get

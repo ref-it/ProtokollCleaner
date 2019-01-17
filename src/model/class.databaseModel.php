@@ -552,17 +552,25 @@ class DatabaseModel extends Database
 	 * @return boolean|new id
 	 */
 	public function createMember($m){
-		$pattern = 'sis';
+		$pattern = 'sisiiii';
 		$data = [
 			$m['name'],
 			$m['gremium'],
 			$m['job'],
+			$m['flag_elected'],
+			$m['flag_active'],
+			$m['flag_ref'],
+			$m['flag_stuff'],
 		];
 		$sql = "INSERT INTO `".TABLE_PREFIX."current_member`
 			(	`name`,
 				`gremium`, 
-				`job` )
-			VALUES(?,?,?) ";
+				`job`,
+				`flag_elected`,
+				`flag_active`,
+				`flag_ref`,
+				`flag_stuff` )
+			VALUES(?,?,?,?,?,?,?) ";
 		$this->protectedInsert($sql, $pattern, $data);
 		$result = $this->affectedRows();
 		if ($this->affectedRows() > 0){
@@ -595,7 +603,7 @@ class DatabaseModel extends Database
 	/**
 	 * update current member by name
 	 * @param array $m member element array
-	 * @return boolean|new id
+	 * @return boolean
 	 */
 	public function updateMemberById($m){
 		$pattern = 'sisi';
@@ -605,10 +613,31 @@ class DatabaseModel extends Database
 			$m['job'],
 			$m['id'],
 		];
+		$extra = '';
+		if (isset($m['flag_elected'])){
+			$pattern .= 'i';
+			array_splice( $data, count($data) - 1 , 0, [$m['flag_elected']] );
+			$extra .= " , `flag_elected` = ?";
+		}
+		if (isset($m['flag_stuff'])){
+			$pattern .= 'i';
+			array_splice( $data, count($data) - 1 , 0, [$m['flag_stuff']] );
+			$extra .= " , `flag_stuff` = ?";
+		}
+		if (isset($m['flag_ref'])){
+			$pattern .= 'i';
+			array_splice( $data, count($data) - 1 , 0, [$m['flag_ref']] );
+			$extra .= " , `flag_ref` = ?";
+		}
+		if (isset($m['flag_active'])){
+			$pattern .= 'i';
+			array_splice( $data, count($data) - 1 , 0, [$m['flag_active']] );
+			$extra .= " , `flag_active` = ?";
+		}
 		$sql = "UPDATE `".TABLE_PREFIX."current_member` SET
 				`name` = ?,
 				`gremium` = ?,
-				`job` = ?
+				`job` = ? $extra 
 				WHERE `id` = ?";
 		$this->protectedInsert($sql, $pattern, $data);
 		return !$this->isError();
@@ -698,7 +727,7 @@ class DatabaseModel extends Database
 				`created_by`,
 				`hash`,
 				`gremium`,
-				`mail_info_state`
+				`mail_info_state`,
 				`mail_proto_remember`)
 			VALUES(?,?,?,?,?,?,?,?,?,?,?,?) ";
 		$this->protectedInsert($sql, $pattern, $data);
@@ -839,7 +868,7 @@ class DatabaseModel extends Database
 	/**
 	 * update top entry
 	 * @param array $t top element array
-	 * @return boolean|new id
+	 * @return boolean
 	 */
 	public function updateTop($t){
 		$pattern = 'siissssisisiiiii';
@@ -887,8 +916,27 @@ class DatabaseModel extends Database
 			return false;
 		}
 	}
-	
-	
+
+	/**
+	 * update top entry - delete foreign link to resort, by resort id
+	 * @param integer $resort_id
+	 * @return boolean
+	 */
+	public function updateTopUnsetResortConstraintResortById($resort_id){
+		$pattern = 'i';
+		$sql = "UPDATE `".TABLE_PREFIX."tops` SET
+				`resort` = NULL
+				WHERE `resort` = ?";
+
+		$this->protectedInsert($sql, $pattern, [$resort_id]);
+		$result = $this->affectedRows();
+		if (!$this->isError()){
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	/**
 	 * create top entry
 	 * @param array $t top element array
@@ -1023,7 +1071,7 @@ class DatabaseModel extends Database
 		}
 		return !$this->isError();
 	}
-	
+
 	/**
 	 * delete tops by member id
 	 * @param integer $id
@@ -1070,6 +1118,17 @@ class DatabaseModel extends Database
 	 */
 	function deleteTopById($id){
 		$sql = "DELETE FROM `".TABLE_PREFIX."tops` WHERE `id` = ?;";
+		$this->protectedInsert($sql, 'i', [$id]);
+		return !$this->isError();
+	}
+
+	/**
+	 * delete resort by id
+	 * @param integer $id
+	 * @return integer affected rows
+	 */
+	function deleteResortById($id){
+		$sql = "DELETE FROM `".TABLE_PREFIX."resort` WHERE `id` = ?;";
 		$this->protectedInsert($sql, 'i', [$id]);
 		return !$this->isError();
 	}
@@ -1347,6 +1406,34 @@ class DatabaseModel extends Database
 				`start`,
 				`end`)
 			VALUES(?,?,?) ";
+		$this->protectedInsert($sql, $pattern, $data);
+		$result = $this->affectedRows();
+		if ($this->affectedRows() > 0){
+			return $this->lastInsertId();
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * create legislatur
+	 * @param array $l legislatur element array
+	 * @return boolean|new id
+	 */
+	public function createResort($r){
+		$pattern = 'sssi';
+		$data = [
+			$r['name'],
+			$r['name_short'],
+			$r['type'],
+			$r['gremium'],
+		];
+		$sql = "INSERT INTO `".TABLE_PREFIX."resort`
+			(	`name`,
+				`name_short`,
+				`type`,
+				`gremium`)
+			VALUES(?,?,?,?) ";
 		$this->protectedInsert($sql, $pattern, $data);
 		$result = $this->affectedRows();
 		if ($this->affectedRows() > 0){

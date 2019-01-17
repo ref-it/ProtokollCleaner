@@ -251,4 +251,383 @@ class CronController extends MotherController {
 		//return nothing if ok -> so cron only creates mail if something gone wrong
 		return;
 	}
+
+	/**
+	 * implode and concat resort for member job name
+	 * @param array $member
+	 * @üaram integer $gid
+	 * @return array
+	 */
+	private function sgis2DbMember($member, $gid){
+		$job = '';
+		$out = [
+			'name' => $member['name'],
+			'gremium' => $gid,
+			'job' => '',
+			'overwrite' => NULL,
+			'flag_elected' => 0,
+			'flag_active' => 0,
+			'flag_ref' => 0,
+			'flag_stuff' => 0,
+		];
+		if (isset($member['dbid'])){
+			$out['id'] = $member['dbid'];
+		}
+		foreach ($member['gremien'] as $k => $v){
+			$handled = false;
+			if ($k == 'Studierendenrat (StuRa)'){
+				$ak = array_keys($v);
+				$aks = implode(',', $ak);
+				if (isset($v['Mitglied']) || false!==strpos( $aks,'Entsandt')){
+					$out['flag_elected'] = 1;
+					$handled = true;
+				}
+				if (isset($v['Aktiv'])){
+					$out['flag_active'] = 1;
+					$job.=((!empty($job))?', ':'').'Aktiv';
+					$handled = true;
+				}
+				if (isset($v['Schlüsselmeister'])){
+					$out['flag_active'] = 1;
+					$job.=((!empty($job))?', ':'').'Schlüsselmeister';
+					$handled = true;
+				}
+				if (isset($v['Angestellt'])){
+					$out['flag_stuff'] = 1;
+					$job.=((!empty($job))?', ':'').'Angestellt';
+					$handled = true;
+				}
+				if (isset($v['Interclubverantwortlicher'])){
+					$out['flag_active'] = 1;
+					$job.=((!empty($job))?', ':'').'Interclubverantwortlich';
+					$handled = true;
+				}
+				if (false !== strpos( $aks,'Entsandt')){
+					foreach ($v as $role => $ign){
+						if (false !== strpos( $role,'Entsandt')){
+							$split = explode(' ', $role);
+							$job.=((!empty($job))?', ':'')."{$split[0]} FSR {$split[1]}";
+							$handled = true;
+						}
+					}
+				}
+			}
+			if ($k == 'KTS'){
+				$job.=((!empty($job))?', ':'').'KTS'.((isset($v['Hauptdelegiert']))?' (HD)':'').((isset($v['Nebendelegiert']))?' (ND)':'');
+				$handled = true;
+			}
+			if ($k == 'Konsul' && isset($v['Mitglied'])){
+				$job.=((!empty($job))?', ':'').'Konsul';
+				$out['flag_stuff'] = 1;
+				$handled = true;
+			}
+			if (0 === strpos( $k,'Referat')){
+				$rname = substr($k,8);
+				$pre = '';
+				$ak = array_keys($v);
+				$aks = implode(',', $ak);
+				if (isset($this->resort_akuefi[$rname]) && $rname != 'Finanzen'){
+					$rname = $this->resort_akuefi[$rname];
+				}
+				if (isset($v['stellv. Leiter'])){
+					$out['flag_ref'] = 1;
+					$pre = 'stellv. Ref ';
+				}
+				if (isset($v['Leiter'])){
+					$out['flag_ref'] = 1;
+					$pre = 'Leitung Ref ';
+				}
+				if ($rname == 'Finanzen'){
+					$pre = '';
+					if (false!==strpos($aks,'stellv. Haushaltsverantwortlich')){
+						$rname = 'stellv. HV';
+					} elseif (false!==strpos($aks,'Haushaltsverantwortliche')){
+						$rname = 'HV';
+					}
+					if (false!==strpos($aks,'stellv. Kassenverantwortliche')){
+						$rname = 'stellv. KV';
+					} elseif (false!==strpos($aks,'Kassenverantwortliche')){
+						$rname = 'KV';
+					}
+				}
+				$job.=((!empty($job))?', ':'').$pre . $rname;
+				$handled = true;
+			}
+			if (0 === strpos( $k,'AG ')){
+				//ignore AG (disabled in request)
+				$handled = true;
+			}
+			if ($handled){
+				unset($member['gremien'][$k]);
+			}
+		}
+
+		$out['job'] = $job;
+		return $out;
+	}
+
+	private $resort_akuefi = [
+		'Hochschulpolitik' => 'HoPo',
+		'Hochschulpolitik (HoPo)' => 'HoPo',
+		'Soziales' => 'Soz',
+		'Internationales' => 'INT',
+		'Öffentlichkeitsarbeit' => 'Öff',
+		'Sport, Umwelt und Gesundheit' => 'SUG',
+		'Politische Bildung' => 'PoliBi',
+		'Finanzen' => 'HV',
+		'Konferenz Thüringer Studierendenschaften (KTS)' => 'KTS',
+		'Verbesserung der Studienbedingungen' => 'VerS',
+		'Verbesserung der Studienbedingungen 2020' => 'VerS2020'
+	];
+
+	/**
+	 * ACTION cronsgis
+	 */
+	public function sgis(){
+		header('Content-type:text/plain;charset=utf-8');
+		$perm = 'stura';
+		//call sgis api -------------------
+		require_once(FRAMEWORK_PATH.'/class.hHttpClient.php');
+		$http = new hHttpClient();
+
+		$sgis_error = 0;
+		$sgis_member = [];
+		$sgis_gremien = [];
+		$sgis_start = microtime(true);
+		$sgis_resorts = [
+			'Interclubverantwortlicher' => 'AG Interclub',
+			'Schlüsselmeister' => 'Tokenverantwortlicher',
+			'Entsandt MB' => 'FSR MB',
+			'Entsandt MN' => 'FSR MN',
+			'Entsandt WM' => 'FSR WM',
+			'Entsandt EI' => 'FSR EI',
+			'Entsandt IA' => 'FSR IA',
+			'Angestellt Angestellte',
+		];
+		$resort_akuefi = $this->resort_akuefi;
+		$sgis_request_count = 1;
+
+		//get Gremien
+		$http->__doRequest('POST', SGISAPI_URL, NULL, NULL, [SGISAPI_HEADER => SGISAPI_KEY], [], [], ['action' => 'getGremien']);
+		if ($http->getStatusCode() == 200) {
+			$sgis = $http->getResponseBodyContent();
+			$_sgis_gremien = json_decode($sgis, true)['result'];
+		} else {
+			$sgis_error = $sgis_error | 1;
+		}
+
+		if (!$sgis_error) {
+			foreach ($_sgis_gremien as $g) {
+				if (false === strpos($g['name'], 'Fachschaftsrat')) {
+					$sgis_gremien[$g['id']] = $g;
+					if (!$sgis_error) {
+						//get Rollen
+						$http->__doRequest('POST', SGISAPI_URL, NULL, NULL, [SGISAPI_HEADER => SGISAPI_KEY], [], [], ['action' => 'getRollen', 'gid' => $g['id']]);
+						$sgis_request_count++;
+						if ($http->getStatusCode() == 200) {
+							$sgis2 = $http->getResponseBodyContent();
+							$_sgis_rollen = json_decode($sgis2, true);
+							if (!isset($_sgis_rollen['result'])) {
+								echo "\n================\nNotice: Empty Gremium:\n";
+								var_export($g);
+								echo "\n";
+								unset($sgis_gremien[$g['id']]);
+							} else {
+								if (!in_array($g['name'], $sgis_resorts, true) && (strpos($g['name'], 'Studierendenrat')===false)){
+									$sgis_resorts[$g['id']] = str_replace([
+										'Konsul',
+										'KTS',
+										'Referat Hochschulpolitik (HoPo)'
+									], [
+										'Angestellt Konsul',
+										'Referat Konferenz Thüringer Studierendenschaften (KTS)',
+										'Referat Hochschulpolitik'
+									], $g['name']);
+								}
+								$sgis_gremien[$g['id']]['rollen'] = $_sgis_rollen['result'];
+								if (!$sgis_error) {
+									foreach ($sgis_gremien[$g['id']]['rollen'] as $r_key => $r) {
+										//skip aktive in non stura
+										if ($r['name'] == 'Aktiv' && false===strpos($g['name'], 'Studierendenrat')){
+											if (DEBUG || DEBUG>0) echo "\n----------\nSkip - G:".$g['name'].' R:'.$r['name'];
+											continue;
+										}
+										//get Member----------
+										$http->__doRequest('POST', SGISAPI_URL, NULL, NULL, [SGISAPI_HEADER => SGISAPI_KEY], [], [], ['action' => 'getPersonen', 'rid' => $r['id']]);
+										$sgis_request_count++;
+										if ($http->getStatusCode() == 200) {
+											$sgis3 = $http->getResponseBodyContent();
+											$_sgis_member = json_decode($sgis3, true);
+											if (!isset($_sgis_member['result'])) {
+												echo "\n-----------\nNotice: Empty AG:\n";
+												var_export($r);
+												echo "\n";
+												unset($sgis_gremien[$g['id']]['rollen'][$r_key]);
+											} else {
+												$sgis_gremien[$g['id']]['rollen'][$r_key]['member'] = $_sgis_member['result'];
+												foreach ($_sgis_member['result']['currentMembers'] as $m){
+													if (!isset($sgis_member[$m['id']])){
+														$sgis_member[$m['id']]['id'] = $m['id'];
+														$sgis_member[$m['id']]['name'] = $m['name'];
+														$sgis_member[$m['id']]['gremien'] = [];
+													}
+													$sgis_member[$m['id']]['gremien'][$g['name']][$r['name']] = 1;
+												}
+											}
+										} else {
+											$sgis_error = $sgis_error | 4;
+											echo 'Error SGIS-API: getPersonen:' . json_encode($r);
+										}
+										//--------------------
+									}
+								}
+							}
+						} else {
+							$sgis_error = $sgis_error | 2;
+							echo 'Error SGIS-API: getRollen:' . json_encode($g);
+						}
+					}
+				}
+			}
+		}
+
+		if (!$sgis_error) {
+			//db resorts ==========================
+			//diff resorts
+			$db_resorts = $this->db->getResorts($perm);
+			$diff_resorts = [
+				'add' => $sgis_resorts,
+				'delete' => []
+			];
+			if (false !== ($tpos = array_search('Tokenverantwortlicher', $diff_resorts['add']))){
+				unset($diff_resorts['add'][$tpos]);
+			}
+			foreach ($db_resorts as $dbr) {
+				if (false!== ($apos = array_search($dbr['type'] .' '. $dbr['name'],$diff_resorts['add'], true))){
+					unset($diff_resorts['add'][$apos]);
+				} else {
+					$diff_resorts['delete'][] = $dbr;
+				}
+			}
+
+
+			//delete resorts
+			foreach ($diff_resorts['delete'] as $del_r){
+				//delete top->resort link (update top)
+				if (!$this->db->updateTopUnsetResortConstraintResortById($del_r['id'])){
+					echo 'ERROR: DB: updateTopUnsetResortConstraintResortById: '- $this->db->getError();
+				}
+				//delete resort
+				if (!$this->db->deleteResortById($del_r['id'])){
+					echo 'ERROR: DB: DeleteResort: '- $this->db->getError();
+				}
+			}
+			//add resorts
+			$grem = $this->db->getCommitteebyName($perm);
+			foreach ($diff_resorts['add'] as $k => $add_r){
+				$type = NULL;
+				$name = $add_r;
+				$short = NULL;
+
+				$ex = explode(' ', $add_r, 2);
+				if (count($ex)==2){
+					$type = $ex[0];
+					$name = $ex[1];
+				} else {
+					echo "\nError: Unknown Resort Type of: $add_r\n";
+				}
+
+				if (isset( $resort_akuefi[$name]) ){
+					$short = $resort_akuefi[$name];
+				}
+				$this->db->createResort([
+					'name' => $name,
+					'type' => $type,
+					'name_short' => $short,
+					'gremium' => $grem['id'],
+				]);
+			}
+
+			//db member list ==========================
+			//diff member
+			$db_member = $this->db->getMembers($perm);
+			$db_member_name2id = [];
+			foreach ($db_member as $mem){
+				$db_member_name2id[$mem['name']] = $mem['id'];
+			}
+			$diff_member = [
+				'add' => [],
+				'delete' => $db_member_name2id,
+				'update' => [],
+			];
+
+			foreach($sgis_member as $smem){
+				if (isset($diff_member['delete'][$smem['name']])){
+					$smem['dbid'] = $diff_member['delete'][$smem['name']];
+					unset($diff_member['delete'][$smem['name']]);
+					$diff_member['update'][] = $this->sgis2DbMember($smem, $grem['id']);
+				} else {
+					$diff_member['add'][] = $this->sgis2DbMember($smem, $grem['id']);
+				}
+			}
+
+			//update members - delete -------------------------------------
+			require_once(FRAMEWORK_PATH . '/class.fileHandler.php');
+			$fh = new FileHandler($this->db);
+			foreach($diff_member['delete'] as $del_m) {
+				$deltops = $this->db->getDeleteTopsByMemberIdSoft($del_m);
+				if (is_array($deltops) || count($deltops) > 0) {
+					foreach ($deltops as $dtop) {
+						$fh->deleteFilesByLinkId($dtop['id']);
+					}
+				}
+
+				//remove member of not generated newprotocols
+				$npnc = $this->db->deleteMemberOfUncreatedNewprotoByMemberId($del_m);
+				//delete tops
+				$tr = $this->db->deleteTopsByMemberIdSoft($del_m);
+				//delete $tr
+				if ($tr) {
+					$np = $this->db->deleteNewprotoByMemberIdSoft($del_m);
+				}
+				//delete member
+				if ($np) {
+					$me = $this->db->deleteMemberById($del_m);
+				}
+				//return result
+				if (!$me) {
+					echo "Error: Member Delete - mem['id']";
+				}
+			}
+
+			//update members - add -------------------------------------
+			foreach($diff_member['add'] as $add_m) {
+				$res = $this->db->createMember($add_m);
+				if (!$res){
+					echo "\nError Add Member: ". json_encode($add_m);
+					echo $this->db->getError();
+					echo PHP_EOL;
+				}
+			}
+			//update members - update -------------------------------------
+			foreach($diff_member['update'] as $update_m) {
+				if (!$this->db->updateMemberById($update_m)){
+					echo "\nError Update Member: ". json_encode($update_m);
+					echo $this->db->getError();
+					echo PHP_EOL;
+				}
+			}
+
+			if (DEBUG || DEBUG>0){
+				$sgis_end = microtime(true);
+				$sgis_time = $sgis_end - $sgis_start;
+
+				echo "\n\n=======================\nSGIS API Request Count: $sgis_request_count - in $sgis_time Second(s)";
+			}
+			die();
+		} else {
+			// error, can't reach api
+			die(BASE_TITLE. "\nError: Couldn't reach SGIS API. Code: ".$sgis_error);
+		}
+	}
 }
