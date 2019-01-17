@@ -48,6 +48,7 @@ $routes = [
 		'invite/nprestore'	=> ['inprestore',	'invitation', 	'nprestore'],
 		'invite/mdelete'	=> ['imemberdelete','invitation', 	'mdelete'],
 		'invite/madd'		=> ['imemberadd',	'invitation', 	'madd'],
+		'invite/mptoggle'		=> ['imemberpendingtoggle',	'invitation', 	'mptoggle'],
 		'files/npupload'	=> ['filesnpupload', 'file',		'tfupload'],
 		'files/delete'		=> ['filesdelete',	 'file',		'tfremove'],
 	]
@@ -129,6 +130,7 @@ $permission_map = [
 	'inprestore'	=> 'stura,konsul,admin',
 	'imemberdelete' => 'konsul,admin',
 	'imemberadd' 	=> 'konsul,admin',
+	'imemberpendingtoggle' 	=> 'konsul,admin',
 	'ipublic' 		=> 'sgis',
 	'protoedit' 	=> 'stura,konsul,admin',
 	'protopublish' 	=> 'stura,konsul,admin',

@@ -611,6 +611,7 @@ class CronController extends MotherController {
 			}
 			//update members - update -------------------------------------
 			foreach($diff_member['update'] as $update_m) {
+				if (array_key_exists( 'overwrite', $update_m)) unset($update_m['overwrite']) ;
 				if (!$this->db->updateMemberById($update_m)){
 					echo "\nError Update Member: ". json_encode($update_m);
 					echo $this->db->getError();

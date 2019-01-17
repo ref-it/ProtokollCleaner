@@ -89,7 +89,7 @@
 					if (count($members) > 0){
 						echo '<li class="membergroup p-2 list-group-item bg-dark text-white font-weight-bold">'.$group.'</li>';
 						foreach ($members as $m){
-							echo '<li class="member p-2 list-group-item"><span class="membername" data-group="'.$group.'" data-id="'.$m['id'].'" data-job="'.(($m['job'])?'('.$m['job'].')':'').'" data-name="'.$m['name'].'" data-management="'.$m['management'].'" data-protocol="'.$m['protocol'].'"></span></li>';
+							echo '<li class="member p-2 list-group-item'.((!empty($m['overwrite']) && false!== strpos($m['overwrite'],'(ruhend)'))?' sleeping':'').'"><span class="membername" data-group="'.$group.'" data-id="'.$m['id'].'" data-job="'.(($m['job'])?'('.$m['job'].')':'').'" data-name="'.$m['name'].'" data-management="'.$m['management'].'" data-protocol="'.$m['protocol'].'"></span><span title="Ruhend (Toggle)" class="pendingtoggle btn btn-outline-danger"></span></li>';
 						}
 					}
 				}

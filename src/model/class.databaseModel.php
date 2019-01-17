@@ -634,6 +634,11 @@ class DatabaseModel extends Database
 			array_splice( $data, count($data) - 1 , 0, [$m['flag_active']] );
 			$extra .= " , `flag_active` = ?";
 		}
+		if (array_key_exists('overwrite', $m)){
+			$pattern = substr_replace($pattern, 's', strlen($pattern) - 1, 0);
+			array_splice( $data, count($data) - 1 , 0, [$m['overwrite']] );
+			$extra .= " , `overwrite` = ?";
+		}
 		$sql = "UPDATE `".TABLE_PREFIX."current_member` SET
 				`name` = ?,
 				`gremium` = ?,

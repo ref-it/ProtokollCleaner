@@ -411,7 +411,61 @@ class InvitationController extends MotherController {
 			$this->print_json_result();
 		}
 	}
-	
+
+	/**
+	 * POST action
+	 * toggle sleeping ('ruhend') state of committee member
+	 */
+	public function mptoggle(){
+		//calculate accessmap
+		$validator_map = [
+			'committee' => ['regex',
+				'pattern' => '/'.implode('|', array_keys(PROTOMAP)).'/',
+				'maxlength' => 10,
+				'error' => 'Du hast nicht die benötigten Berechtigungen, um dieses Gremium zu bearbeiten.'
+			],
+			'mid' => ['integer',
+				'min' => '1',
+				'error' => 'Ungültige Id.'
+			],
+		];
+		$vali = new Validator();
+		$vali->validateMap($_POST, $validator_map, true);
+		$this->handleValidatorError($vali);
+
+		$member = $this->db->getMemberById($vali->getFiltered('mid'));
+		if (!$member || $member['gname'] != $vali->getFiltered('committee')){
+			$this->json_result = [
+				'success' => false,
+				'eMsg' => 'Mitglied nicht gefunden nicht gefunden.'
+			];
+		} else {
+			$isSleeping = (!empty($member['overwrite']) && false!== strpos($member['overwrite'],'(ruhend)'));
+			if ($isSleeping){
+				$over = trim(str_replace('(ruhend)', '', $member['overwrite']));
+				if (empty($over)) $over = NULL;
+				$member['overwrite'] = $over;
+			} else {
+				if ($member['overwrite']===NULL) $member['overwrite'] = '';
+				$member['overwrite'] = $member['overwrite'] . '(ruhend)';
+			}
+
+			//return result
+			if ($this->db->updateMemberById($member)){
+				$this->json_result = [
+					'success' => true,
+					'msg' => 'Mitgliedstatus aktualisiert.'
+				];
+			} else {
+				$this->json_result = [
+					'success' => false,
+					'eMsg' => 'Fehler beim Aktualisieren des Mitgliedstatus.'
+				];
+			}
+		}
+		$this->print_json_result();
+	}
+
 	/**
 	 * POST action
 	 * delete committee member

@@ -453,6 +453,45 @@
 		callback(param);
 	}
 	// ===== MEMBER FUNCTIONS ===============================================
+	// ------------------------------------------------
+	var func_pendingtoggleMember = function(){
+		var $e = $(this).prev();
+		console.log($e.parent().hasClass('sleeping'));
+		$.modaltools({
+			headerClass: 'bg-danger',
+			text: 'Mitglied: <strong>"'+ $e[0].dataset.name+'"</strong> als <strong>'+(($e.parent().hasClass('sleeping'))?'nicht  ':'')+'ruhend</strong> markieren?',
+			single_callback: function(key, obj){
+				if (key == 'ok'){
+					var dataset = {
+						mid: $e[0].dataset.id,
+						committee: 'stura'
+					};
+					var fchal = document.getElementById('fchal');
+					dataset[fchal.getAttribute("name")] = fchal.value;
+
+					$.ajax({
+						type: "POST",
+						url: GLOBAL_RELATIVE+'invite/mptoggle',
+						data: dataset,
+						success: function(data){
+							pdata = parseData(data);
+							if(pdata.success == true){
+								var $p = $e.parent();
+								if ($p.hasClass('sleeping')) {
+									$p.removeClass('sleeping')
+								} else {
+									$p.addClass('sleeping')
+								}
+							} else {
+								silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
+							}
+						},
+						error: postError
+					});
+				}
+			}
+		}).open();
+	};
 	// ===== TOP FUNCTIONS  ===============================================
 	// ------------------------------------------------
 	function sortCallback(evt, ui) {
@@ -1398,6 +1437,7 @@
 	// ===== DOCUMENT READY ===============================================
 	$(document).ready(function(){
 		// member func ----------
+		$('.silmph_memberbox.editmember .pendingtoggle').on('click', func_pendingtoggleMember);
 		$('.silmph_memberbox.editmember .newmember_name').keypress(function(e){
 			if(e.keyCode==13) $('.silmph_memberbox.editmember .newmemberbtn').click();
 		});
