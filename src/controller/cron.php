@@ -428,9 +428,9 @@ class CronController extends MotherController {
 							$sgis2 = $http->getResponseBodyContent();
 							$_sgis_rollen = json_decode($sgis2, true);
 							if (!isset($_sgis_rollen['result'])) {
-								echo "\n================\nNotice: Empty Gremium:\n";
+								/*echo "\n================\nNotice: Empty Gremium:\n";
 								var_export($g);
-								echo "\n";
+								echo "\n";*/
 								unset($sgis_gremien[$g['id']]);
 							} else {
 								if (!in_array($g['name'], $sgis_resorts, true) && (strpos($g['name'], 'Studierendenrat')===false)){
@@ -459,9 +459,9 @@ class CronController extends MotherController {
 											$sgis3 = $http->getResponseBodyContent();
 											$_sgis_member = json_decode($sgis3, true);
 											if (!isset($_sgis_member['result'])) {
-												echo "\n-----------\nNotice: Empty AG:\n";
+												/*echo "\n-----------\nNotice: Empty AG:\n";
 												var_export($r);
-												echo "\n";
+												echo "\n";*/
 												unset($sgis_gremien[$g['id']]['rollen'][$r_key]);
 											} else {
 												$sgis_gremien[$g['id']]['rollen'][$r_key]['member'] = $_sgis_member['result'];
