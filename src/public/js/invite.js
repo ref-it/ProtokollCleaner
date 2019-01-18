@@ -1323,12 +1323,19 @@
 					$.modaltools({
 						headerClass: 'bg-success',
 						text: $c,
+						boxClass: 'pdffile',
 						ptag: false,
 						headlineText: pdata.headline,
 						buttons: {'abort': 'Schließen'}
 					}).open();
 				} else {
-					silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 0);
+					$.modaltools({
+						headerClass: 'bg-danger',
+						text: pdata.eMsg,
+						ptag: false,
+						headlineText: 'PDF ERROR',
+						buttons: {'abort': 'Schließen'}
+					}).open();
 				}
 			},
 			error: function (data){ waitmodal.close(); postError(data); }

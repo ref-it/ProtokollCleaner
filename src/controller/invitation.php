@@ -1001,17 +1001,33 @@ class InvitationController extends MotherController {
 		foreach($members as $m) {
 			$name = $m['name'];
 			$job = $m['job'];
-			if (!empty($member['overwrite']) && false !== strpos($member['overwrite'], '(ruhend)')) {
+			if (!empty($m['overwrite']) && false !== strpos($m['overwrite'], '(ruhend)')) {
 				$name .= ' (ruhend)';
 			}
 			if ($m['flag_stuff']) {
-				$members_stuff[$name] = $job;
+				$members_stuff[] = [
+					'name' => $name,
+					'job' => $job,
+					'text' => ($m['overwrite'])? $m['overwrite'] : '',
+				];
 			} else if ($m['flag_elected']) {
-				$members_elected[$name] = $job;
+				$members_elected[] = [
+					'name' => $name,
+					'job' => $job,
+					'text' => ($m['overwrite'])? $m['overwrite'] : '',
+				];
 			} else if ($m['flag_active']) {
-				$members_active[$name] = $job;
+				$members_active[] = [
+					'name' => $name,
+					'job' => $job,
+					'text' => ($m['overwrite'])? $m['overwrite'] : '',
+				];
 			} else if ($m['flag_ref']) {
-				$members_ref[$name] = $job;
+				$members_ref[] = [
+					'name' => $name,
+					'job' => $job,
+					'text' => ($m['overwrite'])? $m['overwrite'] : '',
+				];
 			}
 		}
 		//do pdf api call
@@ -1022,7 +1038,12 @@ class InvitationController extends MotherController {
 			'member_elected' => $members_elected,
 			'member_stuff' => $members_stuff,
 			'member_ref' => $members_ref,
-			'member_active' => $members_active
+			'member_active' => $members_active,
+
+			'nth' => 42,			//skip implementation, not used anymore
+			'legislatur' => 42,		//skip implementation, not used anymore
+			'leitung' => ($nproto['management'] && isset($members[$nproto['management']]))? $members[$nproto['management']]['name']: '',
+			'protocol' => ($nproto['protocol'] && isset($members[$nproto['protocol']]))? $members[$nproto['protocol']]['name']: '',
 		];
 
 		$result = do_post_request2(FUI2PDF_URL . '/pdfbuilder', $pdfout, FUI2PDF_AUTH);
@@ -1045,6 +1066,7 @@ class InvitationController extends MotherController {
 						'<input type="hidden" name="d" value="1">' . '</form>',
 					'attr' => [
 						'type' => 'application/pdf',
+						'width' => '100%',
 						'download' =>
 							"Sitzungsliste_" . $date->format('Y-m-d') . 	'.pdf' ,
 					],
@@ -1064,7 +1086,7 @@ class InvitationController extends MotherController {
 					'type' => 'modal',
 					'subtype' => 'server-error',
 					'status' => '200',
-					'msg' => '<div style="white-space:pre-wrap;">' . print_r((isset($result['data']['error'])) ? $result['data']['error'] : $result['data'], true) . '</div>',
+					'eMsg' => '<div style="white-space:pre-wrap;">' . print_r((isset($result['data']['error'])) ? $result['data']['error'] : $result['data'], true) . '</div>',
 				];
 			}
 		}else if ($result['success'] && isset($filtered['d']) && $filtered['d'] == 1){
