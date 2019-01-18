@@ -1016,14 +1016,14 @@ class InvitationController extends MotherController {
 					'job' => $job,
 					'text' => ($m['overwrite'])? $m['overwrite'] : '',
 				];
-			} else if ($m['flag_active']) {
-				$members_active[] = [
+			} else if ($m['flag_ref']) {
+				$members_ref[] = [
 					'name' => $name,
 					'job' => $job,
 					'text' => ($m['overwrite'])? $m['overwrite'] : '',
 				];
-			} else if ($m['flag_ref']) {
-				$members_ref[] = [
+			} else if ($m['flag_active']) {
+				$members_active[] = [
 					'name' => $name,
 					'job' => $job,
 					'text' => ($m['overwrite'])? $m['overwrite'] : '',
