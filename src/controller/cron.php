@@ -628,6 +628,7 @@ class CronController extends MotherController {
 			die();
 		} else {
 			// error, can't reach api
+			echo BASE_TITLE. "\nError: Couldn't reach SGIS API. Code: ".$sgis_error;
 			die(BASE_TITLE. "\nError: Couldn't reach SGIS API. Code: ".$sgis_error);
 		}
 	}
