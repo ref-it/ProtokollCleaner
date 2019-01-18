@@ -449,8 +449,32 @@ div.silmph__message_success {
 		width: 98%;
 	}
 }
-
-
+.modalwrapper .modal-box.pdffile {
+	width: 98%;
+	left: 0;
+	right: 0;
+	margin: 0 auto;
+	display: block;
+	z-index: 500;
+	min-width: auto;
+	bottom: 20px;
+	top: 86px;
+}
+.modalwrapper .modal-box.pdffile .modal-header {
+	width: 98%;
+}
+.modalwrapper .modal-box.pdffile .modal-content {
+	padding: 0;
+	height: 100%;
+}
+.modalwrapper .modal-box.pdffile .modal-body {
+	padding: 0;
+	height: 90%;
+}
+.modalwrapper .modal-box.pdffile .modal-body > object{
+	padding: 0;
+	height: 100%;
+}
 
 /* GENERAL HALF + FULL BOXES ==============================================  */
 .half_container, 

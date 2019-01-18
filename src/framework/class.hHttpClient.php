@@ -102,6 +102,15 @@ class hHttpClient
 	}
 
 	/**
+	 * check response code first
+	 * @return mixed $response
+	 */
+	public function getResponseBodyContent()
+	{
+		return $this->response->getBody()->getContents();
+	}
+
+	/**
 	 * get http status code of last request
 	 * @return false|integer the status_code
 	 */
@@ -152,9 +161,11 @@ class hHttpClient
 	 * @param string $password (optional) login credentials (username) for request
 	 * @param array $header additional request header
 	 * @param array $options additional request options
+	 * @param array $curl additional curl option flags
+	 * @param array $param post/get... parameter|data, could bes set in $options, $options may be overwritten
 	 * @throws \Exception
 	 */
-	protected function __doRequest($type, $url, $username=null, $password=null, $header = array(), $options = array(), $curl = array()){
+	public function __doRequest($type, $url, $username=null, $password=null, $header = array(), $options = array(), $curl = array(), $param = NULL){
 		$this->error = false;
 		if (!$url){
 			$this->last_request_url = '';
@@ -168,6 +179,11 @@ class hHttpClient
 			$opt = [];
 			if (is_array($options) && count($options)>0){
 				$opt = $options;
+			}
+			if (is_array($param) && count($param)>0){
+				foreach ($param as $k => $v){
+					$opt['form_params'][$k] = $v;
+				}
 			}
 			if ($username && is_string($username) && 
 				$password && is_string($password)){

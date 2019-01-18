@@ -297,10 +297,10 @@
 	content: "(L: " attr(data-management) ") (P: " attr(data-protocol) ")";
 	float: right;
 }
-.silmph_memberbox .member .delete {
+.silmph_memberbox .member .pendingtoggle {
 	display: none;
 }
-.silmph_memberbox.editmember .member .delete {
+.silmph_memberbox.editmember .member .pendingtoggle {
 	display: inline-block;
 	font: normal normal normal 14px/1 FontAwesome;
 	cursor: pointer;
@@ -312,11 +312,17 @@
 	margin-left: 8px;
 	text-align: center;
 }
-.silmph_memberbox .member .delete::before {
-	content: "\f00d";
+.silmph_memberbox .member .pendingtoggle::before {
+	content: "\f21b";
 	width: 29px;
 	display: inline-block;
 	text-align: center;
+}
+.silmph_memberbox .member.sleeping .pendingtoggle::before{
+	content: "\f234";
+}
+.silmph_memberbox .member.sleeping {
+	color: #9c9b9b;
 }
 .silmph_memberbox:not(.editmember) {
 	display: none;

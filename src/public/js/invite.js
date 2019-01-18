@@ -454,11 +454,12 @@
 	}
 	// ===== MEMBER FUNCTIONS ===============================================
 	// ------------------------------------------------
-	var func_deleteMember = function(){
+	var func_pendingtoggleMember = function(){
 		var $e = $(this).prev();
+		console.log($e.parent().hasClass('sleeping'));
 		$.modaltools({
 			headerClass: 'bg-danger',
-			text: 'Soll das Mitglied: <strong>"'+ $e[0].dataset.name+'"</strong> wirklich gelöscht werden? Alle verknüpften Protokolle werden gelöscht.', 
+			text: 'Mitglied: <strong>"'+ $e[0].dataset.name+'"</strong> als <strong>'+(($e.parent().hasClass('sleeping'))?'nicht  ':'')+'ruhend</strong> markieren?',
 			single_callback: function(key, obj){
 				if (key == 'ok'){
 					var dataset = {
@@ -467,19 +468,20 @@
 					};
 					var fchal = document.getElementById('fchal');
 					dataset[fchal.getAttribute("name")] = fchal.value;
-					
+
 					$.ajax({
 						type: "POST",
-						url: GLOBAL_RELATIVE+'invite/mdelete',
+						url: GLOBAL_RELATIVE+'invite/mptoggle',
 						data: dataset,
 						success: function(data){
 							pdata = parseData(data);
 							if(pdata.success == true){
 								var $p = $e.parent();
-								$p.css({overflow: 'hidden'}).animate({ height: '0', padding: '0', opacity: 'toggle' }, 500, function(){
-									$p.remove();
-								});
-								silmph__add_message(pdata.msg + ((typeof(pdata.timing) == 'number')? ' (In '+pdata.timing.toFixed(2)+' Sekunden)' : ''), MESSAGE_TYPE_SUCCESS, 3000);
+								if ($p.hasClass('sleeping')) {
+									$p.removeClass('sleeping')
+								} else {
+									$p.addClass('sleeping')
+								}
 							} else {
 								silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
 							}
@@ -489,69 +491,6 @@
 				}
 			}
 		}).open();
-	};
-	// ------------------------------------------------
-	var func_add_member_btn = function(){
-		var $e = $(this).parent().prev().prev().children('input');
-		var $ej = $(this).parent().prev().children('input');
-		var val_name = $e.val().trim();
-		var val_job = $ej.val().trim();
-		
-		var error = false;
-		if (val_name.length != 0 && val_name.length < 3){
-			silmph__add_message('Der Name muss mindestens 3 Zeichen lang sein.', MESSAGE_TYPE_WARNING, 5000);
-			error = true;
-		}
-		formError($e, error);
-		
-		if(!error && val_name.length > 0){
-			var dataset = {
-				mname: val_name,
-				mjob: val_job,
-				committee: 'stura'
-			};
-			var fchal = document.getElementById('fchal');
-			dataset[fchal.getAttribute("name")] = fchal.value;
-			
-			$.ajax({
-				type: "POST",
-				url: GLOBAL_RELATIVE+'invite/madd',
-				data: dataset,
-				success: function(data){
-					pdata = parseData(data);
-					formError($e, !pdata.success);
-					if(pdata.success == true){
-						//append new element
-						var newli = $('<li/>', {
-							'class':'member p-2 list-group-item',
-							html: '<span class="membername"'+
-									' data-id="'+pdata.newmember.id+
-									'" data-name="'+pdata.newmember.name+
-									'" data-job="'+(pdata.newmember.job!=''?'('+pdata.newmember.job+')':'')+
-									'" data-management="0" data-protocol="0"></span>'
-						});
-						if ($e.closest('.silmph_memberbox').hasClass('editmember')){
-							newli.append('<span class="delete btn btn-outline-danger"></span>');
-							newli.children('.delete').on('click', func_deleteMember);
-						}
-						var $list = $e.closest('.silmph_memberbox').children('ul');
-						$list.append(newli);
-						//sort member list by name
-						var sort_member = function(a, b){
-							 return ($(b).children('.membername').data('name')) < ($(a).children('.membername').data('name')) ? 1 : -1;    
-						}
-						$list.children('li').sort(sort_member) // sort elements
-						                  .appendTo($list); // append again to the list
-						silmph__add_message(pdata.msg + ((typeof(pdata.timing) == 'number')? ' (In '+pdata.timing.toFixed(2)+' Sekunden)' : ''), MESSAGE_TYPE_SUCCESS, 3000);
-						$e.val('');
-						$e.focus();
-					} else {
-						silmph__add_message(pdata.eMsg, MESSAGE_TYPE_WARNING, 5000);
-					}
-				},
-				error: postError
-			});
-		}
 	};
 	// ===== TOP FUNCTIONS  ===============================================
 	// ------------------------------------------------
@@ -958,6 +897,7 @@
 					'<div class="col-6">'+
 					((data.state < 2)?
 						' <button class="infoedit btn btn-outline-secondary" title="Info | Bearbeiten" type="button"><i class="fa fa-fw fa-info"></i></button>'+
+						' <button class="memberpdf btn btn-outline-secondary" title="Anwesenheitsliste" type="button"><i class="fa fa-fw fa-file-text-o"></i></button>'+
 						' <button class="send'+ ((data.inviteMailDone)? ' resend':'')+' btn btn-outline-secondary" title="Einladung'+ ((data.inviteMailDone)? ' erneut':'')+' versenden" type="button"><i class="fa fa-fw fa-envelope"></i></button>'+
 						' <button class="createp btn btn-outline-secondary" title="Protokoll erstellen" type="button">'+
 							'<span class="fa-stack2 fa-fw"><i class="fa fa-wikipedia-w fa-stack-1x"></i><i class="fa fa-pencil fa-stack-1x text-success"></i></span>'+
@@ -965,6 +905,7 @@
 						' <button class="cancel btn btn-outline-secondary" title="Planung entfernen" type="button"><i class="fa fa-fw fa-times"></i></button>'
 					:
 						' <a target="_blank" class="link btn btn-outline-secondary" href="'+data.generatedUrl+'" title="Zum Protokoll" type="button"><i class="fa fa-fw fa-link"></i></a>'+
+						' <button class="memberpdf btn btn-outline-secondary" title="Anwesenheitsliste" type="button"><i class="fa fa-fw fa-file-text-o"></i></button>'+
 						((!data.disableRestore)?' <button class="restore_one btn btn-outline-secondary" title="Ausgewählte Tops Wiederherstellen" type="button"><i class="fa fa-fw fa-recycle"></i></button> <button class="restore btn btn-outline-secondary" title="Alle Tops Wiederherstellen" type="button"><i class="fa fa-fw fa-stack-overflow"></i></button>':'')
 					)+
 					'</div>'
@@ -1337,7 +1278,70 @@
 				});
 			}, 'abort': function(obj){ obj.close(); }}
 		}).open();
-	}
+	};
+	// member pdf list request
+	var func_newproto_memberpdf = function ($e) {
+		var $e = $(this).closest('.nprotoelm');
+		var dataset = {
+			committee: 'stura',
+			hash: 		$e[0].dataset.hash,
+			npid: 		$e[0].dataset.id,
+		};
+		var fchal = document.getElementById('fchal');
+		dataset[fchal.getAttribute("name")] = fchal.value;
+		var waitmodal = $.modaltools({
+			text: '<strong>Anfrage wird verarbeitet. Bitte warten.</strong></p><p><div class="multifa center"><span class="fa fa-cog sym-spin"></span><span class="fa fa-cog sym-spin-reverse"></span></div>',
+			buttons: {}
+		}).open();
+
+		$.ajax({
+			type: "POST",
+			url: GLOBAL_RELATIVE+'invite/npmemberlist',
+			data: dataset,
+			success: function (data){
+				waitmodal.close();
+				pdata = {};
+				pdata = parseData(data, false);
+				console.log(pdata);
+
+				if(pdata.success == true){
+					var obj_opt = $.extend({'data': pdata.datapre  + pdata.data}, pdata.attr );
+					var $c = $('<' + pdata.container + '/>');
+					for (p in obj_opt) {
+						if (obj_opt.hasOwnProperty(p)) {
+							$c.attr(p, obj_opt[p]);
+						}
+					}
+					//fallback
+					$c.html(pdata.fallback);
+					$c.find('.modal-form-fallback-submit').on('click', function () {
+						var $e = $(this);
+						$e.closest('form').append('<input type="hidden" name="'+fchal.getAttribute("name")+'" value="' + fchal.value + '" >');
+						$e.closest('form')[0].submit();
+					});
+					// build pdf modal
+					$.modaltools({
+						headerClass: 'bg-success',
+						text: $c,
+						boxClass: 'pdffile',
+						ptag: false,
+						headlineText: pdata.headline,
+						buttons: {'abort': 'Schließen'}
+					}).open();
+				} else {
+					$.modaltools({
+						headerClass: 'bg-danger',
+						text: pdata.eMsg,
+						ptag: false,
+						headlineText: 'PDF ERROR',
+						buttons: {'abort': 'Schließen'}
+					}).open();
+				}
+			},
+			error: function (data){ waitmodal.close(); postError(data); }
+		});
+		console.log(dataset);
+	};
 	// add btn events to newproto elements
 	var func_newproto_add_events = function ($e){
 		// info / edit button
@@ -1346,6 +1350,8 @@
 		});
 		// delete proto
 		$e.find('.cancel').on('click', func_newproto_delete);
+		// send/resend invitation
+		$e.find('.memberpdf').on('click', func_newproto_memberpdf);
 		// send/resend invitation
 		$e.find('.send').on('click', func_newproto_invite);
 		// write to wiki
@@ -1498,11 +1504,10 @@
 	// ===== DOCUMENT READY ===============================================
 	$(document).ready(function(){
 		// member func ----------
-		$('.silmph_memberbox.editmember .delete').on('click', func_deleteMember);
+		$('.silmph_memberbox.editmember .pendingtoggle').on('click', func_pendingtoggleMember);
 		$('.silmph_memberbox.editmember .newmember_name').keypress(function(e){
 			if(e.keyCode==13) $('.silmph_memberbox.editmember .newmemberbtn').click();
 		});
-		$('.silmph_memberbox.editmember .newmemberbtn').on('click', func_add_member_btn);
 		$('.silmph_memberbox .showtoggle').on('click', func_top_showtoggle);
 		// top func -------------
 		$('.silmph_toplist').sortable({

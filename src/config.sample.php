@@ -35,11 +35,21 @@ define('TIMEZONE', 'Europe/Berlin'); //Mögliche Werte: http://php.net/manual/de
 define('TEMPLATE', 'stura');
 
 // ===== SimpleSAML Settings & Konstants
-define('SIMPLESAML_ACCESS_GROUP', 'stura');
+define('SIMPLESAML_ACCESS_GROUP', 'sgis,student');
 define("SAML_SIMPLESAMLDIR" , realpath(dirname(__FILE__) . '/../../../..') . "/simplesamlphp");
 define("SAML_SIMPLESAMLAUTHSOURCE" , "");
-define("SAML_AUTHGROUP" , "");
+define("SAML_AUTHGROUP" , "sgis,student");
 define("SAML_ADMINGROUP" , "");
+
+// ===== Sgis API =====
+define('SGISAPI_URL', 'https://helfer.stura.tu-ilmenau.de/sgis/rest.php');
+define('SGISAPI_KEY', '');
+define('SGISAPI_HEADER', '');
+
+// ===== PDF API =====
+define('FUI2PDF_APIKEY', 'SECRET_API_KEY');
+define('FUI2PDF_AUTH', base64_encode('user:password'));
+define('FUI2PDF_URL', 'pdfui_api_url');
 
 // ===== Wiki Settings =====
 define('WIKI_URL', 'https://wiki.stura.tu-ilmenau.de');
@@ -56,10 +66,10 @@ define('DEBUG_USE_DUMMY_LOGIN', false);
 // ===== CRON SETTINGS =====
 const CRON_USERMAP = [
 	'cronuser' => [
-		'password' => '1234', //
+		'password' => '1234', //FIXME
 		'displayName' => 'Cron User',
 		'mail' => 'ref-it@tu-ilmenau.de',
-		'groups' => [ 'basic', 'cron', 'croninfo', 'cronmail', 'cronwiki'],
+		'groups' => [ 'basic', 'cron', 'croninfo', 'cronmail', 'cronwiki', 'cronsgis'],
 		'eduPersonPrincipalName' => ['cronuser'],
 	]
 ];

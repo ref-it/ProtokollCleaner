@@ -42,7 +42,8 @@
 							<div class="col-6">
 								<?php if($state < 2){ ?>
 									<button class="infoedit btn btn-outline-secondary" title="Info | Bearbeiten" type="button"><i class="fa fa-fw fa-info"></i></button>
-									<button class="send<?= ($nproto['invite_mail_done'])? ' resend':'' ?> btn btn-outline-secondary" title="Einladung<?= ($nproto['invite_mail_done'])? ' erneut':'' ?> versenden" type="button"><i class="fa fa-fw fa-envelope"></i></button>
+                                    <button class="memberpdf btn btn-outline-secondary" title="Anwesenheitsliste" type="button"><i class="fa fa-fw fa-file-text-o"></i></button>
+                                    <button class="send<?= ($nproto['invite_mail_done'])? ' resend':'' ?> btn btn-outline-secondary" title="Einladung<?= ($nproto['invite_mail_done'])? ' erneut':'' ?> versenden" type="button"><i class="fa fa-fw fa-envelope"></i></button>
 									<button class="createp btn btn-outline-secondary" title="Protokoll erstellen" type="button">
 										<span class="fa-stack2 fa-fw">
 											<i class="fa fa-wikipedia-w fa-stack-1x"></i>
@@ -51,7 +52,8 @@
 									<button class="cancel btn btn-outline-secondary" title="Planung entfernen" type="button"><i class="fa fa-fw fa-times"></i></button>
 								<?php } else { ?>
 									<a target="_blank" class="link btn btn-outline-secondary" href="<?= ($nproto['generated_url']? WIKI_URL.'/'.str_replace(':', '/', $param['protomap'][0]).'/'.$nproto['generated_url']: '#')?>" title="Zum Protokoll" type="button"><i class="fa fa-fw fa-link"></i></a>
-									<?php if ( !$disable_restore ){ ?>
+                                    <button class="memberpdf btn btn-outline-secondary" title="Anwesenheitsliste" type="button"><i class="fa fa-fw fa-file-text-o"></i></button>
+                                    <?php if ( !$disable_restore ){ ?>
                                         <button class="restore_one btn btn-outline-secondary" title="Ausgewählte Tops Wiederherstellen" type="button"><i class="fa fa-fw fa-recycle"></i></button>
 										<button class="restore btn btn-outline-secondary" title="Alle Tops Wiederherstellen" type="button"><i class="fa fa-fw fa-stack-overflow"></i></button>
 									<?php } ?>
@@ -89,23 +91,12 @@
 					if (count($members) > 0){
 						echo '<li class="membergroup p-2 list-group-item bg-dark text-white font-weight-bold">'.$group.'</li>';
 						foreach ($members as $m){
-							echo '<li class="member p-2 list-group-item"><span class="membername" data-group="'.$group.'" data-id="'.$m['id'].'" data-job="'.(($m['job'])?'('.$m['job'].')':'').'" data-name="'.$m['name'].'" data-management="'.$m['management'].'" data-protocol="'.$m['protocol'].'"></span><span class="delete btn btn-outline-danger"></span></li>';
+							echo '<li class="member p-2 list-group-item'.((!empty($m['overwrite']) && false!== strpos($m['overwrite'],'(ruhend)'))?' sleeping':'').'"><span class="membername" data-group="'.$group.'" data-id="'.$m['id'].'" data-job="'.(($m['job'])?'('.$m['job'].')':'').'" data-name="'.$m['name'].'" data-management="'.$m['management'].'" data-protocol="'.$m['protocol'].'"></span><span title="Ruhend (Toggle)" class="pendingtoggle btn btn-outline-danger"></span></li>';
 						}
 					}
 				}
 			?>
 				</ul>
-			<?php 
-			if(checkUserPermission('admin')){
-				echo '<div class="form-row">';
-				echo '<div class="form-group col-md-5 mb-0">';
-				echo '<input class="newmember_name form-control" type="text" value="" placeholder="Neues Mitglied"></div>';
-				echo '<div class="form-group col-md-3 mb-0">';
-				echo '<input class="newmember_job form-control" type="text" value="" placeholder="Tätigkeit"></div>';
-				echo '<div class="form-group col-md-4 mb-0">';
-				echo '<button class="newmemberbtn btn btn-success w-100" type="button">Hinzufügen</button></div>';
-				echo '</div>';
-			} ?>
 		</div>
 	</div>
 </div>

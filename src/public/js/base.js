@@ -313,9 +313,10 @@ function checkIsValidName(name){
     			}
     			$modal.fadeOut(300, function(){
     				var $t = $(settings.target);
-    				if ($t.hasClass('open')) $t.removeClass('open');
     				$(this).remove();
     				if (typeof(callback) == 'function') callback();
+    				var l = ($t.find('.modal-box').length);
+    				if (l <= 0 && $t.hasClass('open')) $t.removeClass('open');
     			});
     			return $out;
     		};
