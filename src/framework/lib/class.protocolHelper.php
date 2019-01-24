@@ -401,8 +401,9 @@ class protocolHelper extends protocolOut
 					$writeUserText++;
 				}
 			}
+
 			//detect list && enummeration
-			$enumRe = '/^( *(\*|-))/';
+			$enumRe = '/^( *(\*(?!\*)|-))/';
 			$enumMatch = [];
 			preg_match($enumRe, $line, $enumMatch);
 			if (count($enumMatch) > 0 && !(strlen($enumMatch[0] -1 ) > (4 + $lastEnumerationSpace) ) && (strlen($enumMatch[0]) == 1 || strlen($enumMatch[0])%2==0) ){
