@@ -427,7 +427,7 @@ class CronController extends MotherController {
 						if ($http->getStatusCode() == 200) {
 							$sgis2 = $http->getResponseBodyContent();
 							$_sgis_rollen = json_decode($sgis2, true);
-							if (!isset($_sgis_rollen['result'])) {
+							if (!isset($_sgis_rollen['result']) || !isset($_sgis_rollen['result']['rollen'])) {
 								/*echo "\n================\nNotice: Empty Gremium:\n";
 								var_export($g);
 								echo "\n";*/
@@ -444,7 +444,7 @@ class CronController extends MotherController {
 										'Referat Hochschulpolitik'
 									], $g['name']);
 								}
-								$sgis_gremien[$g['id']]['rollen'] = $_sgis_rollen['result'];
+								$sgis_gremien[$g['id']]['rollen'] = $_sgis_rollen['result']['rollen'];
 								if (!$sgis_error) {
 									foreach ($sgis_gremien[$g['id']]['rollen'] as $r_key => $r) {
 										//skip aktive in non stura
