@@ -13,7 +13,7 @@
  * @platform        PHP
  * @requirements    PHP 7.0 or higher
  */
- 
+
 require_once (FRAMEWORK_PATH."/config/config.protocol.php");
 require_once (FRAMEWORK_PATH."/lib/class.protocol.php");
 require_once (FRAMEWORK_PATH."/lib/class.protocolOut.php");
@@ -32,7 +32,7 @@ class protocolHelper extends protocolOut
 	function __construct()
 	{
 	}
-	
+
 	private static $regexFinder = [
 		'multimatch' => [
 			'todo' => '/(?<!alte )todo/i',
@@ -44,88 +44,88 @@ class protocolHelper extends protocolOut
 			'sitzung' => '/=(=)+( )*(\d+).?( )*StuRa-Sitzung.*=(=)+/i'
 		]
 	];
-	
+
 	private static $personFinder = '/(\[\[person:(\s)*([a-zA-Z0-9äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]+( [a-zA-Z0-9äöüÄÖÜéèêóòôáàâíìîúùûÉÈÊÓÒÔÁÀÂÍÌÎÚÙÛß]+)*)(\s)*\]\])/i';
-	
+
 	private static $resolutionParts = [
-		'titel=' => 'Titel', 
+		'titel=' => 'Titel',
 		'j=' => 'Ja',
 		'n=' => 'Nein',
 		'L=' => 'Link',
 		'e=' => 'Enthaltungen',
 		's=' => 'Beschluss',
 	];
-	
+
 	public static $resolutionType = [[
 			'match' => ['Protokoll', 'beschließt', 'Sitzung', '\d+'], 
 			'long' => 'Protokoll',
 			'short' => 'P'
 		], [ //old resolutions on resolist
-			'match' => ['Protokoll', 'vom', 'bestätigt', '\d\d\d\d'], 
+			'match' => ['Protokoll', 'vom', 'bestätigt', '\d\d\d\d'],
 			'long' => 'Protokoll',
 			'short' => 'P'
 		], [ //old resolutions on resolist2
-			'match' => ['Protokoll', 'beschließt', 'vom', 'Wiki vorliegende', 'Fassung', '\d+'], 
+			'match' => ['Protokoll', 'beschließt', 'vom', 'Wiki vorliegende', 'Fassung', '\d+'],
 			'long' => 'Protokoll',
 			'short' => 'P'
 		], [
-			'match' => ['Tagesordnung'], 
+			'match' => ['Tagesordnung'],
 			'long' => 'Tagesordnung',
 			'short' => 'T'
 		], [
-			'match' => ['Haushaltsverantwortliche', 'beschließt', 'Budget'], 
+			'match' => ['Haushaltsverantwortliche', 'beschließt', 'Budget'],
 			'long' => 'Finanzen',
 			'short' => 'H'
 		], [
-			'match' => ['beschließt', 'Budget'], 
+			'match' => ['beschließt', 'Budget'],
 			'long' => 'Finanzen',
 			'short' => 'F'
 		], [
-			'match' => ['beschließt', 'EUR '], 
+			'match' => ['beschließt', 'EUR '],
 			'long' => 'Finanzen',
 			'short' => 'F'
 		], [
-			'match' => ['beschließt', 'Risikofinanzierung'], 
+			'match' => ['beschließt', 'Risikofinanzierung'],
 			'long' => 'Finanzen',
 			'short' => 'F'
 		],[
-			'match' => ['beschließt', 'Kredit'], 
+			'match' => ['beschließt', 'Kredit'],
 			'long' => 'Finanzen',
 			'short' => 'F'
 		],[
-			'match' => ['beschließt', 'Finanzplan'], 
+			'match' => ['beschließt', 'Finanzplan'],
 			'long' => 'Finanzen',
 			'short' => 'F'
 		], [
-			'match' => ['Ordnung'], 
+			'match' => ['Ordnung'],
 			'long' => 'Ordnung',
 			'short' => 'O'
 		], [
-			'match' => ['Gründung|Auflösung|Leiter|Mitglied|wählt|bestätigt'], 
+			'match' => ['Gründung|Auflösung|Leiter|Mitglied|wählt|bestätigt'],
 			'long' => 'Wahl',
 			'short' => 'W'
 		], [
-			'match' => ['beschließt|bestätigt', 'Amt'], 
+			'match' => ['beschließt|bestätigt', 'Amt'],
 			'long' => 'Wahl',
 			'short' => 'W'
 		], [
-			'pattern' => '/.*/', 
+			'pattern' => '/.*/',
 			'long' => 'Sonstiges',
 			'short' => 'S'
 		]
 	];
-	
+
 	private static $highlightKeywords = [
 		'angestellte', 'todo', 'fixme', 'deleteme', 'rdb'
 	];
-	
+
 	private $isLineError = false;
 	private $lineError = '';
-	
+
 	private static $tagRegex = '/(({{tag>[a-zA-Z0-9]+(_[a-zA-Z0-9]+)*([ ]*[a-zA-Z0-9]+(_[a-zA-Z0-9]+)*)*( )*}}|=(=)+( )*geschlossen(d?)er( *)Teil( )*=(=)+|=(=)+( )*Nicht(( |-)*)(ö|Ö)ffentlich(t?)er( *)Teil( )*=(=)+|=(=)+( )*interner( *)Teil( )*=(=)+|=(=)+( )*(ö|Ö)ffentlicher( *)Teil( )*=(=)+)+)/i';
 	private static $oldTags = ['/^(=(=)+( )*geschlossen(d?)er( *)Teil( )*=(=)+|=(=)+( )*interner( *)Teil( )*=(=)+|=(=)+( )*Nicht(( |-)*)(ö|Ö)ffentlich(t?)er( *)Teil( )*=(=)+)$/i', '/^=(=)+( )*(ö|Ö)ffentlicher Teil( )*=(=)+$/i'];
 	private static $ignoreTags = [];
-	
+
 	private static $monthReplaceMap = [
 		'Januar' 	=> '01',
 		'Februar' 	=> '02',
@@ -141,10 +141,10 @@ class protocolHelper extends protocolOut
 		'Dezember' 	=> '12'
 	];
 	private static $date1Reg = '/(\d{1,2}(\.| )*(Januar|Februar|März|April|Mai|Juni|Juli|August|September|Oktober|November|Dezember)(\D){0,3}(\d{2,4}))/i';
-	
+
 	/**
 	 * categorize and split raw resolution strings to array
-	 * 
+	 *
 	 * @param array $resolutions array of raw resolution strings
 	 * @param Protocol $p
 	 * @param array $overwriteType overwrites Type ['short' => '', 'long' => '']
@@ -158,7 +158,7 @@ class protocolHelper extends protocolOut
 		}
 		return $result;
 	}
-	
+
 	/**
 	 * parse resolution Type
 	 * @param $text resolution text
@@ -180,10 +180,10 @@ class protocolHelper extends protocolOut
 			//regex pattern
 			if (isset($type['pattern'])){
 				if (is_array($type['pattern'])){
-					$pattern = $type['pattern'];	
+					$pattern = $type['pattern'];
 				}
 				else {
-					$pattern = [$type['pattern']]; 	
+					$pattern = [$type['pattern']];
 				}
 			}
 			//handle multiple and match pattern
@@ -202,7 +202,7 @@ class protocolHelper extends protocolOut
 		}
 		return $return;
 	}
-	
+
 	/**
 	 * parse protocol resolution to p_tag
 	 * @param string $text
@@ -212,7 +212,7 @@ class protocolHelper extends protocolOut
 	public static function parseResolutionProtocolTag($text, $committee){
 		//parse date on protocols resolutions
 		$return = [];
-		
+
 		//parse protocoltag
 		$date = [];
 		if (preg_match(self::$date1Reg, $text, $matches3) == 1){
@@ -266,30 +266,30 @@ class protocolHelper extends protocolOut
 				}
 			}
 		}
-		
 		if(count($date) == 0){
 			$return['p_link_date'] = false;
 			$return['p_tag'] = 0;
-		} else if(count($date) == 1){
-			$return['p_link_date'] = [$date[0]->format('Y-m-d')];
-			$return['p_tag'] = $committee.':'.$return['p_link_date'][0];
-		} else if(count($date) == 2 && $date[0]->format('Y-m-d') == $date[1]->format('Y-m-d')) {
-			$return['p_link_date'] = [$date[0]->format('Y-m-d')];
-			$return['p_tag'] = $committee.':'.$return['p_link_date'][0];
 		} else {
 			$return['p_tag'] = '';
 			foreach ($date as $pos => $d){
-				$return['p_link_date'][] = $date[$pos]->format('Y-m-d');
-				$return['p_tag'].= (($pos != 0)?'|':'').$committee.':'.$date[$pos]->format('Y-m-d');
+				$formatted = $date[$pos]->format('Y-m-d');
+				if (in_array($formatted, $return['p_link_date'], true)) continue;
+				$return['p_link_date'][] = $formatted;
+				$return['p_tag'].= (($return['p_tag'])?'|':'').$committee.':'.$formatted;
 			}
-			$return['multiple'] = true;
+			if (count($return['p_link_date'])==0){
+				$return['p_link_date'] = false;
+				$return['p_tag'] = 0;
+			} elseif (count($return['p_link_date'])>1) {
+				$return['multiple'] = true;
+			}
 		}
 		return $return;
 	}
-	
+
 	/**
 	 * categorize and split raw resolution strings to array
-	 * 
+	 *
 	 * @param string $resolution raw resolution text
 	 * @param Protocol $p
 	 * @return array parsed resolution [title, type_short, type_long, p_tag, text|raw]
@@ -302,7 +302,7 @@ class protocolHelper extends protocolOut
 			$text = str_replace('}}', '', $text);
 			foreach (self::$resolutionParts as $query => $key){
 				if (preg_match('/^'.$query.'/i', $text)){
-					$result[$key] = htmlspecialchars(substr($text, strlen($query)));				
+					$result[$key] = htmlspecialchars(substr($text, strlen($query)));
 				}
 			}
 		}
@@ -331,7 +331,7 @@ class protocolHelper extends protocolOut
 		$result['intern'] = ($result['type_long'] == 'Intern')? 1 : 0;
 		return $result;
 	}
-	
+
 	/**
 	 * add resolution tag
 	 *
@@ -348,29 +348,29 @@ class protocolHelper extends protocolOut
 			$p->resolutions[$pos]['r_tag'] = "$legislatur/{$p->legislatur_week}{$extra2}-{$reso['type_short']}".str_pad($count[$reso['type_short']], 2, '0', STR_PAD_LEFT);
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param Protocol $p
 	 * @param string $addDraftText
 	 * @param string $nopreview
 	 */
 	public function parseProto($p, $addDraftText = false, $nopreview = false){
 		prof_flag('parseProto_start');
-		
+
 		$isInternal = false;	// dont copy internal parts to public part
 		$this->isLineError = false;	// found parsing error
 		$lastTagClosed = true; 	// prevent duplicate closing tags and closing internal part before opening
 		$writeUserText = 1;		// used to detect protocol head
 		$alc = 0;			//additional line counter remember if script adds
 		$rlc = 0;			//removed line counter
-		
+
 		//init preg_match results
 		$pregFind = ['todo' => [], 'resolution' => [], 'fixme' => [], 'deleteme' => []];	// contains preg matches (todos, fixmes, resolutions)
-		
+
 		//only fill preview or output
 		if (!$nopreview) $p->preview = self::generateDiffHeader();
-		
+
 		//
 		$lastEnumerationSpace = 0;
 		// parser main loop - loop throught $protocol lines
@@ -387,7 +387,7 @@ class protocolHelper extends protocolOut
 					if ($addDraftText){
 						$p->external .= '====== ENTWURF - PROTOKOLL ======'."\n";
 						$alc++;
-					}			
+					}
 				}
 				$addDraftText = false;
 				$writeUserText = 0;
@@ -414,7 +414,7 @@ class protocolHelper extends protocolOut
 				break;
 			}
 			$lastEnumerationSpace = (count($enumMatch) > 0)? strlen($enumMatch[0]) - 1 : 0;
-			
+
 			// detect nonpublic/internal parts
 			$matches = [];
 			$match = preg_match(self::$tagRegex, $line, $matches, PREG_OFFSET_CAPTURE, 0);
@@ -438,7 +438,7 @@ class protocolHelper extends protocolOut
 						if (in_array($single_tag, self::$ignoreTags, true)){
 							$p->tags[$single_tag] = 0; // mark tag used
 							continue; //but skip counting
-						}	
+						}
 						if (strlen($single_tag)>2 && substr($single_tag,0, 2) != 'no') {
 							$p->tags[$single_tag] = isset($p->tags[$single_tag])? $p->tags[$single_tag] + 1 : 1;
 							if ($single_tag == PROTO_INTERNAL_TAG){
@@ -504,7 +504,7 @@ class protocolHelper extends protocolOut
 			if (!$nopreview) $p->preview .= self::generateDiffErrorLine($this->lineError);
 			else $p->external .= self::generateDiffErrorLine($this->lineError);
 		}
-		
+
 		if (!$nopreview){
 			//print table footer
 			$p->preview .= self::generateDiffFooter();
@@ -514,7 +514,7 @@ class protocolHelper extends protocolOut
 			$p->preview = preg_replace($re, $subst, $p->preview);
 		}
 		prof_flag('parseProto_end');
-		
+
 		//categorize pregmatches
 		if (isset($pregFind['resolution']['public']))
 			$p->resolutions = $p->resolutions + self::parseResolutionArray($pregFind['resolution']['public'], $p);
@@ -522,7 +522,7 @@ class protocolHelper extends protocolOut
 			$p->resolutions = $p->resolutions + self::parseResolutionArray($pregFind['resolution']['intern'], $p, ['long' => 'Intern', 'short' => 'I']);
 		//create resolution tags
 		self::numberResolutionArray($p, $p->legislatur);
-		
+
 		// add todos and fixmes
 		$tmp_todo = [
 			'deleteme' => $pregFind['deleteme'],
@@ -530,20 +530,20 @@ class protocolHelper extends protocolOut
 			'todo' => $pregFind['todo']
 		];
 		$p->todos = self::todo2linearArray($tmp_todo, $p->id);
-		
+
 		//add protocol numnber (sitzungnummer)
 		if (isset($pregFind['sitzung']) && preg_match(self::$regexFinder['no_multimatch']['sitzung'], array_values($pregFind['sitzung']['public'])[0], $tmp_sitzung_matches) == 1){
-			$p->protocol_number = $tmp_sitzung_matches[3]; 
+			$p->protocol_number = $tmp_sitzung_matches[3];
 		} else {
 			$p->protocol_number = -1;
 			$p->parse_errors['f'][] = "Sitzungsnummer konnte nicht erkannt werden.";
 		}
-		
+
 		// object
 		return $p;
 		//TODO detect Legislatur
 	}
-	
+
 	/**
 	 * recreate todo array to linear array
 	 * @param array $todos
@@ -573,4 +573,3 @@ class protocolHelper extends protocolOut
 	}
 }
 
-?>
