@@ -359,78 +359,151 @@ class ProtocolController extends MotherController {
 			//---------------------------------
 			//create/update resolutions
 			$db_resolutions = $this->db->getResolutionByOnProtocol($p->id, true);
-			//remember protocol resolution
-			$proto_reso_new = [];
-			//insert new resolutons, modify existing, delete old
-			foreach ($p->resolutions as $reso){
-				$reso['on_protocol'] = $p->id;
-				//update existing resolutions...
-				if (isset($db_resolutions[$reso['r_tag']])){
-					$reso['id'] = $db_resolutions[$reso['r_tag']]['id'];
-					//error if resolution protocol tag was changed
-					if ($db_resolutions[$reso['r_tag']]['type_long'] == 'Protokoll'
-						&& $db_resolutions[$reso['r_tag']]['p_tag'] !== $reso['p_tag']){
-						$this->json_result = [
-							'success' => false,
-							'eMsg' => 'Protokollbeschlüsse müssen in der Reihenfolge bleiben, in der diese initial erstellt wurden.'
-						];
-						error_log('Proto Publish: User "'.$this->auth->getUsername()." tried to change protocol resolition order. r_tag: {$reso['r_tag']} -- old_p_tag: {$db_resolutions[$reso['r_tag']]['p_tag']} -- new_p_tag: {$reso['p_tag']} ");
-					} else {
-						//update resolution
-						$this->db->updateResolution($reso);
-					}
-					unset($db_resolutions[$reso['r_tag']]);
-				} else { //create resolution
-					if ($reso['type_long'] == 'Protokoll'){
-						$proto_reso_new[] = $reso;
-					} else {
-						$this->db->createResolution($reso);
-					}
-				}
-			}
-			//delete others
-			foreach ($db_resolutions as $reso){
-				//if old protocol exist with same text, dont create new and keep old
-				$skip_delete = false;
-				if ($reso['type_long'] == 'Protokoll'){
-					foreach ($proto_reso_new as $key => $new_p_reso){
-						if ($reso['noraw'] == 1 && $reso['text'] == $new_p_reso['Titel']	  // resolution crawled with resolution list
-							|| $reso['noraw'] == 0 && $reso['text'] == $new_p_reso['text'] ){// crawled on protocol with this tool
-							$skip_delete = true;
-							unset($proto_reso_new[$key]);
-						}
-						if ($skip_delete) break;
-					}
-				}
-				if ($skip_delete) continue;
-				//keep linked protocol resolutions
-				if ($reso['p_tag'] !== NULL && $reso['pid'] != null){
-					$this->json_result = [
-						'success' => false,
-						'eMsg' => 'Protokollbeschlüsse, welche mit einem veröffentlichten Protokoll verlinkt sind, können nicht gelöscht werden.'
-					];
-					error_log('Proto Publish: User "'.$this->auth->getUsername()." tried to delete linked protocol resolition {$reso['r_tag']} --- p_tag: {$reso['p_tag']}");
-				} else {
-					$this->db->deleteResolutionById($reso['id']);
-				}
-			}
 			$gremium = $this->db->getCreateCommitteebyName($vali->getFiltered('committee'));
-			//create new protocoll resolutions now
-			foreach ($proto_reso_new as $reso){
-				$newresoid = $this->db->createResolution($reso);
-				//Update protocols -> set agreed on resolution
-				if ($newresoid){
-					if (isset($reso['p_link_date']) && is_array($reso['p_link_date'])){
-						foreach ($reso['p_link_date'] as $resoDate){
-							$this->db->updateProtocolSetAgreed($newresoid, $gremium['id'], $resoDate);
+
+			/*
+			 * PER RESOLUTION TYPE
+			1. p - db keys = rest_map_indexes
+			2. foreach db_text -> key in new,
+			   case db_text[key] == p_text[key]
+				unset db_text[key]
+				unset p_text[key]
+				dic[key] = key
+				- use dic or update directly
+			   case isset(p_text[key]) && db_text[key] != p_text[key] ;;but false !== p_key = in_array db_text[key] in p_text -> p_key
+				unset db_text[key]
+				unset p_text[p_key]
+				dic[p_key] = key
+				- use dic or update directly
+			   case db_text[db_key] not in p_text
+				ignore -> delete
+				if key not in rest_map_indexes, add there
+			3. foreach p_text -> key
+				if key in rest_map -> reuse
+					else
+						dic[key] = rest_map.pop()
+				-> insert
+			4. update elements of dic (not required, done inline)
+			 *
+			 *  */
+
+			$resoTodo = [];
+			$p_reso_keys = [];
+
+			//init data for matching algo
+			foreach($db_resolutions as $k => $r){
+				$resoTodo[$r['type_long']]['db'][$k] = $r['text'];
+			}
+			foreach($p->resolutions as $k => $r){
+				$resoTodo[$r['type_long']]['p'][$r['r_tag']] = $r['text'];
+				$p_reso_keys[$r['r_tag']] = $k;
+				$p->resolutions[$k]['on_protocol'] = $p->id;
+			}
+
+			//per type
+			foreach ($resoTodo as $reso_type => $rtexts){
+				$db_text = (isset($rtexts['db']))? $rtexts['db'] : [];
+				$p_text  = (isset($rtexts['p']))?  $rtexts['p']  : [];
+
+				//1.
+				$new_map_keys = array_diff(array_keys($p_text), array_keys($db_text));
+				//2.
+				foreach( $db_text as $db_k => $v ) {
+					if (isset($p_text[$db_k]) && $db_text[$db_k] == $p_text[$db_k]) {
+						unset( $db_text[$db_k] );
+						unset( $p_text[$db_k] );
+						// update reso
+						$db_reso = $db_resolutions[$db_k];
+						$p_reso = $p->resolutions[$p_reso_keys[$db_k]];
+						$p_reso['id'] = $db_reso['id'];
+
+						if ($reso_type == 'Protokoll') {
+							//if old reso has p_tag, and new is not the same, remove agreed id of protocol
+							if ($db_reso['p_tag'] !== $p_reso['p_tag']){
+								$this->db->updateProtocolRemoveAgreedByAgreedId( $db_reso['id'], $gremium['id'] );
+							}
+							//may set new agreed tag
+							if (isset($p_reso['p_link_date']) && is_array($p_reso['p_link_date'])){
+								foreach ($p_reso['p_link_date'] as $resoDate){
+									$this->db->updateProtocolSetAgreed($db_reso['id'], $gremium['id'], $resoDate);
+								}
+							} else {
+								error_log('427_1: protocol.php --- undefined index: p_link_date, skip setAgreed'."\n\t".print_r($p_reso));
+							}
 						}
-					} else {
-						error_log('429_1: protocol.php --- undefined index: p_link_date, skip setAgreed'."\n\t".print_r($reso));
+						//real reso update
+						$this->db->updateResolution($p_reso);
+					} elseif(isset($p_text[$db_k]) && $db_text[$db_k] != $p_text[$db_k] && false !== ($p_k = array_search( $db_text[$db_k], $p_text, true))) {
+						unset( $db_text[$db_k] );
+						unset( $p_text[$p_k] );
+
+						// update reso
+						$db_reso = $db_resolutions[$db_k];
+						$p_reso = $p->resolutions[$p_reso_keys[$p_k]];
+						$p_reso['id'] = $db_reso['id'];
+						$p_reso['r_tag'] = $db_k; // weise alten key zu
+
+						if ($reso_type == 'Protokoll') {
+							//if old reso has p_tag, and new is not the same, remove agreed id of protocol
+							if ($db_reso['p_tag'] !== $p_reso['p_tag']){
+								$this->db->updateProtocolRemoveAgreedByAgreedId( $db_reso['id'], $gremium['id'] );
+							}
+							//may set new agreed tag
+							if (isset($p_reso['p_link_date']) && is_array($p_reso['p_link_date'])){
+								foreach ($p_reso['p_link_date'] as $resoDate){
+									$this->db->updateProtocolSetAgreed($p_reso['id'], $gremium['id'], $resoDate);
+								}
+							} else {
+								error_log('453_1: protocol.php --- undefined index: p_link_date, skip setAgreed'."\n\t".print_r($p_reso));
+							}
+						}
+						//real reso update
+						$this->db->updateResolution($p_reso);
+					} elseif (!isset($p_text[$db_k]) || $db_text[$db_k] != $p_text[$db_k] && false === (array_search( $db_text[$db_k], $p_text, true))) {
+						unset( $db_text[$db_k] );
+
+						// ignore -> delete reso
+						$db_reso = $db_resolutions[$db_k];
+
+						if ($reso_type == 'Protokoll') {
+							//if old reso has p_tag, and new is not the same, remove agreed id of protocol
+							$this->db->updateProtocolRemoveAgreedByAgreedId( $db_reso['id'], $gremium['id'] );
+						}
+
+						// real reso delete
+						$this->db->deleteResolutionById($db_reso['id']);
+
+						// if key not in rest_map_indexes, add there
+						if (!in_array($db_k, $new_map_keys,true)){
+							$new_map_keys[] = $db_k;
+						}
 					}
-				} else {
-					error_log('429: protocol.php --- undefined index: p_link_date'."\n\t".print_r($reso));
+				}
+				//3.
+				foreach($p_text as $p_k => $v){
+					$p_reso = $p->resolutions[$p_reso_keys[$p_k]];
+					if (false===( $pos = array_search( $p_k, $new_map_keys, true))) {
+						$p_reso['r_tag'] = array_shift($new_map_keys);
+					} else {
+						unset($new_map_keys[$pos]);
+					}
+					//insert
+					$newid = $this->db->createResolution($p_reso);
+					if ($reso_type == 'Protokoll') {
+						$p_reso['id'] = $newid;
+
+						//may set new agreed tag
+						if (isset($p_reso['p_link_date']) && is_array($p_reso['p_link_date'])){
+							foreach ($p_reso['p_link_date'] as $resoDate){
+								$this->db->updateProtocolSetAgreed($p_reso['id'], $gremium['id'], $resoDate);
+							}
+						} else {
+							error_log('500_1: protocol.php --- undefined index: p_link_date, skip setAgreed'."\n\t".print_r($p_reso));
+						}
+					}
 				}
 			}
+
 			//---------------------------------
 			//create/update/delete todo|fixme|deleteme
 			$db_todo = $this->db->getTodosByProtocol($p->id, true);

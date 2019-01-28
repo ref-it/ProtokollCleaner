@@ -219,10 +219,8 @@
 	foreach ($param['openProtocols']['notAgreed'] as $prot){
 		$newproto = (isset($param['openProtocols']['newproto'][$prot['date']]))?$param['openProtocols']['newproto'][$prot['date']]: NULL;
 		echo "\n  * [[".$param['protoInternLink'] . $prot['name']."|Protokoll vom ".$prot['name']."]] Protokollverantwortliche*r: [[:person:".((isset($newproto['protocol']))?$param['members'][$newproto['protocol']]['name']:'XXX')."]]";
-	}
-	echo "\n";
-	foreach ($param['openProtocols']['notAgreed'] as $prot){
 		echo "\n {{template>:vorlagen:stimmen|Titel=Der StuRa beschließt das Protokoll der Sitzung vom ".date_create_from_format('Y-m-d', $prot['date'])->format('d.m.Y')." in der im Wiki vorliegenden Fassung.|J=|N=|E=|S=angenommen/abgelehnt}}\n";
+		echo "\n";
 	}
 	echo "\n";
 ?>
