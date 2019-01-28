@@ -118,27 +118,54 @@ class DatabaseModel extends Database
 		}
 		return $r;
 	}
-	
-	
-	
+
 	/**
 	 * update protocol entry, set protocol agreed value
 	 * @param NULL|integer $agreed agreed state
+	 * @param string $date format Y-m-d
+	 * @param integer $gid gremium id
 	 * @param 
 	 * @return boolean|new id
 	 */
 	public function updateProtocolSetAgreed($agreed, $gid, $date){
-		$pattern = 'iis';
+		$pattern = 'iiis';
 		$data = [
+			$agreed,
 			$agreed,
 			$gid, 
 			$date
 		];
 	
 		$sql = "UPDATE `".TABLE_PREFIX."protocol` SET
-				`agreed` = ?
-				WHERE `agreed` IS NULL AND `gremium` = ? AND `date` = ? ";
-	
+				`agreed` = ? 
+				WHERE (`agreed` != ? OR `agreed` IS NULL) AND `gremium` = ? AND `date` = ? ";
+
+		$this->protectedInsert($sql, $pattern, $data);
+		$result = $this->affectedRows();
+		if (!$this->isError()){
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * update protocol entry, set protocol agreed value
+	 * @param NULL|integer $agreed agreed state
+	 * @param
+	 * @return boolean|new id
+	 */
+	public function updateProtocolRemoveAgreedByAgreedId($agreed, $gid){
+		$pattern = 'ii';
+		$data = [
+			$agreed,
+			$gid,
+		];
+
+		$sql = "UPDATE `".TABLE_PREFIX."protocol` SET
+				`agreed` = NULL
+				WHERE `agreed` = ? AND `gremium` = ?";
+
 		$this->protectedInsert($sql, $pattern, $data);
 		$result = $this->affectedRows();
 		if (!$this->isError()){

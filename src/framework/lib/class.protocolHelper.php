@@ -57,7 +57,7 @@ class protocolHelper extends protocolOut
 	];
 
 	public static $resolutionType = [[
-			'match' => ['Protokoll', 'beschließt', 'Sitzung', '\d+'], 
+			'match' => ['Protokoll', 'beschließt', 'Sitzung', '\d+'],
 			'long' => 'Protokoll',
 			'short' => 'P'
 		], [ //old resolutions on resolist
@@ -271,6 +271,7 @@ class protocolHelper extends protocolOut
 			$return['p_tag'] = 0;
 		} else {
 			$return['p_tag'] = '';
+			$return['p_link_date'] = [];
 			foreach ($date as $pos => $d){
 				$formatted = $date[$pos]->format('Y-m-d');
 				if (in_array($formatted, $return['p_link_date'], true)) continue;
@@ -320,8 +321,11 @@ class protocolHelper extends protocolOut
 				$p->parse_errors['f'][] = "<strong>Parse Error: Protokolldatum</strong> Dem folgenden Protokollbeschluss konnte kein Datum entnommen werden. Gesuchtes format: dd.mm.yy, dd-mm-yy, dd.mm.yyyy oder dd-mm-yyyy<br><i>{$result['Titel']}</i>";
 			} else if(isset($tmpPtag['multiple'])) {
 				$p->parse_errors['f'][] = "<strong>Parse Error: Protokolldatum</strong> Bitte nur einen Beschluss pro Protokoll.<br><i>{$result['Titel']}</i>";
+				$result['p_tag'] = $tmpPtag['p_tag'];
+				$result['p_link_date'] = $tmpPtag['p_link_date'];
 			} else {
 				$result['p_tag'] = $tmpPtag['p_tag'];
+				$result['p_link_date'] = $tmpPtag['p_link_date'];
 			}
 		} else {
 			$result['p_tag'] = NULL;
