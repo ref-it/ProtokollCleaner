@@ -733,7 +733,7 @@ class DatabaseModel extends Database
 	 * @return boolean|new id
 	 */
 	public function createNewproto($n){
-		$pattern = 'sisiiiissiis';
+		$pattern = 'sisiiiissiiss';
 		$data = [
 			$n['date'],
 			(isset($n['legislatur'])&&$n['legislatur'])?$n['legislatur']:NULL,
@@ -747,6 +747,7 @@ class DatabaseModel extends Database
 			$n['gremium'],
 			isset($n['mail_info_state'])? $n['mail_info_state']: 0,
 			isset($n['mail_proto_remember'])? $n['mail_proto_remember']: NULL,
+			(isset($n['room'])&&$n['room'])?$n['room']:NULL,
 		];
 		$sql = "INSERT INTO `".TABLE_PREFIX."newproto`
 			(	`date`,
@@ -760,8 +761,9 @@ class DatabaseModel extends Database
 				`hash`,
 				`gremium`,
 				`mail_info_state`,
-				`mail_proto_remember`)
-			VALUES(?,?,?,?,?,?,?,?,?,?,?,?) ";
+				`mail_proto_remember`,
+				`room`)
+			VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?) ";
 		$this->protectedInsert($sql, $pattern, $data);
 		$result = $this->affectedRows();
 		if ($this->affectedRows() > 0){
@@ -777,7 +779,7 @@ class DatabaseModel extends Database
 	 * @return boolean|new id
 	 */
 	public function updateNewproto($n){
-		$pattern = 'sisiiiisssiisi';
+		$pattern = 'sisiiiisssiissi';
 		$data = [
 			$n['date'],
 			(isset($n['legislatur'])&&$n['legislatur'])?$n['legislatur']:NULL,
@@ -792,6 +794,7 @@ class DatabaseModel extends Database
 			$n['gremium'],
 			$n['mail_info_state'],
 			$n['mail_proto_remember'],
+			(isset($n['room'])&&$n['room'])?$n['room']:NULL,
 			$n['id']
 		];
 
@@ -808,7 +811,8 @@ class DatabaseModel extends Database
 				`hash` = ?,
 				`gremium` = ?,
 				`mail_info_state` = ?,
-				`mail_proto_remember` = ?
+				`mail_proto_remember` = ?,
+				`room` = ?
 				WHERE `id` = ?";
 	
 		$this->protectedInsert($sql, $pattern, $data);
@@ -1246,10 +1250,7 @@ class DatabaseModel extends Database
 		if ($this->isError()){
 			return false;
 		} else {
-			return [
-				'name' => $committeeName,
-				'id' => $this->lastInsertId()
-			];
+			return $this->getCommitteebyName($committeeName);
 		}
 	}
 	
