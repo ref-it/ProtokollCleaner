@@ -5,7 +5,7 @@
 <div class="card mb-3">
 	<div class="card-body">
         <div class="invite-info">
-            Der StuRa läd alle interessierten Studierenden ein, an den Treffen teilzunehmen. Die Sitzungen finden in der Regel hochschulöffentlich jeden Mittwoch um 19:00 Uhr im EAZ 1337/1338 statt.
+            Der StuRa läd alle interessierten Studierenden ein, an den Treffen teilzunehmen. Die Sitzungen finden in der Regel hochschulöffentlich jeden Mittwoch um <?= $param['settings']['meeting_hour'];?>:00 Uhr im <?= $param['settings']['meeting_room'];?> statt.
         </div>
 		<h3>Nächste geplante Sitzung</h3>
 		<div class="silmph_nprotolist mb-1 border border-secondary" data-meetinghour="<?= $param['settings']['meeting_hour'];?>" data-legislatur="<?= $param['legislatur']['number']; ?>" data-nthproto="<?= $param['nth-proto']; ?>">
@@ -34,7 +34,7 @@
 							}
 						} ?>
 						<div class="nprotoelm row p-2" data-id="<?= $nproto['id'] ?>" data-hash="<?= (!$disable_restore)?$nproto['hash']:'' ?>" data-m="<?= $nproto['management']?$nproto['management']:'' ?>" data-p="<?= $nproto['protocol']?$nproto['protocol']:'' ?>">
-							<div class="col-3"><?= date_create($nproto['date'])->format('d.m.Y H:i') ?></div>
+							<div class="col-12"><?= date_create($nproto['date'])->format('d.m.Y H:i') ?><?= ($nproto['room']?'<div style="color:#ee1212;font-weight:bold;">Die Sitzung wurde in einen anderen Raum verlegt und findet nun im "'.htmlspecialchars($nproto['room']).'" statt.</div>':'') ?></div>
 						</div>
 				<?php break; } ?>
 			</div>

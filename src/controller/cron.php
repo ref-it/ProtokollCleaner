@@ -212,6 +212,11 @@ class CronController extends MotherController {
 				'm'=> ($nproto['management'] && isset($members[$nproto['management']]))? $members[$nproto['management']] : NULL
 			];
 			$nproto['membernames'] = $membernames;
+			// room
+			if (!$nproto['room']){
+				$committee = $this->db->getCommitteebyName($nproto['gname']);
+				$nproto['room'] = $committee['default_room'];
+			}
 			// open protocols // not aggreed
 			$notAgreedProtocols = $this->db->getProtocols($nproto['gname'], false, false, true, false, " AND P.ignore = 0 AND LENGTH(P.name) = 10 AND P.date > '2017-01-01' AND date < '".date_create()->format('Y-m-d')."'");
 			$draftStateProtocols = $this->db->getProtocols($nproto['gname'], false, false, false, true, " AND P.ignore = 0 AND (P.public_url IS NULL) AND LENGTH(P.name) = 10 AND P.date > '2017-01-01' AND date < '".date_create()->format('Y-m-d')."'");

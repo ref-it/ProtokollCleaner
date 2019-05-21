@@ -892,6 +892,7 @@
 			'data-hash': data.hash,
 			'data-m': data.m,
 			'data-p': data.p,
+			'data-room': data.room,
 			'html': '<div class="col-3">'+data.date+'</div>'+
 					'<div class="col-3">'+data.stateLong+'</div>'+
 					'<div class="col-6">'+
@@ -1144,6 +1145,7 @@
 			proposal['hash'] = old[0].dataset.hash,
 			proposal['date'] = $.format.date(stringToDate(old.children('div').eq(0).text().split(' ')[0]), 'yyyy-MM-dd'),
 			proposal['time'] = (old.children('div').eq(0).text().split(' '))[1],
+			proposal['room'] = old[0].dataset.room,
 			proposal['mana'] = members.hasOwnProperty('id'+old[0].dataset.m)? members['id'+old[0].dataset.m].name: '',
 			proposal['prot'] = members.hasOwnProperty('id'+old[0].dataset.p)? members['id'+old[0].dataset.p].name: '';
 		}
@@ -1384,6 +1386,7 @@
 		var out = {
 			legislatur: $('.silmph_nprotolist')[0].dataset.legislatur,
 			time: $('.silmph_nprotolist')[0].dataset.meetinghour+':00',
+			room: $('.silmph_nprotolist')[0].dataset.hasOwnProperty('meetingroom')? $('.silmph_nprotolist')[0].dataset.meetingroom : '',
 			date: $.format.date(d, 'yyyy-MM-dd'),
 			management: {counter: -1, name: '', id: 0},
 			protocol: {counter: -1, name: '', id: 0}
@@ -1409,6 +1412,7 @@
 				+ func_create_form_elem([
 				   {alias: 'date', placeholder: 'Datum', label:'Datum der Sitzung', type:'date', value: proposal.date},
 				   {alias: 'time', placeholder: 'Uhrzeit', label:'Uhrzeit der Uhrzeit', type:'time', value: proposal.time},
+				   {alias: 'room', placeholder: 'Raum', label:'Wo findet die Sitzung statt?', type:'text', value: ((proposal.hasOwnProperty('room')&&proposal.room != null && typeof(proposal.room)=='string' && proposal.room!='' )? proposal.room:'')},
 				   {alias: 'mana', placeholder: (proposal.management.name!=''?'Vorschlag: '+proposal.management.name:''), label:'Wer leitet die Sitzung?', value: (proposal.hasOwnProperty('mana')?proposal.mana:'')},
 				   {alias: 'prot', placeholder: (proposal.protocol.name!=''?'Vorschlag: '+proposal.protocol.name:''), label:'Wer protokolliert?', value: (proposal.hasOwnProperty('prot')?proposal.prot:'')}
 				  ], {fieldIdPrefix: 'frmNpVal'})
@@ -1448,10 +1452,10 @@
 				proposal['hash'] = old[0].dataset.hash,
 				proposal['date'] = $.format.date(stringToDate(old.children('div').eq(0).text().split(' ')[0]), 'yyyy-MM-dd'),
 				proposal['time'] = (old.children('div').eq(0).text().split(' '))[1],
+				proposal['room'] = old[0].dataset.room,
 				proposal['mana'] = members.hasOwnProperty('id'+old[0].dataset.m)? members['id'+old[0].dataset.m].name: '',
 				proposal['prot'] = members.hasOwnProperty('id'+old[0].dataset.p)? members['id'+old[0].dataset.p].name: '';
 			}
-			console.log(proposal);
 		}
 		$.modaltools({
 			headerClass: 'bg-success',
@@ -1469,6 +1473,7 @@
 					committee: 'stura',
 					date: 		$.format.date(stringToDate(obj.modal.find('[id^=frmNpVal][data-alias=date]').val()), 'yyyy-MM-dd'),
 					time: 		obj.modal.find('[id^=frmNpVal][data-alias=time]').val(),
+					room: 		obj.modal.find('[id^=frmNpVal][data-alias=room]').val(),
 					management: obj.modal.find('[id^=frmNpVal][data-alias=mana]').val(),
 					protocol: 	obj.modal.find('[id^=frmNpVal][data-alias=prot]').val(),
 					hash: 		obj.modal.find('.silmph_createnewproto')[0].dataset.hash,

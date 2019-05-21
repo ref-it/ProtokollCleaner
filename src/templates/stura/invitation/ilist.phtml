@@ -9,7 +9,7 @@
         <div class="silmph_themenhead silmph_when printonly">
             <span>Wann?</span>
         </div>
-		<div class="silmph_nprotolist mb-1 border border-secondary" data-meetinghour="<?= $param['settings']['meeting_hour'];?>" data-legislatur="<?= $param['legislatur']['number']; ?>" data-nthproto="<?= $param['nth-proto']; ?>">
+		<div class="silmph_nprotolist mb-1 border border-secondary" data-meetinghour="<?= $param['settings']['meeting_hour'];?>" data-meetingroom="<?= $param['settings']['meeting_room'];?>" data-legislatur="<?= $param['legislatur']['number']; ?>" data-nthproto="<?= $param['nth-proto']; ?>">
 			<div class="bg-warning npheadline">
 	  			<div class="row p-2">
 	    			<div class="col-3">Datum</div>
@@ -36,7 +36,7 @@
 								$disable_restore = true;
 							}
 						} ?>
-						<div class="nprotoelm row p-2" data-id="<?= $nproto['id'] ?>" data-hash="<?= (!$disable_restore)?$nproto['hash']:'' ?>" data-m="<?= $nproto['management']?$nproto['management']:'' ?>" data-p="<?= $nproto['protocol']?$nproto['protocol']:'' ?>">
+						<div class="nprotoelm row p-2" data-id="<?= $nproto['id'] ?>" data-hash="<?= (!$disable_restore)?$nproto['hash']:'' ?>" data-m="<?= $nproto['management']?$nproto['management']:'' ?>" data-p="<?= $nproto['protocol']?$nproto['protocol']:'' ?>" data-room="<?= $nproto['room']?$nproto['room']:$param['settings']['meeting_room'] ?>">
 							<div class="col-3"><?= date_create($nproto['date'])->format('d.m.Y H:i') ?></div>
 	    					<div class="col-3"><?= $statelist[$state] ?></div>
 							<div class="col-6">

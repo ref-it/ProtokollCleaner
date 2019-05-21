@@ -69,6 +69,7 @@ class InvitationController extends MotherController {
 			'sender' 	=> ($user != NULL)? $user['username'] : '',
 			'message' 	=> $additional_message,
 			'committee' => $proto['gname'],
+			'room'		=> $proto['room'],
 			'tops' 		=> $tops,
 			'proto'		=> $proto, 
 			'resorts'	=> $resorts,
@@ -167,6 +168,7 @@ class InvitationController extends MotherController {
 		$sett['auto_invite'] = intval($settings['AUTO_INVITE_N_HOURS']);
 		$sett['disable_restore'] = intval($settings['DISABLE_RESTORE_OLDER_DAYS']);
 		$sett['meeting_hour'] = intval($committee['default_meeting_hour']);
+		$sett['meeting_room'] = ($committee['default_room']);
 		$this->t->printPageHeader();
 		$this->includeTemplate(__FUNCTION__, [
 			'tops' => $tops,
@@ -205,6 +207,7 @@ class InvitationController extends MotherController {
 		$sett['auto_invite'] = intval($settings['AUTO_INVITE_N_HOURS']);
 		$sett['disable_restore'] = intval($settings['DISABLE_RESTORE_OLDER_DAYS']);
 		$sett['meeting_hour'] = intval($committee['default_meeting_hour']);
+		$sett['meeting_room'] = ($committee['default_room']);
 		$this->t->printPageHeader();
 		$this->includeTemplate(__FUNCTION__, [
 			'tops' => $tops,
@@ -735,6 +738,12 @@ class InvitationController extends MotherController {
 				'format' => 'H:i',
 				'error' => 'Ungültige Uhrzeit'
 			],
+			'room' => ['regex',
+			   'pattern' => '/^(([0-9]|[a-z]|[A-Z]|[ \/\-])*)$/',
+			   'empty',
+			   'maxlength' => 63,
+			   'error' => 'Ungültige Ortsangabe'
+			],
 			'management' => ['name',
 				'empty',
 				'error' => 'Ungültiger Name: Sitzungsleitung'
@@ -819,6 +828,8 @@ class InvitationController extends MotherController {
 			if (isset($nproto['protocol']) && $nproto['protocol'] != $memberLink['proto'] || (!isset($nproto['protocol']) || !$nproto['protocol']) && $memberLink['proto'] ){
 				$send_infomail = true;
 			}
+			$nproto['room'] = $vali->getFiltered('room')? $vali->getFiltered('room') : NULL;
+			if ($nproto['room'] == $gremium['default_room']) $nproto['room'] = NULL;
 			$nproto['management'] = $memberLink['manag'];
 			$nproto['protocol'] = $memberLink['proto'];
 			$nproto['hash'] = (isset($nproto['hash']) && $nproto['hash'])? $nproto['hash'] : md5($nproto['date'].date_create()->getTimestamp().$vali->getFiltered('committee').mt_rand(0, 640000));
@@ -874,7 +885,8 @@ class InvitationController extends MotherController {
 				'date'  =>	date_create($nproto['date'])->format('d.m.Y H:i'),
 				'isNew' =>	($newnpid==0)? 1 : 0,
 				'm' 	=>  $nproto['management']?$nproto['management']:'' ,
-				'p' 	=>  $nproto['protocol']?$nproto['protocol']:''
+				'p' 	=>  $nproto['protocol']?$nproto['protocol']:'',
+				'room' 	=>  $nproto['room']?$nproto['room']:(($gremium['default_room'])?$gremium['default_room']:'')
 			];
 			//return result
 			$this->json_result = [
@@ -1158,6 +1170,11 @@ class InvitationController extends MotherController {
 				|| $nproto['hash'] != $vali->getFiltered('hash')){
 				$this->json_not_found('Protokoll nicht gefunden');
 				return;
+			}
+			// room
+			if (!$nproto['room']){
+				$committee = $this->db->getCommitteebyName($nproto['gname']);
+				$nproto['room'] = $committee['default_room'];
 			}
 			//don't allow dates in the past
 			$validateDate = date_create_from_format('Y-m-d H:i:s', $nproto['date']);
