@@ -5,7 +5,7 @@
 
 =================================================
 
-Der <?=  ucfirst(strtolower($param['committee'])) ?> der TU Ilmenau läd am <?= date_create($param['proto']['date'])->format('d.m.Y') ?> um <?= date_create($param['proto']['date'])->format('H:i') ?> Uhr zur nächsten Sitzung im <?= htmlspecialchars($param['room']); ?> ein.
+Der <?=  ucfirst(strtolower($param['committee'])) ?> der TU Ilmenau lädt am <?= date_create($param['proto']['date'])->format('d.m.Y') ?> um <?= date_create($param['proto']['date'])->format('H:i') ?> Uhr zur nächsten Sitzung im <?= htmlspecialchars($param['room']); ?> ein.
 
 Voraussichtliche 
   - Sitzungsleitung:    <?= ($param['proto']['membernames']['m'])? $param['proto']['membernames']['m']['name'] : '-' ?>
