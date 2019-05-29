@@ -126,6 +126,7 @@
 	<p>Desweiteren können Referate, AGs und Angestellte ihre Berichte <a href="<?= $param['topLink'] ?>">hier [<?php echo count($links); $links[] = $param['topLink'] ?>]</a> noch bis zur Sitzung vortragen. Dort befinden sich auch vorgetragene Referatberichte.</p>
 	<p>Solltet Ihr zum Zeitpunkt der Sitzung verhindert sein, meldet euch bitte rechtzeitig ab und hinterlegt gegebenenfalls für geplante Abstimmungen eine schriftliche Stimme.</p>
 	<p>Solltet Ihr zum Zeitpunkt der Sitzung verhindert sein und eine AG, ein Referat leiten oder einen FSR vertreten, tragt bitte eure Berichte aus diesen Gremien vor.</p>
+	<p>Weitere Informationen können im Sitzungs-Leitfaden [<?php echo count($links); $links[] = 'https://wiki.stura.tu-ilmenau.de/leitfaden/sitzungsleitung'; ?>] gefunden werden.</p>
 	<?php if (is_array($param['unreconciled_protocols']) && isset($param['unreconciled_protocols']['draftState']) && count($param['unreconciled_protocols']['draftState'])){ ?>
 	<p>&#8212;</p>
 	<h4>Erinnerung</h4>
