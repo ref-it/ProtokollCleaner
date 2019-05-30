@@ -677,9 +677,9 @@ class DatabaseModel extends Database
 	
 	/**
 	 * return list of newproto
-	 * @param $gremium committee|gremium name
-	 * @param $key use table col as return array key 
-	 * @param $generated_only ignore protos dont created in wiki
+	 * @param string $gremium committee|gremium name
+	 * @param string $key use table col as return array key
+	 * @param bool $generated_only ignore protos dont created in wiki
 	 * @return array
 	 */
 	public function getNewprotos($gremium, $key = 'id', $generated_only = false){
@@ -692,6 +692,27 @@ class DatabaseModel extends Database
 			} else {
 				$return[] = $line;
 			}	
+		}
+		return $return;
+	}
+
+	/**
+	 * return list of newproto
+	 * @param string $gremium committee|gremium name
+	 * @param \DateTime $date
+	 * @param string $key use table col as return array key
+	 * @return array
+	 */
+	public function getNextprotos($gremium, $date, $key = 'id'){
+		$sql = "SELECT NP.* FROM `".TABLE_PREFIX."newproto` NP, `".TABLE_PREFIX."gremium` G WHERE NP.gremium = G.id AND G.name = ? AND NP.date >= ? ORDER BY NP.date ASC";
+		$result = $this->getResultSet($sql, 'ss', [$gremium, $date->format('Y-m-d')]);
+		$return = [];
+		foreach ($result as $line){
+			if ($key){
+				$return[$line[$key]] = $line;
+			} else {
+				$return[] = $line;
+			}
 		}
 		return $return;
 	}

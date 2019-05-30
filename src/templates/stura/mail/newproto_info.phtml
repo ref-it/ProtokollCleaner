@@ -40,7 +40,7 @@
 	<br><strong style="font-weight:bold; width: 200px; padding-left: 20px;">Sitzungsleitung:</strong> <?= ($param['leitung'])? $param['leitung'] : '--- nicht vergeben ---'; ?>
 	<br><strong style="font-weight:bold; width: 200px; padding-left: 20px;">Protokollierung:</strong> <?= ($param['leitung'])? $param['protokoll'] : '--- nicht vergeben ---'; ?></p>
 	
-	<p>Weitere Informationen können im vergangenen Protokoll, oder im <a href="<?= $param['toolLink'] ?>">Protokolltool [<?php echo count($links); $links[] = $param['toolLink'] ?>]</a> gefunden werden.
+	<p>Weitere Informationen können im vergangenen Protokoll, im <a href="https://wiki.stura.tu-ilmenau.de/leitfaden/sitzungsleitung">Sitzungs-Leitfaden [<?php echo count($links); $links[] = 'https://wiki.stura.tu-ilmenau.de/leitfaden/sitzungsleitung'; ?>]</a>, oder im <a href="<?= $param['toolLink'] ?>">Protokolltool [<?php echo count($links); $links[] = $param['toolLink'] ?>]</a> gefunden werden.
 	<br>Solltet die oben genannten Personen zum Zeitpunkt der Sitzung verhindert sein, meldet euch bitte rechtzeitig ab <strong style="font-weight:bold;">und</strong> sucht eine Person, welche die Aufgabe übernimmt.</p>
 	<hr>
 	<h3>Links</h3>
