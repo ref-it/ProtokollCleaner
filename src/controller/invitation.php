@@ -199,7 +199,7 @@ class InvitationController extends MotherController {
 		$resorts = $this->db->getResorts($perm);
 		$member = $this->db->getMembersCounting($perm);
 		$committee = $this->db->getCommitteebyName($perm);
-		$newproto = $this->db->getNewprotos($perm);
+		$newproto = $this->db->getNextprotos($perm, date_create_from_format('H:i:s', '00:00:00')->modify('-1 day'));
 		$settings = $this->db->getSettings();
 		$legis = $this->db->getCurrentLegislatur();
 		$oldproto = $this->db->getProtocolsByLegislatur($perm, $legis['number']);
