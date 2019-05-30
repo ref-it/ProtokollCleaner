@@ -56,3 +56,24 @@ clone git
 
 - https://helfer.stura.tu-ilmenau.de/protocolhelper/
 
+## Externe Bibliotheken
+
+- php
+  - phpMailer
+  - guzzle
+  - defuse-crypto
+
+- js/css
+  - serviceWorker
+  - screenfull
+  - push.js
+  - jQuery
+  - jQueryUI
+  - jQuery-DateFormat
+  - jQueryUI-widget-combobox
+  - dropzone
+  - bootstrap 
+  - codeMirror
+  - iLitePhoto
+
+
