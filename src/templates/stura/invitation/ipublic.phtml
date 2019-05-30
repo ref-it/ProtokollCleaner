@@ -7,7 +7,7 @@
         <div class="invite-info">
             Der StuRa lädt alle interessierten Studierenden ein, an den Treffen teilzunehmen. Die Sitzungen finden in der Regel hochschulöffentlich jeden Mittwoch um <?= $param['settings']['meeting_hour'];?>:00 Uhr im <?= $param['settings']['meeting_room'];?> statt.
         </div>
-		<h3>Nächste geplante Sitzung</h3>
+		<h3>Nächste <?= (is_array($param['newproto']) && count($param['newproto']) > 1)?'geplanten Sitzungen':'geplante Sitzung' ?></h3>
 		<div class="silmph_nprotolist mb-1 border border-secondary" data-meetinghour="<?= $param['settings']['meeting_hour'];?>" data-legislatur="<?= $param['legislatur']['number']; ?>" data-nthproto="<?= $param['nth-proto']; ?>">
 			<div class="bg-warning npheadline">
 	  			<div class="row p-2">
@@ -16,27 +16,24 @@
 			</div>
 			<div class="npbody">
 				<?php
-					// state:
-					// 0 - geplant 		- generated_url==null && invite_mail_done == 0
-					// 1 - eingeladen	- generated_url==null && invite_mail_done == 1
-					// 2 - erstellt 	- generated_url!=null
-					$statelist = ['Geplant', 'Eingeladen', 'Erstellt'];
+					$printed_newprotos = 0;
+					$now = date_create();
 					foreach($param['newproto'] as $nproto){
-						$state = ($nproto['generated_url'] != null)? 2 : (($nproto['invite_mail_done'])? 1 : 0);
-						$disable_restore = false;
-						if ($state == 2){
-							$today = date_create();
-							$npdate = date_create($nproto['date']);
-							$npdate->setTime(0, 0);
-							$diff1 = $today->getTimestamp() - $npdate->getTimestamp();
-							if ( $diff1 > 3600 * 24 * $param['settings']['disable_restore'] ){
-								$disable_restore = true;
-							}
-						} ?>
-						<div class="nprotoelm row p-2" data-id="<?= $nproto['id'] ?>" data-hash="<?= (!$disable_restore)?$nproto['hash']:'' ?>" data-m="<?= $nproto['management']?$nproto['management']:'' ?>" data-p="<?= $nproto['protocol']?$nproto['protocol']:'' ?>">
-							<div class="col-12"><?= date_create($nproto['date'])->format('d.m.Y H:i') ?><?= ($nproto['room']?'<div style="color:#ee1212;font-weight:bold;">Die Sitzung wurde in einen anderen Raum verlegt und findet nun im "'.htmlspecialchars($nproto['room']).'" statt.</div>':'') ?></div>
+						$npdate = date_create($nproto['date']);
+						$printed_newprotos++;
+						?>
+						<div class="nprotoelm row p-2 m-0 border-top border-secondary">
+							<div class="col-12"><?= date_create($nproto['date'])->format('d.m.Y H:i'). (($now->getTimestamp() > ($npdate->getTimestamp() + 18000))? ' (vergangen)':'') ?><?= ($nproto['room']?'<div style="color:#ee1212;font-weight:bold;">Die Sitzung wurde in einen anderen Raum verlegt und findet nun im "'.htmlspecialchars($nproto['room']).'" statt.</div>':'') ?></div>
 						</div>
-				<?php break; } ?>
+				<?php }
+					if (!is_array($param['newproto']) || count($param['newproto']) == 0 || $printed_newprotos == 0){
+						?>
+						<div class="nprotoelm row p-2 m-0 border-top border-secondary">
+							<div class="col-12"><div style="font-weight:bold;">Bisher ist keine Sitzung geplant. Bitte schaue später nocheinmal hier vorbei.</div></div>
+						</div>
+						<?
+					}
+				?>
 			</div>
 		</div>
 	</div>
