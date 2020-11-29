@@ -1,5 +1,5 @@
 (function(){
-	$(document).on('ready', function(){
+	jQuery(function ($) {
 		//highlight id tag -------------------------------
 		setTimeout(function(){
 			//highlight id tag
@@ -125,11 +125,7 @@
 				}
 				for (let i = 0; i < reso_type_index_by_key[search_type].length; i++) {
 					let j = reso_type_index_by_key[search_type][i];
-					if (searchtext[j].indexOf(value) > -1) {
-						$searchbase.eq(j).show();
-					} else {
-						$searchbase.eq(j).hide();
-					}
+					$searchbase.eq(j).toggle(searchtext[j].indexOf(value) > -1);
 				}
 			} else {
 				for (let j = 0; j < searchbase_length; j++) {
@@ -164,6 +160,17 @@
 				timeout_debounce_search = null;
 				update_search_result_event.call(t, ev);
 			}, 600);
+		});
+
+		// =============================================================================================================
+		// search info one click filter
+		$('.search-filter .desc code').on('click', function (ev){
+			let v = this.textContent;
+			if (this.dataset.hasOwnProperty('searchAppend')) {
+				v += this.dataset.searchAppend;
+			}
+			$search_field.val(v);
+			update_search_result_event.call($search_field[0], ev);
 		});
 	});
 })();
