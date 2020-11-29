@@ -139,7 +139,9 @@ class ProtocolController extends MotherController {
 			if (isset($p['agreed']) && $p['agreed'] > 0){
 				$intern_and_extern[$name]['agreed'] = true;
 			}
-			$intern_and_extern[$name]['id'] = $p['id'];
+			if (isset($intern_and_extern[$name]) && is_array($intern_and_extern[$name]) && count($intern_and_extern[$name])){
+				$intern_and_extern[$name]['id'] = $p['id'];
+			}
 		}
 		krsort($intern_and_extern);
 		
