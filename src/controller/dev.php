@@ -11,14 +11,13 @@
  * @platform		PHP
  * @requirements	PHP 7.0 or higher
  */
- 
+
 require_once (SYSBASE . '/framework/class._MotherController.php');
 
 class DevController extends MotherController
 {
-	
 	/**
-	 * 
+	 * constructor
 	 * @param Database $db
 	 * @param AuthHandler $auth
 	 * @param Template $template
@@ -26,20 +25,21 @@ class DevController extends MotherController
 	function __construct($db, $auth, $template){
 		parent::__construct($db, $auth, $template);
 	}
-	
+
 	/**
 	 * ACTION wiki
 	 */
 	public function wiki(){
+		/*
 		$this->t->printPageHeader();
 		require_once (SYSBASE.'/framework/class.wikiClient.php');
-		
+
 		$x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
 		$a = $x->getAttachement('spielwiese:test:utf8test:badge3.png');
-		
+
 		echo '<pre>'; var_dump(
 			$x->putAttachement('spielwiese:test:utf8test:badge5.png', $a)
-		); 
+		);
 		echo '</pre>';
 		echo '<pre>'; var_dump(
 			$x->listAttachements('spielwiese:test:utf8test')
@@ -48,8 +48,9 @@ class DevController extends MotherController
 		echo '<pre>'; var_dump(
 			$x->listAttachements('spielwiese:test:utf8testdsd')
 		); echo '</pre>';
-		
+
 		$this->t->printPageFooter();
+		*/
 	}
 
 	public function putwiki()
@@ -70,7 +71,5 @@ class DevController extends MotherController
 		$cc = new CronController($this->db, $this->auth, $this->t);
 		$cc->sgis();
 		// */
-
-
 	}
 }
