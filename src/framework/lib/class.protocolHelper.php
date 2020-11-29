@@ -97,7 +97,7 @@ class protocolHelper extends protocolOut
 			'long' => 'Finanzen',
 			'short' => 'F'
 		], [
-			'match' => ['Ordnung|Geschäftsordnung'],
+			'match' => ['Ordnung|Geschäftsordnung|Wahlordnung|Schließsystemordnung|Flyerordnung|Finanzordnung|Satzung|Förderrichtlinie|Kreditrichtlinie|Nutzungsordnung'],
 			'long' => 'Ordnung',
 			'short' => 'O'
 		], [
