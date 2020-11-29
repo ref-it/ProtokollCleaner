@@ -57,7 +57,7 @@ class protocolHelper extends protocolOut
 	];
 
 	public static $resolutionType = [[
-			'match' => ['Protokoll', 'beschließt', 'Sitzung', '\d+'],
+			'match' => ['Protokoll', 'beschließt', 'Fassung', 'Sitzung', '\d+'],
 			'long' => 'Protokoll',
 			'short' => 'P'
 		], [ //old resolutions on resolist
@@ -97,7 +97,7 @@ class protocolHelper extends protocolOut
 			'long' => 'Finanzen',
 			'short' => 'F'
 		], [
-			'match' => ['Ordnung'],
+			'match' => ['Ordnung|Geschäftsordnung'],
 			'long' => 'Ordnung',
 			'short' => 'O'
 		], [
@@ -169,12 +169,21 @@ class protocolHelper extends protocolOut
 		//detect type by pregmatches
 		foreach (protocolHelper::$resolutionType as $type){
 			$pattern = [];
+			$pattern_blacklist = [];
 			//matches as string
 			if (isset($type['match'])){
 				if (is_array($type['match'])){
 					foreach ($type['match'] as $mat){	$pattern[] = '/.*('.$mat.').*/';	}
 				} else {
 					$pattern[] = '/.*('.$type['match'].').*/';
+				}
+			}
+			//blacklist_match
+			if (isset($type['blacklist'])){
+				if (is_array($type['blacklist'])){
+					foreach ($type['blacklist'] as $mat){	$pattern_blacklist[] = '/.*('.$mat.').*/';	}
+				} else {
+					$pattern_blacklist[] = '/.*('.$type['blacklist'].').*/';
 				}
 			}
 			//regex pattern
@@ -194,6 +203,16 @@ class protocolHelper extends protocolOut
 					break;
 				}
 			}
+			// blacklist
+			if ($matches){
+				foreach ($pattern_blacklist as $subpattern){
+					if (preg_match($subpattern, $text)){
+						$matches = false;
+						break;
+					}
+				}
+			}
+			// return value
 			if ($matches){
 				$return['type_short'] = $type['short'];
 				$return['type_long'] = $type['long'];

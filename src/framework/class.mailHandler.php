@@ -338,7 +338,7 @@ class MailHandler
 	/**
 	 * debug SMTP settings
 	 * @param array $settings
-	 * @param function $out function($message, $add_emptyline_suffix = false, $bold = false, $add_extra_tab_space = 0)
+	 * @param callable $out function($message, $add_emptyline_suffix = false, $bold = false, $add_extra_tab_space = 0)
 	 * @throws Exception
 	 */
 	public static function smtpdebug($settings, $out){

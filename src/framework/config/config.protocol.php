@@ -1,6 +1,6 @@
 <?php
 /**
- * protokollmap 
+ * protokollmap
  * 	permission: in array ;; out array ;; beschlussliste ;; invitation mail target
  * @var array
  */

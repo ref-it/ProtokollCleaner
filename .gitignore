@@ -10,3 +10,4 @@ src/framework/conf/config.php
 src/public/files/get/filestorage*
 src/public/files/get/filestorage/*
 src/logs/*
+docs/*backup*
