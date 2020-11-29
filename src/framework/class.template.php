@@ -172,6 +172,7 @@ class Template
 	 */
 	public function appendJsLink( $scriptname, $js_relative = true ){
 		if ($js_relative) $scriptname = BASE_SUBDIRECTORY . 'js/'. $scriptname;
+		$scriptname .= '?v='.FRAMEWORK_VERSION;
 		$this->scripts[] = "<script src=\""."$scriptname\" type=\"text/javascript\"></script>";
 	}
 
@@ -210,6 +211,7 @@ class Template
 	 */
 	public function appendCssLink( $stylename, $media = NULL, $css_relative = true ){
 		if ($css_relative) $stylename = BASE_SUBDIRECTORY . 'css/'. $stylename;
+		$stylename .= '?v='.FRAMEWORK_VERSION;
 		$this->css[] = "<link rel=\"stylesheet\" type=\"text/css\" href=\"$stylename\"".(($media)? ' media="'.$media.'"' : '')."/>";
 	}
 	
@@ -219,6 +221,7 @@ class Template
 	 * @param string $media html media tag if necessary
 	 */
 	public function prependCssLink( $stylename, $media = NULL ){
+		$stylename .= '?v='.FRAMEWORK_VERSION;
 		array_unshift ( $this->css, "<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/$stylename\"".(($media)? ' media="'.$media.'"' : '')."/>");
 	}
 	

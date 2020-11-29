@@ -445,7 +445,7 @@ class CronController extends MotherController {
 										'Referat Hochschulpolitik (HoPo)'
 									], [
 										'Angestellt Konsul',
-										'Referat Konferenz Thüringer Studierendenschaften (KTS)',
+										'Konferenz Thüringer Studierendenschaften (KTS)',
 										'Referat Hochschulpolitik'
 									], $g['name']);
 								}

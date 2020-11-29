@@ -1,5 +1,5 @@
 (function(){
-	$(document).ready(function(){
+	jQuery(function ($) {
 		//highlight id tag -------------------------------
 		setTimeout(function(){
 			//highlight id tag
@@ -15,50 +15,91 @@
 		}, 200);
 		//get parameter filter ------------------------------
 		$('.resol_legend .legend-order').on('click', function(){
-			this.dataset.filter = (this.dataset.filter=='1')? '0': '1';
+			this.dataset.filter = (this.dataset.filter==='1')? '0': '1';
 			//chevron
-			$chevron = $(this).children('.color').children('i');
+			let $chevron = $(this).children('.color').children('i');
 			if ($chevron.hasClass($chevron.data('class0'))) $chevron.removeClass($chevron.data('class0'));
 			if ($chevron.hasClass($chevron.data('class1'))) $chevron.removeClass($chevron.data('class1'));
 			$chevron.addClass($chevron.data('class'+this.dataset.filter));
 			//text
-			$name = $(this).children('.name');
+			let $name = $(this).children('.name');
 			$name.text($name.data('text'+this.dataset.filter));
 			//get parameter
-			var newvalue = this.dataset.filter == 1 ? 'ASC':'';
-			var key = this.dataset.type;
+			let newvalue = this.dataset.filter === '1' ? 'ASC':'';
+			let key = this.dataset.type;
 			window.location.href = setGetParameter(window.location.href, key, newvalue);
 		});
 		$('.resol_legend .legend-year select').on('change', function(){
 			//get parameter
-			var newvalue = this.value;
-			var key = this.parentNode.dataset.type;
+			let newvalue = this.value;
+			let key = this.parentNode.dataset.type;
 			window.location.href = setGetParameter(window.location.href, key, newvalue);
 		});
 		//filter resolution table ---------------------------
-		var last_value = '';
-		var last_search_type = '';
-		var $searchbase = $("#resotable .resolution");
-		var $resocounter = $('.resocounter');
-		var headline_timeout = null;
-		$newweek = $('#resotable tr.newweek');
+		let last_value = '';
+		let last_search_type = '';
+		const $resocounter = $('.resocounter');
+		const $search_field = $("#resofilter");
+		const $newweek = $('#resotable tr.newweek');
+		const $searchbase = $("#resotable .resolution");
+		const searchbase_length = $searchbase.length;
+		const searchtext = {};
+		const reso_type_key_map = { // reso type to index list key
+			t: 't',
+			tagesordnung: 't',
+			p: 'p',
+			protokoll: 'p',
+			o: 'o',
+			ordnungen: 'o',
+			w: 'w',
+			wahl: 'w',
+			f: 'f',
+			h: 'h',
+			finanzen: 'finanzen',
+			s: 's',
+			i: 'i',
+			intern: 'i',
+			sonstiges: 's',
+		};
+		const reso_type_index_by_key = {};	// index list by reso type key
+		for (const p in reso_type_key_map) { // init list
+			if (reso_type_key_map.hasOwnProperty(p) && !reso_type_index_by_key.hasOwnProperty(reso_type_key_map[p])){
+				reso_type_index_by_key[reso_type_key_map[p]] = [];
+				reso_type_index_by_key['not_'+reso_type_key_map[p]] = [];
+			}
+		}
+		let timeout_headline_update = null; // timeout for headline update
+		let timeout_debounce_search = null; // debounce search filter
+
 		//init searchset - do not convert element text on every letter, only do it once
 		setTimeout(function(){
-			var text = '';
-			for (var i = 0; i < $searchbase.length; i++){
-				text = $searchbase.eq(i).clone().find('.togglebox').remove().end().text().toLowerCase();
-				$searchbase.eq(i).data('search', text+'');
+			let text = '';
+			for (let i = 0; i < $searchbase.length; i++){
+				let reso = $searchbase.eq(i);
+				text = reso.clone().find('.togglebox').remove().end().text().toLowerCase() + '';
+				searchtext[i] = text;
+				// init search reso indexes
+				for (let p in reso_type_index_by_key) {
+					if (reso_type_index_by_key.hasOwnProperty(p)){
+						if (p.indexOf('not_') === 0) continue;
+						if (reso.hasClass('resotype-'+p.charAt(0).toUpperCase() + p.slice(1))){
+							reso_type_index_by_key[p].push(i);
+						} else {
+							reso_type_index_by_key['not_'+p].push(i);
+						}
+					}
+				}
 			}
-			$("#resofilter").fadeIn();
+			$search_field.fadeIn();
 		}, 500);
-		$("#resofilter").on("keyup", function() {
+
+		const update_search_result_event = function() {
 			//current seach value
-			var value = $(this).val().toLowerCase();
-			var search_type = false;
+			let value = $(this).val().toLowerCase();
+			let search_type = false;
 			//filter resolution type
-			if (value.length > 0 && value.charAt(0) == '#'){
-				var tmp_type = '';
-				var split_pos = value.indexOf(' ');
+			if (value.length > 0 && value.charAt(0) === '#'){
+				let split_pos = value.indexOf(' ');
 				if (split_pos >= 0){
 					search_type = value.substr(1, split_pos);
 					value = value.substr(split_pos + 1);
@@ -66,35 +107,39 @@
 					search_type = value.substr(1);
 					value = '';
 				}
-				search_type = search_type.charAt(0).toUpperCase() + search_type.slice(1);
+				// get search_type list key
+				if (reso_type_key_map.hasOwnProperty(search_type)){
+					search_type = reso_type_key_map[search_type];
+				} else {
+					search_type = false;
+				}
 			}
-			//reset searchset needed?
-			var l = (value.indexOf(last_value) == -1 || last_search_type != search_type)? true : false; 
 			//remember last search arguments
 			last_value = value;
 			last_search_type = search_type;
-			//filter elements
-			var $searchon;
-			if (search_type != false){
-				$searchon = $searchbase;
-				$searchon.filter('.resotype-'+search_type+'').show();
-				$searchon.filter(':not(.resotype-'+search_type+')').hide();
-				$searchon = $searchbase.filter(':visible');
+			// filter elements
+			if (search_type !== false){
+				for (let i = 0; i < reso_type_index_by_key['not_'+search_type].length; i++) {
+					let j = reso_type_index_by_key['not_'+search_type][i];
+					$searchbase.eq(j).hide();
+				}
+				for (let i = 0; i < reso_type_index_by_key[search_type].length; i++) {
+					let j = reso_type_index_by_key[search_type][i];
+					$searchbase.eq(j).toggle(searchtext[j].indexOf(value) > -1);
+				}
 			} else {
-				$searchon = (l)? $searchbase : $searchbase.filter(':visible');
+				for (let j = 0; j < searchbase_length; j++) {
+					$searchbase.eq(j).toggle(searchtext[j].indexOf(value) > -1);
+				}
 			}
-			//filter results
-			$searchon.filter(function() {
-				// search text
-				$(this).toggle($(this).data('search').indexOf(value) > -1)
-			});
 			//debounce headline and counter update
-			if (headline_timeout != null) {
-				clearTimeout(headline_timeout);
-				headline_timeout = null;
+			if (timeout_headline_update != null) {
+				clearTimeout(timeout_headline_update);
+				timeout_headline_update = null;
 			}
-			headline_timeout = setTimeout( function(){
-				var $visible = $searchbase.filter(':visible');
+			timeout_headline_update = setTimeout( function(){
+				timeout_headline_update = null;
+				let $visible = $searchbase.filter(':visible');
 				//update protocol date + link headlines
 				$newweek.hide();
 				$visible.prevUntil('.newweek').prev('.newweek').show();
@@ -102,7 +147,30 @@
 				//update counter
 				$resocounter.text($visible.length);
 			}, 500)
+		};
+
+		// search field key listener
+		$search_field.on("keyup", function(ev) {
+			let t = this;
+			if (timeout_debounce_search !== null) {
+				clearTimeout(timeout_debounce_search);
+				timeout_debounce_search = null;
+			}
+			timeout_debounce_search = setTimeout(function (){
+				timeout_debounce_search = null;
+				update_search_result_event.call(t, ev);
+			}, 600);
+		});
+
+		// =============================================================================================================
+		// search info one click filter
+		$('.search-filter .desc code').on('click', function (ev){
+			let v = this.textContent;
+			if (this.dataset.hasOwnProperty('searchAppend')) {
+				v += this.dataset.searchAppend;
+			}
+			$search_field.val(v);
+			update_search_result_event.call($search_field[0], ev);
 		});
 	});
-	
 })();

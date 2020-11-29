@@ -2,14 +2,14 @@
 /**
  * CONTROLLER Base Controller
  *
- * @package         Stura - Referat IT - ProtocolHelper
- * @category        controller
+ * @package			Stura - Referat IT - ProtocolHelper
+ * @category		controller
  * @author 			michael g
  * @author 			Stura - Referat IT <ref-it@tu-ilmenau.de>
  * @since 			17.02.2018
  * @copyright 		Copyright (C) 2018 - All rights reserved
- * @platform        PHP
- * @requirements    PHP 7.0 or higher
+ * @platform		PHP
+ * @requirements	PHP 7.0 or higher
  */
  
 require_once (SYSBASE . '/framework/class._MotherController.php');
@@ -52,15 +52,25 @@ class DevController extends MotherController
 		$this->t->printPageFooter();
 	}
 
-    public function putwiki()
-    {
-        $this->t->printPageHeader();
-        require_once(SYSBASE . '/framework/class.wikiClient.php');
+	public function putwiki()
+	{
+		/* // create wiki page
+		$this->t->printPageHeader();
+		require_once(SYSBASE . '/framework/class.wikiClient.php');
 
-        $x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
-        echo '<pre>';
-        var_dump($x->putSpielwiese('test2', 'blubb'));
-        echo '</pre>';
-        $this->t->printPageFooter();
-    }
+		$x = new wikiClient(WIKI_URL, WIKI_USER, WIKI_PASSWORD, WIKI_XMLRPX_PATH);
+		echo '<pre>';
+		var_dump($x->putPage('spielwiese/test2', 'blubb'));
+		echo '</pre>';
+		$this->t->printPageFooter();
+		// */
+
+		/* // trigger cronupdate
+		require_once(SYSBASE.'/controller/cron.php');
+		$cc = new CronController($this->db, $this->auth, $this->t);
+		$cc->sgis();
+		// */
+
+
+	}
 }

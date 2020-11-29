@@ -20,6 +20,7 @@ define('SILMPH', true);
 define('MAIL_TEST_TIMEOUT', 10); //prevent mailspam with testmails (in minutes)
 define('SYSBASE', realpath(dirname(__FILE__) . '/..'));
 define('FRAMEWORK_PATH', dirname(__FILE__));
+define('FRAMEWORK_VERSION', '2.0.1');
 
 //forbid some uploadpaths/directories
 function forbidden_uploadpaths(){
