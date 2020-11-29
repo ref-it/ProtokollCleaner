@@ -57,7 +57,6 @@
 			var search_type = false;
 			//filter resolution type
 			if (value.length > 0 && value.charAt(0) == '#'){
-				var tmp_type = '';
 				var split_pos = value.indexOf(' ');
 				if (split_pos >= 0){
 					search_type = value.substr(1, split_pos);
