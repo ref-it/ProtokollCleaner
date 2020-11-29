@@ -25,7 +25,30 @@ $this->t->appendFloatingLink(WIKI_URL."/".str_replace(':', '/', self::$protomap[
 	</div>
 </div>
 
-<p class="noprint">Zum Filtern hier Suchwort eingeben.</p>  
+<div class="search-filter">
+	<span class="printonly">Suche: </span>
+	<details>
+		<summary>Zum Filtern hier Suchwort eingeben.</summary>
+		<div class="desc noprint">
+			Um nach einem Beschlusstyp zu filtern, kann den Suchbegriffen ein <code>#</code> vorangestellt werdem, gefolgt vom Kürzelbuchstaben oder dem Typ.
+			<br><br>
+			<strong>Beispiel: Beschluss betrifft<span class="asterisk">*</span> ...</strong>
+			<ul>
+				<li><code>#T</code> oder <code>#Tagesordnung</code></li>
+				<li><code>#P</code> oder <code>#Protokoll</code>e</li>
+				<li><code>#O</code> oder <code>#Ordnungen</code></li>
+				<li><code>#W</code> oder <code>#Wahl</code>en</li>
+				<li><code>#F</code><span class="asterisk">**</span> oder <code>#Finanzen</code><span class="asterisk">****</span></li>
+				<li><code>#H</code><span class="asterisk">***</span> oder <code data-search-append="en">#Finanz</code>beschluss des Haushaltsverantwortlichen</li>
+				<li><code>#S</code> oder <code>#Sonstiges</code></li>
+			</ul>
+			<div class="comment"><span class="asterisk">*</span><span>Die Beschlüsse werden seit 2018 automatisch kategorisiert. Keine Gewähr bei fehlerhaft zugeordneten Kategorien.</span></div>
+			<div class="comment"><span class="asterisk">**</span><span>Finanzbeschlüsse ohne die des Haushaltsverantwortlichen</span></div>
+			<div class="comment"><span class="asterisk">***</span><span>Ausschließlich Finanzbeschlüsse des Haushaltsverantwortlichen</span></div>
+			<div class="comment"><span class="asterisk">****</span><span>Alle Finanzbeschlüsse</span></div>
+		</div>
+	</details>
+</div>
 <input class="form-control noprint" id="resofilter" type="text" style="display: none;" placeholder="Suche..">
 <br>
 

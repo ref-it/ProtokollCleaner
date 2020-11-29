@@ -136,3 +136,25 @@
 	top: 4px;
 	right: 14px;
 }
+.search-filter .desc {
+	font-size: 0.8em;
+	padding: 10px;
+	border: 1px solid #999;
+	margin: 0 0 20px;
+	background: #f1f1f1;
+}
+.search-filter .desc code {
+	cursor: pointer;
+}
+.search-filter span.asterisk {
+	color: red;
+}
+.search-filter .comment {
+	font-size: 0.8em;
+}
+.search-filter .comment span.asterisk {
+	display: inline-block;
+	width: 24px;
+	text-align: right;
+	margin-right: 5px;
+}
