@@ -56,16 +56,54 @@
 		right: 0;
 	}
 }
-.protolist .proto.agreed {
+.protolist .proto.agreed:not(.public) {
 	color: #00590f;
 }
 .protolist .proto.draft {
 	color: #e06700;
 }
+.protolist .proto.draft.agreed {
+	color: #68fc32;
+}
+.protolist .proto.private {
+	color: #e00000;
+}
 .protolist .proto::after{
 	content: "";
     clear: both;
     display: block;
+}
+.descriptions .headline {
+	font-weight: bold;
+	font-size: 80%;
+}
+.descriptions .entry {
+	display: inline-block;
+	margin-right: 5px;
+}
+.descriptions .entry .color {
+	display: inline-block;
+	width: 24px;
+	height: 17px;
+	border: 1px solid black;
+	margin-right: 15px;
+	vertical-align: text-bottom;
+}
+.descriptions .entry .desc {
+	font-size: 0.65em;
+	font-weight: bold;
+}
+.descriptions .entry.private .color {
+	background: #e00000;
+}
+.descriptions .entry.draft .color {
+	background: #e06700;
+}
+.descriptions .entry.draftAgreed .color {
+	background: #68fc32;
+}
+.descriptions .entry.agreed .color {
+	background: #00590f;
 }
 .protolist .proto > span {
 	font-weight: bold;

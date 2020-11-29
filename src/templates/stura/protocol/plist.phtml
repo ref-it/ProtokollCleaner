@@ -1,6 +1,12 @@
 <h3><?= ucwords( $param['committee'], " \t\r\n\f\v-"); ?> - Protokolle</h3>
 <p><strong>(Gefunden: <?= count($param['int_ext']) ?> - Veröffentlicht: <?= $param['counter']['published'] .(($param['counter']['draft']>0)?' - Entwurf: '.$param['counter']['draft']:''); ?>)</strong></p>
-
+<div class="descriptions">
+	<div class="headline">Legende</div>
+	<div class="entry private"><span class="color"></span><span class="desc">Unveröffentlichtes Protokoll</span></div>
+	<div class="entry draft"><span class="color"></span><span class="desc">Entwurf veröffentlicht</span></div>
+	<div class="entry draftAgreed"><span class="color"></span><span class="desc">Abgestimmt, aber nicht fertig veröffentlicht</span></div>
+	<div class="entry agreed"><span class="color"></span><span class="desc">Abgestimmt, aber nicht veröffentlicht</span></div>
+</div>
 <div class="protolist">
 <?php
 
