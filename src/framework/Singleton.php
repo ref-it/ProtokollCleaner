@@ -40,7 +40,7 @@ abstract class Singleton{
      *
      * @throws Exception
      */
-    final private static function setCredentials($confArray){
+    final protected static function setCredentials($confArray){
         
         $visVars = get_class_vars(static::class); // gets all public and protected vars
         foreach ($confArray as $varName => $value){
