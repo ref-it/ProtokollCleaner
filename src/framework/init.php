@@ -81,7 +81,7 @@ if (!file_exists(SYSBASE.'/vendor') || !is_dir(SYSBASE.'/vendor')){
 	error_log("Initialisation failed. Vendor directory missing. Please run composer install.");
 	die();
 } else {
-	require SYSBASE . 'vendor/autoload.php';
+	require SYSBASE . '/vendor/autoload.php';
 }
 
 /**
