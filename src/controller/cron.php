@@ -538,7 +538,7 @@ class CronController extends MotherController {
 				if (count($ex)==2){
 					$type = $ex[0];
 					$name = $ex[1];
-				else if ($add_r === 'Promovierendenvertretung') {
+				} else if ($add_r === 'Promovierendenvertretung') {
 +					continue;
 				} else {
 					echo "\nError: Unknown Resort Type of: $add_r\n";
