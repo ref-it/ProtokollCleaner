@@ -39,7 +39,7 @@ class AuthSamlHandler extends Singleton implements AuthHandler{
 	private static $AUTHGROUP;
 	private static $ADMINGROUP;
 	private $saml;
-	
+
 	/**
 	 * return instance of this class#
 	 * singleton class
@@ -62,14 +62,14 @@ class AuthSamlHandler extends Singleton implements AuthHandler{
 		session_start();
 		$this->requireAuth();
 	}
-	
+
 	final static protected function static__set($name, $value){
 		if (property_exists(get_class(), $name))
 			self::$$name = $value;
 		else
 			throw new Exception("$name ist keine Variable in " . get_class());
 	}
-	
+
 	/**
 	 * return user displayname
 	 * @return string
@@ -78,7 +78,7 @@ class AuthSamlHandler extends Singleton implements AuthHandler{
 		$this->requireAuth();
 		return $this->getAttributes()["displayName"][0];
 	}
-	
+
 	/**
 	 * handle session and user login
 	 */
@@ -111,7 +111,7 @@ class AuthSamlHandler extends Singleton implements AuthHandler{
 			$_SESSION['SILMPH']['MESSAGES'] = [];
 		}
 	}
-	
+
 	/**
 	 * return current user attributes
 	 * @return array
@@ -122,14 +122,14 @@ class AuthSamlHandler extends Singleton implements AuthHandler{
 		//var_dump($attributes['groups']);
 		if (!$DEV){
 			return $attributes;
-		}else{
+		} else {
 			$removeGroups = [];
 			//$removeGroups = ["ref-finanzen","ref-finanzen-hv",];
 			$attributes["groups"] = array_diff($attributes["groups"], $removeGroups);
 			return $attributes;
 		}
 	}
-	
+
 	/**
 	 * return user mail address
 	 * @return string
@@ -171,7 +171,7 @@ class AuthSamlHandler extends Singleton implements AuthHandler{
 		}
 		return true;
 	}
-	
+
 	function hasGremium($gremien, $delimiter = ","){
 		$attributes = $this->getAttributes();
 		if(!isset($attributes["gremien"])){
@@ -182,7 +182,7 @@ class AuthSamlHandler extends Singleton implements AuthHandler{
 		}
 		return true;
 	}
-	
+
 	/**
 	 * return username or user mail address
 	 * if not set return null
@@ -196,7 +196,7 @@ class AuthSamlHandler extends Singleton implements AuthHandler{
 			return $attributes["mail"][0];
 		return null;
 	}
-	
+
 	/**
 	 * return log out url
 	 * @return string
@@ -204,7 +204,7 @@ class AuthSamlHandler extends Singleton implements AuthHandler{
 	function getLogoutURL(){
 		return $this->saml->getLogoutURL();
 	}
-	
+
 	/**
 	 * return boolean if admin is on group list
 	 * @return bool
@@ -212,7 +212,7 @@ class AuthSamlHandler extends Singleton implements AuthHandler{
 	function isAdmin(){
 		return $this->hasGroup(self::$ADMINGROUP);
 	}
-	
+
 	/**
 	 * send html header to redirect to logout url
 	 * @param string $param
