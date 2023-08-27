@@ -169,7 +169,27 @@ class AuthSamlHandler extends Singleton implements AuthHandler{
 	 */
 	function getUserMail(){
 		$this->requireAuth();
-		return $this->getAttributes()["mail"][0];
+		$a = $this->getAttributes();
+		$m = ($a['mail'][0]??
+			($a['mail']??
+				NULL));
+		if (!$m){
+			foreach($a as $k => $att) {
+				if (str_starts_with($k, 'urn:oid')) {
+					$f = null;
+					if (is_string($att)) {
+						$f = $att;
+					} else if (is_array($att)) {
+						$f = array_values($att)[0];
+					}
+					if ($f && str_contains($f, '@')) {
+						$m = $f;
+						break;
+					}
+				}
+			}
+		}
+		return $m;
 	}
 
 	/**
