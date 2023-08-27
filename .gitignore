@@ -18,3 +18,4 @@ examples/*
 tmp/*
 simplesamlphp/
 simplesamlphp*
+src/vendor/

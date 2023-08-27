@@ -1,0 +1,29 @@
+{
+  "name": "stura-ilmenau/protocolhelper",
+  "description": "Stura TU Ilmenau, Tool zum Erstellen, Vortragen, Veröffentlichen von Sitzungsprotokollen und Beschlüssen.",
+  "authors": [
+    {
+      "name": "Michael Gnehr",
+      "email": "michael@gnehr.de",
+      "role": "Developer"
+    }
+  ],
+  "type": "project",
+  "config": {
+    "vendor-dir": "src/vendor"
+  },
+  "require": {
+    "php": ">=8.1",
+    "phpmailer/phpmailer": "^6.5",
+    "defuse/php-encryption": "^2.3",
+    "guzzlehttp/guzzle": "^7.0",
+    "ext-pdo": "*",
+    "ext-json": "*",
+    "ext-curl": "*",
+    "ext-mbstring": "*",
+    "ext-hash": "*",
+    "ext-xml": "*",
+    "ext-openssl": "*",
+    "ext-simplexml": "*"
+  }
+}

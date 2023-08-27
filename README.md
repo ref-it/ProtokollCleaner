@@ -45,12 +45,17 @@ clone git
 
 ```
     git clone https://github.com/Ref-IT/ProtokollCleaner.git
-    git submodule update --init --recursive
 ```
 
-2. Einspielen des DB Modells mit Hilfe von MySQL Workbench
+2. die git submodule wurden gegen composer ausgetauscht
 
-3. Anpassen der Konfigurationsdatei config.sample.php
+```
+    composer install
+```
+
+3. Einspielen des DB Modells mit Hilfe von MySQL Workbench
+
+4. Anpassen der Konfigurationsdatei config.sample.php
 
 ## Installierte Instanzen
 
