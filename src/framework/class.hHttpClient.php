@@ -12,8 +12,6 @@
  * @platform        PHP
  * @requirements    PHP 7.0 or higher
  */
- 
-require_once(FRAMEWORK_PATH.'/external_libraries/http_client/guzzle6_3_0.phar');
 
 class hHttpClient
 {

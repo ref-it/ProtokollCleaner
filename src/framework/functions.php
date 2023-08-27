@@ -104,7 +104,6 @@ if (!function_exists('silmph_encrypt_key')) {
 	 * @return string encrypted string
 	 */
 	function silmph_encrypt_key ($data, $keyAscii){
-		require_once(dirname(__FILE__).'/external_libraries/crypto/defuse-crypto.phar');
 		$key = Defuse\Crypto\Key::loadFromAsciiSafeString($keyAscii);
 		$ciphertext = Defuse\Crypto\Crypto::encrypt($data, $key);
 		return $ciphertext;
@@ -121,7 +120,6 @@ if (!function_exists('silmph_decrypt_key')) {
 	 * @return string|false decrypted string | false if cipher was manipulated
 	 */
 	function silmph_decrypt_key ($ciphertext, $keyAscii){
-		require_once(dirname(__FILE__).'/external_libraries/crypto/defuse-crypto.phar');
 		$key = Defuse\Crypto\Key::loadFromAsciiSafeString($keyAscii);
 		try {
 			$data = Defuse\Crypto\Crypto::decrypt($ciphertext, $key);
