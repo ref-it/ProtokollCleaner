@@ -81,4 +81,26 @@ clone git
   - codeMirror
   - iLitePhoto
 
+## nginx config
+
+To prevent access to filestorage location, make nginx config look something like this.
+(Apache will handle this via htaccess and rewrite engine.)
+
+```
+location / {
+        try_files $uri /index.php$is_args$args;
+    }
+
+    location ~* ^/files/get/filestorage/(.+){
+        try_files $uri /index.php$is_args$args;
+    }
+
+    location ~ \.php$ {
+        fastcgi_split_path_info ^(.+\.php)(/.+)$;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+        fastcgi_index index.php;
+        include fastcgi_params;
+    }
+```
 
