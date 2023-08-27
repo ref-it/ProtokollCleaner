@@ -334,11 +334,11 @@ class CronController extends MotherController {
 				if (isset($this->resort_akuefi[$rname]) && $rname != 'Finanzen'){
 					$rname = $this->resort_akuefi[$rname];
 				}
-				if (isset($v['stellv. Leiter'])){
+				if (isset($v['stellv. Leiter']) || isset($v['stellv. Leiter:in'])){
 					$out['flag_ref'] = 1;
 					$pre = 'stellv. Ref ';
 				}
-				if (isset($v['Leiter'])){
+				if (isset($v['Leiter']) || isset($v['Leiter:in'])){
 					$out['flag_ref'] = 1;
 					$pre = 'Leitung Ref ';
 				}
@@ -538,6 +538,8 @@ class CronController extends MotherController {
 				if (count($ex)==2){
 					$type = $ex[0];
 					$name = $ex[1];
+				else if ($add_r === 'Promovierendenvertretung') {
++					continue;
 				} else {
 					echo "\nError: Unknown Resort Type of: $add_r\n";
 				}
