@@ -12,7 +12,7 @@
  * @platform        PHP
  * @requirements    PHP 7.0 or higher
  */
- 
+
 /**
  * define global variables
  */
@@ -75,23 +75,31 @@ require_once (dirname(__FILE__)."/functions.php"); //load helper function set
 
 prof_flag('app_start');
 
+if (!file_exists(SYSBASE.'/vendor') || !is_dir(SYSBASE.'/vendor')){
+	echo 'Initialisation failed.<br>';
+	echo "vendor directory missing. Please run composer install.";
+	error_log("Initialisation failed. Vendor directory missing. Please run composer install.");
+	die();
+} else {
+	require SYSBASE . 'vendor/autoload.php';
+}
+
 /**
  * generate app secret key
  */
 if (defined('ENABLE_ADMIN_INSTALL') && ENABLE_ADMIN_INSTALL) {
 	if (!file_exists(SYSBASE.'/secret.php')){
 		//generate secret key - include external library: defuse-crypto
-		require_once(dirname(__FILE__).'/external_libraries/crypto/defuse-crypto.phar');
 		$key = Defuse\Crypto\Key::createNewRandomKey();
 		$pass_key = $key->saveToAsciiSafeString();
-		
+
 		//create file content
 		$key_file_content = "<?php /* -------------------------------------------------------- */\n";
 		$key_file_content .= "// Must include code to stop this file being accessed directly\n";
 		$key_file_content .= "if(!defined('SILMPH')) die(header('Location: index.php')); \n";
 		$key_file_content .= "//* -------------------------------------------------------- */\n";
 		$key_file_content .= "define('SILMPH_KEY_SECRET', '".$pass_key."');\n ?>";
-		
+
 		//create file
 		$handle = fopen (SYSBASE.'/secret.php', w);
 		fwrite ($handle, $key_file_content);
@@ -126,10 +134,7 @@ require_once (dirname(__FILE__)."/class.template.php");
 /**
  * include external library: phpmailer
  */
-require_once (dirname(__FILE__).'/external_libraries/phpmailer/src/PHPMailer.php');
-require_once (dirname(__FILE__).'/external_libraries/phpmailer/src/SMTP.php');
-require_once (dirname(__FILE__).'/external_libraries/phpmailer/src/Exception.php');
-define('MAIL_LANGUAGE_PATH', dirname(__FILE__).'/external_libraries/phpmailer/language');
+define('MAIL_LANGUAGE_PATH', SYSBASE.'/vendor/phpmailer/phpmailer/language');
 
 /**
  * include framework mail script
