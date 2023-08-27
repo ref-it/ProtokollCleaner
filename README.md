@@ -104,3 +104,39 @@ location / {
     }
 ```
 
+## cronjobs
+
+To update some wikipages and user information from sGis some cronjobs are required.
+
+Create a file '/home/< user >/.logins/cron_protocol_tool.netrc' and make sure no other user or group has access 'chmod 600 cron_protocol_tool.netrc'.
+Place your basic auth login information there. Do not pass this information directly via command line as other users may see them via the process list.
+
+```
+machine < domain >
+        login < cronuser >
+        password < password >
+```
+
+e.g.
+
+```
+machine helfer.stura.tu-ilmenau.de
+        login cronuser
+        password 012345678
+```
+
+add following lines to '/etc/crontab'
+
+```
+1  *    * * *   < user > curl --netrc-file /home/< user >/.logins/cron_protocol_tool.netrc -s -X POST https://<domain and path>/cron/mail
+4  2    * * *   < user > curl --netrc-file /home/< user >/.logins/cron_protocol_tool.netrc -s -X POST https://<domain and path>/cron/wiki
+2  4    * * *   < user > curl --netrc-file /home/< user >/.logins/cron_protocol_tool.netrc -s -X POST https://<domain and path>/cron/sgis
+```
+
+e.g.
+
+```
+1  *    * * *   < user > curl --netrc-file /home/< user >/.logins/cron_protocol_tool.netrc -s -X POST https://helfer.stura.tu-ilmenau.de/protocolhelper/cron/mail
+4  2    * * *   < user > curl --netrc-file /home/< user >/.logins/cron_protocol_tool.netrc -s -X POST https://helfer.stura.tu-ilmenau.de/protocolhelper/cron/wiki
+2  4    * * *   < user > curl --netrc-file /home/< user >/.logins/cron_protocol_tool.netrc -s -X POST https://helfer.stura.tu-ilmenau.de/protocolhelper/cron/sgis
+```
