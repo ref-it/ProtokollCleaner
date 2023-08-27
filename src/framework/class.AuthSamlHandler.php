@@ -14,6 +14,8 @@
  * @requirements    PHP 7.0 or higher
  */
 
+use \SimpleSAML\Auth\Simple as SimpleSaml;
+
 require_once (dirname(__FILE__).'/Singleton.php');
 require_once (dirname(__FILE__).'/class.AuthHandler.php');
 
@@ -56,7 +58,7 @@ class AuthSamlHandler extends Singleton implements AuthHandler{
 	 */
 	protected function __construct(){
 		require_once(self::$SIMPLESAMLDIR . '/lib/_autoload.php');
-		$this->saml = new SimpleSAML_Auth_Simple(self::$SIMPLESAMLAUTHSOURCE);
+		$this->saml = new SimpleSaml(self::$SIMPLESAMLAUTHSOURCE);
 		session_start();
 		$this->requireAuth();
 	}
