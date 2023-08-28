@@ -1000,7 +1000,7 @@ class DatabaseModel extends Database
 	 * @return boolean|new id
 	 */
 	public function createTop($t){
-		$pattern = 'siissssiisiiii';
+		$pattern = 'siissssiisiiiis';
 		$data = [
 			$t['headline'],
 			(isset($t['resort'])&&$t['resort'])?$t['resort']:NULL,
