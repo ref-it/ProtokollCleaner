@@ -89,7 +89,7 @@ $navigation = [
 	'invite'	=> ['invitebase', 	'Sitzung',			'&#xf0e0;',		''],
 	'invitestuds'	=> ['ipublic', 	'Tagesordnung',		'&#xf276;',		''],
 	'https://stura.tu-ilmenau.de/impressum' => ['baseaccess', 'Impressum', '&#xf129;', NULL],
-	'https://www.tu-ilmenau.de/impressum/datenschutz/' => ['baseaccess', 'Datenschutz', '&#xf1c0;', NULL],
+	'https://stura.tu-ilmenau.de/datenschutz' => ['baseaccess', 'Datenschutz', '&#xf1c0;', NULL],
 ];
 
 if (DEBUG >= 1) {
