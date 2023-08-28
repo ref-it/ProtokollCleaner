@@ -242,12 +242,42 @@ class AuthSamlHandler extends Singleton implements AuthHandler{
 	 * @return string|NULL
 	 */
 	function getUsername(){
-		$attributes = $this->getAttributes();
-		if (isset($attributes["eduPersonPrincipalName"]) && isset($attributes["eduPersonPrincipalName"][0]))
-			return $attributes["eduPersonPrincipalName"][0];
-		if (isset($attributes["mail"]) && isset($attributes["mail"][0]))
-			return $attributes["mail"][0];
-		return null;
+		$a = $this->getAttributes();
+		$n = ($a['eduPersonPrincipalName'][0]??
+				($a['eduPersonPrincipalName']??
+					NULL));
+		$mail = ($a['mail'][0]??
+				($a['mail']??
+					NULL));
+		if (!$n){
+			foreach($a as $k => $att) {
+				if (str_starts_with($k, 'urn:oid')) {
+					$f = null;
+					if (is_string($att)) {
+						$f = $att;
+					} else if (is_array($att)) {
+						$f = array_values($att)[0];
+					}
+					if ($f) {
+						if (str_contains($f, '@')) {
+							if (!$mail) {
+								$mail = $f;
+							}
+							continue;
+						} else if (preg_match('/[A-Z ]/', $f)) {
+							continue;
+						} else {
+							$n = $f;
+							break;
+						}
+					}
+				}
+			}
+		}
+		if (!$n && $mail){
+			return $mail;
+		}
+		return $n;
 	}
 
 	/**
