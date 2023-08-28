@@ -754,7 +754,7 @@ class DatabaseModel extends Database
 	 * @return boolean|new id
 	 */
 	public function createNewproto($n){
-		$pattern = 'sisiiiissiiss';
+		$pattern = 'sisiiiissiisss';
 		$data = [
 			$n['date'],
 			(isset($n['legislatur'])&&$n['legislatur'])?$n['legislatur']:NULL,
@@ -769,6 +769,7 @@ class DatabaseModel extends Database
 			isset($n['mail_info_state'])? $n['mail_info_state']: 0,
 			isset($n['mail_proto_remember'])? $n['mail_proto_remember']: NULL,
 			(isset($n['room'])&&$n['room'])?$n['room']:NULL,
+			date_create('now', new DateTimeZone('Europe/Berlin'))->format('Y-m-d H:i:s'),
 		];
 		$sql = "INSERT INTO `".TABLE_PREFIX."newproto`
 			(	`date`,
@@ -783,8 +784,9 @@ class DatabaseModel extends Database
 				`gremium`,
 				`mail_info_state`,
 				`mail_proto_remember`,
-				`room`)
-			VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?) ";
+				`room`,
+				`created_on`)
+			VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?) ";
 		$this->protectedInsert($sql, $pattern, $data);
 		$result = $this->affectedRows();
 		if ($this->affectedRows() > 0){
