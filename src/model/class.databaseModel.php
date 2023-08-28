@@ -1015,7 +1015,8 @@ class DatabaseModel extends Database
 			(isset($t['guest'])&&$t['guest'])?1:0,
 			(isset($t['order']))?$t['order']:9999,
 			(isset($t['skip_next'])&&$t['skip_next'])?1:0,
-			(isset($t['intern'])&&$t['intern'])?1:0
+			(isset($t['intern'])&&$t['intern'])?1:0,
+			date_create('now', new DateTimeZone('Europe/Berlin'))->format('Y-m-d H:i:s')
 		];
 		$sql = "INSERT INTO `".TABLE_PREFIX."tops`
 			(	`headline`,
@@ -1031,8 +1032,9 @@ class DatabaseModel extends Database
 				`guest`,
 				`order`,
 				`skip_next`,
-				`intern` )
-			VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?) ";
+				`intern`,
+				`added_on` )
+			VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?) ";
 		$this->protectedInsert($sql, $pattern, $data);
 		$result = $this->affectedRows();
 		if ($this->affectedRows() > 0){
