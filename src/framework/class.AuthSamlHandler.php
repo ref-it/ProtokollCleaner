@@ -245,7 +245,9 @@ class AuthSamlHandler extends Singleton implements AuthHandler{
 		$a = $this->getAttributes();
 		$n = ($a['eduPersonPrincipalName'][0]??
 				($a['eduPersonPrincipalName']??
-					NULL));
+					($a['username'][0]??
+						($a['username']??
+							NULL))));
 		$mail = ($a['mail'][0]??
 				($a['mail']??
 					NULL));
