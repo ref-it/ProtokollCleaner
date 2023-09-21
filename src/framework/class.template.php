@@ -131,7 +131,7 @@ class Template
 		}
 		
 		if ($appendDefaultScripts){
-			$this->appendJsLink('libs/jquery-3.1.1.min.js');
+			$this->appendJsLink('libs/jquery-3.7.1.min.js');
 			$this->appendJsLink('libs/bootstrap.min.js');
 			//$this->appendJsLink('libs/screenfull.js');
 			$this->appendJsLink('base.js');
