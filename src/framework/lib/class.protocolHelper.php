@@ -429,7 +429,12 @@ class protocolHelper extends protocolOut
 			$enumRe = '/^( *(\*(?!\*)|-))/';
 			$enumMatch = [];
 			preg_match($enumRe, $line, $enumMatch);
-			if (count($enumMatch) > 0 && !(strlen($enumMatch[0] -1 ) > (4 + $lastEnumerationSpace) ) && (strlen($enumMatch[0]) == 1 || strlen($enumMatch[0])%2==0) ){
+			if (count($enumMatch) > 0
+				&& !(strlen($enumMatch[0]) -1 > (4 + $lastEnumerationSpace) )
+				&& (
+					strlen($enumMatch[0]) == 1
+					|| strlen($enumMatch[0])%2==0
+				) ){
 				$this->isLineError = true;
 				$this->lineError = "Ungültige Anzahl an Leerzeichen in Liste oder Aufzählung. Beachte die Anzahl muss durch 2 teilbar sein.";
 				$p->parse_errors['f'][] = $this->lineError;
