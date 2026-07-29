@@ -36,31 +36,31 @@
 	</head>
 	<body id="body" <?php if ($this->extra_body_class) echo 'class="'.$this->extra_body_class.'"'; ?> >
 		<nav class="navbar fixed-top navbar-expand-md navbar-dark bg-<?= (DEBUG>=1)? 'danger':'dark' ?> noprint" style="position:fixed">
-     		<a class="navbar-brand mr-auto" href="<?= BASE_URL.BASE_SUBDIRECTORY ?>">
+     		<a class="navbar-brand me-auto" href="<?= BASE_URL.BASE_SUBDIRECTORY ?>">
      			<img alt="logo" src="<?= BASE_SUBDIRECTORY ?>images/logo_wt.png" height="30px"><span class="hide_on_small">Protokollautomatisierung</span></a>
-	  		<button class="btn btn-outline-light mr-1 fa ml-auto d-block d-md-none" onclick="printPage();" type="button">&#xf02f;</button>
+	  		<button class="btn btn-outline-light me-1 fa ms-auto d-block d-md-none" onclick="printPage();" type="button">&#xf02f;</button>
 	  		<?php if (isset($this->auth)) { ?>
-	  			<a class="btn btn-outline-light mr-1 fa ml-0 d-block d-md-none" href="<?= $this->auth->getLogoutURL(); ?>">&#xf011;</a>
+	  			<a class="btn btn-outline-light me-1 fa ms-0 d-block d-md-none" href="<?= $this->auth->getLogoutURL(); ?>">&#xf011;</a>
 		  	<?php } ?>
-		  	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+		  	<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
 		    	<span class="navbar-toggler-icon"></span>
 		  	</button>
 	  		<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-	    		<div class="navbar-nav mr-auto d-block d-md-none">
+	    		<div class="navbar-nav me-auto d-block d-md-none">
 	    			<?php
 	    				$tnav = $this->getNavigation();
 						foreach ($tnav as $route => $linkdata){ ?>
 							<a target="_self" href="<?= $route?>" title="<?= $linkdata[0] ?>" class="nav-item nav-link <?= ((isset($linkdata['active']))?'active':'') ?>"><i class="fa fa-fw"><?= $linkdata[1] ?></i><?= $linkdata[0] ?></a>
 					<?php }	?>
 					<?php if (isset($this->auth)) { ?>
-						<div class="nav-link nav-item ml-auto mr-0 pull-right"><?= $this->auth->getUserFullName(); ?></div>
+						<div class="nav-link nav-item ms-auto me-0 pull-right"><?= $this->auth->getUserFullName(); ?></div>
 					<?php } ?>
 				</div>
 
 			</div>
-			<button class="btn btn-outline-light mr-1 fa ml-auto d-none d-md-block" onclick="printPage();" type="button">&#xf02f;</button>
+			<button class="btn btn-outline-light me-1 fa ms-auto d-none d-md-block" onclick="printPage();" type="button">&#xf02f;</button>
 		  	<?php if (isset($this->auth)) { ?>
-		  		<a class="btn btn-outline-light fa ml-0 d-none d-md-block" href="<?= $this->auth->getLogoutURL(); ?>">&#xf011;</a>
+		  		<a class="btn btn-outline-light fa ms-0 d-none d-md-block" href="<?= $this->auth->getLogoutURL(); ?>">&#xf011;</a>
 			<?php } ?>
 		</nav>
 		<div class="bar_placeholder noprint"></div>
@@ -96,7 +96,6 @@
 			<div class="main content" id="content">
 				<div class="modalwrapper">
 					<div class="modal_bg" style="position: fixed"></div>
-					<div class="modal_close noselect" style="position: fixed">&#x274C;</div>
 					<?php $this->printModal(true); ?>
 				</div>
 				<div class="message_relative"><div id="silmph__message_container" class="silmph__message_container" style="position:fixed"></div></div>

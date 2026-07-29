@@ -118,7 +118,7 @@ $.widget( "custom.combobox", {
 	},
    
 	_destroy: function() {
-		this.wrapper.remove();
+		this.input.remove();
 		this.element.show();
 	}
 });

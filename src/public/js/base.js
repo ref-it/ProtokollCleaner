@@ -274,7 +274,7 @@ function checkIsValidName(name){
                 ptag: true,
                 buttonClass: 'btn-outline-dark',
                 autoremove: false,//time in ms
-                html: '<div class="modal-header [%HEADCLASS%]"><span class="modal-headtext">[%HEADLINE%]</span><span class="close">&times;</span></div><div class="modal-content"><div class="modal-body">[%TEXT%]</div><div class="buttons modal-footer [%FOOTCLASS%]">[%BUTTONS%]</div></div>'
+                html: '<div class="modal-header [%HEADCLASS%]"><span class="modal-headtext">[%HEADLINE%]</span><button type="button" class="btn-close btn-close-white" aria-label="Close"></button></div><div class="modal-content"><div class="modal-body">[%TEXT%]</div><div class="buttons modal-footer [%FOOTCLASS%]">[%BUTTONS%]</div></div>'
             }, options );
     		//return obj
     		var $out = {};
@@ -334,7 +334,7 @@ function checkIsValidName(name){
     				fadeRemove();
     			}, settings.autoremove);
     		}
-    		$modal.find('.modal-header > span').on('click', function(){
+    		$modal.find('.modal-headtext, .btn-close').on('click', function(){
     			fadeRemove();
 			});
     		$out.modal = $modal;
@@ -406,13 +406,12 @@ var silmph__add_message = function (msg, type, hide_delay){
 			$e = $(e);
 			if ($e.hasClass('open')) $e.removeClass('open');
 		}));
-		$modalwrapper.find('.modal-box .close').click();
+		$modalwrapper.find('.modal-box .btn-close').click();
 	}
 
 	$(document).ready(function(){
 		$modalwrapper = $('.modalwrapper');
-		$('.modalwrapper .modal_close').click(modal_close);
-		$('.modalwrapper .close').click(modal_close);
+		$('.modalwrapper .btn-close').click(modal_close);
 	});
 	
 	$(document).keydown(function(e) {

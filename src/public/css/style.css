@@ -13,21 +13,13 @@ html, body {
 	height: 100%;
 	background-color: white;
 }
-* {
-	box-sizing: border-box;
-	font-family: "PT Sans",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue","Noto Sans","Liberation Sans",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
-}
 button, input{
 	border-radius: 0;
 }
 .noselect {
-  -webkit-touch-callout: none; /* iOS Safari */
-	-webkit-user-select: none; /* Chrome/Safari/Opera */
-	 -khtml-user-select: none; /* Konqueror */
-	   -moz-user-select: none; /* Firefox */
-		-ms-user-select: none; /* Internet Explorer/Edge */
-			user-select: none; /* Non-prefixed version, currently
-								  not supported by any browser */
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none; /* Safari still requires the prefix */
+	user-select: none;
 }
 .clear {
 	clear: both;
@@ -66,38 +58,6 @@ button, input{
 .bg_highlight {
   animation: highlight_yellow linear 2s;
   animation-iteration-count: 1;
-  -webkit-animation: highlight_yellow linear 2s;
-  -webkit-animation-iteration-count: 1;
-  -moz-animation: highlight_yellow linear 2s;
-  -moz-animation-iteration-count: 1;
-  -o-animation: highlight_yellow linear 2s;
-  -o-animation-iteration-count: 1;
-  -ms-animation: highlight_yellow linear 2s;
-  -ms-animation-iteration-count: 1;
-}
-@-moz-keyframes highlight_yellow {
- 	0% { background-color: #F8FFA6; }
- 	30% { background-color: #effe3f; }
- 	70% { background-color: #effe3f; }
- 	100% { background-color: none; }
-}
-@-webkit-keyframes highlight_yellow {
- 	0% { background-color: #F8FFA6; }
- 	30% { background-color: #effe3f; }
- 	70% { background-color: #effe3f; }
- 	100% { background-color: none; }
-}
-@-webkit-keyframes highlight_yellow {
- 	0% { background-color: #F8FFA6; }
- 	30% { background-color: #effe3f; }
- 	70% { background-color: #effe3f; }
- 	100% { background-color: none; }
-}
-@-ms-keyframes highlight_yellow {
- 	0% { background-color: #F8FFA6; }
- 	30% { background-color: #effe3f; }
- 	70% { background-color: #effe3f; }
- 	100% { background-color: none; }
 }
 @keyframes highlight_yellow {
  	0% { background-color: #F8FFA6; }
@@ -298,8 +258,6 @@ div.message_relative{
 	border-style: solid;
 	position: relative;
 	font-size: 1.2em;
-	-webkit-box-shadow: 1px 1px 5px 2px rgba(107,107,107,1);
-	-moz-box-shadow: 1px 1px 5px 2px rgba(107,107,107,1);
 	box-shadow: 1px 1px 5px 2px rgba(107,107,107,1);
 }
 #silmph__message_container div i{
@@ -311,10 +269,7 @@ div.message_relative{
 	top: 10px;
 	cursor: pointer;
 	-webkit-touch-callout: none; /* iOS Safari */
-	-webkit-user-select: none;   /* Chrome/Safari/Opera */
-	-khtml-user-select: none;    /* Konqueror */
-	-moz-user-select: none;      /* Firefox */
-	-ms-user-select: none;       /* IE/Edge */
+	-webkit-user-select: none; /* Safari still requires the prefix */
 	user-select: none;
 }
 #silmph__message_container div i:hover{
@@ -368,33 +323,15 @@ div.silmph__message_success {
 .modalwrapper.open .modal_bg{
 	display: block;
 }
-.modalwrapper .modal_close{
-	position: fixed;
-	right: 30px;
-	top: 100px;
-	height: 50px;
-	width: 50px;
-	border-radius: 50px;
-	line-height: 50px;
-	border: 1px solid #fff;
-	color: #fff;
-	font-size: 2em;
-	font-weight: bold;
-	cursor: pointer;
-	text-align: center;
-}
-.modalwrapper .modal_close:hover{
-	border: 3px solid #fff;
-	line-height: 48px;
-	font-size: 2.1em;
-}
 /* ---------- */
 .modalwrapper .modal-box {
 	position: fixed;
+	top: 10%;
 	left: 0;
 	right: 0;
 	margin: 0 auto;
-	display: block;
+	display: flex;
+	flex-direction: column;
 	z-index: 500;
 	width: 85%;
 	width: calc(84% - 20px);
@@ -402,8 +339,14 @@ div.silmph__message_success {
 	margin-left: calc(15% + 20px);
 	min-width: 300px;
 	max-height: 80%;
-	overflow-y: auto;
+	overflow: hidden;
 	background: #999;
+}
+/* only the body scrolls internally so header/footer (and its buttons) always stay reachable */
+.modalwrapper .modal-content {
+	flex: 1 1 auto;
+	min-height: 0;
+	overflow: hidden;
 }
 .modalwrapper .modal-header {
 	width: 85%;
@@ -419,6 +362,13 @@ div.silmph__message_success {
 }
 .modalwrapper .modal-header.bg-warning .modal-headtext {
 	color: #000;
+}
+.modalwrapper .modal-header .btn-close {
+	margin-left: auto;
+	cursor: pointer;
+}
+.modalwrapper .modal-header.bg-warning .btn-close {
+	--bs-btn-close-filter: none;
 }
 
 .modalwrapper .modal-box .modal-footer {
@@ -441,7 +391,8 @@ div.silmph__message_success {
 		left: 0;
 		right: 0;
 		margin: 0 auto;
-		display: block;
+		display: flex;
+		flex-direction: column;
 		z-index: 500;
 		min-width: auto;
 	}
@@ -576,9 +527,6 @@ div.silmph__message_success {
 .half_container table tr:hover,
 .full_container table tr:hover{
 	background-color: #efefef;
-	-moz-transition: background .3s linear;
-	-webkit-transition: background .3s linear;
-	-o-transition: background .3s linear;
 	transition: background .3s linear;
 }
 .half_container table tr:nth-child(1) th,
@@ -661,42 +609,6 @@ div.silmph__message_success {
 	88% 	{ transform: translate(1px,0px)   rotate(-3deg);}
 	101% 	{ transform: translate(0px,0px)   rotate(0deg);	}
 }
-
-@-moz-keyframes shakeFrames{
-	0% 		{ -moz-transform: translate(0px,0px)  rotate(0deg);	}
-	14% 	{ -moz-transform: translate(1px,-1px) rotate(3deg);	}
-	37% 	{ -moz-transform: translate(0px,1px)  rotate(-3deg);}
-	63% 	{ -moz-transform: translate(-1px,-1px)rotate(2deg);	}
-	88% 	{ -moz-transform: translate(1px,0px)  rotate(-3deg);}
-	101% 	{ -moz-transform: translate(0px,0px)  rotate(0deg);	}
-}
-
-@-webkit-keyframes shakeFrames {
-	0% 		{ -webkit-transform: translate(0px,0px)  rotate(0deg); }
-	14% 	{ -webkit-transform: translate(1px,-1px) rotate(3deg); }
-	37% 	{ -webkit-transform: translate(0px,1px)  rotate(-3deg);}
-	63% 	{ -webkit-transform: translate(-1px,-1px)rotate(2deg); }
-	88% 	{ -webkit-transform: translate(1px,0px)  rotate(-3deg);}
-	101% 	{ -webkit-transform: translate(0px,0px)  rotate(0deg); }
-}
-
-@-o-keyframes shakeFrames {
-	0% 		{ -o-transform: translate(0px,0px)  rotate(0deg); }
-	14% 	{ -o-transform: translate(1px,-1px) rotate(3deg); }
-	37% 	{ -o-transform: translate(0px,1px)  rotate(-3deg);}
-	63% 	{ -o-transform: translate(-1px,-1px)rotate(2deg); }
-	88% 	{ -o-transform: translate(1px,0px)  rotate(-3deg);}
-	101% 	{ -o-transform: translate(0px,0px)  rotate(0deg); }
-}
-
-@-ms-keyframes shakeFrames {
-	0% 		{ -ms-transform: translate(0px,0px)	 rotate(0deg); }
-	14% 	{ -ms-transform: translate(1px,-1px) rotate(3deg); }
-	37% 	{ -ms-transform: translate(0px,1px)	 rotate(-3deg);}
-	63% 	{ -ms-transform: translate(-1px,-1px)rotate(2deg); }
-	88% 	{ -ms-transform: translate(1px,0px)	 rotate(-3deg);}
-	101% 	{ -ms-transform: translate(0px,0px)	 rotate(0deg); }
-}
 @keyframes shakeFrames2{
 	0% 		{ transform: translate(0px,0px)   rotate(0deg);	}
 	14% 	{ transform: translate(1px,-1px)  rotate(3deg);	}
@@ -704,42 +616,6 @@ div.silmph__message_success {
 	63% 	{ transform: translate(-1px,-1px) rotate(2deg);	}
 	88% 	{ transform: translate(1px,0px)   rotate(-3deg);}
 	101% 	{ transform: translate(0px,0px)   rotate(0deg);	}
-}
-
-@-moz-keyframes shakeFrames2{
-	0% 		{ -moz-transform: translate(0px,0px)  rotate(0deg);	}
-	14% 	{ -moz-transform: translate(1px,-1px) rotate(3deg);	}
-	37% 	{ -moz-transform: translate(0px,1px)  rotate(-3deg);}
-	63% 	{ -moz-transform: translate(-1px,-1px)rotate(2deg);	}
-	88% 	{ -moz-transform: translate(1px,0px)  rotate(-3deg);}
-	101% 	{ -moz-transform: translate(0px,0px)  rotate(0deg);	}
-}
-
-@-webkit-keyframes shakeFrames2 {
-	0% 		{ -webkit-transform: translate(0px,0px)  rotate(0deg); }
-	14% 	{ -webkit-transform: translate(1px,-1px) rotate(3deg); }
-	37% 	{ -webkit-transform: translate(0px,1px)  rotate(-3deg);}
-	63% 	{ -webkit-transform: translate(-1px,-1px)rotate(2deg); }
-	88% 	{ -webkit-transform: translate(1px,0px)  rotate(-3deg);}
-	101% 	{ -webkit-transform: translate(0px,0px)  rotate(0deg); }
-}
-
-@-o-keyframes shakeFrames2 {
-	0% 		{ -o-transform: translate(0px,0px)  rotate(0deg); }
-	14% 	{ -o-transform: translate(1px,-1px) rotate(3deg); }
-	37% 	{ -o-transform: translate(0px,1px)  rotate(-3deg);}
-	63% 	{ -o-transform: translate(-1px,-1px)rotate(2deg); }
-	88% 	{ -o-transform: translate(1px,0px)  rotate(-3deg);}
-	101% 	{ -o-transform: translate(0px,0px)  rotate(0deg); }
-}
-
-@-ms-keyframes shakeFrames2 {
-	0% 		{ -ms-transform: translate(0px,0px)	 rotate(0deg); }
-	14% 	{ -ms-transform: translate(1px,-1px) rotate(3deg); }
-	37% 	{ -ms-transform: translate(0px,1px)	 rotate(-3deg);}
-	63% 	{ -ms-transform: translate(-1px,-1px)rotate(2deg); }
-	88% 	{ -ms-transform: translate(1px,0px)	 rotate(-3deg);}
-	101% 	{ -ms-transform: translate(0px,0px)	 rotate(0deg); }
 }
 /* --------- SPINNING FONT AWESOME----------*/
 .multifa {
@@ -767,48 +643,16 @@ div.silmph__message_success {
   left: 37px;
 }
 .sym-spin {
-  -webkit-animation: spin 5s infinite linear;
-  -moz-animation: spin 5s infinite linear;
-  -o-animation: spin 5s infinite linear;
   animation: spin 5s infinite linear;
 }
 .sym-spin-reverse {
-  -webkit-animation: spin 5s infinite linear reverse;
-  -moz-animation: spin 5s infinite linear reverse;
-  -o-animation: spin 5s infinite linear reverse;
   animation: spin 5s infinite linear reverse;
-}
-@-moz-keyframes spin {
-  0% {
-    -moz-transform: rotate(0deg);
-  }
-  100% {
-    -moz-transform: rotate(359deg);
-  }
-}
-@-webkit-keyframes spin {
-  0% {
-    -webkit-transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(359deg);
-  }
-}
-@-o-keyframes spin {
-  0% {
-    -o-transform: rotate(0deg);
-  }
-  100% {
-    -o-transform: rotate(359deg);
-  }
 }
 @keyframes spin {
   0% {
-    -webkit-transform: rotate(0deg);
     transform: rotate(0deg);
   }
   100% {
-    -webkit-transform: rotate(359deg);
     transform: rotate(359deg);
   }
 }
@@ -916,19 +760,11 @@ div.silmph__message_success {
 }
 .floating-links .head-toggle span.toggler i.fa {
 	transition: transform 0.3s ease;
-	-moz-transform: rotate(30deg);
-	-webkit-transform: rotate(30deg);
-	-o-transform: rotate(30deg);
-	-ms-transform: rotate(30deg);
 	transform: rotate(30deg);
 }
 .floating-links:hover .head-toggle span.toggler i.fa,
 .floating-links:focus .head-toggle span.toggler i.fa,
 .floating-links:active .head-toggle span.toggler i.fa{
-	-moz-transform: rotate(0);
-	-webkit-transform: rotate(0);
-	-o-transform: rotate(0);
-	-ms-transform: rotate(0);
 	transform: rotate(0);
 }
 .floating-links .link-line {
