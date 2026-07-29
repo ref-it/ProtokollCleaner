@@ -16,9 +16,6 @@ docs/*
 db-old/*
 examples/*
 tmp/*
-simplesamlphp/
-simplesamlphp*
-src/public/simplesaml
 src/vendor/
 public_html
 composer.lock

@@ -107,7 +107,7 @@ if (DEBUG >= 1) {
  * @var array
  */
 $permission_map = [
-	'baseaccess' 	=> SIMPLESAML_ACCESS_GROUP,
+	'baseaccess' 	=> OIDC_ACCESS_GROUP,
 	'admin' 		=> 'konsul,admin',
 	'crawler' 		=> 'konsul,admin',
 	'dev' 			=> 'ref-it,konsul,admin,dev',

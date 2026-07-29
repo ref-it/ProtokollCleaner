@@ -34,12 +34,18 @@ define('BASE_SUBDIRECTORY', '/'); // starts and ends with letter '/' - NOTE: If 
 define('TIMEZONE', 'Europe/Berlin'); //Mögliche Werte: http://php.net/manual/de/timezones.php
 define('TEMPLATE', 'stura');
 
-// ===== SimpleSAML Settings & Konstants
-define('SIMPLESAML_ACCESS_GROUP', 'sgis,student');
-define("SAML_SIMPLESAMLDIR" , dirname(__FILE__,4) . "/simplesamlphp");
-define("SAML_SIMPLESAMLAUTHSOURCE" , "");
-define("SAML_AUTHGROUP" , "sgis,student");
-define("SAML_ADMINGROUP" , "");
+// ===== OpenID Connect Settings & Constants =====
+define('OIDC_ACCESS_GROUP', 'sgis,student'); // Pflicht-Gruppe für generellen Zugriff (Login-Gate)
+define('OIDC_PROVIDER_URL', 'https://idp.example.org/realms/stura'); // Issuer-URL des OIDC-Providers (Discovery: {url}/.well-known/openid-configuration)
+define('OIDC_CLIENT_ID', '');
+define('OIDC_CLIENT_SECRET', '');
+define('OIDC_REDIRECT_URI', BASE_URL.BASE_SUBDIRECTORY); // muss 1:1 als Redirect-URI beim Provider registriert sein
+define('OIDC_SCOPES', 'profile,email'); // komma-getrennt, "openid" wird automatisch ergänzt
+define('OIDC_AUTHGROUP', 'sgis,student'); // Pflicht-Gruppe, siehe OIDC_GROUPS_CLAIM
+define('OIDC_ADMINGROUP', '');
+define('OIDC_GROUPS_CLAIM', 'groups'); // Name des Claims mit den Gruppen/Rollen des Users, ggf. "realm_access.roles" (Keycloak) o.ä.
+define('OIDC_GREMIEN_CLAIM', 'gremien');
+define('OIDC_SESSION_MAX_AGE', 3600 * 8); // Sekunden bis eine lokale Session erneut gegen den Provider validiert wird
 
 // ===== Sgis API =====
 define('SGISAPI_URL', 'https://helfer.stura.tu-ilmenau.de/sgis/rest.php');

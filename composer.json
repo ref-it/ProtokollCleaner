@@ -24,6 +24,7 @@
     "ext-hash": "*",
     "ext-xml": "*",
     "ext-openssl": "*",
-    "ext-simplexml": "*"
+    "ext-simplexml": "*",
+    "jumbojett/openid-connect-php": "^1.0.2"
   }
 }

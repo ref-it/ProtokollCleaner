@@ -18,8 +18,8 @@ require_once (dirname(__FILE__).'/class.AuthHandler.php');
 /**
  * DummyAuth Handler
  * used for debugging login
- * replaces SAML login and provide simple login
- * implements the SAML Interface of AuthHandler/AuthSamlHandler
+ * replaces OIDC login and provide simple login
+ * implements the AuthHandler interface, see also AuthOidcHandler
  * @package         Stura - Referat IT - ProtocolHelper
  * @category        framework
  * @author 			michael gnehr

@@ -36,20 +36,26 @@ function setAuthHandler(){
 		if (DEBUG >= 1 && DEBUG_USE_DUMMY_LOGIN){
 			require_once (dirname(__FILE__)."/class.AuthDummyHandler.php");
 			$auth = AuthDummyHandler::getInstance();
-			$hasAuth = $auth->requireGroup(SIMPLESAML_ACCESS_GROUP);
+			$hasAuth = $auth->requireGroup(OIDC_ACCESS_GROUP);
 		} else {
-			require_once (dirname(__FILE__)."/class.AuthSamlHandler.php");
+			require_once (dirname(__FILE__)."/class.AuthOidcHandler.php");
 			$conf = [
-				"AuthSamlHandler" => [
-					"SIMPLESAMLDIR" => SAML_SIMPLESAMLDIR,
-					"SIMPLESAMLAUTHSOURCE" => SAML_SIMPLESAMLAUTHSOURCE,
-					"AUTHGROUP" => SAML_AUTHGROUP,
-					"ADMINGROUP" => SAML_ADMINGROUP,
+				"AuthOidcHandler" => [
+					"PROVIDER_URL" => OIDC_PROVIDER_URL,
+					"CLIENT_ID" => OIDC_CLIENT_ID,
+					"CLIENT_SECRET" => OIDC_CLIENT_SECRET,
+					"REDIRECT_URI" => OIDC_REDIRECT_URI,
+					"SCOPES" => OIDC_SCOPES,
+					"AUTHGROUP" => OIDC_AUTHGROUP,
+					"ADMINGROUP" => OIDC_ADMINGROUP,
+					"GROUPS_CLAIM" => OIDC_GROUPS_CLAIM,
+					"GREMIEN_CLAIM" => OIDC_GREMIEN_CLAIM,
+					"SESSION_MAX_AGE" => OIDC_SESSION_MAX_AGE,
 				],
 			];
 			Singleton::configureAll($conf);
-			$auth = AuthSamlHandler::getInstance();
-			$hasAuth = $auth->requireGroup(SIMPLESAML_ACCESS_GROUP);
+			$auth = AuthOidcHandler::getInstance();
+			$hasAuth = $auth->requireGroup(OIDC_ACCESS_GROUP);
 		}
 	}
 }
