@@ -116,7 +116,7 @@
 .protolist .proto > div > button{
 	min-width: 132px;
 }
-.protolist .proto > div > div.placeholder{
+.protolist .proto > div > div.pbc-placeholder{
 	min-width: 132px;
 	display:inline-block;
 	height: 38px;

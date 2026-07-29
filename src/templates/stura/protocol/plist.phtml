@@ -30,7 +30,7 @@ foreach ($param['int_ext'] as $pname => $v){
 			'<div class="pbc">'. //proto button container
 			(isset($v['intern'])?
 				'<button class="btn btn-outline-dark compare" type="button">'.(isset($v['extern'])?'Untersuchen':'Veröffentlichen').'</button>':
-				'<div class="btn placeholder"></div>').
+				'<div class="btn pbc-placeholder"></div>').
 			(isset($v['reso'])?
 				'<a href="'.BASE_SUBDIRECTORY.'reso/list?pid='.$v['id'].'" title="Beschlüsse" class="btn resolink btn-outline-danger ms-1"><i class="fa fa-fw fa-list-ol"></i></a>':'').
 			(isset($v['intern'])?
