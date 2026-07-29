@@ -285,6 +285,7 @@ class xrpcClient extends hServerClient
 				'body' => $this->rendered_xml
 			));
 		} catch (\Exception $e) {
+			error_log('XRPC Client: request to "'.$this->server.'" failed: '.$e->getMessage());
 		}
 		if (DEBUG >= 2){
 			echo '<pre>C: '; var_dump($this->status_code); echo '</pre>';
