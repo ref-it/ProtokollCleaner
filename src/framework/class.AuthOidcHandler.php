@@ -33,6 +33,7 @@ class AuthOidcHandler extends Singleton implements AuthHandler{
 	private static $CLIENT_ID;
 	private static $CLIENT_SECRET;
 	private static $REDIRECT_URI;
+	private static $CALLBACK_PATH;
 	private static $SCOPES;
 	private static $AUTHGROUP;
 	private static $ADMINGROUP;
@@ -74,6 +75,15 @@ class AuthOidcHandler extends Singleton implements AuthHandler{
 	}
 
 	/**
+	 * return true if the current request targets the dedicated OIDC redirect_uri
+	 * @return bool
+	 */
+	private function isCallbackRequest(){
+		$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '';
+		return rtrim($path, '/') === rtrim(BASE_SUBDIRECTORY . self::$CALLBACK_PATH, '/');
+	}
+
+	/**
 	 * handle session and user login
 	 */
 	function requireAuth(){
@@ -104,7 +114,8 @@ class AuthOidcHandler extends Singleton implements AuthHandler{
 			&& (time() - $_SESSION['SILMPH']['OIDC_AUTH_TIME']) < self::$SESSION_MAX_AGE;
 
 		if (!$sessionValid){
-			if (!isset($_REQUEST['code']) && !isset($_REQUEST['error'])){
+			//never remember the callback URL itself as the "return to" target - would cause a redirect loop
+			if (!$this->isCallbackRequest() && !isset($_REQUEST['code']) && !isset($_REQUEST['error'])){
 				//about to redirect to the provider - remember where the user wanted to go
 				$_SESSION['SILMPH']['OIDC_REQUESTED_URI'] = $_SERVER['REQUEST_URI'];
 			}

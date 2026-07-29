@@ -39,7 +39,8 @@ define('OIDC_ACCESS_GROUP', 'sgis,student'); // Pflicht-Gruppe für generellen Z
 define('OIDC_PROVIDER_URL', 'https://idp.example.org/realms/stura'); // Issuer-URL des OIDC-Providers (Discovery: {url}/.well-known/openid-configuration)
 define('OIDC_CLIENT_ID', '');
 define('OIDC_CLIENT_SECRET', '');
-define('OIDC_REDIRECT_URI', BASE_URL.BASE_SUBDIRECTORY); // muss 1:1 als Redirect-URI beim Provider registriert sein
+define('OIDC_CALLBACK_PATH', 'oidc/callback'); // relativer Pfad ohne führenden/folgenden Slash
+define('OIDC_REDIRECT_URI', BASE_URL.BASE_SUBDIRECTORY.OIDC_CALLBACK_PATH); // muss 1:1 als Redirect-URI beim Provider registriert sein
 define('OIDC_SCOPES', 'profile,email'); // komma-getrennt, "openid" wird automatisch ergänzt
 define('OIDC_AUTHGROUP', 'sgis,student'); // Pflicht-Gruppe, siehe OIDC_GROUPS_CLAIM
 define('OIDC_ADMINGROUP', '');
