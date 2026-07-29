@@ -346,6 +346,9 @@ div.silmph__message_success {
 	min-height: 0;
 	overflow: hidden;
 }
+.modalwrapper .modal-body {
+	overflow-y: auto;
+}
 .modalwrapper .modal-header {
 	width: 85%;
 	width: calc(84% - 20px);
