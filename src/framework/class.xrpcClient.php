@@ -76,7 +76,7 @@ class xrpcClient extends hServerClient
 	 */
 	protected function setError($message, $throw = true)
 	{
-		$this->error = get_class() .': '. $message;
+		$this->error = get_class($this) .': '. $message;
 		if ($throw) throw new \Exception($this->error);
 	}
 	

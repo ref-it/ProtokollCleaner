@@ -68,10 +68,10 @@ class AuthOidcHandler extends Singleton implements AuthHandler{
 	}
 
 	final static protected function static__set($name, $value){
-		if (property_exists(get_class(), $name))
+		if (property_exists(static::class, $name))
 			self::$$name = $value;
 		else
-			throw new Exception("$name ist keine Variable in " . get_class());
+			throw new Exception("$name ist keine Variable in " . static::class);
 	}
 
 	/**

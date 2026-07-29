@@ -85,10 +85,10 @@ abstract class Singleton{
     /* wanted Implementation in child to access (and set) PRIVATE static variables*/
     /*
     final static protected function  static__set($name, $value){
-        if(property_exists(get_class(), $name))
+        if(property_exists(static::class, $name))
             self::$$name = $value;
         else
-            throw new Exception("$name ist keine Variable in ".get_class());
+            throw new Exception("$name ist keine Variable in ".static::class);
     }
     */
 }
@@ -99,10 +99,10 @@ abstract class Singleton{
 class Test extends Singleton {
     private static $test;
     final static protected function  static__set($name, $value){
-        if(property_exists(get_class(), $name))
+        if(property_exists(static::class, $name))
             self::$$name = $value;
         else
-            throw new Exception("$name ist keine Variable in ".get_class());
+            throw new Exception("$name ist keine Variable in ".static::class);
     }
 }
 
