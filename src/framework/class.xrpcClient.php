@@ -313,6 +313,21 @@ class xrpcClient extends hServerClient
 		foreach($xml->getDocNamespaces() as $strPrefix => $strNamespace) {
 			$xml->registerXPathNamespace($strPrefix,$strNamespace);
 		}
+
+		//detect XML-RPC <fault> responses - these have no <params> and would otherwise
+		//silently parse into an empty result, hiding the real error from the remote server
+		$faultNames = $xml->xpath("//fault/value/struct/member/name");
+		if ($faultNames){
+			$faultValues = $xml->xpath("//fault/value/struct/member/value/*");
+			$fault = [];
+			foreach ($faultNames as $k => $n){
+				$fault[$n->__toString()] = isset($faultValues[$k])? $faultValues[$k]->__toString() : '';
+			}
+			$this->error = 'XRPC Client: server returned a fault - code '
+				.($fault['faultCode'] ?? '?').': '.($fault['faultString'] ?? 'unknown error');
+			error_log($this->error);
+		}
+
 		$json = json_encode($xml);
 		$value = $xml->xpath("//params/param/value/*");
 		$val_name = $xml->xpath("//struct/member/name");
