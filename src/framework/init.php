@@ -101,7 +101,7 @@ if (defined('ENABLE_ADMIN_INSTALL') && ENABLE_ADMIN_INSTALL) {
 		$key_file_content .= "define('SILMPH_KEY_SECRET', '".$pass_key."');\n ?>";
 
 		//create file
-		$handle = fopen (SYSBASE.'/secret.php', w);
+		$handle = fopen (SYSBASE.'/secret.php', 'w');
 		fwrite ($handle, $key_file_content);
 		fclose ($handle);
 		chmod(SYSBASE.'/secret.php', 0400);
