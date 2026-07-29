@@ -335,8 +335,6 @@ div.silmph__message_success {
 	z-index: 500;
 	width: 85%;
 	width: calc(84% - 20px);
-	margin-left: 15%;
-	margin-left: calc(15% + 20px);
 	min-width: 300px;
 	max-height: 80%;
 	overflow: hidden;
@@ -355,6 +353,7 @@ div.silmph__message_success {
 	position: fixed;
 	z-index: 10;
 	top: 30px;
+	padding: .6rem 1.2rem;
 }
 .modalwrapper .modal-header .modal-headtext {
 	font-weight: bold;
