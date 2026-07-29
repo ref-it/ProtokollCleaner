@@ -13,6 +13,9 @@ html, body {
 	height: 100%;
 	background-color: white;
 }
+.navbar {
+	padding: .5rem 1rem;
+}
 button, input{
 	border-radius: 0;
 }
