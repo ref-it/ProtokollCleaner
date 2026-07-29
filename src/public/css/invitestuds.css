@@ -22,6 +22,8 @@
 }
 .silmph_top {
 	margin-top: 1px;
+	background-color: #f0f0f0;
+	padding: .75rem 1rem;
 }
 .silmph_top_counter_reset {
 	counter-reset: topcount;
