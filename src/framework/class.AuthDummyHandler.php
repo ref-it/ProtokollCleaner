@@ -178,10 +178,6 @@ class AuthDummyHandler implements AuthHandler{
 	 */
 	function hasGroup($group, $delimiter = ","){
 		$this->requireAuth();
-		if (trim($group) === ''){
-			//no group required - any authenticated user passes
-			return true;
-		}
 		$attributes = $this->getAttributes();
 		if (count(array_intersect(explode($delimiter, strtolower($group)), array_map("strtolower", $attributes["groups"]))) == 0){
 			return false;

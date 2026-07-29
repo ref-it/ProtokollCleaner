@@ -255,10 +255,6 @@ class AuthOidcHandler extends Singleton implements AuthHandler{
 	 * @return bool  true if the user has one or more groups from $group
 	 */
 	function hasGroup($groups, $delimiter = ","){
-		if (trim($groups) === ''){
-			//no group required - any authenticated user passes
-			return true;
-		}
 		$userGroups = $this->getClaimAsList(self::$GROUPS_CLAIM);
 		if (empty($userGroups)){
 			return false;
