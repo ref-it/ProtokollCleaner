@@ -52,7 +52,7 @@ class wikiClient extends xrpcClient
 	public function getVersion(){
 		$this->setMethod('dokuwiki.getVersion');
 		if ($this->send()){
-			return $this->parse_response()[0];
+			return $this->parse_response()[0] ?? '';
 		} else {
 			return '';
 		}
@@ -65,7 +65,7 @@ class wikiClient extends xrpcClient
 	public function getTime(){
 		$this->setMethod('dokuwiki.getTime');
 		if ($this->send()){
-			return $this->parse_response()[0];
+			return $this->parse_response()[0] ?? '';
 		} else {
 			return '';
 		}
@@ -78,7 +78,7 @@ class wikiClient extends xrpcClient
 	public function getXMLRPCAPIVersion(){
 		$this->setMethod('dokuwiki.getXMLRPCAPIVersion');
 		if ($this->send()){
-			return $this->parse_response()[0];
+			return $this->parse_response()[0] ?? '';
 		} else {
 			return '';
 		}
@@ -91,7 +91,7 @@ class wikiClient extends xrpcClient
 	public function getTitle(){
 		$this->setMethod('dokuwiki.getTitle');
 		if ($this->send()){
-			return $this->parse_response()[0];
+			return $this->parse_response()[0] ?? '';
 		} else {
 			return '';
 		}
@@ -181,12 +181,12 @@ class wikiClient extends xrpcClient
 		$this->setParams($param);
 		if ($this->send()){
 			$this->parse_response();
-			return $this->parsed_result[0];
+			return $this->parsed_result[0] ?? '';
 		} else {
 			return '';
 		}
 	}
-	
+
 	/**
 	 * get docuWiki Page - html wiki text
 	 * @param string $filename
@@ -201,7 +201,7 @@ class wikiClient extends xrpcClient
 		$this->setParams($param);
 		if ($this->send()){
 			$this->parse_response();
-			return $this->parsed_result[0];
+			return $this->parsed_result[0] ?? '';
 		} else {
 			return '';
 		}
