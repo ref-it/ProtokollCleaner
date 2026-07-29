@@ -279,9 +279,8 @@ class xrpcClient extends hServerClient
 		
 		try {
 			$this->_doRequest('POST', $this->server, array(
-				//'Depth' => 0
-			), array (
 				'Content-Type' => 'text/xml; charset=utf-8',
+			), array (
 				'body' => $this->rendered_xml
 			));
 		} catch (\Exception $e) {
