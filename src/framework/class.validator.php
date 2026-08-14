@@ -724,7 +724,7 @@ class Validator {
 	 * @return boolean
 	 */
 	public function V_password($value, $params = []) {
-		$p = trim(strip_tags(''.$value));
+		$p = trim(''.$value);
 	
 		if (in_array('empty', $params, true) && $p === ''){
 			$this->filtered = $p;
