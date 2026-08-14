@@ -124,7 +124,7 @@ if (!function_exists('silmph_decrypt_key')) {
 		try {
 			$data = Defuse\Crypto\Crypto::decrypt($ciphertext, $key);
 			return $data;
-		} catch (Defuse\Crypto\WrongKeyOrModifiedCiphertextException $ex) {
+		} catch (Defuse\Crypto\Exception\WrongKeyOrModifiedCiphertextException $ex) {
 			// An attack! Either the wrong key was loaded, or the ciphertext has
 			// changed since it was created -- either corrupted in the database or
 			// intentionally modified by Eve trying to carry out an attack.
